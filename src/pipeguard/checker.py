@@ -519,6 +519,54 @@ def _channel_visibility(module: Module, graph: PDG, source: Effect, target: Effe
     return False
 
 
+def _region_covers(module: Module, covering: str, covered: str) -> bool:
+    outer = module.region_map[covering]
+    inner = module.region_map[covered]
+    return (
+        outer.address_space == inner.address_space
+        and outer.allocation_id == inner.allocation_id
+        and outer.offset <= inner.offset
+        and outer.offset + outer.extent >= inner.offset + inner.extent
+    )
+
+
+def _proxy_visible(module: Module, graph: PDG, point: Effect, window: Effect) -> bool:
+    if point.mode != "WRITE" or window.mode != "READ":
+        return False
+    issue = module.event_map[window.begin]
+    target_domain = {
+        "CpAsyncIssue": "ASYNC_COPY",
+        "TmaLoadIssue": "TMA",
+        "TmaStoreIssue": "TMA",
+        "WgmmaIssue": "TENSOR_CORE",
+    }.get(issue.type)
+    if target_domain is None:
+        return False
+    point_event = module.event_map[point.begin]
+    source_region = module.region_map[window.region]
+    for fence in module.events:
+        if (
+            fence.type != "ProxyFence"
+            or fence.actor != point_event.actor
+            or fence.from_domain != "GENERIC"
+            or fence.to_domain != target_domain
+            or fence.scope != "CTA"
+            or not graph.reachable(point.end, fence.id)
+            or not graph.reachable(fence.id, window.begin)
+            or not any(_region_covers(module, region, window.region) for region in fence.regions)
+        ):
+            continue
+        mask = fence.visibility_mask
+        assert mask is not None
+        if source_region.address_space == "SHARED" and mask.shared:
+            return True
+        if source_region.address_space == "GLOBAL" and mask.global_write:
+            return True
+        if source_region.address_space == "TENSOR" and mask.tensor_write:
+            return True
+    return False
+
+
 def _completion_observed(module: Module, graph: PDG, window: Effect, point: Effect) -> bool:
     issue = module.event_map[window.begin]
     if issue.type in {"CpAsyncIssue", "WgmmaIssue", "TmaStoreIssue"}:
@@ -557,12 +605,11 @@ def _data_hazard(module: Module, graph: PDG) -> dict[str, Any] | None:
             else:
                 window, point = (left, right) if left.async_window else (right, left)
                 if window.mode == "READ":
-                    # A generic WRITE feeding an async-copy READ requires a
-                    # matching generic->async proxy fence, which is deliberately
-                    # unsupported in this checkpoint.
-                    point_before = False
+                    # A generic WRITE feeding an async READ requires a matching
+                    # generic-to-async proxy fence.
+                    point_before = _proxy_visible(module, graph, point, window)
                     completion_before = _completion_observed(module, graph, window, point)
-                    query = "generic write before async-copy read requires unsupported proxy visibility, or overwrite must follow observed completion"
+                    query = "generic write before async read requires a direction/scope/region-compatible proxy fence, or overwrite must follow observed completion"
                 else:
                     point_before = graph.reachable(point.end, window.begin)
                     completion_before = _completion_observed(module, graph, window, point)
@@ -811,6 +858,10 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
                 f"channel:{key}": value.snapshot()
                 for key, value in sorted(canonical.state.channels.items())
             },
+            "visibility_transfers": [
+                transfer.snapshot()
+                for transfer in sorted(canonical.state.visibility_transfers, key=lambda item: item.event)
+            ],
         }
         return {
             "verdict": "DATA_HAZARD", "checker_version": "0.2.0",
@@ -822,7 +873,7 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
         "verdict": "SAFE", "checker_version": "0.2.0", "summary": "all supported protocol and data checks passed",
         "diagnostics": [], "statistics": statistics,
         "manifest": {
-            "scope": "finite statically-resolved sm90 single_cta mbarrier/TMA-load/TMA-store/collective-barrier/cp.async/WGMMA/channel core",
+            "scope": "finite statically-resolved sm90 single_cta mbarrier/TMA-load/TMA-store/collective-barrier/cp.async/WGMMA/channel/proxy-visibility core",
             "assumptions": dict(sorted(module.raw["assumptions"].items())), "producer": module.raw["producer"],
             "frontend_provenance": module.raw["frontend_provenance"], "counts": counts,
         },

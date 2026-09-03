@@ -19,6 +19,7 @@ from .protocols import (
     CommittedGroup,
     CommitGroupState,
     ProducerConsumerChannelState,
+    VisibilityTransfer,
 )
 
 
@@ -131,6 +132,7 @@ class ExecutionState:
     collectives: dict[str, CollectiveBarrierState] = field(default_factory=dict)
     groups: dict[str, CommitGroupState] = field(default_factory=dict)
     channels: dict[str, ProducerConsumerChannelState] = field(default_factory=dict)
+    visibility_transfers: list[VisibilityTransfer] = field(default_factory=list)
     remaining: dict[tuple[str, int, int], set[str]] = field(default_factory=dict)
     observed: set[str] = field(default_factory=set)
     pending_completions: dict[str, AsyncOp] = field(default_factory=dict)
@@ -1276,6 +1278,18 @@ class Executor:
             state.dynamic_edges.add(edge)
             added_edges = (edge,)
             changed_channels.add((event.resource, event.slot))
+        elif event.type == "ProxyFence":
+            assert event.from_domain is not None and event.to_domain is not None
+            assert event.scope is not None and event.visibility_mask is not None
+            state.visibility_transfers.append(VisibilityTransfer(
+                event.id,
+                event.actor,
+                event.from_domain,
+                event.to_domain,
+                event.scope,
+                event.regions,
+                event.visibility_mask,
+            ))
         elif event.type == "MBarrierInit":
             barrier = state.barriers[event.resource]
             if barrier.lifecycle == "LIVE":
@@ -1492,10 +1506,22 @@ class Executor:
             )
             for resource, channel in sorted(state.channels.items())
         )
+        transfers = tuple(
+            (
+                transfer.event,
+                transfer.actor,
+                transfer.from_domain,
+                transfer.to_domain,
+                transfer.scope,
+                transfer.regions,
+                tuple(sorted(transfer.visibility_mask.artifact().items())),
+            )
+            for transfer in sorted(state.visibility_transfers, key=lambda item: item.event)
+        )
         remaining = tuple((key, tuple(sorted(event_ids))) for key, event_ids in sorted(state.remaining.items()))
         pending = tuple((key, op.issue_id, op.actor, op.resource, op.destination_region, op.lifecycle_epoch, op.generation, op.bytes)
                         for key, op in sorted(state.pending_completions.items()))
-        return (tuple(sorted(state.frontiers.items())), tuple(sorted(state.executed)), barriers, collectives, groups, channels, remaining,
+        return (tuple(sorted(state.frontiers.items())), tuple(sorted(state.executed)), barriers, collectives, groups, channels, transfers, remaining,
                 tuple(sorted(state.observed)), pending, tuple(sorted(state.completed_transitions)))
 
     def explore(self, hold: str | None = None) -> ExplorationResult:

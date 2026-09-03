@@ -174,7 +174,7 @@ def test_unknown_and_known_unimplemented_events_are_distinct_and_fail_closed():
     assert unknown.value.code == "UNKNOWN_EVENT"
 
     raw = json.loads((FIXTURES / "unknown_event.json").read_text())
-    raw["events"][0]["type"] = "ProxyFence"
+    raw["events"][0]["type"] = "AtomicReadModifyWrite"
     with pytest.raises(PGIRError) as known:
         module_from_dict(raw)
     assert known.value.code == "KNOWN_EVENT_UNSUPPORTED"
@@ -1058,7 +1058,7 @@ def full_visibility_mask() -> dict:
     }
 
 
-def test_future_protocol_fields_are_structured_but_still_unsupported():
+def test_proxy_protocol_fields_are_structured_and_validated():
     raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
     fence = next(event for event in raw["events"] if event["id"] == "read")
     fence.clear()
@@ -1073,9 +1073,8 @@ def test_future_protocol_fields_are_structured_but_still_unsupported():
         "regions": ["tile"],
         "visibility_mask": full_visibility_mask(),
     })
-    with pytest.raises(PGIRError) as caught:
-        module_from_dict(raw)
-    assert caught.value.code == "KNOWN_EVENT_UNSUPPORTED"
+    module = module_from_dict(raw)
+    assert check_module(module)["verdict"] == "SAFE"
 
     fence["visibility_mask"].pop("tensor_write")
     with pytest.raises(PGIRError) as malformed:
@@ -2106,3 +2105,82 @@ def test_channel_maximal_uses_delta_driven_handoff_stream(monkeypatch):
     assert result["statistics"]["channel_notifications"] > 0
     assert result["statistics"]["full_enabled_scans"] == 0
     assert result["statistics"]["state_clones"] == 0
+
+
+def tma_load_proxy_module(to_domain: str = "TMA", fence_after_issue: bool = False, fence_region: str = "source"):
+    raw = json.loads((FIXTURES / "tma_completion_before_arrival.json").read_text())
+    original = sorted(raw["events"], key=lambda event: event["seq"])
+    source_write = {"id": "source_write", "type": "MemWrite", "actor": "a", "seq": 0, "region": "source"}
+    proxy = {
+        "id": "proxy", "type": "ProxyFence", "actor": "a", "seq": 0,
+        "from_domain": "GENERIC", "to_domain": to_domain, "scope": "CTA",
+        "regions": [fence_region], "visibility_mask": full_visibility_mask(),
+    }
+    events = [source_write]
+    for event in original:
+        events.append(event)
+        if fence_after_issue and event["id"] == "issue":
+            events.append(proxy)
+    if not fence_after_issue:
+        issue_index = next(index for index, event in enumerate(events) if event["id"] == "issue")
+        events.insert(issue_index, proxy)
+    for seq, event in enumerate(events):
+        event["seq"] = seq
+    raw["events"] = events
+    return raw
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_directional_proxy_fence_publishes_generic_write_to_tma(engine):
+    module = module_from_dict(tma_load_proxy_module())
+    result = check_module(module, engine=engine)
+    assert result["verdict"] == "SAFE"
+    executor = Executor(module)
+    state = executor.explore().state
+    assert [transfer.to_domain for transfer in state.visibility_transfers] == ["TMA"]
+
+
+def test_proxy_wrong_domain_does_not_publish():
+    raw = tma_load_proxy_module()
+    next(event for event in raw["events"] if event["id"] == "proxy")["to_domain"] = "ASYNC_COPY"
+    assert check_module(module_from_dict(raw), engine="crosscheck")["verdict"] == "DATA_HAZARD"
+
+
+def test_proxy_after_issue_does_not_publish_retroactively():
+    raw = tma_load_proxy_module(fence_after_issue=True)
+    assert check_module(module_from_dict(raw), engine="crosscheck")["verdict"] == "DATA_HAZARD"
+
+
+def test_proxy_region_must_cover_async_source():
+    raw = tma_load_proxy_module(fence_region="source_slice")
+    source = next(region for region in raw["regions"] if region["id"] == "source")
+    raw["regions"].append({
+        **source,
+        "id": "source_slice",
+        "extent": max(1, source["extent"] // 2),
+    })
+    result = check_module(module_from_dict(raw), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+
+
+def test_proxy_reverse_direction_and_mask_mismatch_fail_closed():
+    raw = tma_load_proxy_module()
+    proxy = next(event for event in raw["events"] if event["id"] == "proxy")
+    proxy.update({"from_domain": "TMA", "to_domain": "GENERIC"})
+    with pytest.raises(PGIRError) as direction:
+        module_from_dict(raw)
+    assert direction.value.code == "UNSUPPORTED_PROXY_DIRECTION"
+
+    raw = tma_load_proxy_module()
+    proxy = next(event for event in raw["events"] if event["id"] == "proxy")
+    proxy["scope"] = "CLUSTER"
+    with pytest.raises(PGIRError) as scope:
+        module_from_dict(raw)
+    assert scope.value.code == "SCHEMA_INVALID"
+
+    raw = tma_load_proxy_module()
+    proxy = next(event for event in raw["events"] if event["id"] == "proxy")
+    proxy["visibility_mask"]["global_write"] = False
+    with pytest.raises(PGIRError) as mask:
+        module_from_dict(raw)
+    assert mask.value.code == "PROXY_REGION_MASK_MISMATCH"

@@ -22,13 +22,14 @@ IMPLEMENTED_EVENTS = frozenset({
     "WgmmaFenceOperand", "WgmmaIssue", "WgmmaCommitGroup", "WgmmaWaitGroup",
     "TmaStoreIssue", "TmaStoreCommitGroup", "TmaStoreWaitGroup",
     "ChannelCreate", "ProducerAcquire", "ProducerCommit", "ConsumerWait", "ConsumerRelease",
+    "ProxyFence",
 })
 KNOWN_UNSUPPORTED_EVENTS = frozenset({
     "AtomicReadModifyWrite", "Fork", "Join", "BarrierRelease",
     "MBarrierTxComplete", "MBarrierPhaseComplete",
     "CpAsyncGroupComplete",
     "TmaLoadComplete", "TmaStoreSourceReleased", "TmaStoreGlobalComplete",
-    "WgmmaResultReady", "WgmmaOperandsReleased", "ProxyFence",
+    "WgmmaResultReady", "WgmmaOperandsReleased",
 })
 
 
@@ -487,6 +488,7 @@ def _semantic_validate(module: Module) -> None:
         "ProducerCommit": ("resource", "slot", "logical_phase"),
         "ConsumerWait": ("resource", "slot", "logical_phase"),
         "ConsumerRelease": ("resource", "slot", "logical_phase"),
+        "ProxyFence": ("from_domain", "to_domain", "scope", "regions", "visibility_mask"),
         "MBarrierInit": ("resource", "count", "lifecycle_epoch"), "MBarrierInvalidate": ("resource", "lifecycle_epoch"),
         "MBarrierArrive": ("resource", "count", "lifecycle_epoch", "generation"),
         "MBarrierExpectTx": ("resource", "bytes", "lifecycle_epoch", "generation"),
@@ -527,6 +529,7 @@ def _semantic_validate(module: Module) -> None:
         "ProducerCommit": {"resource", "slot", "logical_phase"},
         "ConsumerWait": {"resource", "slot", "logical_phase"},
         "ConsumerRelease": {"resource", "slot", "logical_phase"},
+        "ProxyFence": {"from_domain", "to_domain", "scope", "regions", "visibility_mask"},
         "MBarrierInit": {"resource", "count", "lifecycle_epoch"}, "MBarrierInvalidate": {"resource", "lifecycle_epoch"},
         "MBarrierArrive": {"lifecycle_epoch", "resource", "count", "generation", "predicate"},
         "MBarrierExpectTx": {"lifecycle_epoch", "resource", "bytes", "generation"},
@@ -721,6 +724,41 @@ def _semantic_validate(module: Module) -> None:
                     "CHANNEL_SLOT_OUT_OF_RANGE",
                     "channel event slot exceeds the declared capacity",
                     {"event": event.id, "slot": event.slot, "capacity": resource.capacity},
+                )
+        elif event.type == "ProxyFence":
+            if event.from_domain != "GENERIC" or event.to_domain not in {"ASYNC_COPY", "TMA", "TENSOR_CORE"}:
+                raise PGIRError(
+                    "UNSUPPORTED_PROXY_DIRECTION",
+                    "supported ProxyFence directions are GENERIC to ASYNC_COPY, TMA, or TENSOR_CORE",
+                    {"event": event.id, "from_domain": event.from_domain, "to_domain": event.to_domain},
+                )
+            if event.scope != "CTA":
+                raise PGIRError(
+                    "UNSUPPORTED_PROXY_SCOPE",
+                    "only CTA-scope ProxyFence semantics are supported in PGIR v1",
+                    {"event": event.id, "scope": event.scope},
+                )
+            mask = event.visibility_mask
+            if mask.control_only:
+                raise PGIRError(
+                    "INVALID_PROXY_VISIBILITY_MASK",
+                    "ProxyFence must publish at least one data visibility domain",
+                    {"event": event.id, "visibility_mask": mask.artifact()},
+                )
+            uncovered = sorted(
+                region_id for region_id in event.regions
+                if (
+                    regions[region_id].address_space == "SHARED" and not mask.shared
+                    or regions[region_id].address_space == "GLOBAL" and not mask.global_write
+                    or regions[region_id].address_space == "TENSOR" and not mask.tensor_write
+                    or regions[region_id].address_space == "REGISTER"
+                )
+            )
+            if uncovered:
+                raise PGIRError(
+                    "PROXY_REGION_MASK_MISMATCH",
+                    "ProxyFence visibility mask does not publish every named region",
+                    {"event": event.id, "regions": uncovered},
                 )
         elif event.resource is not None and resources[event.resource].kind != "mbarrier":
             raise PGIRError(

@@ -10,6 +10,7 @@ from .common import (
     WAIT_MODES,
     VisibilityMask,
 )
+from .visibility import VisibilityTransfer
 
 __all__ = [
     "ChannelSlotState",
@@ -24,4 +25,5 @@ __all__ = [
     "SCOPES",
     "WAIT_MODES",
     "VisibilityMask",
+    "VisibilityTransfer",
 ]
