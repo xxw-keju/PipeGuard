@@ -7,8 +7,9 @@ from pathlib import Path
 
 import pytest
 
-from pipeguard.checker import check_module
-from pipeguard.engine import Executor, ProtocolError
+from pipeguard.checker import _anchor_ids, check_module
+from pipeguard.engine import ExecutionState, Executor, ProtocolError
+from pipeguard.incremental import END, IncrementalEngine, StableReadySet, build_anchor_streams
 from pipeguard.model import PGIRError, load_module, module_from_dict, stable_completion_id
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -761,3 +762,269 @@ def test_cli_check_engine_modes(engine: str):
     document = json.loads(process.stdout)
     assert document["verdict"] == "SAFE"
     assert document["statistics"]["engine"] == engine
+
+
+# Incremental held-anchor engine coverage.
+def independent_read_module(actor_count: int, events_per_actor: int = 1):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["actors"] = [
+        {"id": f"actor_{index:02d}", "kind": "LANE", "participants": [index]}
+        for index in range(actor_count)
+    ]
+    raw["target"]["cta_threads"] = 32
+    raw["resources"] = []
+    raw["events"] = [
+        {
+            "id": f"read_{actor:02d}_{seq:02d}",
+            "type": "MemRead",
+            "actor": f"actor_{actor:02d}",
+            "seq": seq,
+            "region": "tile",
+        }
+        for actor in range(actor_count)
+        for seq in range(events_per_actor)
+    ]
+    return module_from_dict(raw)
+
+
+def test_stable_ready_set_orders_multiple_bitmap_levels():
+    ready = StableReadySet(257)
+    for rank in (256, 64, 129, 0, 63, 128):
+        assert ready.add(rank)
+    assert not ready.add(64)
+    assert ready.discard(129)
+    assert [ready.pop_min() for _ in range(5)] == [0, 63, 64, 128, 256]
+    assert ready.pop_min() is None
+
+
+def generated_barrier_module(capacity: int, observer_count: int):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    observers = [f"observer_{index}" for index in range(observer_count)]
+    raw["actors"] = [
+        {"id": "producer", "kind": "PARTITION", "participants": list(range(capacity))},
+        *[
+            {
+                "id": actor,
+                "kind": "PARTITION",
+                "participants": [capacity + index],
+            }
+            for index, actor in enumerate(observers)
+        ],
+    ]
+    raw["target"]["cta_threads"] = capacity + observer_count
+    raw["resources"][0]["participants"] = ["producer", *observers]
+    raw["regions"] = []
+    raw["events"] = [
+        {
+            "id": "init",
+            "type": "MBarrierInit",
+            "actor": "producer",
+            "seq": 0,
+            "resource": "bar",
+            "lifecycle_epoch": 0,
+            "count": capacity,
+        },
+        {
+            "id": "arrive",
+            "type": "MBarrierArrive",
+            "actor": "producer",
+            "seq": 1,
+            "resource": "bar",
+            "lifecycle_epoch": 0,
+            "generation": 0,
+            "count": capacity,
+        },
+        *[
+            {
+                "id": f"wait_{index}",
+                "type": "MBarrierWaitParity",
+                "actor": actor,
+                "seq": 0,
+                "resource": "bar",
+                "lifecycle_epoch": 0,
+                "generation": 0,
+                "raw_parity": 0,
+                "parity_evidence": structured_evidence(f"{actor}:bar", 0),
+                "depends_on": ["init"],
+            }
+            for index, actor in enumerate(observers)
+        ],
+    ]
+    return module_from_dict(raw)
+
+
+@pytest.mark.parametrize("capacity", [1, 2, 3])
+@pytest.mark.parametrize("observer_count", [1, 2])
+def test_generated_barrier_models_match_exhaustive_boundaries(capacity, observer_count):
+    module = generated_barrier_module(capacity, observer_count)
+    maximal = check_module(module, engine="maximal")
+    exhaustive = check_module(module, engine="exhaustive")
+    assert maximal["verdict"] == exhaustive["verdict"] == "SAFE"
+    assert maximal["artifacts"]["boundaries"] == exhaustive["artifacts"]["boundaries"]
+
+
+def test_transition_delta_and_compact_trace_are_notification_ready():
+    module = independent_read_module(1)
+    executor = Executor(module)
+    state = executor.initial_state()
+    transition = executor.enabled(state)[0]
+    delta = executor.apply(state, transition)
+    assert delta.transition_id == "read_00_00"
+    assert delta.kind == "PROGRAM"
+    assert delta.advanced_actor == "actor_00"
+    assert delta.executed_event == "read_00_00"
+    assert delta.changed_resources == frozenset()
+    assert state.trace == [{"step": 0, "transition": "read_00_00", "kind": "PROGRAM"}]
+
+
+def test_incremental_program_stream_first_middle_final_and_end_flush():
+    module = independent_read_module(1, events_per_actor=3)
+    anchors = _anchor_ids(module)
+    engine = IncrementalEngine(Executor(module), anchors)
+    streams = build_anchor_streams(module, anchors)
+    assert len(streams) == 1
+    assert streams[0].anchors == ("read_00_00", "read_00_01", "read_00_02")
+    assert streams[0].tokens[-1] is END
+    assert not isinstance(END, str)
+
+    canonical = engine.canonical()
+    outcomes = engine.analyze_streams()
+    assert canonical.error is None and not canonical.stuck
+    assert outcomes.error is None and outcomes.stuck_state is None
+    assert outcomes.boundaries == [
+        {"anchor": "read_00_00", "boundary": ["read_00_00"]},
+        {"anchor": "read_00_01", "boundary": ["read_00_01"]},
+        {"anchor": "read_00_02", "boundary": ["read_00_02"]},
+    ]
+    # Three canonical applications plus three releases in the one stream;
+    # the final application proves END flushed the last held anchor.
+    assert engine.counters.transitions_by_kind == {
+        "PROGRAM": 6,
+        "TMA_COMPLETION": 0,
+        "PHASE_COMPLETION": 0,
+    }
+    assert engine.counters.state_initializations == 2
+
+
+def test_end_flush_reports_invalid_final_anchor():
+    module = lifecycle_module("MBarrierInit", "MBarrierInit")
+    engine = IncrementalEngine(Executor(module), _anchor_ids(module))
+    outcomes = engine.analyze_streams()
+    assert outcomes.error is not None
+    assert outcomes.error.code == "REINIT_LIVE"
+    assert outcomes.error.event == "e1"
+    assert outcomes.boundaries == [
+        {"anchor": "e0", "boundary": ["e0"]},
+        {"anchor": "e1", "boundary": ["e1"]},
+    ]
+
+
+def test_maximal_uses_no_enabled_scan_or_state_clone(monkeypatch):
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError("reference scan/clone reached from maximal engine")
+
+    monkeypatch.setattr(Executor, "enabled", forbidden)
+    monkeypatch.setattr(ExecutionState, "clone", forbidden)
+    result = check_module(load("partial_next_phase.json"), engine="maximal")
+    assert result["verdict"] == "SAFE"
+    assert result["artifacts"]["canonical_trace"]
+    assert result["statistics"]["full_enabled_scans"] == 0
+    assert result["statistics"]["state_clones"] == 0
+    assert result["statistics"]["replayed_prefix_steps"] == 0
+
+
+def test_every_real_and_synthetic_anchor_has_one_incremental_boundary():
+    module = load("tma_completion_before_arrival.json")
+    expected = _anchor_ids(module)
+    result = check_module(module, engine="maximal")
+    anchors = [item["anchor"] for item in result["artifacts"]["boundaries"]]
+    assert result["verdict"] == "SAFE"
+    assert anchors == expected
+    assert any(anchor.startswith("completion:tma-load:") for anchor in anchors)
+    assert any(anchor.startswith("completion:mbarrier-phase:") for anchor in anchors)
+    assert len(anchors) == len(set(anchors))
+
+
+def test_held_tma_completion_exposes_early_next_generation_hazard():
+    module = tx_pending_early_next_arrival_module()
+    completion = stable_completion_id("issue0", 0)
+    result = check_module(module, engine="maximal")
+    assert result["verdict"] == "SYNC_HAZARD"
+    assert result["diagnostics"][0]["code"] == "ARRIVE_WITH_ZERO_PENDING_COUNT"
+    assert result["diagnostics"][0]["event"] == "arrive1"
+    prefix = [step["transition"] for step in result["witness"]["reachable_execution_prefix"]]
+    assert "issue0" in prefix
+    assert completion not in prefix
+
+
+@pytest.mark.parametrize(("actors", "events_per_actor"), [(1, 3), (2, 2), (3, 1)])
+def test_generated_small_models_have_exact_maximal_exhaustive_boundaries(actors, events_per_actor):
+    module = independent_read_module(actors, events_per_actor)
+    maximal = check_module(module, engine="maximal")
+    exhaustive = check_module(module, engine="exhaustive")
+    assert maximal["verdict"] == exhaustive["verdict"] == "SAFE"
+    assert maximal["artifacts"]["boundaries"] == exhaustive["artifacts"]["boundaries"]
+
+
+def test_incremental_operation_counts_scale_by_work_not_timing():
+    reports = {
+        size: check_module(independent_read_module(1, events_per_actor=size), engine="maximal")
+        for size in (16, 32)
+    }
+    for size, result in reports.items():
+        statistics = result["statistics"]
+        assert result["verdict"] == "SAFE"
+        assert statistics["n_ext"] == size
+        assert statistics["t_eff"] == 1
+        assert statistics["state_initializations"] == 2
+        assert statistics["completed_passes"] == 2
+        assert statistics["anchor_boundaries"] == size
+        assert statistics["transitions_by_kind"]["PROGRAM"] == 2 * size
+        assert statistics["transition_attempts"] == 2 * size
+        assert statistics["scheduler_work_units"] <= 10 * size
+        assert statistics["worklist_pops"] == statistics["transition_attempts"]
+        assert statistics["stale_worklist_pops"] == 0
+        assert statistics["full_enabled_scans"] == 0
+        assert statistics["state_clones"] == 0
+        assert statistics["replayed_prefix_steps"] == 0
+    small = reports[16]["statistics"]
+    large = reports[32]["statistics"]
+    assert large["transition_attempts"] == 2 * small["transition_attempts"]
+    assert large["scheduler_work_units"] == 2 * small["scheduler_work_units"]
+
+
+def test_incremental_statistics_certificate_is_deterministic():
+    module = independent_read_module(3, 2)
+    first = check_module(module, engine="maximal")["statistics"]
+    second = check_module(module, engine="maximal")["statistics"]
+    assert first == second
+    assert first["certificate"]["stream_counts"] == {
+        "program": 3,
+        "phase_completion": 0,
+        "tma_completion": 0,
+        "total": 3,
+    }
+    assert first["boundary_evaluations"] == 6
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_never_spawned_synthetic_phase_anchor_is_unreachable_not_stuck(engine):
+    module = lifecycle_module("MBarrierInit", "MBarrierArrive")
+    raw = json.loads(json.dumps(module.raw))
+    raw["events"][1]["predicate"] = False
+    result = check_module(module_from_dict(raw), engine=engine)
+    assert result["verdict"] == "INCONCLUSIVE"
+    if engine == "crosscheck":
+        assert result["artifacts"]["crosscheck"]["maximal"]["verdict"] == "INCONCLUSIVE"
+        assert result["artifacts"]["crosscheck"]["exhaustive"]["verdict"] == "INCONCLUSIVE"
+    else:
+        assert result["diagnostics"][0]["code"] == "ANCHOR_NOT_REACHED"
+
+
+def test_crosscheck_retains_maximal_incremental_certificate():
+    result = check_module(load("safe_handoff.json"), engine="crosscheck")
+    statistics = result["statistics"]
+    assert statistics["certificate"] == statistics["maximal_certificate"]
+    assert statistics["full_enabled_scans"] == 0
+    assert statistics["state_clones"] == 0
+    assert statistics["replayed_prefix_steps"] == 0

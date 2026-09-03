@@ -82,6 +82,26 @@ class Transition:
         return (1, self.event.actor, self.event.seq, self.event.id)
 
 
+@dataclass(frozen=True, slots=True)
+class TransitionDelta:
+    """Committed state changes used by notification-driven schedulers.
+
+    The delta is returned only after a transition succeeds. Reference callers
+    may ignore it; incremental callers use it to update readiness without a
+    global enabled-transition scan.
+    """
+
+    transition_id: str
+    kind: Literal["PROGRAM", "TMA_COMPLETION", "PHASE_COMPLETION"]
+    advanced_actor: str | None = None
+    executed_event: str | None = None
+    changed_resources: frozenset[str] = frozenset()
+    spawned_completions: tuple[str, ...] = ()
+    retired_completions: tuple[str, ...] = ()
+    consumed_waits: tuple[str, ...] = ()
+    dynamic_edges: tuple[tuple[str, str, str], ...] = ()
+
+
 @dataclass(slots=True)
 class ExecutionState:
     frontiers: dict[str, int]
@@ -257,10 +277,9 @@ class Executor:
     def _record(self, state: ExecutionState, transition: Transition) -> None:
         state.trace.append({
             "step": len(state.trace), "transition": transition.id, "kind": transition.kind,
-            "barriers": {key: state.barriers[key].snapshot() for key in sorted(state.barriers)},
         })
 
-    def apply(self, state: ExecutionState, transition: Transition) -> None:
+    def apply(self, state: ExecutionState, transition: Transition) -> TransitionDelta:
         if transition.kind == "TMA_COMPLETION":
             op = state.pending_completions.get(transition.id)
             if op is None:
@@ -282,12 +301,19 @@ class Executor:
                 snapshot["completion_bytes"] = op.bytes
                 snapshot["completed_tx_bytes_after"] = completed_tx
                 raise ProtocolError("TX_BYTES_EXCEED_EXPECTED", "completed transaction bytes exceed expected bytes", op.issue_id, snapshot)
+            edge = (op.issue_id, transition.id, "ISSUE_TO_COMPLETION")
             state.pending_completions.pop(transition.id)
             barrier.completed_tx = completed_tx
             state.completed_transitions.add(transition.id)
-            state.dynamic_edges.add((op.issue_id, transition.id, "ISSUE_TO_COMPLETION"))
+            state.dynamic_edges.add(edge)
             self._record(state, transition)
-            return
+            return TransitionDelta(
+                transition.id,
+                transition.kind,
+                changed_resources=frozenset({op.resource}),
+                retired_completions=(transition.id,),
+                dynamic_edges=(edge,),
+            )
 
         if transition.kind == "PHASE_COMPLETION":
             assert transition.resource is not None
@@ -327,10 +353,18 @@ class Executor:
             barrier.can_invalidate = True
             state.completed_transitions.add(transition.id)
             self._record(state, transition)
-            return
+            return TransitionDelta(
+                transition.id,
+                transition.kind,
+                changed_resources=frozenset({transition.resource}),
+            )
 
         event = transition.event
         assert event is not None
+        changed_resources: set[str] = set()
+        spawned_completions: tuple[str, ...] = ()
+        consumed_waits: tuple[str, ...] = ()
+        added_edges: tuple[tuple[str, str, str], ...] = ()
         if event.type == "MBarrierInit":
             barrier = state.barriers[event.resource]
             if barrier.lifecycle == "LIVE":
@@ -352,6 +386,7 @@ class Executor:
             barrier.generation_started = False
             barrier.can_invalidate = False
             barrier.publications.clear()
+            changed_resources.add(event.resource)
         elif event.type == "MBarrierInvalidate":
             barrier = self._barrier(state, event)
             in_flight = any(op.resource == event.resource for op in state.pending_completions.values())
@@ -365,16 +400,21 @@ class Executor:
             barrier.lifecycle = "INVALIDATED"
             barrier.can_invalidate = False
             barrier.publications.clear()
+            changed_resources.add(event.resource)
         elif event.type == "MBarrierArrive":
             self._arrive(state, self._barrier(state, event), event)
+            if event.predicate:
+                changed_resources.add(event.resource)
         elif event.type == "MBarrierExpectTx":
             self._expect(self._barrier(state, event), event)
+            changed_resources.add(event.resource)
         elif event.type == "MBarrierArriveExpectTx":
             barrier = self._barrier(state, event)
             if event.predicate:
                 self._validate_arrive(barrier, event)
                 self._expect(barrier, event)
                 self._arrive(state, barrier, event)
+                changed_resources.add(event.resource)
         elif event.type == "MBarrierWaitParity":
             barrier = self._barrier(state, event)
             status = self._wait_status(event, barrier)
@@ -401,18 +441,33 @@ class Executor:
             if not bucket:
                 state.remaining.pop(key)
             state.observed.add(event.id)
-            state.dynamic_edges.add((stable_phase_id(event.resource, event.lifecycle_epoch, event.generation), event.id, "COMPLETION_TO_WAIT"))
+            edge = (stable_phase_id(event.resource, event.lifecycle_epoch, event.generation), event.id, "COMPLETION_TO_WAIT")
+            state.dynamic_edges.add(edge)
+            consumed_waits = (event.id,)
+            added_edges = (edge,)
         elif event.type == "TmaLoadIssue":
             barrier = self._barrier(state, event)
             self._require_current_generation(barrier, event)
-            barrier.can_invalidate = False
-            barrier.generation_started = True
             completion_id = stable_completion_id(event.id, event.generation)
             if completion_id in state.pending_completions or completion_id in state.completed_transitions:
                 raise ProtocolError("DUPLICATE_COMPLETION", "completion identity is not unique", event.id)
+            barrier.can_invalidate = False
+            barrier.generation_started = True
             state.pending_completions[completion_id] = AsyncOp(completion_id, event.id, event.actor, event.resource, event.destination_region, event.lifecycle_epoch, event.generation, event.bytes)
+            changed_resources.add(event.resource)
+            spawned_completions = (completion_id,)
         self._advance_program(state, event)
         self._record(state, transition)
+        return TransitionDelta(
+            transition.id,
+            transition.kind,
+            advanced_actor=event.actor,
+            executed_event=event.id,
+            changed_resources=frozenset(changed_resources),
+            spawned_completions=spawned_completions,
+            consumed_waits=consumed_waits,
+            dynamic_edges=added_edges,
+        )
 
     def boundary(self, state: ExecutionState) -> tuple[str, ...]:
         return tuple(event.id for actor in sorted(state.frontiers) if (event := self._frontier_event(state, actor)) is not None)

@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Any, Literal
 
 from .engine import Executor, ExplorationLimit, ProtocolError
+from .incremental import IncrementalCounters, IncrementalEngine
 from .model import Event, Module, normalize_module, stable_completion_id, stable_digest, stable_phase_id
 
 
@@ -200,6 +201,28 @@ def _statistics(module: Module, engine: str) -> dict[str, Any]:
     }
 
 
+def _finish_incremental_statistics(statistics: dict[str, Any], counters: IncrementalCounters) -> None:
+    certificate = counters.certificate()
+    statistics["explored_steps"] = counters.successful_transitions
+    statistics["program_streams"] = counters.program_streams
+    statistics["phase_streams"] = counters.phase_streams
+    statistics["tma_completion_streams"] = counters.tma_completion_streams
+    statistics["anchor_streams"] = counters.anchor_streams
+    statistics["anchors"] = counters.anchors
+    for key in (
+        "n_ext", "t_eff", "state_initializations", "completed_passes", "anchor_boundaries",
+        "transition_attempts", "scheduler_work_units", "worklist_pushes", "worklist_pops",
+        "stale_worklist_pops",
+        "dependency_registrations", "dependency_notifications", "wait_registrations",
+        "wait_notifications", "resource_notifications", "frontier_exposures",
+        "phase_enable_checks", "remaining_removals", "boundary_evaluations",
+        "full_enabled_scans", "state_clones", "replayed_prefix_steps",
+    ):
+        statistics[key] = certificate[key]
+    statistics["transitions_by_kind"] = certificate["transitions_by_kind"]
+    statistics["certificate"] = certificate
+
+
 def _protocol_report(
     error: ProtocolError,
     trace: list[dict[str, Any]],
@@ -268,16 +291,52 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
     digest = stable_digest(normalized)
     executor = Executor(module)
     graph = _base_pdg(module)
-    canonical = executor.explore()
+    anchors = _anchor_ids(module)
+    incremental = IncrementalEngine(executor, anchors) if engine == "maximal" else None
+    canonical = incremental.canonical() if incremental is not None else executor.explore()
     boundaries: list[dict[str, Any]] = []
     statistics = _statistics(module, engine)
-    statistics["explored_steps"] += len(canonical.state.trace)
+    if incremental is None:
+        statistics["explored_steps"] += len(canonical.state.trace)
+    else:
+        _finish_incremental_statistics(statistics, incremental.counters)
 
     if engine == "maximal":
+        assert incremental is not None
         if canonical.error is not None:
             return _protocol_report(canonical.error, canonical.state.trace, graph, boundaries, digest, statistics)
         if canonical.stuck:
             return _stuck_report(executor, canonical.state, graph, boundaries, digest, statistics)
+
+        outcomes = incremental.analyze_streams()
+        boundaries = sorted(outcomes.boundaries, key=lambda item: item["anchor"])
+        graph.edges.update(outcomes.dynamic_edges)
+        graph.nodes.update(node for edge in outcomes.dynamic_edges for node in edge[:2])
+        _finish_incremental_statistics(statistics, incremental.counters)
+        if outcomes.error is not None:
+            assert outcomes.error_state is not None
+            return _protocol_report(outcomes.error, outcomes.error_state.trace, graph, boundaries, digest, statistics)
+        if outcomes.stuck_state is not None:
+            return _stuck_report(executor, outcomes.stuck_state, graph, boundaries, digest, statistics)
+        if outcomes.unreachable_anchor is not None:
+            assert outcomes.unreachable_state is not None
+            return _inconclusive(
+                "ANCHOR_NOT_REACHED",
+                "held anchor was not enabled at its terminal boundary",
+                digest,
+                graph,
+                boundaries,
+                statistics,
+                {
+                    "anchor": outcomes.unreachable_anchor,
+                    "boundary": list(executor.boundary(outcomes.unreachable_state)),
+                },
+            )
+        for item in boundaries:
+            anchor = item["anchor"]
+            for event_id in item["boundary"]:
+                if event_id != anchor:
+                    graph.add_edge(anchor, event_id, "BOUNDARY_ORDER")
     else:
         try:
             global_outcomes = executor.explore_all()
@@ -291,15 +350,7 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
             state = sorted(global_outcomes.stuck, key=executor.fingerprint)[0]
             return _stuck_report(executor, state, graph, boundaries, digest, statistics)
 
-    for anchor in _anchor_ids(module):
-        if engine == "maximal":
-            outcome = executor.explore(hold=anchor)
-            statistics["explored_steps"] += len(outcome.state.trace)
-            if outcome.error is not None:
-                return _protocol_report(outcome.error, outcome.state.trace, graph, boundaries, digest, statistics)
-            states = [outcome.state]
-            boundary = outcome.boundary
-        else:
+        for anchor in anchors:
             try:
                 outcomes = executor.explore_all(hold=anchor)
             except ExplorationLimit as error:
@@ -320,26 +371,25 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
                 )
             states = outcomes.terminals
             boundary = next(iter(boundary_set), ())
-
-        boundaries.append({"anchor": anchor, "boundary": list(boundary)})
-        for state in states:
-            probe_error, probed = executor.probe(state, anchor)
-            if probe_error is not None:
-                return _protocol_report(probe_error, state.trace, graph, boundaries, digest, statistics)
-            if probed is None:
-                return _inconclusive(
-                    "ANCHOR_NOT_REACHED",
-                    "held anchor was not enabled at its terminal boundary",
-                    digest,
-                    graph,
-                    boundaries,
-                    statistics,
-                    {"anchor": anchor, "boundary": list(executor.boundary(state))},
-                )
-            _add_dynamic_edges(graph, state)
-        for event_id in boundary:
-            if event_id != anchor:
-                graph.add_edge(anchor, event_id, "BOUNDARY_ORDER")
+            boundaries.append({"anchor": anchor, "boundary": list(boundary)})
+            for state in states:
+                probe_error, probed = executor.probe(state, anchor)
+                if probe_error is not None:
+                    return _protocol_report(probe_error, state.trace, graph, boundaries, digest, statistics)
+                if probed is None:
+                    return _inconclusive(
+                        "ANCHOR_NOT_REACHED",
+                        "held anchor was not enabled at its terminal boundary",
+                        digest,
+                        graph,
+                        boundaries,
+                        statistics,
+                        {"anchor": anchor, "boundary": list(executor.boundary(state))},
+                    )
+                _add_dynamic_edges(graph, state)
+            for event_id in boundary:
+                if event_id != anchor:
+                    graph.add_edge(anchor, event_id, "BOUNDARY_ORDER")
 
     _add_dynamic_edges(graph, canonical.state)
     hazard = _data_hazard(module, graph)
@@ -369,7 +419,6 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
         "artifacts": artifacts,
     }
 
-
 def _core_result(report: dict[str, Any]) -> dict[str, Any]:
     return {
         "verdict": report["verdict"],
@@ -392,10 +441,15 @@ def check_module(
     maximal_core = _core_result(maximal)
     exhaustive_core = _core_result(exhaustive)
     statistics = _statistics(module, "crosscheck")
+    base_fields = {"actors", "events", "resources", "regions", "explored_steps", "explored_states", "engine"}
+    for key, value in maximal["statistics"].items():
+        if key not in base_fields:
+            statistics[key] = value
     statistics["explored_steps"] = maximal["statistics"]["explored_steps"] + exhaustive["statistics"]["explored_steps"]
     statistics["explored_states"] = exhaustive["statistics"]["explored_states"]
     statistics["maximal_steps"] = maximal["statistics"]["explored_steps"]
     statistics["exhaustive_states"] = exhaustive["statistics"]["explored_states"]
+    statistics["maximal_certificate"] = maximal["statistics"].get("certificate", {})
 
     # A protocol-risk run returns at its first reachable witness, so the two
     # engines may legitimately have collected different boundary *prefixes*.
