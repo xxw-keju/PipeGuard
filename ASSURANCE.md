@@ -77,3 +77,5 @@ They are conservatively classified as tested protocol extensions, not as consequ
 ## Frontend obligation
 
 A core result is only as sound as the PGIR extraction. TileLang and Triton adapters must emit complete provenance, preserve actor/participant identities, regions, generations, group endpoints, engine evidence, proxy direction, and unsupported constructs. An adapter that cannot prove a required field must return a frontend failure and must not emit a SAFE-capable PGIR.
+
+The strict snapshot adapters expose all implemented PGIR event kinds and preserve their typed fields. The standalone TIRX and TTGIR capture tools automate smaller, explicitly documented subsets and reject every unknown executable node. Therefore cross-DSL snapshot equivalence validates normalization and core behavior under the extraction certificate; it does not prove that an unsupported source kernel can be captured, nor that manually authored metadata is truthful.

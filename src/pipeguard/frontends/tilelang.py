@@ -18,20 +18,40 @@ _OPERATION_FIELDS = {
     "tilelang.barrier.arrive": {"resource", "invocation_id", "count"},
     "tilelang.barrier.observe": {"resource", "invocation_id"},
     "tilelang.mbarrier.init": {"resource", "lifecycle_epoch", "count"},
+    "tilelang.mbarrier.invalidate": {"resource", "lifecycle_epoch"},
     "tilelang.mbarrier.arrive": {"resource", "lifecycle_epoch", "generation", "count"},
+    "tilelang.mbarrier.expect_tx": {"resource", "lifecycle_epoch", "generation", "bytes"},
+    "tilelang.mbarrier.arrive_expect_tx": {"resource", "lifecycle_epoch", "generation", "count", "bytes"},
     "tilelang.mbarrier.wait_parity": {
-        "resource",
-        "lifecycle_epoch",
-        "generation",
-        "raw_parity",
-        "logical_stream_id",
-        "stream_rank",
-        "polling_coalesced",
+        "resource", "lifecycle_epoch", "generation", "raw_parity",
+        "logical_stream_id", "stream_rank", "polling_coalesced",
     },
+    "tilelang.tma_load.issue": {"resource", "source_region", "destination_region", "bytes", "lifecycle_epoch", "generation"},
+    "tilelang.cp_async.issue": {"resource", "source_region", "destination_region", "bytes", "group_owner"},
+    "tilelang.cp_async.commit_group": {"resource", "group_owner", "group_seq"},
+    "tilelang.cp_async.wait_group": {"resource", "group_owner", "wait_group_count"},
+    "tilelang.wgmma.fence_operand": {"resource", "group_owner", "regions"},
+    "tilelang.wgmma.issue": {"resource", "group_owner", "regions", "destination_region"},
+    "tilelang.wgmma.commit_group": {"resource", "group_owner", "group_seq"},
+    "tilelang.wgmma.wait_group": {"resource", "group_owner", "wait_group_count", "completion_kind"},
+    "tilelang.tma_store.issue": {"resource", "group_owner", "source_region", "destination_region", "bytes"},
+    "tilelang.tma_store.commit_group": {"resource", "group_owner", "group_seq"},
+    "tilelang.tma_store.wait_group": {"resource", "group_owner", "wait_group_count", "wait_mode"},
+    "tilelang.channel.create": {"resource"},
+    "tilelang.channel.producer_acquire": {"resource", "slot", "logical_phase"},
+    "tilelang.channel.producer_commit": {"resource", "slot", "logical_phase"},
+    "tilelang.channel.consumer_wait": {"resource", "slot", "logical_phase"},
+    "tilelang.channel.consumer_release": {"resource", "slot", "logical_phase"},
+    "tilelang.proxy_fence": {"from_domain", "to_domain", "scope", "regions", "visibility_mask"},
 }
 _OPTIONAL_BY_OPERATION = {
     "tilelang.barrier.arrive": {"predicate"},
     "tilelang.mbarrier.arrive": {"predicate"},
+    "tilelang.mbarrier.arrive_expect_tx": {"predicate"},
+    "tilelang.tma_load.issue": {"engine_id", "engine_seq"},
+    "tilelang.cp_async.issue": {"engine_id", "engine_seq", "predicate"},
+    "tilelang.wgmma.issue": {"engine_id", "engine_seq"},
+    "tilelang.tma_store.issue": {"engine_id", "engine_seq"},
 }
 _EVENT_TYPES = {
     "tilelang.mem.read": "MemRead",
@@ -39,8 +59,28 @@ _EVENT_TYPES = {
     "tilelang.barrier.arrive": "BarrierArrive",
     "tilelang.barrier.observe": "BarrierObserve",
     "tilelang.mbarrier.init": "MBarrierInit",
+    "tilelang.mbarrier.invalidate": "MBarrierInvalidate",
     "tilelang.mbarrier.arrive": "MBarrierArrive",
+    "tilelang.mbarrier.expect_tx": "MBarrierExpectTx",
+    "tilelang.mbarrier.arrive_expect_tx": "MBarrierArriveExpectTx",
     "tilelang.mbarrier.wait_parity": "MBarrierWaitParity",
+    "tilelang.tma_load.issue": "TmaLoadIssue",
+    "tilelang.cp_async.issue": "CpAsyncIssue",
+    "tilelang.cp_async.commit_group": "CpAsyncCommitGroup",
+    "tilelang.cp_async.wait_group": "CpAsyncWaitGroup",
+    "tilelang.wgmma.fence_operand": "WgmmaFenceOperand",
+    "tilelang.wgmma.issue": "WgmmaIssue",
+    "tilelang.wgmma.commit_group": "WgmmaCommitGroup",
+    "tilelang.wgmma.wait_group": "WgmmaWaitGroup",
+    "tilelang.tma_store.issue": "TmaStoreIssue",
+    "tilelang.tma_store.commit_group": "TmaStoreCommitGroup",
+    "tilelang.tma_store.wait_group": "TmaStoreWaitGroup",
+    "tilelang.channel.create": "ChannelCreate",
+    "tilelang.channel.producer_acquire": "ProducerAcquire",
+    "tilelang.channel.producer_commit": "ProducerCommit",
+    "tilelang.channel.consumer_wait": "ConsumerWait",
+    "tilelang.channel.consumer_release": "ConsumerRelease",
+    "tilelang.proxy_fence": "ProxyFence",
 }
 
 
@@ -155,10 +195,12 @@ def _event(operation: dict[str, Any], index: int) -> dict[str, Any]:
     }
     if "depends_on" in operation:
         event["depends_on"] = operation["depends_on"]
-    for field in _OPERATION_FIELDS[op] - {"logical_stream_id", "stream_rank", "polling_coalesced"}:
-        event[field] = operation[field]
-    if "predicate" in operation:
-        event["predicate"] = operation["predicate"]
+    excluded = _COMMON_OPERATION_FIELDS | {
+        "op", "logical_stream_id", "stream_rank", "polling_coalesced",
+    }
+    for field, value in operation.items():
+        if field not in excluded and field != "depends_on":
+            event[field] = value
     if op == "tilelang.mbarrier.wait_parity":
         event["parity_evidence"] = {
             "derivation_kind": "PARITY_EXPRESSION",

@@ -18,20 +18,40 @@ _OPERATION_FIELDS = {
     "triton.barrier.arrive": {"resource", "invocation_id", "count"},
     "triton.barrier.observe": {"resource", "invocation_id"},
     "triton.mbarrier.init": {"resource", "lifecycle_epoch", "count"},
+    "triton.mbarrier.invalidate": {"resource", "lifecycle_epoch"},
     "triton.mbarrier.arrive": {"resource", "lifecycle_epoch", "generation", "count"},
+    "triton.mbarrier.expect_tx": {"resource", "lifecycle_epoch", "generation", "bytes"},
+    "triton.mbarrier.arrive_expect_tx": {"resource", "lifecycle_epoch", "generation", "count", "bytes"},
     "triton.mbarrier.wait_parity": {
-        "resource",
-        "lifecycle_epoch",
-        "generation",
-        "raw_parity",
-        "logical_stream_id",
-        "stream_rank",
-        "polling_coalesced",
+        "resource", "lifecycle_epoch", "generation", "raw_parity",
+        "logical_stream_id", "stream_rank", "polling_coalesced",
     },
+    "triton.tma_load.issue": {"resource", "source_region", "destination_region", "bytes", "lifecycle_epoch", "generation"},
+    "triton.cp_async.issue": {"resource", "source_region", "destination_region", "bytes", "group_owner"},
+    "triton.cp_async.commit_group": {"resource", "group_owner", "group_seq"},
+    "triton.cp_async.wait_group": {"resource", "group_owner", "wait_group_count"},
+    "triton.wgmma.fence_operand": {"resource", "group_owner", "regions"},
+    "triton.wgmma.issue": {"resource", "group_owner", "regions", "destination_region"},
+    "triton.wgmma.commit_group": {"resource", "group_owner", "group_seq"},
+    "triton.wgmma.wait_group": {"resource", "group_owner", "wait_group_count", "completion_kind"},
+    "triton.tma_store.issue": {"resource", "group_owner", "source_region", "destination_region", "bytes"},
+    "triton.tma_store.commit_group": {"resource", "group_owner", "group_seq"},
+    "triton.tma_store.wait_group": {"resource", "group_owner", "wait_group_count", "wait_mode"},
+    "triton.channel.create": {"resource"},
+    "triton.channel.producer_acquire": {"resource", "slot", "logical_phase"},
+    "triton.channel.producer_commit": {"resource", "slot", "logical_phase"},
+    "triton.channel.consumer_wait": {"resource", "slot", "logical_phase"},
+    "triton.channel.consumer_release": {"resource", "slot", "logical_phase"},
+    "triton.proxy_fence": {"from_domain", "to_domain", "scope", "regions", "visibility_mask"},
 }
 _OPTIONAL_BY_OPERATION = {
     "triton.barrier.arrive": {"predicate"},
     "triton.mbarrier.arrive": {"predicate"},
+    "triton.mbarrier.arrive_expect_tx": {"predicate"},
+    "triton.tma_load.issue": {"engine_id", "engine_seq"},
+    "triton.cp_async.issue": {"engine_id", "engine_seq", "predicate"},
+    "triton.wgmma.issue": {"engine_id", "engine_seq"},
+    "triton.tma_store.issue": {"engine_id", "engine_seq"},
 }
 _EVENT_TYPES = {
     "triton.mem.read": "MemRead",
@@ -39,8 +59,28 @@ _EVENT_TYPES = {
     "triton.barrier.arrive": "BarrierArrive",
     "triton.barrier.observe": "BarrierObserve",
     "triton.mbarrier.init": "MBarrierInit",
+    "triton.mbarrier.invalidate": "MBarrierInvalidate",
     "triton.mbarrier.arrive": "MBarrierArrive",
+    "triton.mbarrier.expect_tx": "MBarrierExpectTx",
+    "triton.mbarrier.arrive_expect_tx": "MBarrierArriveExpectTx",
     "triton.mbarrier.wait_parity": "MBarrierWaitParity",
+    "triton.tma_load.issue": "TmaLoadIssue",
+    "triton.cp_async.issue": "CpAsyncIssue",
+    "triton.cp_async.commit_group": "CpAsyncCommitGroup",
+    "triton.cp_async.wait_group": "CpAsyncWaitGroup",
+    "triton.wgmma.fence_operand": "WgmmaFenceOperand",
+    "triton.wgmma.issue": "WgmmaIssue",
+    "triton.wgmma.commit_group": "WgmmaCommitGroup",
+    "triton.wgmma.wait_group": "WgmmaWaitGroup",
+    "triton.tma_store.issue": "TmaStoreIssue",
+    "triton.tma_store.commit_group": "TmaStoreCommitGroup",
+    "triton.tma_store.wait_group": "TmaStoreWaitGroup",
+    "triton.channel.create": "ChannelCreate",
+    "triton.channel.producer_acquire": "ProducerAcquire",
+    "triton.channel.producer_commit": "ProducerCommit",
+    "triton.channel.consumer_wait": "ConsumerWait",
+    "triton.channel.consumer_release": "ConsumerRelease",
+    "triton.proxy_fence": "ProxyFence",
 }
 
 
@@ -151,10 +191,12 @@ def _event(operation: dict[str, Any], index: int) -> dict[str, Any]:
     }
     if "depends_on" in operation:
         event["depends_on"] = operation["depends_on"]
-    for field in _OPERATION_FIELDS[op] - {"logical_stream_id", "stream_rank", "polling_coalesced"}:
-        event[field] = operation[field]
-    if "predicate" in operation:
-        event["predicate"] = operation["predicate"]
+    excluded = _COMMON_OPERATION_FIELDS | {
+        "op", "logical_stream_id", "stream_rank", "polling_coalesced",
+    }
+    for field, value in operation.items():
+        if field not in excluded and field != "depends_on":
+            event[field] = value
     if op == "triton.mbarrier.wait_parity":
         event["parity_evidence"] = {
             "derivation_kind": "PHASE_SSA",
