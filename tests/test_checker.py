@@ -174,7 +174,7 @@ def test_unknown_and_known_unimplemented_events_are_distinct_and_fail_closed():
     assert unknown.value.code == "UNKNOWN_EVENT"
 
     raw = json.loads((FIXTURES / "unknown_event.json").read_text())
-    raw["events"][0]["type"] = "CpAsyncIssue"
+    raw["events"][0]["type"] = "WgmmaIssue"
     with pytest.raises(PGIRError) as known:
         module_from_dict(raw)
     assert known.value.code == "KNOWN_EVENT_UNSUPPORTED"
@@ -912,6 +912,7 @@ def test_incremental_program_stream_first_middle_final_and_end_flush():
         "TMA_COMPLETION": 0,
         "PHASE_COMPLETION": 0,
         "BARRIER_RELEASE": 0,
+        "GROUP_COMPLETION": 0,
     }
     assert engine.counters.state_initializations == 2
 
@@ -1013,6 +1014,7 @@ def test_incremental_statistics_certificate_is_deterministic():
         "phase_completion": 0,
         "tma_completion": 0,
         "barrier_release": 0,
+        "group_completion": 0,
         "total": 3,
     }
     assert first["boundary_evaluations"] == 6
@@ -1308,3 +1310,276 @@ def test_collective_resource_and_arrival_require_exact_lane_contract():
     with pytest.raises(PGIRError) as mixed:
         module_from_dict(raw)
     assert mixed.value.code == "INVALID_VISIBILITY_MASK"
+
+
+def cp_async_module(
+    group_count: int = 1,
+    wait_group_count: int = 0,
+    overwrite_group: int | None = 0,
+    empty_groups: bool = False,
+):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["actors"] = [
+        {"id": "owner", "kind": "PARTITION", "participants": [0]},
+    ]
+    raw["target"]["cta_threads"] = 1
+    raw["resources"] = [{
+        "id": "copies",
+        "kind": "async_group",
+        "participants": ["owner"],
+        "capacity": 8,
+        "protocol": "CP_ASYNC",
+        "scope": "CTA",
+    }]
+    raw["regions"] = [{
+        "id": "source",
+        "allocation_id": "global-source",
+        "address_space": "GLOBAL",
+        "offset": 0,
+        "extent": 64,
+    }] + [
+        {
+            "id": f"tile{group}",
+            "allocation_id": "shared",
+            "address_space": "SHARED",
+            "offset": group * 16,
+            "extent": 16,
+        }
+        for group in range(group_count)
+    ]
+    events = []
+    for group in range(group_count):
+        if not empty_groups:
+            events.append({
+                "id": f"issue{group}",
+                "type": "CpAsyncIssue",
+                "actor": "owner",
+                "seq": len(events),
+                "resource": "copies",
+                "source_region": "source",
+                "destination_region": f"tile{group}",
+                "bytes": 16,
+                "group_owner": "owner",
+            })
+        events.append({
+            "id": f"commit{group}",
+            "type": "CpAsyncCommitGroup",
+            "actor": "owner",
+            "seq": len(events),
+            "resource": "copies",
+            "group_owner": "owner",
+            "group_seq": group,
+        })
+    events.append({
+        "id": "wait",
+        "type": "CpAsyncWaitGroup",
+        "actor": "owner",
+        "seq": len(events),
+        "resource": "copies",
+        "group_owner": "owner",
+        "wait_group_count": wait_group_count,
+    })
+    if overwrite_group is not None:
+        events.append({
+            "id": "overwrite",
+            "type": "MemWrite",
+            "actor": "owner",
+            "seq": len(events),
+            "region": f"tile{overwrite_group}",
+        })
+    raw["events"] = events
+    return module_from_dict(raw)
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_cp_async_wait_zero_closes_copy_window(engine):
+    module = cp_async_module()
+    result = check_module(module, engine=engine)
+    completion = stable_group_completion_id("CP_ASYNC", "owner", 0, "GROUP_COMPLETE")
+    group = stable_group_id("CP_ASYNC", "owner", 0)
+    assert result["verdict"] == "SAFE"
+    edges = result["artifacts"]["pdg"]["edges"]
+    assert {"from": "issue0", "to": group, "kind": "ISSUE_TO_GROUP"} in edges
+    assert {"from": group, "to": completion, "kind": "GROUP_TO_COMPLETION"} in edges
+    assert {"from": completion, "to": "wait", "kind": "COMPLETION_TO_WAIT"} in edges
+    assert completion in {item["anchor"] for item in result["artifacts"]["boundaries"]}
+
+
+def test_cp_async_empty_commit_is_trivially_complete_without_async_anchor():
+    module = cp_async_module(empty_groups=True, overwrite_group=None)
+    result = check_module(module, engine="crosscheck")
+    completion = stable_group_completion_id("CP_ASYNC", "owner", 0, "GROUP_COMPLETE")
+    group = stable_group_id("CP_ASYNC", "owner", 0)
+    assert result["verdict"] == "SAFE"
+    assert completion not in {item["anchor"] for item in result["artifacts"]["boundaries"]}
+    assert {"from": group, "to": completion, "kind": "GROUP_TO_COMPLETION"} in result["artifacts"]["pdg"]["edges"]
+    assert result["statistics"]["group_completion_streams"] == 0
+
+
+def test_cp_async_wait_group_one_observes_only_older_groups():
+    safe = check_module(cp_async_module(2, wait_group_count=1, overwrite_group=0), engine="crosscheck")
+    assert safe["verdict"] == "SAFE"
+
+    hazard = check_module(cp_async_module(2, wait_group_count=1, overwrite_group=1), engine="crosscheck")
+    assert hazard["verdict"] == "DATA_HAZARD"
+    latest = stable_group_completion_id("CP_ASYNC", "owner", 1, "GROUP_COMPLETE")
+    assert not any(
+        edge["from"] == latest and edge["to"] == "wait"
+        for edge in hazard["artifacts"]["pdg"]["edges"]
+    )
+
+
+def test_cp_async_missing_commit_and_wait_before_commit_fail_closed():
+    raw = json.loads(json.dumps(cp_async_module().raw))
+    raw["events"] = [raw["events"][0]]
+    missing = check_module(module_from_dict(raw))
+    assert missing["verdict"] == "SYNC_HAZARD"
+    assert missing["diagnostics"][0]["code"] == "MISSING_CP_ASYNC_COMMIT"
+
+    raw = json.loads(json.dumps(cp_async_module().raw))
+    raw["events"] = [raw["events"][0], raw["events"][2]]
+    raw["events"][1]["seq"] = 1
+    early = check_module(module_from_dict(raw), engine="crosscheck")
+    assert early["verdict"] == "SYNC_HAZARD"
+    assert early["diagnostics"][0]["code"] == "WAIT_BEFORE_COMMIT"
+
+
+def test_cp_async_group_validation_rejects_owner_sequence_and_capacity_ambiguity():
+    raw = json.loads(json.dumps(cp_async_module().raw))
+    raw["actors"].append({"id": "other", "kind": "PARTITION", "participants": [0]})
+    next(event for event in raw["events"] if event["id"] == "issue0")["group_owner"] = "other"
+    with pytest.raises(PGIRError) as owner:
+        module_from_dict(raw)
+    assert owner.value.code == "GROUP_OWNER_MISMATCH"
+
+    raw = json.loads(json.dumps(cp_async_module().raw))
+    next(event for event in raw["events"] if event["id"] == "commit0")["group_seq"] = 1
+    with pytest.raises(PGIRError) as sequence:
+        module_from_dict(raw)
+    assert sequence.value.code == "COMMIT_GROUP_SEQUENCE_GAP"
+
+    raw = json.loads(json.dumps(cp_async_module().raw))
+    raw["resources"][0]["capacity"] = 9
+    with pytest.raises(PGIRError) as capacity:
+        module_from_dict(raw)
+    assert capacity.value.code == "CP_ASYNC_CAPACITY_UNSUPPORTED"
+
+    raw = json.loads(json.dumps(cp_async_module().raw))
+    raw["events"][-2]["wait_group_count"] = 8
+    with pytest.raises(PGIRError) as wait_count:
+        module_from_dict(raw)
+    assert wait_count.value.code == "WAIT_GROUP_COUNT_OUT_OF_RANGE"
+
+
+def test_cp_async_completion_replay_is_failure_atomic():
+    executor = Executor(cp_async_module(overwrite_group=None))
+    state = executor.initial_state()
+    for identifier in ("issue0", "commit0"):
+        executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
+    completion = next(item for item in executor.enabled(state) if item.kind == "GROUP_COMPLETION")
+    executor.apply(state, completion)
+    before = executor.fingerprint(state)
+    with pytest.raises(ProtocolError) as caught:
+        executor.apply(state, completion)
+    assert caught.value.code == "INVALID_GROUP_COMPLETION_TRANSITION"
+    assert executor.fingerprint(state) == before
+
+
+def test_cp_async_group_completion_stream_is_ordered_and_delta_driven(monkeypatch):
+    module = cp_async_module(2, wait_group_count=0, overwrite_group=1)
+    completion_ids = [
+        stable_group_completion_id("CP_ASYNC", "owner", group, "GROUP_COMPLETE")
+        for group in range(2)
+    ]
+    stream = next(
+        item for item in build_anchor_streams(module, _anchor_ids(module))
+        if item.kind == "GROUP_COMPLETION"
+    )
+    assert stream.anchors == tuple(completion_ids)
+
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError("reference scan/clone reached from cp.async maximal engine")
+
+    monkeypatch.setattr(Executor, "enabled", forbidden)
+    monkeypatch.setattr(ExecutionState, "clone", forbidden)
+    result = check_module(module, engine="maximal")
+    assert result["verdict"] == "SAFE"
+    assert result["statistics"]["group_completion_streams"] == 1
+    assert result["statistics"]["group_notifications"] > 0
+    assert result["statistics"]["full_enabled_scans"] == 0
+    assert result["statistics"]["state_clones"] == 0
+
+
+def test_held_cp_async_completion_exposes_group_capacity_violation():
+    raw = json.loads(json.dumps(cp_async_module(2, wait_group_count=0, overwrite_group=None).raw))
+    raw["resources"][0]["capacity"] = 1
+    module = module_from_dict(raw)
+    for engine in ("maximal", "exhaustive", "crosscheck"):
+        result = check_module(module, engine=engine)
+        assert result["verdict"] == "SYNC_HAZARD"
+        assert result["diagnostics"][0]["code"] == "COMMIT_GROUP_CAPACITY_EXCEEDED"
+
+
+def test_cp_async_wait_does_not_publish_to_another_actor_via_dependency():
+    raw = json.loads(json.dumps(cp_async_module(overwrite_group=None).raw))
+    raw["actors"].append({"id": "reader", "kind": "PARTITION", "participants": [1]})
+    raw["target"]["cta_threads"] = 2
+    raw["resources"][0]["participants"].append("reader")
+    raw["events"].append({
+        "id": "cross_actor_read",
+        "type": "MemRead",
+        "actor": "reader",
+        "seq": 0,
+        "depends_on": ["wait"],
+        "region": "tile0",
+    })
+    result = check_module(module_from_dict(raw), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+
+
+def cp_async_linear_module(size: int):
+    raw = json.loads(json.dumps(cp_async_module(size, overwrite_group=None).raw))
+    raw["resources"][0]["capacity"] = 1
+    original = {event["id"]: event for event in raw["events"]}
+    raw["events"] = []
+    for group in range(size):
+        issue = original[f"issue{group}"]
+        commit = original[f"commit{group}"]
+        issue["seq"] = 3 * group
+        commit["seq"] = 3 * group + 1
+        raw["events"].extend([
+            issue,
+            commit,
+            {
+                "id": f"wait{group}",
+                "type": "CpAsyncWaitGroup",
+                "actor": "owner",
+                "seq": 3 * group + 2,
+                "resource": "copies",
+                "group_owner": "owner",
+                "wait_group_count": 0,
+            },
+        ])
+    return module_from_dict(raw)
+
+
+def test_cp_async_incremental_work_scales_linearly_by_count():
+    reports = {
+        size: check_module(cp_async_linear_module(size), engine="maximal")
+        for size in (16, 32)
+    }
+    for size, result in reports.items():
+        statistics = result["statistics"]
+        assert result["verdict"] == "SAFE"
+        assert statistics["n_ext"] == 4 * size
+        assert statistics["t_eff"] == 2
+        assert statistics["state_initializations"] == 3
+        assert statistics["completed_passes"] == 3
+        assert statistics["transition_attempts"] == 12 * size
+        assert statistics["full_enabled_scans"] == 0
+        assert statistics["state_clones"] == 0
+        assert statistics["replayed_prefix_steps"] == 0
+    small = reports[16]["statistics"]
+    large = reports[32]["statistics"]
+    assert large["transition_attempts"] == 2 * small["transition_attempts"]
+    assert large["scheduler_work_units"] <= 2 * small["scheduler_work_units"] + 16

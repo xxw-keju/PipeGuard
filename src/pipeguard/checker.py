@@ -13,6 +13,8 @@ from .model import (
     stable_collective_release_id,
     stable_completion_id,
     stable_digest,
+    stable_group_completion_id,
+    stable_group_id,
     stable_phase_id,
 )
 
@@ -62,8 +64,46 @@ class PDG:
         }
 
 
+def _cp_async_relations(
+    module: Module,
+) -> tuple[
+    dict[str, tuple[str, str, tuple[str, ...]]],
+    dict[str, tuple[str, str]],
+    dict[str, tuple[str, ...]],
+]:
+    commits: dict[str, tuple[str, str, tuple[str, ...]]] = {}
+    issues: dict[str, tuple[str, str]] = {}
+    waits: dict[str, tuple[str, ...]] = {}
+    for actor in sorted(module.events_by_actor):
+        staged: dict[str, list[str]] = {}
+        committed: dict[str, list[str]] = {}
+        for event in module.events_by_actor[actor]:
+            if event.type == "CpAsyncIssue" and event.predicate:
+                staged.setdefault(event.resource, []).append(event.id)
+            elif event.type == "CpAsyncCommitGroup":
+                group_id = stable_group_id("CP_ASYNC", event.group_owner, event.group_seq)
+                completion_id = stable_group_completion_id(
+                    "CP_ASYNC",
+                    event.group_owner,
+                    event.group_seq,
+                    "GROUP_COMPLETE",
+                )
+                staged_issues = tuple(staged.get(event.resource, ()))
+                commits[event.id] = (group_id, completion_id, staged_issues)
+                for issue in staged_issues:
+                    issues[issue] = (group_id, completion_id)
+                staged[event.resource] = []
+                committed.setdefault(event.resource, []).append(completion_id)
+            elif event.type == "CpAsyncWaitGroup":
+                groups = committed.get(event.resource, [])
+                cutoff = max(0, len(groups) - event.wait_group_count)
+                waits[event.id] = tuple(groups[:cutoff])
+    return commits, issues, waits
+
+
 def _base_pdg(module: Module) -> PDG:
     graph = PDG()
+    cp_commits, _cp_issues, cp_waits = _cp_async_relations(module)
     graph.nodes.update(event.id for event in module.events)
     for actor in sorted(module.events_by_actor):
         trace = module.events_by_actor[actor]
@@ -78,6 +118,17 @@ def _base_pdg(module: Module) -> PDG:
                 graph.add_edge(event.id, release, "BARRIER_ARRIVE")
             elif event.type == "BarrierObserve":
                 graph.add_edge(release, event.id, "BARRIER_RELEASE")
+            continue
+        if event.type == "CpAsyncCommitGroup":
+            group, completion, issues = cp_commits[event.id]
+            graph.add_edge(event.id, group, "COMMIT_TO_GROUP")
+            for issue in issues:
+                graph.add_edge(issue, group, "ISSUE_TO_GROUP")
+            graph.add_edge(group, completion, "GROUP_TO_COMPLETION")
+            continue
+        if event.type == "CpAsyncWaitGroup":
+            for completion in cp_waits[event.id]:
+                graph.add_edge(completion, event.id, "COMPLETION_TO_WAIT")
             continue
         if event.resource is None or event.generation is None:
             continue
@@ -99,12 +150,15 @@ def _base_pdg(module: Module) -> PDG:
 
 
 def _anchor_ids(module: Module) -> list[str]:
+    cp_commits, _cp_issues, _cp_waits = _cp_async_relations(module)
     identifiers = {event.id for event in module.events}
     for event in module.events:
         if event.type == "TmaLoadIssue":
             identifiers.add(stable_completion_id(event.id, event.generation))
         if event.type in {"BarrierArrive", "BarrierObserve"}:
             identifiers.add(stable_collective_release_id(event.resource, event.invocation_id))
+        if event.type == "CpAsyncCommitGroup" and cp_commits[event.id][2]:
+            identifiers.add(cp_commits[event.id][1])
         if event.resource is not None and event.generation is not None:
             identifiers.add(stable_phase_id(event.resource, event.lifecycle_epoch, event.generation))
     return sorted(identifiers)
@@ -112,11 +166,18 @@ def _anchor_ids(module: Module) -> list[str]:
 
 def _effects(module: Module) -> list[Effect]:
     result: list[Effect] = []
+    _commits, cp_issues, _waits_by_event = _cp_async_relations(module)
     for event in module.events:
         if event.type in {"MemRead", "MemWrite"}:
             result.append(Effect(event.id, event.actor, "READ" if event.type == "MemRead" else "WRITE", event.region, event.id, event.id, False))
         elif event.type == "TmaLoadIssue":
             completion = stable_completion_id(event.id, event.generation)
+            result.extend((
+                Effect(f"effect:{event.id}:source", event.actor, "READ", event.source_region, event.id, completion, True),
+                Effect(f"effect:{event.id}:destination", event.actor, "WRITE", event.destination_region, event.id, completion, True),
+            ))
+        elif event.type == "CpAsyncIssue" and event.predicate and event.id in cp_issues:
+            _group, completion = cp_issues[event.id]
             result.extend((
                 Effect(f"effect:{event.id}:source", event.actor, "READ", event.source_region, event.id, completion, True),
                 Effect(f"effect:{event.id}:destination", event.actor, "WRITE", event.destination_region, event.id, completion, True),
@@ -194,6 +255,9 @@ def _collective_visibility(module: Module, graph: PDG, source: Effect, target: E
 
 def _completion_observed(module: Module, graph: PDG, window: Effect, point: Effect) -> bool:
     issue = module.event_map[window.begin]
+    if issue.type == "CpAsyncIssue":
+        point_event = module.event_map[point.begin]
+        return point_event.actor == issue.actor and graph.reachable(window.end, point.begin)
     point_event = module.event_map[point.begin]
     return any(wait.actor == point_event.actor and graph.reachable(wait.id, point.begin) for wait in _waits(module, issue.resource, issue.lifecycle_epoch, issue.generation))
 
@@ -225,15 +289,16 @@ def _data_hazard(module: Module, graph: PDG) -> dict[str, Any] | None:
             else:
                 window, point = (left, right) if left.async_window else (right, left)
                 if window.mode == "READ":
-                    # generic WRITE -> TMA READ requires a matching generic->TMA proxy
-                    # fence, which is deliberately unsupported in this core.
+                    # A generic WRITE feeding an async-copy READ requires a
+                    # matching generic->async proxy fence, which is deliberately
+                    # unsupported in this checkpoint.
                     point_before = False
                     completion_before = _completion_observed(module, graph, window, point)
-                    query = "generic write before TMA read requires unsupported proxy visibility, or overwrite must follow observed completion"
+                    query = "generic write before async-copy read requires unsupported proxy visibility, or overwrite must follow observed completion"
                 else:
                     point_before = graph.reachable(point.end, window.begin)
                     completion_before = _completion_observed(module, graph, window, point)
-                    query = "TMA destination conflict must precede issue or follow observed completion"
+                    query = "async-copy destination conflict must precede issue or follow observed completion"
                 safe = point_before or completion_before
             if not safe:
                 return {
@@ -268,6 +333,7 @@ def _finish_incremental_statistics(statistics: dict[str, Any], counters: Increme
     statistics["phase_streams"] = counters.phase_streams
     statistics["tma_completion_streams"] = counters.tma_completion_streams
     statistics["barrier_release_streams"] = counters.barrier_release_streams
+    statistics["group_completion_streams"] = counters.group_completion_streams
     statistics["anchor_streams"] = counters.anchor_streams
     statistics["anchors"] = counters.anchors
     for key in (
@@ -275,7 +341,7 @@ def _finish_incremental_statistics(statistics: dict[str, Any], counters: Increme
         "transition_attempts", "scheduler_work_units", "worklist_pushes", "worklist_pops",
         "stale_worklist_pops",
         "dependency_registrations", "dependency_notifications", "wait_registrations",
-        "wait_notifications", "resource_notifications", "collective_notifications", "frontier_exposures",
+        "wait_notifications", "resource_notifications", "collective_notifications", "group_notifications", "frontier_exposures",
         "phase_enable_checks", "remaining_removals", "boundary_evaluations",
         "full_enabled_scans", "state_clones", "replayed_prefix_steps",
     ):
@@ -468,6 +534,10 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
                 f"collective:{key}": value.snapshot()
                 for key, value in sorted(canonical.state.collectives.items())
             },
+            **{
+                f"group:{key}": value.snapshot()
+                for key, value in sorted(canonical.state.groups.items())
+            },
         }
         return {
             "verdict": "DATA_HAZARD", "checker_version": "0.2.0",
@@ -479,7 +549,7 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
         "verdict": "SAFE", "checker_version": "0.2.0", "summary": "all supported protocol and data checks passed",
         "diagnostics": [], "statistics": statistics,
         "manifest": {
-            "scope": "finite statically-resolved sm90 single_cta mbarrier/TMA-load/collective-barrier core",
+            "scope": "finite statically-resolved sm90 single_cta mbarrier/TMA-load/collective-barrier/cp.async core",
             "assumptions": dict(sorted(module.raw["assumptions"].items())), "producer": module.raw["producer"],
             "frontend_provenance": module.raw["frontend_provenance"], "counts": counts,
         },

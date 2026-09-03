@@ -4,8 +4,16 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
-from .model import Event, Module, stable_collective_release_id, stable_completion_id, stable_phase_id
-from .protocols import CollectiveBarrierState
+from .model import (
+    Event,
+    Module,
+    stable_collective_release_id,
+    stable_completion_id,
+    stable_group_completion_id,
+    stable_group_id,
+    stable_phase_id,
+)
+from .protocols import CollectiveBarrierState, CommittedGroup, CommitGroupState
 
 
 class ProtocolError(Exception):
@@ -72,9 +80,10 @@ class BarrierState:
 @dataclass(frozen=True, slots=True)
 class Transition:
     id: str
-    kind: Literal["PROGRAM", "TMA_COMPLETION", "PHASE_COMPLETION", "BARRIER_RELEASE"]
+    kind: Literal["PROGRAM", "TMA_COMPLETION", "PHASE_COMPLETION", "BARRIER_RELEASE", "GROUP_COMPLETION"]
     event: Event | None = None
     resource: str | None = None
+    owner: str | None = None
 
     def order_key(self) -> tuple[Any, ...]:
         if self.kind != "PROGRAM":
@@ -93,11 +102,12 @@ class TransitionDelta:
     """
 
     transition_id: str
-    kind: Literal["PROGRAM", "TMA_COMPLETION", "PHASE_COMPLETION", "BARRIER_RELEASE"]
+    kind: Literal["PROGRAM", "TMA_COMPLETION", "PHASE_COMPLETION", "BARRIER_RELEASE", "GROUP_COMPLETION"]
     advanced_actor: str | None = None
     executed_event: str | None = None
     changed_resources: frozenset[str] = frozenset()
     changed_collectives: frozenset[str] = frozenset()
+    changed_groups: frozenset[tuple[str, str]] = frozenset()
     spawned_completions: tuple[str, ...] = ()
     retired_completions: tuple[str, ...] = ()
     consumed_waits: tuple[str, ...] = ()
@@ -110,6 +120,7 @@ class ExecutionState:
     executed: set[str]
     barriers: dict[str, BarrierState]
     collectives: dict[str, CollectiveBarrierState] = field(default_factory=dict)
+    groups: dict[str, CommitGroupState] = field(default_factory=dict)
     remaining: dict[tuple[str, int, int], set[str]] = field(default_factory=dict)
     observed: set[str] = field(default_factory=set)
     pending_completions: dict[str, AsyncOp] = field(default_factory=dict)
@@ -166,6 +177,15 @@ class Executor:
                 for resource in self.module.resources
                 if resource.kind in {"cta_barrier", "named_barrier"}
             },
+            groups={
+                resource.id: CommitGroupState(
+                    resource.protocol,
+                    resource.participants,
+                    resource.capacity,
+                )
+                for resource in self.module.resources
+                if resource.kind == "async_group" and resource.protocol == "CP_ASYNC"
+            },
             remaining={key: set(event_ids) for key, event_ids in self.required_logical_waits.items()},
             observed=set(),
         )
@@ -205,6 +225,34 @@ class Executor:
             return "BLOCKED"
         return "INVALID"
 
+    def _group_transition(
+        self,
+        resource_id: str,
+        owner: str,
+        group_state: CommitGroupState,
+    ) -> Transition | None:
+        pending = group_state.pending(owner)
+        if not pending:
+            return None
+        group = pending[0]
+        return Transition(
+            group.completion_id,
+            "GROUP_COMPLETION",
+            resource=resource_id,
+            owner=owner,
+        )
+
+    def _group_wait_status(
+        self,
+        event: Event,
+        group_state: CommitGroupState,
+    ) -> Literal["READY", "BLOCKED", "INVALID"]:
+        assert event.group_owner is not None and event.wait_group_count is not None
+        if group_state.staged.get(event.group_owner):
+            return "INVALID"
+        required = group_state.required_for_wait(event.group_owner, event.wait_group_count)
+        return "READY" if all(group.completed for group in required) else "BLOCKED"
+
     def _wait_status(self, event: Event, barrier: BarrierState) -> Literal["READY", "BLOCKED", "INVALID"]:
         assert event.generation is not None and event.raw_parity is not None and event.parity_evidence is not None
         if barrier.lifecycle != "LIVE" or event.parity_evidence.lifecycle_epoch != barrier.lifecycle_epoch or event.raw_parity != event.generation % 2:
@@ -230,6 +278,12 @@ class Executor:
             transition = self._collective_transition(resource_id, state.collectives[resource_id])
             if transition is not None and transition.id != hold:
                 result.append(transition)
+        for resource_id in sorted(state.groups):
+            group_state = state.groups[resource_id]
+            for owner in sorted(group_state.participants):
+                transition = self._group_transition(resource_id, owner, group_state)
+                if transition is not None and transition.id != hold:
+                    result.append(transition)
         for actor in sorted(state.frontiers):
             event = self._frontier_event(state, actor)
             if event is None or event.id == hold or not set(event.depends_on).issubset(state.executed):
@@ -238,6 +292,10 @@ class Executor:
                 continue
             if event.type == "BarrierObserve" and self._collective_observe_status(
                 event, state.collectives[event.resource]
+            ) == "BLOCKED":
+                continue
+            if event.type == "CpAsyncWaitGroup" and self._group_wait_status(
+                event, state.groups[event.resource]
             ) == "BLOCKED":
                 continue
             if event.resource is not None and event.generation is not None:
@@ -359,6 +417,44 @@ class Executor:
                 dynamic_edges=(edge,),
             )
 
+        if transition.kind == "GROUP_COMPLETION":
+            if transition.resource is None or transition.owner is None:
+                raise ProtocolError(
+                    "INVALID_GROUP_COMPLETION_TRANSITION",
+                    "group completion lacks its resource or owner identity",
+                    transition.id,
+                )
+            group_state = state.groups.get(transition.resource)
+            enabled_transition = (
+                self._group_transition(transition.resource, transition.owner, group_state)
+                if group_state is not None
+                else None
+            )
+            if enabled_transition is None or enabled_transition.id != transition.id:
+                snapshot = group_state.snapshot(transition.owner) if group_state is not None else {}
+                snapshot["expected_group_completion"] = (
+                    enabled_transition.id if enabled_transition is not None else None
+                )
+                raise ProtocolError(
+                    "INVALID_GROUP_COMPLETION_TRANSITION",
+                    "cp.async group completion is not the next enabled group for this owner",
+                    transition.id,
+                    snapshot,
+                )
+            group = group_state.pending(transition.owner)[0]
+            edge = (group.group_id, transition.id, "GROUP_TO_COMPLETION")
+            group.completed = True
+            state.completed_transitions.add(transition.id)
+            state.dynamic_edges.add(edge)
+            self._record(state, transition)
+            return TransitionDelta(
+                transition.id,
+                transition.kind,
+                changed_groups=frozenset({(transition.resource, transition.owner)}),
+                retired_completions=(transition.id,),
+                dynamic_edges=(edge,),
+            )
+
         if transition.kind == "BARRIER_RELEASE":
             assert transition.resource is not None
             collective = state.collectives[transition.resource]
@@ -441,6 +537,7 @@ class Executor:
         assert event is not None
         changed_resources: set[str] = set()
         changed_collectives: set[str] = set()
+        changed_groups: set[tuple[str, str]] = set()
         spawned_completions: tuple[str, ...] = ()
         consumed_waits: tuple[str, ...] = ()
         added_edges: tuple[tuple[str, str, str], ...] = ()
@@ -507,6 +604,101 @@ class Executor:
             state.dynamic_edges.add(edge)
             added_edges = (edge,)
             changed_collectives.add(event.resource)
+        elif event.type == "CpAsyncIssue":
+            assert event.resource is not None and event.group_owner is not None
+            group_state = state.groups[event.resource]
+            if event.predicate:
+                group_state.staged_operations(event.group_owner).append(event.id)
+                changed_groups.add((event.resource, event.group_owner))
+        elif event.type == "CpAsyncCommitGroup":
+            assert event.resource is not None and event.group_owner is not None
+            assert event.group_seq is not None
+            group_state = state.groups[event.resource]
+            expected = group_state.next_group_seq.get(event.group_owner, 0)
+            if event.group_seq != expected:
+                code = "STALE_COMMIT_GROUP" if event.group_seq < expected else "FUTURE_COMMIT_GROUP"
+                snapshot = group_state.snapshot(event.group_owner)
+                snapshot["event_group_seq"] = event.group_seq
+                raise ProtocolError(
+                    code,
+                    "cp.async commit sequence does not name the next group",
+                    event.id,
+                    snapshot,
+                )
+            if len(group_state.pending(event.group_owner)) >= group_state.capacity:
+                raise ProtocolError(
+                    "COMMIT_GROUP_CAPACITY_EXCEEDED",
+                    "cp.async cannot retain more uncompleted groups than its resource capacity",
+                    event.id,
+                    group_state.snapshot(event.group_owner),
+                )
+            group_id = stable_group_id(group_state.protocol, event.group_owner, event.group_seq)
+            completion_id = stable_group_completion_id(
+                group_state.protocol,
+                event.group_owner,
+                event.group_seq,
+                "GROUP_COMPLETE",
+            )
+            if (
+                completion_id in state.completed_transitions
+                or any(group.completion_id == completion_id for group in group_state.groups(event.group_owner))
+            ):
+                raise ProtocolError(
+                    "DUPLICATE_GROUP_COMPLETION",
+                    "cp.async group completion identity is not unique",
+                    event.id,
+                    group_state.snapshot(event.group_owner),
+                )
+            issues = tuple(group_state.staged.get(event.group_owner, ()))
+            group = CommittedGroup(
+                event.group_seq,
+                group_id,
+                event.id,
+                issues,
+                completion_id,
+                completed=not issues,
+            )
+            edges = tuple(
+                [(event.id, group_id, "COMMIT_TO_GROUP")]
+                + [(issue, group_id, "ISSUE_TO_GROUP") for issue in issues]
+                + ([(group_id, completion_id, "GROUP_TO_COMPLETION")] if not issues else [])
+            )
+            group_state.groups(event.group_owner).append(group)
+            group_state.staged[event.group_owner] = []
+            group_state.next_group_seq[event.group_owner] = expected + 1
+            if not issues:
+                state.completed_transitions.add(completion_id)
+            state.dynamic_edges.update(edges)
+            added_edges = edges
+            changed_groups.add((event.resource, event.group_owner))
+        elif event.type == "CpAsyncWaitGroup":
+            assert event.resource is not None and event.group_owner is not None
+            assert event.wait_group_count is not None
+            group_state = state.groups[event.resource]
+            status = self._group_wait_status(event, group_state)
+            if status == "INVALID":
+                raise ProtocolError(
+                    "WAIT_BEFORE_COMMIT",
+                    "cp.async wait reached staged operations that have not been committed",
+                    event.id,
+                    group_state.snapshot(event.group_owner),
+                )
+            if status == "BLOCKED":
+                raise AssertionError("blocked cp.async wait was applied")
+            old_frontier = group_state.observed_frontier.get(event.group_owner, -1)
+            required = group_state.required_for_wait(event.group_owner, event.wait_group_count)
+            newly_observed = [group for group in required if group.sequence > old_frontier]
+            edges = tuple(
+                (group.completion_id, event.id, "COMPLETION_TO_WAIT")
+                for group in newly_observed
+            )
+            if required:
+                group_state.observed_frontier[event.group_owner] = max(
+                    old_frontier,
+                    required[-1].sequence,
+                )
+            state.dynamic_edges.update(edges)
+            added_edges = edges
         elif event.type == "MBarrierInit":
             barrier = state.barriers[event.resource]
             if barrier.lifecycle == "LIVE":
@@ -607,6 +799,7 @@ class Executor:
             executed_event=event.id,
             changed_resources=frozenset(changed_resources),
             changed_collectives=frozenset(changed_collectives),
+            changed_groups=frozenset(changed_groups),
             spawned_completions=spawned_completions,
             consumed_waits=consumed_waits,
             dynamic_edges=added_edges,
@@ -623,6 +816,12 @@ class Executor:
         if any(
             collective.arrivals or self._collective_transition(resource, collective) is not None
             for resource, collective in state.collectives.items()
+        ):
+            return True
+        if any(
+            bool(group_state.staged.get(owner)) or group_state.pending(owner)
+            for group_state in state.groups.values()
+            for owner in group_state.participants
         ):
             return True
         return any(barrier.generation_started for barrier in state.barriers.values() if barrier.lifecycle == "LIVE")
@@ -646,10 +845,39 @@ class Executor:
             )
             for resource, collective in sorted(state.collectives.items())
         )
+        groups = tuple(
+            (
+                resource,
+                group_state.protocol,
+                group_state.participants,
+                group_state.capacity,
+                tuple(
+                    (
+                        owner,
+                        group_state.next_group_seq.get(owner, 0),
+                        tuple(group_state.staged.get(owner, ())),
+                        tuple(
+                            (
+                                group.sequence,
+                                group.group_id,
+                                group.commit_event,
+                                group.issue_events,
+                                group.completion_id,
+                                group.completed,
+                            )
+                            for group in group_state.committed.get(owner, ())
+                        ),
+                        group_state.observed_frontier.get(owner, -1),
+                    )
+                    for owner in sorted(group_state.participants)
+                ),
+            )
+            for resource, group_state in sorted(state.groups.items())
+        )
         remaining = tuple((key, tuple(sorted(event_ids))) for key, event_ids in sorted(state.remaining.items()))
         pending = tuple((key, op.issue_id, op.actor, op.resource, op.destination_region, op.lifecycle_epoch, op.generation, op.bytes)
                         for key, op in sorted(state.pending_completions.items()))
-        return (tuple(sorted(state.frontiers.items())), tuple(sorted(state.executed)), barriers, collectives, remaining,
+        return (tuple(sorted(state.frontiers.items())), tuple(sorted(state.executed)), barriers, collectives, groups, remaining,
                 tuple(sorted(state.observed)), pending, tuple(sorted(state.completed_transitions)))
 
     def explore(self, hold: str | None = None) -> ExplorationResult:
@@ -722,6 +950,25 @@ class Executor:
                     "resource": resource_id,
                     "protocol_state": collective.snapshot(),
                 }
+        for resource_id in sorted(state.groups):
+            group_state = state.groups[resource_id]
+            for owner in sorted(group_state.participants):
+                if group_state.staged.get(owner):
+                    return {
+                        "code": "MISSING_CP_ASYNC_COMMIT",
+                        "message": "cp.async operations remain staged without a commit_group",
+                        "resource": resource_id,
+                        "owner": owner,
+                        "protocol_state": group_state.snapshot(owner),
+                    }
+                if group_state.pending(owner):
+                    return {
+                        "code": "STUCK_CP_ASYNC_COMPLETION",
+                        "message": "a committed cp.async group cannot reach its synthetic completion",
+                        "resource": resource_id,
+                        "owner": owner,
+                        "protocol_state": group_state.snapshot(owner),
+                    }
         waits = [event.id for actor in sorted(state.frontiers) if (event := self._frontier_event(state, actor)) is not None and event.type == "MBarrierWaitParity"]
         if waits:
             return {"code": "STUCK_WAIT", "message": "no transition can satisfy one or more waits", "events": waits}
@@ -734,5 +981,16 @@ class Executor:
                 "code": "STUCK_BARRIER_OBSERVE",
                 "message": "no collective release can satisfy one or more barrier observes",
                 "events": observes,
+            }
+        group_waits = [
+            event.id for actor in sorted(state.frontiers)
+            if (event := self._frontier_event(state, actor)) is not None
+            and event.type == "CpAsyncWaitGroup"
+        ]
+        if group_waits:
+            return {
+                "code": "STUCK_CP_ASYNC_WAIT",
+                "message": "no cp.async group completion can satisfy one or more waits",
+                "events": group_waits,
             }
         return {"code": "STUCK_DEPENDENCY", "message": "no program or completion transition is enabled", "boundary": list(self.boundary(state))}

@@ -11,17 +11,19 @@ import jsonschema
 
 from .protocols import RESOURCE_KINDS, VisibilityMask
 
-IMPLEMENTED_RESOURCE_KINDS = frozenset({"mbarrier", "cta_barrier", "named_barrier"})
+IMPLEMENTED_RESOURCE_KINDS = frozenset({"mbarrier", "cta_barrier", "named_barrier", "async_group"})
+IMPLEMENTED_ASYNC_PROTOCOLS = frozenset({"CP_ASYNC"})
 
 IMPLEMENTED_EVENTS = frozenset({
     "MemRead", "MemWrite", "BarrierArrive", "BarrierObserve",
     "MBarrierInit", "MBarrierInvalidate", "MBarrierArrive", "MBarrierExpectTx",
     "MBarrierArriveExpectTx", "MBarrierWaitParity", "TmaLoadIssue",
+    "CpAsyncIssue", "CpAsyncCommitGroup", "CpAsyncWaitGroup",
 })
 KNOWN_UNSUPPORTED_EVENTS = frozenset({
     "AtomicReadModifyWrite", "Fork", "Join", "BarrierRelease",
     "MBarrierTxComplete", "MBarrierPhaseComplete",
-    "CpAsyncIssue", "CpAsyncCommitGroup", "CpAsyncGroupComplete", "CpAsyncWaitGroup",
+    "CpAsyncGroupComplete",
     "TmaLoadComplete", "TmaStoreIssue", "TmaStoreSourceReleased",
     "TmaStoreGlobalComplete", "TmaStoreCommitGroup", "TmaStoreWaitGroup",
     "WgmmaFenceOperand", "WgmmaIssue", "WgmmaCommitGroup", "WgmmaResultReady",
@@ -300,7 +302,7 @@ def _semantic_validate(module: Module) -> None:
                     "mbarrier resource carries fields for another protocol",
                     {"resource": resource.id, "fields": unexpected_resource_fields},
                 )
-        else:
+        elif resource.kind in {"cta_barrier", "named_barrier"}:
             missing = [
                 name for name in ("capacity", "scope", "visibility_mask")
                 if getattr(resource, name) is None
@@ -353,11 +355,60 @@ def _semantic_validate(module: Module) -> None:
                     "collective barrier must select either control-only or at least one data visibility domain",
                     {"resource": resource.id, "visibility_mask": mask.artifact()},
                 )
+        else:
+            missing = [
+                name for name in ("capacity", "protocol", "scope")
+                if getattr(resource, name) is None
+            ]
+            if missing:
+                raise PGIRError(
+                    "RESOURCE_FIELDS_MISSING",
+                    "async-group resource lacks required metadata",
+                    {"resource": resource.id, "fields": missing},
+                )
+            if resource.visibility_mask is not None:
+                raise PGIRError(
+                    "RESOURCE_FIELDS_UNEXPECTED",
+                    "async-group resource cannot carry collective visibility metadata",
+                    {"resource": resource.id, "fields": ["visibility_mask"]},
+                )
+            if resource.protocol not in IMPLEMENTED_ASYNC_PROTOCOLS:
+                raise PGIRError(
+                    "KNOWN_RESOURCE_UNSUPPORTED",
+                    "async-group protocol is not implemented yet",
+                    {"resource": resource.id, "protocol": resource.protocol},
+                )
+            if resource.protocol == "CP_ASYNC" and resource.capacity > 8:
+                raise PGIRError(
+                    "CP_ASYNC_CAPACITY_UNSUPPORTED",
+                    "cp.async supports at most eight uncompleted committed groups",
+                    {"resource": resource.id, "capacity": resource.capacity},
+                )
+
+    cp_async_owners: dict[str, list[str]] = {}
+    for resource in module.resources:
+        if resource.kind == "async_group" and resource.protocol == "CP_ASYNC":
+            for owner in resource.participants:
+                cp_async_owners.setdefault(owner, []).append(resource.id)
+    ambiguous_owners = {
+        owner: sorted(resource_ids)
+        for owner, resource_ids in cp_async_owners.items()
+        if len(resource_ids) > 1
+    }
+    if ambiguous_owners:
+        raise PGIRError(
+            "AMBIGUOUS_GROUP_OWNER_RESOURCE",
+            "one cp.async owner cannot span multiple async-group resources in PGIR v1",
+            {"owners": ambiguous_owners},
+        )
 
     required_fields = {
         "MemRead": ("region",), "MemWrite": ("region",),
         "BarrierArrive": ("resource", "count", "invocation_id"),
         "BarrierObserve": ("resource", "invocation_id"),
+        "CpAsyncIssue": ("resource", "source_region", "destination_region", "bytes", "group_owner"),
+        "CpAsyncCommitGroup": ("resource", "group_owner", "group_seq"),
+        "CpAsyncWaitGroup": ("resource", "group_owner", "wait_group_count"),
         "MBarrierInit": ("resource", "count", "lifecycle_epoch"), "MBarrierInvalidate": ("resource", "lifecycle_epoch"),
         "MBarrierArrive": ("resource", "count", "lifecycle_epoch", "generation"),
         "MBarrierExpectTx": ("resource", "bytes", "lifecycle_epoch", "generation"),
@@ -370,6 +421,12 @@ def _semantic_validate(module: Module) -> None:
         "MemRead": {"region"}, "MemWrite": {"region"},
         "BarrierArrive": {"resource", "count", "invocation_id", "predicate"},
         "BarrierObserve": {"resource", "invocation_id"},
+        "CpAsyncIssue": {
+            "resource", "source_region", "destination_region", "bytes", "group_owner",
+            "engine_id", "engine_seq", "predicate",
+        },
+        "CpAsyncCommitGroup": {"resource", "group_owner", "group_seq"},
+        "CpAsyncWaitGroup": {"resource", "group_owner", "wait_group_count"},
         "MBarrierInit": {"resource", "count", "lifecycle_epoch"}, "MBarrierInvalidate": {"resource", "lifecycle_epoch"},
         "MBarrierArrive": {"lifecycle_epoch", "resource", "count", "generation", "predicate"},
         "MBarrierExpectTx": {"lifecycle_epoch", "resource", "bytes", "generation"},
@@ -425,6 +482,48 @@ def _semantic_validate(module: Module) -> None:
                     "collective arrival count must cover the actor's complete lane set",
                     {"event": event.id, "count": event.count, "actor_lanes": list(actors[event.actor].participants)},
                 )
+        elif event.type in {"CpAsyncIssue", "CpAsyncCommitGroup", "CpAsyncWaitGroup"}:
+            resource = resources[event.resource]
+            if resource.kind != "async_group" or resource.protocol != "CP_ASYNC":
+                raise PGIRError(
+                    "RESOURCE_KIND_MISMATCH",
+                    "cp.async event must reference a CP_ASYNC group resource",
+                    {"event": event.id, "resource": event.resource, "kind": resource.kind, "protocol": resource.protocol},
+                )
+            if event.group_owner != event.actor:
+                raise PGIRError(
+                    "GROUP_OWNER_MISMATCH",
+                    "cp.async groups are owned by the issuing program actor",
+                    {"event": event.id, "actor": event.actor, "group_owner": event.group_owner},
+                )
+            if actors[event.actor].kind == "ASYNC_ENGINE":
+                raise PGIRError(
+                    "INVALID_GROUP_OWNER",
+                    "an ASYNC_ENGINE actor cannot own a program-visible cp.async group",
+                    {"event": event.id, "actor": event.actor},
+                )
+            if (
+                event.type == "CpAsyncWaitGroup"
+                and event.wait_group_count >= resource.capacity
+            ):
+                raise PGIRError(
+                    "WAIT_GROUP_COUNT_OUT_OF_RANGE",
+                    "cp.async wait_group count must be smaller than the group capacity",
+                    {
+                        "event": event.id,
+                        "wait_group_count": event.wait_group_count,
+                        "capacity": resource.capacity,
+                    },
+                )
+            if event.type == "CpAsyncIssue" and (
+                regions[event.source_region].address_space != "GLOBAL"
+                or regions[event.destination_region].address_space != "SHARED"
+            ):
+                raise PGIRError(
+                    "UNSUPPORTED_CP_ASYNC_REGION",
+                    "cp.async requires an explicit global source and shared destination",
+                    {"event": event.id},
+                )
         elif event.resource is not None and resources[event.resource].kind != "mbarrier":
             raise PGIRError(
                 "RESOURCE_KIND_MISMATCH",
@@ -463,6 +562,20 @@ def _semantic_validate(module: Module) -> None:
                 "ASYNC_ENGINE_SEQUENCE_GAP",
                 "explicit async-engine sequence must be unique, gap-free, and start at zero",
                 {"engine": engine_id, "sequence": sequence},
+            )
+
+    commit_streams: dict[tuple[str, str], list[Event]] = {}
+    for event in module.events:
+        if event.type == "CpAsyncCommitGroup":
+            commit_streams.setdefault((event.resource, event.group_owner), []).append(event)
+    for stream, commits in sorted(commit_streams.items()):
+        commits.sort(key=lambda event: (event.group_seq, event.seq, event.id))
+        sequence = [event.group_seq for event in commits]
+        if sequence != list(range(len(sequence))):
+            raise PGIRError(
+                "COMMIT_GROUP_SEQUENCE_GAP",
+                "commit-group sequence must be unique, gap-free, and start at zero",
+                {"stream": stream, "sequence": sequence},
             )
 
     wait_streams: dict[tuple[str, str, int, str], list[Event]] = {}
@@ -546,6 +659,12 @@ def _semantic_validate(module: Module) -> None:
     } | {
         stable_collective_release_id(event.resource, event.invocation_id)
         for event in module.events if event.type in {"BarrierArrive", "BarrierObserve"}
+    } | {
+        stable_group_completion_id("CP_ASYNC", event.group_owner, event.group_seq, "GROUP_COMPLETE")
+        for event in module.events if event.type == "CpAsyncCommitGroup"
+    } | {
+        stable_group_id("CP_ASYNC", event.group_owner, event.group_seq)
+        for event in module.events if event.type == "CpAsyncCommitGroup"
     }
     collisions = sorted(synthetic_ids & events.keys())
     if collisions:

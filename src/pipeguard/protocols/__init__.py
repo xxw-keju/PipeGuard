@@ -1,4 +1,5 @@
 from .collective import CollectiveBarrierState
+from .commit_group import CommittedGroup, CommitGroupState
 from .common import (
     COMPLETION_KINDS,
     PROTOCOL_KINDS,
@@ -11,6 +12,8 @@ from .common import (
 
 __all__ = [
     "CollectiveBarrierState",
+    "CommittedGroup",
+    "CommitGroupState",
     "COMPLETION_KINDS",
     "PROTOCOL_KINDS",
     "PROXY_DOMAINS",
