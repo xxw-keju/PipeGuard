@@ -17,6 +17,29 @@ pytest
 
 Every command writes deterministic compact JSON by default; pass `--pretty` for indented output. `check` and `explain` return one of `SAFE`, `SYNC_HAZARD`, `DATA_HAZARD`, `UNSUPPORTED`, `INCONCLUSIVE`, or `INTERNAL_ERROR`, and include top-level execution `statistics`.
 
+## TileLang frontend
+
+TileLang capture runs in its isolated environment and never imports the checker. Save the post-lowering device module and capture a strict snapshot:
+
+```python
+artifact = tilelang.lower(
+    prim_func,
+    target="cuda",
+    enable_host_codegen=False,
+    enable_device_compile=False,
+)
+Path("device.tvm.json").write_text(tvm.ir.save_json(artifact.device_mod))
+```
+
+```bash
+/usr/local/miniconda3/envs/tl-pg/bin/python tools/tilelang_capture.py \
+  device.tvm.json --source path/to/kernel.py > kernel.tilelang.json
+/usr/bin/python3 -m pipeguard check kernel.tilelang.json \
+  --frontend tilelang --engine crosscheck
+```
+
+`tilelang-snapshot-v1` currently captures exact single-CTA TIRX memory accesses, full-CTA shared barriers, and fresh-lifecycle mbarrier init/arrive/wait streams. It requires static lane extents, branches, loops, addresses, barrier identities, and parity expressions. Non-unit block grids, symbolic control/regions, unknown statements or calls, unsupported address spaces, incomplete extraction, and snapshots from before proxy-fence insertion fail closed. The committed `tilelang_mbarrier_device.tvm.json` fixture was produced by TileLang `2c31e071` and its captured snapshot is checked end to end without importing TileLang into the core environment.
+
 ## Reference semantics
 
 Each actor advances in sequence order. Explicit `depends_on` references and protocol waits may additionally block a program event. Synthetic transitions are separate from program events: a `TmaLoadIssue` opens a global-source read window and a shared-destination write window, then enables one stable transaction-completion transition; only that transition credits bytes. A phase-completion transition is separately enabled when arrival count is zero and completed bytes equal expected bytes. It publishes the logical generation and advances the barrier; only then may events for the new current generation mutate barrier state. Future-generation arrivals or transaction operations are never buffered in a lookahead slot. Raw parity is valid only when it equals `logical_generation % 2`.

@@ -1,0 +1,65 @@
+{
+  "snapshot_version": "tilelang-snapshot-v1",
+  "producer": {
+    "dsl_version": "0.1.14+cu129.git2c31e071",
+    "dsl_commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "backend_commit": "tilelang-tirx",
+    "adapter_version": "tilelang-pgir-v1",
+    "command": "tilelang.lower(..., enable_device_compile=False)"
+  },
+  "target": {
+    "architecture": "sm90",
+    "warp_size": 32,
+    "cta_threads": 2,
+    "shared_memory_bytes": 65536,
+    "grid_scope": "single_cta"
+  },
+  "extraction": {
+    "complete": true,
+    "stage": "post-inject-fence-proxy",
+    "source": "tilelang_safe_handoff.tirx",
+    "finite_control_flow": true,
+    "statically_known_participants": true,
+    "fair_async_completion": true,
+    "no_cluster_effects": true,
+    "alias_precision": "EXACT",
+    "parity_normalization_status": "RESOLVED"
+  },
+  "actors": [
+    {"id": "producer", "kind": "PARTITION", "participants": [0]},
+    {"id": "consumer", "kind": "PARTITION", "participants": [1]}
+  ],
+  "resources": [
+    {"id": "mbarrier:smem:0", "kind": "mbarrier", "participants": ["producer", "consumer"]},
+    {
+      "id": "cta:init-release",
+      "kind": "cta_barrier",
+      "participants": ["producer", "consumer"],
+      "capacity": 2,
+      "scope": "CTA",
+      "visibility_mask": {
+        "shared": true,
+        "global_read": false,
+        "global_write": false,
+        "tensor_read": false,
+        "tensor_write": false,
+        "control_only": false
+      }
+    }
+  ],
+  "regions": [
+    {"id": "shared:tile:0:16", "allocation_id": "tile", "address_space": "SHARED", "offset": 0, "extent": 16}
+  ],
+  "operations": [
+    {"id": "tl:init", "op": "tilelang.mbarrier.init", "actor": "producer", "seq": 0, "resource": "mbarrier:smem:0", "lifecycle_epoch": 0, "count": 1},
+    {"id": "tl:producer:sync:arrive", "op": "tilelang.barrier.arrive", "actor": "producer", "seq": 1, "resource": "cta:init-release", "invocation_id": 0, "count": 1},
+    {"id": "tl:producer:sync:observe", "op": "tilelang.barrier.observe", "actor": "producer", "seq": 2, "resource": "cta:init-release", "invocation_id": 0},
+    {"id": "tl:write", "op": "tilelang.mem.write", "actor": "producer", "seq": 3, "region": "shared:tile:0:16"},
+    {"id": "tl:arrive", "op": "tilelang.mbarrier.arrive", "actor": "producer", "seq": 4, "resource": "mbarrier:smem:0", "lifecycle_epoch": 0, "generation": 0, "count": 1},
+    {"id": "tl:consumer:sync:arrive", "op": "tilelang.barrier.arrive", "actor": "consumer", "seq": 0, "resource": "cta:init-release", "invocation_id": 0, "count": 1},
+    {"id": "tl:consumer:sync:observe", "op": "tilelang.barrier.observe", "actor": "consumer", "seq": 1, "resource": "cta:init-release", "invocation_id": 0},
+    {"id": "tl:wait", "op": "tilelang.mbarrier.wait_parity", "actor": "consumer", "seq": 2, "resource": "mbarrier:smem:0", "lifecycle_epoch": 0, "generation": 0, "raw_parity": 0, "logical_stream_id": "consumer:mbarrier:smem:0", "stream_rank": 0, "polling_coalesced": true},
+    {"id": "tl:read", "op": "tilelang.mem.read", "actor": "consumer", "seq": 3, "region": "shared:tile:0:16"}
+  ],
+  "unsupported_constructs": []
+}

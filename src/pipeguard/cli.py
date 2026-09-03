@@ -6,6 +6,7 @@ import sys
 from typing import Any
 
 from .checker import check_module
+from .frontends import FrontendError, load_tilelang_snapshot
 from .model import PGIRError, load_module, normalize_module, stable_digest
 
 
@@ -34,7 +35,7 @@ def _internal(error: Exception, engine: str) -> dict[str, Any]:
     }
 
 
-def _load_failure(error: PGIRError, engine: str) -> dict[str, Any]:
+def _load_failure(error: PGIRError | FrontendError, engine: str) -> dict[str, Any]:
     inconclusive = error.code in {"INCONCLUSIVE_PARITY", "UNRESOLVED_ASSUMPTIONS"}
     return {
         "verdict": "INCONCLUSIVE" if inconclusive else "UNSUPPORTED", "checker_version": "0.2.0",
@@ -43,12 +44,26 @@ def _load_failure(error: PGIRError, engine: str) -> dict[str, Any]:
     }
 
 
+def _load_input(path: str, frontend: str):
+    if frontend == "pgir":
+        return load_module(path)
+    if frontend == "tilelang":
+        return load_tilelang_snapshot(path)
+    raise ValueError(f"unknown frontend: {frontend}")
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="python -m pipeguard")
     subparsers = parser.add_subparsers(dest="command", required=True)
     for command in ("validate", "normalize", "check", "explain"):
         child = subparsers.add_parser(command)
-        child.add_argument("input", help="path to a pgir-v1 JSON document")
+        child.add_argument("input", help="path to a PGIR or frontend snapshot JSON document")
+        child.add_argument(
+            "--frontend",
+            choices=("pgir", "tilelang"),
+            default="pgir",
+            help="input format (default: pgir)",
+        )
         child.add_argument("--pretty", action="store_true", help="indent JSON output")
         if command in {"check", "explain"}:
             child.add_argument(
@@ -61,10 +76,10 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
-        module = load_module(args.input)
+        module = _load_input(args.input, args.frontend)
         if args.command == "validate":
             result = {
-                "valid": True, "schema_version": "pgir-v1", "normalized_sha256": stable_digest(normalize_module(module)),
+                "valid": True, "schema_version": module.raw["schema_version"], "normalized_sha256": stable_digest(normalize_module(module)),
                 "counts": {"actors": len(module.actors), "events": len(module.events), "regions": len(module.regions), "resources": len(module.resources)},
                 "diagnostics": [],
             }
@@ -83,9 +98,9 @@ def main(argv: list[str] | None = None) -> int:
             }
         _dump(result, args.pretty)
         return 0 if result["verdict"] == "SAFE" else 1
-    except PGIRError as error:
+    except (PGIRError, FrontendError) as error:
         if args.command == "validate":
-            _dump({"valid": False, "schema_version": "pgir-v1", "diagnostics": [error.diagnostic()]}, args.pretty)
+            _dump({"valid": False, "schema_version": None, "diagnostics": [error.diagnostic()]}, args.pretty)
         else:
             _dump(_load_failure(error, getattr(args, "engine", "maximal")), args.pretty)
         return 2
