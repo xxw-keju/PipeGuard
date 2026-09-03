@@ -109,7 +109,9 @@ class TileLangCapture:
 
     def capture(self) -> dict[str, Any]:
         for lane in range(self.cta_threads):
-            LaneWalker(self, lane).walk(self.func.body, ("root",))
+            walker = LaneWalker(self, lane)
+            walker.walk(self.func.body, ("root",))
+            walker.finalize()
         has_mbarrier = any(
             resource["kind"] == "mbarrier" for resource in self.resources.values()
         )
@@ -266,8 +268,23 @@ class LaneWalker:
         self.wait_rank: dict[str, int] = {}
         self.cp_group_seq = 0
         self.cp_staged = 0
+        self.pending_proxy: dict[str, Any] | None = None
+
+    def finalize(self) -> None:
+        if self.pending_proxy is not None:
+            raise CaptureError(
+                "TILELANG_PROXY_TARGET_UNRESOLVED",
+                "fence_proxy_async has no immediately following supported async issue",
+                {"event": self.pending_proxy["id"]},
+            )
 
     def emit(self, op: str, path: tuple[Any, ...], **fields: Any) -> None:
+        if self.pending_proxy is not None and op != "tilelang.cp_async.issue":
+            raise CaptureError(
+                "TILELANG_PROXY_TARGET_UNRESOLVED",
+                "fence_proxy_async must be followed immediately by a supported async issue",
+                {"event": self.pending_proxy["id"], "next_operation": op},
+            )
         identifier = f"tl:{self.actor}:e{self.sequence:05d}:{_stable_path((*path, op))}"
         self.capture.operations.append({
             "id": identifier,
@@ -543,6 +560,30 @@ class LaneWalker:
         name = getattr(expression.op, "name", "")
         if name == "tl.ptx_fence_barrier_init":
             return
+        if name == "tl.fence_proxy_async":
+            if expression.args or self.pending_proxy is not None:
+                raise CaptureError(
+                    "TILELANG_PROXY_TARGET_UNRESOLVED",
+                    "fence_proxy_async must be operand-free and have one unresolved target",
+                )
+            self.emit(
+                "tilelang.proxy_fence",
+                path,
+                from_domain="GENERIC",
+                to_domain="ASYNC_COPY",
+                scope="CTA",
+                regions=[],
+                visibility_mask={
+                    "shared": False,
+                    "global_read": False,
+                    "global_write": False,
+                    "tensor_read": False,
+                    "tensor_write": False,
+                    "control_only": False,
+                },
+            )
+            self.pending_proxy = self.capture.operations[-1]
+            return
         if name in {"tirx.tvm_storage_sync", "tir.tvm_storage_sync"}:
             if len(expression.args) != 1 or str(expression.args[0]).strip('"') != "shared":
                 raise CaptureError(
@@ -643,6 +684,22 @@ class LaneWalker:
                         "destination_extent": destination_bytes,
                     },
                 )
+            if self.pending_proxy is not None:
+                source_space = self.capture.regions[source]["address_space"]
+                mask_field = {
+                    "SHARED": "shared",
+                    "GLOBAL": "global_write",
+                    "TENSOR": "tensor_write",
+                }.get(source_space)
+                if mask_field is None:
+                    raise CaptureError(
+                        "TILELANG_PROXY_REGION_UNSUPPORTED",
+                        "fence_proxy_async source region has no supported visibility mask",
+                        {"region": source, "address_space": source_space},
+                    )
+                self.pending_proxy["regions"] = [source]
+                self.pending_proxy["visibility_mask"][mask_field] = True
+                self.pending_proxy = None
             resource = self.capture.async_group(self.actor)
             self.emit(
                 "tilelang.cp_async.issue",

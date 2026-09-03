@@ -82,7 +82,9 @@ def test_live_tilelang_tirx_capture_fixture_is_safe():
 def test_live_tilelang_cp_async_capture_fixture_is_safe():
     snapshot = json.loads(CAPTURED_ASYNC_SNAPSHOT.read_text())
     operations = [operation["op"] for operation in snapshot["operations"]]
-    assert operations[:3] == [
+    assert operations[:5] == [
+        "tilelang.mem.write",
+        "tilelang.proxy_fence",
         "tilelang.cp_async.issue",
         "tilelang.cp_async.commit_group",
         "tilelang.cp_async.wait_group",
@@ -90,9 +92,9 @@ def test_live_tilelang_cp_async_capture_fixture_is_safe():
     result = check_module(tilelang_snapshot_to_module(snapshot), engine="crosscheck")
     assert result["verdict"] == "SAFE"
     assert result["artifacts"]["normalized_sha256"] == (
-        "2493a69022f29f5c889b800bbb1443c31fa1117f92e540fc10b0518ccea83dc7"
+        "19acb70850fd179e55cd10996202e5ca04a998b34afd21d8cf8f98313680dd20"
     )
-    assert result["statistics"]["n_ext"] == 9
+    assert result["statistics"]["n_ext"] == 11
     assert result["statistics"]["t_eff"] == 3
 
 
