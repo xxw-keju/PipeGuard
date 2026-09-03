@@ -4,7 +4,8 @@ from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
-from .model import Event, Module, stable_completion_id, stable_phase_id
+from .model import Event, Module, stable_collective_release_id, stable_completion_id, stable_phase_id
+from .protocols import CollectiveBarrierState
 
 
 class ProtocolError(Exception):
@@ -71,7 +72,7 @@ class BarrierState:
 @dataclass(frozen=True, slots=True)
 class Transition:
     id: str
-    kind: Literal["PROGRAM", "TMA_COMPLETION", "PHASE_COMPLETION"]
+    kind: Literal["PROGRAM", "TMA_COMPLETION", "PHASE_COMPLETION", "BARRIER_RELEASE"]
     event: Event | None = None
     resource: str | None = None
 
@@ -92,10 +93,11 @@ class TransitionDelta:
     """
 
     transition_id: str
-    kind: Literal["PROGRAM", "TMA_COMPLETION", "PHASE_COMPLETION"]
+    kind: Literal["PROGRAM", "TMA_COMPLETION", "PHASE_COMPLETION", "BARRIER_RELEASE"]
     advanced_actor: str | None = None
     executed_event: str | None = None
     changed_resources: frozenset[str] = frozenset()
+    changed_collectives: frozenset[str] = frozenset()
     spawned_completions: tuple[str, ...] = ()
     retired_completions: tuple[str, ...] = ()
     consumed_waits: tuple[str, ...] = ()
@@ -107,6 +109,7 @@ class ExecutionState:
     frontiers: dict[str, int]
     executed: set[str]
     barriers: dict[str, BarrierState]
+    collectives: dict[str, CollectiveBarrierState] = field(default_factory=dict)
     remaining: dict[tuple[str, int, int], set[str]] = field(default_factory=dict)
     observed: set[str] = field(default_factory=set)
     pending_completions: dict[str, AsyncOp] = field(default_factory=dict)
@@ -154,7 +157,15 @@ class Executor:
         return ExecutionState(
             frontiers={actor.id: 0 for actor in self.module.actors},
             executed=set(),
-            barriers={resource.id: BarrierState() for resource in self.module.resources},
+            barriers={
+                resource.id: BarrierState()
+                for resource in self.module.resources if resource.kind == "mbarrier"
+            },
+            collectives={
+                resource.id: CollectiveBarrierState(resource.participants, resource.capacity)
+                for resource in self.module.resources
+                if resource.kind in {"cta_barrier", "named_barrier"}
+            },
             remaining={key: set(event_ids) for key, event_ids in self.required_logical_waits.items()},
             observed=set(),
         )
@@ -168,6 +179,31 @@ class Executor:
         if barrier.lifecycle == "LIVE" and barrier.generation_started and barrier.pending == 0 and barrier.completed_tx == barrier.expected_tx:
             return Transition(stable_phase_id(resource_id, barrier.lifecycle_epoch, barrier.generation), "PHASE_COMPLETION", resource=resource_id)
         return None
+
+    def _collective_transition(
+        self,
+        resource_id: str,
+        collective: CollectiveBarrierState,
+    ) -> Transition | None:
+        if collective.arrived_count == collective.capacity:
+            return Transition(
+                stable_collective_release_id(resource_id, collective.invocation),
+                "BARRIER_RELEASE",
+                resource=resource_id,
+            )
+        return None
+
+    def _collective_observe_status(
+        self,
+        event: Event,
+        collective: CollectiveBarrierState,
+    ) -> Literal["READY", "BLOCKED", "INVALID"]:
+        assert event.invocation_id is not None
+        if event.invocation_id in collective.publications:
+            return "READY"
+        if event.invocation_id >= collective.invocation:
+            return "BLOCKED"
+        return "INVALID"
 
     def _wait_status(self, event: Event, barrier: BarrierState) -> Literal["READY", "BLOCKED", "INVALID"]:
         assert event.generation is not None and event.raw_parity is not None and event.parity_evidence is not None
@@ -190,11 +226,19 @@ class Executor:
             transition = self._phase_transition(resource_id, state.barriers[resource_id])
             if transition is not None and transition.id != hold:
                 result.append(transition)
+        for resource_id in sorted(state.collectives):
+            transition = self._collective_transition(resource_id, state.collectives[resource_id])
+            if transition is not None and transition.id != hold:
+                result.append(transition)
         for actor in sorted(state.frontiers):
             event = self._frontier_event(state, actor)
             if event is None or event.id == hold or not set(event.depends_on).issubset(state.executed):
                 continue
             if event.type == "MBarrierWaitParity" and self._wait_status(event, state.barriers[event.resource]) == "BLOCKED":
+                continue
+            if event.type == "BarrierObserve" and self._collective_observe_status(
+                event, state.collectives[event.resource]
+            ) == "BLOCKED":
                 continue
             if event.resource is not None and event.generation is not None:
                 barrier = state.barriers[event.resource]
@@ -315,6 +359,40 @@ class Executor:
                 dynamic_edges=(edge,),
             )
 
+        if transition.kind == "BARRIER_RELEASE":
+            assert transition.resource is not None
+            collective = state.collectives[transition.resource]
+            enabled_transition = self._collective_transition(transition.resource, collective)
+            if enabled_transition is None or enabled_transition.id != transition.id:
+                snapshot = collective.snapshot()
+                snapshot["expected_barrier_release"] = (
+                    enabled_transition.id if enabled_transition is not None else None
+                )
+                raise ProtocolError(
+                    "INVALID_BARRIER_RELEASE_TRANSITION",
+                    "collective barrier release is not enabled for this invocation",
+                    transition.id,
+                    snapshot,
+                )
+            invocation = collective.invocation
+            edges = tuple(
+                (event_id, transition.id, "BARRIER_ARRIVE")
+                for event_id, _count in sorted(collective.arrivals.values())
+            )
+            collective.publications.add(invocation)
+            collective.observations.setdefault(invocation, set())
+            collective.invocation += 1
+            collective.arrivals.clear()
+            state.completed_transitions.add(transition.id)
+            state.dynamic_edges.update(edges)
+            self._record(state, transition)
+            return TransitionDelta(
+                transition.id,
+                transition.kind,
+                changed_collectives=frozenset({transition.resource}),
+                dynamic_edges=edges,
+            )
+
         if transition.kind == "PHASE_COMPLETION":
             assert transition.resource is not None
             barrier = state.barriers[transition.resource]
@@ -362,10 +440,74 @@ class Executor:
         event = transition.event
         assert event is not None
         changed_resources: set[str] = set()
+        changed_collectives: set[str] = set()
         spawned_completions: tuple[str, ...] = ()
         consumed_waits: tuple[str, ...] = ()
         added_edges: tuple[tuple[str, str, str], ...] = ()
-        if event.type == "MBarrierInit":
+        if event.type == "BarrierArrive":
+            assert event.resource is not None and event.invocation_id is not None and event.count is not None
+            collective = state.collectives[event.resource]
+            if event.predicate:
+                if event.invocation_id < collective.invocation:
+                    raise ProtocolError(
+                        "STALE_BARRIER_INVOCATION",
+                        "collective arrival targets an already released invocation",
+                        event.id,
+                        collective.snapshot(),
+                    )
+                if event.invocation_id > collective.invocation:
+                    raise ProtocolError(
+                        "FUTURE_BARRIER_INVOCATION",
+                        "collective arrival skipped the current invocation",
+                        event.id,
+                        collective.snapshot(),
+                    )
+                if event.actor in collective.arrivals:
+                    raise ProtocolError(
+                        "DUPLICATE_BARRIER_ARRIVAL",
+                        "actor arrived more than once for one collective invocation",
+                        event.id,
+                        collective.snapshot(),
+                    )
+                if collective.arrived_count + event.count > collective.capacity:
+                    snapshot = collective.snapshot()
+                    snapshot["arrival_count"] = event.count
+                    raise ProtocolError(
+                        "BARRIER_ARRIVAL_OVERFLOW",
+                        "collective arrival exceeds the participant capacity",
+                        event.id,
+                        snapshot,
+                    )
+                collective.arrivals[event.actor] = (event.id, event.count)
+                changed_collectives.add(event.resource)
+        elif event.type == "BarrierObserve":
+            assert event.resource is not None and event.invocation_id is not None
+            collective = state.collectives[event.resource]
+            status = self._collective_observe_status(event, collective)
+            if status == "INVALID":
+                raise ProtocolError(
+                    "STALE_BARRIER_OBSERVE",
+                    "collective observe targets an invocation without a retained release",
+                    event.id,
+                    collective.snapshot(),
+                )
+            if status == "BLOCKED":
+                raise AssertionError("blocked collective observe was applied")
+            observed = collective.observations.setdefault(event.invocation_id, set())
+            if event.actor in observed:
+                raise ProtocolError(
+                    "DUPLICATE_BARRIER_OBSERVE",
+                    "actor observed one collective invocation more than once",
+                    event.id,
+                    collective.snapshot(),
+                )
+            observed.add(event.actor)
+            release = stable_collective_release_id(event.resource, event.invocation_id)
+            edge = (release, event.id, "BARRIER_RELEASE")
+            state.dynamic_edges.add(edge)
+            added_edges = (edge,)
+            changed_collectives.add(event.resource)
+        elif event.type == "MBarrierInit":
             barrier = state.barriers[event.resource]
             if barrier.lifecycle == "LIVE":
                 raise ProtocolError("REINIT_LIVE", "live mbarrier cannot be reinitialized", event.id, barrier.snapshot())
@@ -464,6 +606,7 @@ class Executor:
             advanced_actor=event.actor,
             executed_event=event.id,
             changed_resources=frozenset(changed_resources),
+            changed_collectives=frozenset(changed_collectives),
             spawned_completions=spawned_completions,
             consumed_waits=consumed_waits,
             dynamic_edges=added_edges,
@@ -477,16 +620,36 @@ class Executor:
             return True
         if any(self._phase_transition(resource, barrier) is not None for resource, barrier in state.barriers.items()):
             return True
+        if any(
+            collective.arrivals or self._collective_transition(resource, collective) is not None
+            for resource, collective in state.collectives.items()
+        ):
+            return True
         return any(barrier.generation_started for barrier in state.barriers.values() if barrier.lifecycle == "LIVE")
 
     def fingerprint(self, state: ExecutionState) -> tuple[Any, ...]:
         barriers = tuple((resource, barrier.lifecycle, barrier.lifecycle_epoch, barrier.generation, barrier.parity, barrier.base_count, barrier.pending,
                           barrier.expected_tx, barrier.completed_tx, barrier.generation_started, barrier.can_invalidate,
                           tuple(sorted(barrier.publications))) for resource, barrier in sorted(state.barriers.items()))
+        collectives = tuple(
+            (
+                resource,
+                collective.participants,
+                collective.capacity,
+                collective.invocation,
+                tuple(sorted((actor, event, count) for actor, (event, count) in collective.arrivals.items())),
+                tuple(sorted(collective.publications)),
+                tuple(
+                    (invocation, tuple(sorted(actors)))
+                    for invocation, actors in sorted(collective.observations.items())
+                ),
+            )
+            for resource, collective in sorted(state.collectives.items())
+        )
         remaining = tuple((key, tuple(sorted(event_ids))) for key, event_ids in sorted(state.remaining.items()))
         pending = tuple((key, op.issue_id, op.actor, op.resource, op.destination_region, op.lifecycle_epoch, op.generation, op.bytes)
                         for key, op in sorted(state.pending_completions.items()))
-        return (tuple(sorted(state.frontiers.items())), tuple(sorted(state.executed)), barriers, remaining,
+        return (tuple(sorted(state.frontiers.items())), tuple(sorted(state.executed)), barriers, collectives, remaining,
                 tuple(sorted(state.observed)), pending, tuple(sorted(state.completed_transitions)))
 
     def explore(self, hold: str | None = None) -> ExplorationResult:
@@ -550,7 +713,26 @@ class Executor:
                 pending_bytes = sum(op.bytes for op in state.pending_completions.values() if op.resource == resource_id and op.generation == barrier.generation)
                 if barrier.completed_tx + pending_bytes != barrier.expected_tx:
                     return {"code": "TX_BYTES_MISMATCH", "message": "mbarrier expected/completable transaction bytes do not match", "resource": resource_id, "protocol_state": barrier.snapshot()}
+        for resource_id in sorted(state.collectives):
+            collective = state.collectives[resource_id]
+            if collective.arrivals:
+                return {
+                    "code": "MISSING_BARRIER_PARTICIPANT",
+                    "message": "collective barrier invocation cannot release because participants are missing",
+                    "resource": resource_id,
+                    "protocol_state": collective.snapshot(),
+                }
         waits = [event.id for actor in sorted(state.frontiers) if (event := self._frontier_event(state, actor)) is not None and event.type == "MBarrierWaitParity"]
         if waits:
             return {"code": "STUCK_WAIT", "message": "no transition can satisfy one or more waits", "events": waits}
+        observes = [
+            event.id for actor in sorted(state.frontiers)
+            if (event := self._frontier_event(state, actor)) is not None and event.type == "BarrierObserve"
+        ]
+        if observes:
+            return {
+                "code": "STUCK_BARRIER_OBSERVE",
+                "message": "no collective release can satisfy one or more barrier observes",
+                "events": observes,
+            }
         return {"code": "STUCK_DEPENDENCY", "message": "no program or completion transition is enabled", "boundary": list(self.boundary(state))}

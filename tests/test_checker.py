@@ -911,6 +911,7 @@ def test_incremental_program_stream_first_middle_final_and_end_flush():
         "PROGRAM": 6,
         "TMA_COMPLETION": 0,
         "PHASE_COMPLETION": 0,
+        "BARRIER_RELEASE": 0,
     }
     assert engine.counters.state_initializations == 2
 
@@ -1011,6 +1012,7 @@ def test_incremental_statistics_certificate_is_deterministic():
         "program": 3,
         "phase_completion": 0,
         "tma_completion": 0,
+        "barrier_release": 0,
         "total": 3,
     }
     assert first["boundary_evaluations"] == 6
@@ -1136,3 +1138,173 @@ def test_tma_load_accepts_only_complete_gap_free_async_engine_evidence():
     with pytest.raises(PGIRError) as invalid:
         module_from_dict(wrong_kind)
     assert invalid.value.code == "INVALID_ASYNC_ENGINE"
+
+
+def collective_handoff_module(kind: str = "cta_barrier", mask: dict | None = None):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["actors"] = [
+        {"id": "a_writer", "kind": "PARTITION", "participants": [0]},
+        {"id": "b_reader", "kind": "PARTITION", "participants": [1]},
+    ]
+    raw["target"]["cta_threads"] = 2
+    raw["resources"] = [{
+        "id": "sync",
+        "kind": kind,
+        "participants": ["a_writer", "b_reader"],
+        "capacity": 2,
+        "scope": "CTA",
+        "visibility_mask": mask or {
+            **full_visibility_mask(),
+            "global_read": False,
+            "global_write": False,
+            "tensor_read": False,
+            "tensor_write": False,
+        },
+    }]
+    raw["events"] = [
+        {"id": "write", "type": "MemWrite", "actor": "a_writer", "seq": 0, "region": "tile"},
+        {"id": "arrive_writer", "type": "BarrierArrive", "actor": "a_writer", "seq": 1, "resource": "sync", "count": 1, "invocation_id": 0},
+        {"id": "observe_writer", "type": "BarrierObserve", "actor": "a_writer", "seq": 2, "resource": "sync", "invocation_id": 0},
+        {"id": "arrive_reader", "type": "BarrierArrive", "actor": "b_reader", "seq": 0, "resource": "sync", "count": 1, "invocation_id": 0},
+        {"id": "observe_reader", "type": "BarrierObserve", "actor": "b_reader", "seq": 1, "resource": "sync", "invocation_id": 0},
+        {"id": "read", "type": "MemRead", "actor": "b_reader", "seq": 2, "region": "tile"},
+    ]
+    return module_from_dict(raw)
+
+
+@pytest.mark.parametrize("kind", ["cta_barrier", "named_barrier"])
+def test_collective_barrier_handoff_is_safe_and_crosschecked(kind):
+    module = collective_handoff_module(kind)
+    result = check_module(module, engine="crosscheck")
+    assert result["verdict"] == "SAFE"
+    release = stable_collective_release_id("sync", 0)
+    anchors = {item["anchor"] for item in result["artifacts"]["boundaries"]}
+    assert release in anchors
+    edges = result["artifacts"]["pdg"]["edges"]
+    assert {"from": "arrive_writer", "to": release, "kind": "BARRIER_ARRIVE"} in edges
+    assert {"from": release, "to": "observe_reader", "kind": "BARRIER_RELEASE"} in edges
+    assert result["statistics"]["barrier_release_streams"] == 1
+
+
+def test_control_only_collective_does_not_publish_shared_data():
+    mask = {name: False for name in full_visibility_mask()}
+    mask["control_only"] = True
+    result = check_module(collective_handoff_module(mask=mask), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+    assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
+
+
+@pytest.mark.parametrize(
+    ("mutation", "code"),
+    [
+        (
+            lambda raw: raw["events"].pop(3),
+            "MISSING_BARRIER_PARTICIPANT",
+        ),
+        (
+            lambda raw: raw["events"].insert(
+                2,
+                {"id": "arrive_again", "type": "BarrierArrive", "actor": "a_writer", "seq": 2, "resource": "sync", "count": 1, "invocation_id": 0},
+            ),
+            "DUPLICATE_BARRIER_ARRIVAL",
+        ),
+    ],
+)
+def test_collective_protocol_hazards_have_structured_witness(mutation, code):
+    raw = json.loads(json.dumps(collective_handoff_module().raw))
+    mutation(raw)
+    for actor in {event["actor"] for event in raw["events"]}:
+        actor_events = sorted(
+            (event for event in raw["events"] if event["actor"] == actor),
+            key=lambda event: (event["seq"], event["id"]),
+        )
+        for seq, event in enumerate(actor_events):
+            event["seq"] = seq
+    result = check_module(module_from_dict(raw), engine="crosscheck")
+    assert result["verdict"] == "SYNC_HAZARD"
+    assert result["diagnostics"][0]["code"] == code
+    assert result["witness"]["protocol_state"]
+
+
+def test_collective_two_invocations_have_ordered_release_stream():
+    raw = json.loads(json.dumps(collective_handoff_module().raw))
+    for actor in ("a_writer", "b_reader"):
+        events = [event for event in raw["events"] if event["actor"] == actor]
+        tail = max(event["seq"] for event in events) + 1
+        raw["events"].extend([
+            {"id": f"arrive2_{actor}", "type": "BarrierArrive", "actor": actor, "seq": tail, "resource": "sync", "count": 1, "invocation_id": 1},
+            {"id": f"observe2_{actor}", "type": "BarrierObserve", "actor": actor, "seq": tail + 1, "resource": "sync", "invocation_id": 1},
+        ])
+    module = module_from_dict(raw)
+    result = check_module(module, engine="crosscheck")
+    assert result["verdict"] == "SAFE"
+    releases = [
+        item["anchor"] for item in result["artifacts"]["boundaries"]
+        if item["anchor"].startswith("completion:barrier-release:")
+    ]
+    assert releases == [
+        stable_collective_release_id("sync", 0),
+        stable_collective_release_id("sync", 1),
+    ]
+
+
+def test_collective_maximal_uses_delta_ready_index(monkeypatch):
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError("reference scan/clone reached from collective maximal engine")
+
+    monkeypatch.setattr(Executor, "enabled", forbidden)
+    monkeypatch.setattr(ExecutionState, "clone", forbidden)
+    result = check_module(collective_handoff_module(), engine="maximal")
+    assert result["verdict"] == "SAFE"
+    assert result["statistics"]["full_enabled_scans"] == 0
+    assert result["statistics"]["state_clones"] == 0
+
+
+def test_collective_release_replay_is_failure_atomic():
+    executor = Executor(collective_handoff_module())
+    state = executor.initial_state()
+    for identifier in ("write", "arrive_writer", "arrive_reader"):
+        transition = next(item for item in executor.enabled(state) if item.id == identifier)
+        executor.apply(state, transition)
+    release = next(item for item in executor.enabled(state) if item.kind == "BARRIER_RELEASE")
+    executor.apply(state, release)
+    before = executor.fingerprint(state)
+    with pytest.raises(ProtocolError) as caught:
+        executor.apply(state, release)
+    assert caught.value.code == "INVALID_BARRIER_RELEASE_TRANSITION"
+    assert executor.fingerprint(state) == before
+
+
+def test_collective_future_invocation_is_rejected():
+    raw = json.loads(json.dumps(collective_handoff_module().raw))
+    next(event for event in raw["events"] if event["id"] == "arrive_writer")["invocation_id"] = 1
+    for engine in ("maximal", "exhaustive", "crosscheck"):
+        result = check_module(module_from_dict(raw), engine=engine)
+        assert result["verdict"] == "SYNC_HAZARD"
+        assert result["diagnostics"][0]["code"] == "FUTURE_BARRIER_INVOCATION"
+
+
+def test_collective_resource_and_arrival_require_exact_lane_contract():
+    raw = json.loads(json.dumps(collective_handoff_module().raw))
+    raw["resources"][0]["capacity"] = 1
+    with pytest.raises(PGIRError) as capacity:
+        module_from_dict(raw)
+    assert capacity.value.code == "COLLECTIVE_CAPACITY_MISMATCH"
+
+    raw = json.loads(json.dumps(collective_handoff_module().raw))
+    next(event for event in raw["events"] if event["id"] == "arrive_writer")["count"] = 2
+    with pytest.raises(PGIRError) as arrival:
+        module_from_dict(raw)
+    assert arrival.value.code == "COLLECTIVE_ARRIVAL_COUNT_MISMATCH"
+
+    raw = json.loads(json.dumps(collective_handoff_module().raw))
+    raw["target"]["cta_threads"] = 3
+    with pytest.raises(PGIRError) as incomplete:
+        module_from_dict(raw)
+    assert incomplete.value.code == "CTA_PARTICIPANT_SET_INCOMPLETE"
+
+    raw = json.loads(json.dumps(collective_handoff_module().raw))
+    raw["resources"][0]["visibility_mask"]["control_only"] = True
+    with pytest.raises(PGIRError) as mixed:
+        module_from_dict(raw)
+    assert mixed.value.code == "INVALID_VISIBILITY_MASK"

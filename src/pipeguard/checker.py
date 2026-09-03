@@ -6,7 +6,15 @@ from typing import Any, Literal
 
 from .engine import Executor, ExplorationLimit, ProtocolError
 from .incremental import IncrementalCounters, IncrementalEngine
-from .model import Event, Module, normalize_module, stable_completion_id, stable_digest, stable_phase_id
+from .model import (
+    Event,
+    Module,
+    normalize_module,
+    stable_collective_release_id,
+    stable_completion_id,
+    stable_digest,
+    stable_phase_id,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -64,6 +72,13 @@ def _base_pdg(module: Module) -> PDG:
     for event in module.events:
         for dependency in event.depends_on:
             graph.add_edge(dependency, event.id, "EXPLICIT_DEPENDENCY")
+        if event.type in {"BarrierArrive", "BarrierObserve"}:
+            release = stable_collective_release_id(event.resource, event.invocation_id)
+            if event.type == "BarrierArrive" and event.predicate:
+                graph.add_edge(event.id, release, "BARRIER_ARRIVE")
+            elif event.type == "BarrierObserve":
+                graph.add_edge(release, event.id, "BARRIER_RELEASE")
+            continue
         if event.resource is None or event.generation is None:
             continue
         phase = stable_phase_id(event.resource, event.lifecycle_epoch, event.generation)
@@ -88,6 +103,8 @@ def _anchor_ids(module: Module) -> list[str]:
     for event in module.events:
         if event.type == "TmaLoadIssue":
             identifiers.add(stable_completion_id(event.id, event.generation))
+        if event.type in {"BarrierArrive", "BarrierObserve"}:
+            identifiers.add(stable_collective_release_id(event.resource, event.invocation_id))
         if event.resource is not None and event.generation is not None:
             identifiers.add(stable_phase_id(event.resource, event.lifecycle_epoch, event.generation))
     return sorted(identifiers)
@@ -137,6 +154,44 @@ def _mbarrier_visibility(module: Module, graph: PDG, source: Effect, target: Eff
     return False
 
 
+def _collective_visibility(module: Module, graph: PDG, source: Effect, target: Effect) -> bool:
+    region = module.region_map[source.region]
+    source_event = module.event_map[source.end]
+    target_event = module.event_map[target.begin]
+    for resource in module.resources:
+        if resource.kind not in {"cta_barrier", "named_barrier"}:
+            continue
+        mask = resource.visibility_mask
+        assert mask is not None
+        if mask.control_only:
+            continue
+        if region.address_space == "SHARED" and not mask.shared:
+            continue
+        if region.address_space == "GLOBAL" and not (
+            mask.global_write and (target.mode != "READ" or mask.global_read)
+        ):
+            continue
+        arrivals = [
+            event for event in module.events
+            if event.type == "BarrierArrive"
+            and event.resource == resource.id
+            and event.actor == source_event.actor
+            and event.predicate
+            and graph.reachable(source.end, event.id)
+        ]
+        for arrival in arrivals:
+            for observe in module.events:
+                if (
+                    observe.type == "BarrierObserve"
+                    and observe.resource == resource.id
+                    and observe.invocation_id == arrival.invocation_id
+                    and observe.actor == target_event.actor
+                    and graph.reachable(observe.id, target.begin)
+                ):
+                    return True
+    return False
+
+
 def _completion_observed(module: Module, graph: PDG, window: Effect, point: Effect) -> bool:
     issue = module.event_map[window.begin]
     point_event = module.event_map[point.begin]
@@ -157,8 +212,13 @@ def _data_hazard(module: Module, graph: PDG) -> dict[str, Any] | None:
                 if left.actor == right.actor:
                     safe = graph.reachable(left.end, right.begin) or graph.reachable(right.end, left.begin)
                 else:
-                    safe = _mbarrier_visibility(module, graph, left, right) or _mbarrier_visibility(module, graph, right, left)
-                query = "point conflict requires same-actor order or a scoped shared mbarrier publication"
+                    safe = (
+                        _mbarrier_visibility(module, graph, left, right)
+                        or _mbarrier_visibility(module, graph, right, left)
+                        or _collective_visibility(module, graph, left, right)
+                        or _collective_visibility(module, graph, right, left)
+                    )
+                query = "point conflict requires same-actor order or a typed mbarrier/collective visibility transfer"
             elif left.async_window and right.async_window:
                 safe = graph.reachable(left.end, right.begin) or graph.reachable(right.end, left.begin)
                 query = "async windows must be non-overlapping"
@@ -207,6 +267,7 @@ def _finish_incremental_statistics(statistics: dict[str, Any], counters: Increme
     statistics["program_streams"] = counters.program_streams
     statistics["phase_streams"] = counters.phase_streams
     statistics["tma_completion_streams"] = counters.tma_completion_streams
+    statistics["barrier_release_streams"] = counters.barrier_release_streams
     statistics["anchor_streams"] = counters.anchor_streams
     statistics["anchors"] = counters.anchors
     for key in (
@@ -214,7 +275,7 @@ def _finish_incremental_statistics(statistics: dict[str, Any], counters: Increme
         "transition_attempts", "scheduler_work_units", "worklist_pushes", "worklist_pops",
         "stale_worklist_pops",
         "dependency_registrations", "dependency_notifications", "wait_registrations",
-        "wait_notifications", "resource_notifications", "frontier_exposures",
+        "wait_notifications", "resource_notifications", "collective_notifications", "frontier_exposures",
         "phase_enable_checks", "remaining_removals", "boundary_evaluations",
         "full_enabled_scans", "state_clones", "replayed_prefix_steps",
     ):
@@ -401,7 +462,13 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
     counts = {key: statistics[key] for key in ("actors", "events", "resources", "regions")}
     if hazard is not None:
         hazard["reachable_execution_prefix"] = canonical.state.trace
-        hazard["protocol_state"] = {key: value.snapshot() for key, value in sorted(canonical.state.barriers.items())}
+        hazard["protocol_state"] = {
+            **{key: value.snapshot() for key, value in sorted(canonical.state.barriers.items())},
+            **{
+                f"collective:{key}": value.snapshot()
+                for key, value in sorted(canonical.state.collectives.items())
+            },
+        }
         return {
             "verdict": "DATA_HAZARD", "checker_version": "0.2.0",
             "summary": "a conflicting memory access pair lacks supported execution and visibility ordering",
@@ -412,7 +479,7 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
         "verdict": "SAFE", "checker_version": "0.2.0", "summary": "all supported protocol and data checks passed",
         "diagnostics": [], "statistics": statistics,
         "manifest": {
-            "scope": "finite statically-resolved sm90 single_cta mbarrier/TMA-load core",
+            "scope": "finite statically-resolved sm90 single_cta mbarrier/TMA-load/collective-barrier core",
             "assumptions": dict(sorted(module.raw["assumptions"].items())), "producer": module.raw["producer"],
             "frontend_provenance": module.raw["frontend_provenance"], "counts": counts,
         },

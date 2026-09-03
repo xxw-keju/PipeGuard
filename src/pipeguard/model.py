@@ -11,16 +11,16 @@ import jsonschema
 
 from .protocols import RESOURCE_KINDS, VisibilityMask
 
-IMPLEMENTED_RESOURCE_KINDS = frozenset({"mbarrier"})
+IMPLEMENTED_RESOURCE_KINDS = frozenset({"mbarrier", "cta_barrier", "named_barrier"})
 
 IMPLEMENTED_EVENTS = frozenset({
-    "MemRead", "MemWrite", "MBarrierInit", "MBarrierInvalidate",
-    "MBarrierArrive", "MBarrierExpectTx", "MBarrierArriveExpectTx",
-    "MBarrierWaitParity", "TmaLoadIssue",
+    "MemRead", "MemWrite", "BarrierArrive", "BarrierObserve",
+    "MBarrierInit", "MBarrierInvalidate", "MBarrierArrive", "MBarrierExpectTx",
+    "MBarrierArriveExpectTx", "MBarrierWaitParity", "TmaLoadIssue",
 })
 KNOWN_UNSUPPORTED_EVENTS = frozenset({
-    "AtomicReadModifyWrite", "Fork", "Join", "BarrierArrive", "BarrierRelease",
-    "BarrierObserve", "MBarrierTxComplete", "MBarrierPhaseComplete",
+    "AtomicReadModifyWrite", "Fork", "Join", "BarrierRelease",
+    "MBarrierTxComplete", "MBarrierPhaseComplete",
     "CpAsyncIssue", "CpAsyncCommitGroup", "CpAsyncGroupComplete", "CpAsyncWaitGroup",
     "TmaLoadComplete", "TmaStoreIssue", "TmaStoreSourceReleased",
     "TmaStoreGlobalComplete", "TmaStoreCommitGroup", "TmaStoreWaitGroup",
@@ -289,19 +289,75 @@ def _semantic_validate(module: Module) -> None:
             raise PGIRError("UNKNOWN_RESOURCE_KIND", "resource kind is unknown", {"resource": resource.id, "kind": resource.kind})
         if resource.kind not in IMPLEMENTED_RESOURCE_KINDS:
             raise PGIRError("KNOWN_RESOURCE_UNSUPPORTED", "resource kind is not implemented yet", {"resource": resource.id, "kind": resource.kind})
-        unexpected_resource_fields = [
-            name for name in ("capacity", "protocol", "scope", "visibility_mask")
-            if getattr(resource, name) is not None
-        ]
-        if unexpected_resource_fields:
-            raise PGIRError(
-                "RESOURCE_FIELDS_UNEXPECTED",
-                "mbarrier resource carries fields for another protocol",
-                {"resource": resource.id, "fields": unexpected_resource_fields},
-            )
+        if resource.kind == "mbarrier":
+            unexpected_resource_fields = [
+                name for name in ("capacity", "protocol", "scope", "visibility_mask")
+                if getattr(resource, name) is not None
+            ]
+            if unexpected_resource_fields:
+                raise PGIRError(
+                    "RESOURCE_FIELDS_UNEXPECTED",
+                    "mbarrier resource carries fields for another protocol",
+                    {"resource": resource.id, "fields": unexpected_resource_fields},
+                )
+        else:
+            missing = [
+                name for name in ("capacity", "scope", "visibility_mask")
+                if getattr(resource, name) is None
+            ]
+            if missing:
+                raise PGIRError(
+                    "RESOURCE_FIELDS_MISSING",
+                    "collective barrier resource lacks required metadata",
+                    {"resource": resource.id, "fields": missing},
+                )
+            if resource.protocol is not None:
+                raise PGIRError(
+                    "RESOURCE_FIELDS_UNEXPECTED",
+                    "collective barrier cannot carry an async-group protocol",
+                    {"resource": resource.id, "fields": ["protocol"]},
+                )
+            participant_lanes: list[int] = []
+            for actor_id in resource.participants:
+                participant_lanes.extend(actors[actor_id].participants)
+            if len(participant_lanes) != len(set(participant_lanes)):
+                raise PGIRError(
+                    "OVERLAPPING_COLLECTIVE_PARTICIPANTS",
+                    "collective barrier actors must provide disjoint lane sets",
+                    {"resource": resource.id},
+                )
+            if resource.capacity != len(participant_lanes):
+                raise PGIRError(
+                    "COLLECTIVE_CAPACITY_MISMATCH",
+                    "collective barrier capacity must equal its complete participant lane set",
+                    {"resource": resource.id, "capacity": resource.capacity, "participant_lanes": sorted(participant_lanes)},
+                )
+            if resource.kind == "cta_barrier" and set(participant_lanes) != set(range(cta_threads)):
+                raise PGIRError(
+                    "CTA_PARTICIPANT_SET_INCOMPLETE",
+                    "CTA barrier must cover every lane in the CTA exactly once",
+                    {"resource": resource.id, "participant_lanes": sorted(participant_lanes), "cta_threads": cta_threads},
+                )
+            assert resource.visibility_mask is not None
+            mask = resource.visibility_mask
+            data_visibility = any((
+                mask.shared,
+                mask.global_read,
+                mask.global_write,
+                mask.tensor_read,
+                mask.tensor_write,
+            ))
+            if mask.control_only == data_visibility:
+                raise PGIRError(
+                    "INVALID_VISIBILITY_MASK",
+                    "collective barrier must select either control-only or at least one data visibility domain",
+                    {"resource": resource.id, "visibility_mask": mask.artifact()},
+                )
 
     required_fields = {
         "MemRead": ("region",), "MemWrite": ("region",),
+        "BarrierArrive": ("resource", "count", "invocation_id"),
+        "BarrierObserve": ("resource", "invocation_id"),
         "MBarrierInit": ("resource", "count", "lifecycle_epoch"), "MBarrierInvalidate": ("resource", "lifecycle_epoch"),
         "MBarrierArrive": ("resource", "count", "lifecycle_epoch", "generation"),
         "MBarrierExpectTx": ("resource", "bytes", "lifecycle_epoch", "generation"),
@@ -312,6 +368,8 @@ def _semantic_validate(module: Module) -> None:
     common = {"id", "type", "actor", "seq", "depends_on"}
     specific = {
         "MemRead": {"region"}, "MemWrite": {"region"},
+        "BarrierArrive": {"resource", "count", "invocation_id", "predicate"},
+        "BarrierObserve": {"resource", "invocation_id"},
         "MBarrierInit": {"resource", "count", "lifecycle_epoch"}, "MBarrierInvalidate": {"resource", "lifecycle_epoch"},
         "MBarrierArrive": {"lifecycle_epoch", "resource", "count", "generation", "predicate"},
         "MBarrierExpectTx": {"lifecycle_epoch", "resource", "bytes", "generation"},
@@ -353,6 +411,26 @@ def _semantic_validate(module: Module) -> None:
             raise PGIRError("SELF_DEPENDENCY", "event cannot depend on itself", {"event": event.id})
         if event.resource is not None and event.actor not in resources[event.resource].participants:
             raise PGIRError("UNRESOLVED_PARTICIPANTS", "event actor is outside resource participant set", {"event": event.id, "resource": event.resource})
+        if event.type in {"BarrierArrive", "BarrierObserve"}:
+            resource = resources[event.resource]
+            if resource.kind not in {"cta_barrier", "named_barrier"}:
+                raise PGIRError(
+                    "RESOURCE_KIND_MISMATCH",
+                    "collective barrier event must reference a CTA or named barrier resource",
+                    {"event": event.id, "resource": event.resource, "kind": resource.kind},
+                )
+            if event.type == "BarrierArrive" and event.count != len(actors[event.actor].participants):
+                raise PGIRError(
+                    "COLLECTIVE_ARRIVAL_COUNT_MISMATCH",
+                    "collective arrival count must cover the actor's complete lane set",
+                    {"event": event.id, "count": event.count, "actor_lanes": list(actors[event.actor].participants)},
+                )
+        elif event.resource is not None and resources[event.resource].kind != "mbarrier":
+            raise PGIRError(
+                "RESOURCE_KIND_MISMATCH",
+                "mbarrier/TMA-load event must reference an mbarrier resource",
+                {"event": event.id, "resource": event.resource, "kind": resources[event.resource].kind},
+            )
         if (event.engine_id is None) != (event.engine_seq is None):
             raise PGIRError(
                 "ASYNC_ENGINE_EVIDENCE_INCOMPLETE",
@@ -465,6 +543,9 @@ def _semantic_validate(module: Module) -> None:
     } | {
         stable_phase_id(event.resource, event.lifecycle_epoch, event.generation)
         for event in module.events if event.resource is not None and event.generation is not None
+    } | {
+        stable_collective_release_id(event.resource, event.invocation_id)
+        for event in module.events if event.type in {"BarrierArrive", "BarrierObserve"}
     }
     collisions = sorted(synthetic_ids & events.keys())
     if collisions:

@@ -11,7 +11,7 @@ from .engine import (
     Transition,
     TransitionDelta,
 )
-from .model import Module, stable_completion_id, stable_phase_id
+from .model import Module, stable_collective_release_id, stable_completion_id, stable_phase_id
 
 
 @dataclass(frozen=True, slots=True)
@@ -25,7 +25,7 @@ AnchorToken = str | EndAnchor
 
 @dataclass(frozen=True, slots=True)
 class AnchorStream:
-    kind: Literal["PROGRAM", "PHASE_COMPLETION", "TMA_COMPLETION"]
+    kind: Literal["PROGRAM", "PHASE_COMPLETION", "TMA_COMPLETION", "BARRIER_RELEASE"]
     name: str
     anchors: tuple[str, ...]
 
@@ -111,6 +111,7 @@ class IncrementalCounters:
     program_streams: int = 0
     phase_streams: int = 0
     tma_completion_streams: int = 0
+    barrier_release_streams: int = 0
     anchor_streams: int = 0
     anchors: int = 0
     n_ext: int = 0
@@ -122,6 +123,7 @@ class IncrementalCounters:
         "PROGRAM": 0,
         "TMA_COMPLETION": 0,
         "PHASE_COMPLETION": 0,
+        "BARRIER_RELEASE": 0,
     })
     transition_attempts: int = 0
     worklist_pushes: int = 0
@@ -132,6 +134,7 @@ class IncrementalCounters:
     wait_registrations: int = 0
     wait_notifications: int = 0
     resource_notifications: int = 0
+    collective_notifications: int = 0
     frontier_exposures: int = 0
     phase_enable_checks: int = 0
     remaining_removals: int = 0
@@ -155,6 +158,7 @@ class IncrementalCounters:
             self.wait_registrations,
             self.wait_notifications,
             self.resource_notifications,
+            self.collective_notifications,
             self.frontier_exposures,
             self.phase_enable_checks,
             self.remaining_removals,
@@ -167,6 +171,7 @@ class IncrementalCounters:
                 "program": self.program_streams,
                 "phase_completion": self.phase_streams,
                 "tma_completion": self.tma_completion_streams,
+                "barrier_release": self.barrier_release_streams,
                 "total": self.anchor_streams,
             },
             "anchors": self.anchors,
@@ -186,6 +191,7 @@ class IncrementalCounters:
             "wait_registrations": self.wait_registrations,
             "wait_notifications": self.wait_notifications,
             "resource_notifications": self.resource_notifications,
+            "collective_notifications": self.collective_notifications,
             "frontier_exposures": self.frontier_exposures,
             "phase_enable_checks": self.phase_enable_checks,
             "remaining_removals": self.remaining_removals,
@@ -217,6 +223,16 @@ def build_anchor_streams(module: Module, anchor_ids: list[str]) -> tuple[AnchorS
         ordered = tuple(item[2] for item in sorted(phases[resource].values()))
         if ordered:
             streams.append(AnchorStream("PHASE_COMPLETION", f"phase:{resource}", ordered))
+
+    collectives: dict[str, dict[str, tuple[int, str]]] = {}
+    for event in module.events:
+        if event.type not in {"BarrierArrive", "BarrierObserve"}:
+            continue
+        identifier = stable_collective_release_id(event.resource, event.invocation_id)
+        collectives.setdefault(event.resource, {})[identifier] = (event.invocation_id, identifier)
+    for resource in sorted(collectives):
+        ordered = tuple(item[1] for item in sorted(collectives[resource].values()))
+        streams.append(AnchorStream("BARRIER_RELEASE", f"barrier:{resource}", ordered))
 
     for event in sorted(module.events, key=lambda item: stable_completion_id(item.id, item.generation or 0)):
         if event.type != "TmaLoadIssue":
@@ -250,6 +266,7 @@ class ReadyIndex:
         self.active: dict[str, Transition] = {}
         self.held_candidates: dict[str, Transition] = {}
         self.phase_ready: dict[str, str] = {}
+        self.collective_ready: dict[str, str] = {}
         self.actor_dependencies: dict[str, set[str]] = {}
         self.dependency_waiters: dict[str, set[str]] = {}
         self.actor_resource: dict[str, str] = {}
@@ -262,9 +279,14 @@ class ReadyIndex:
             for event in executor.module.events if event.type == "TmaLoadIssue"
         }
         phase_resources: dict[str, str] = {}
+        collective_resources: dict[str, str] = {}
         for event in executor.module.events:
             if event.resource is not None and event.generation is not None:
                 phase_resources[stable_phase_id(event.resource, event.lifecycle_epoch, event.generation)] = event.resource
+            if event.type in {"BarrierArrive", "BarrierObserve"}:
+                collective_resources[
+                    stable_collective_release_id(event.resource, event.invocation_id)
+                ] = event.resource
         transitions: list[Transition] = [
             Transition(event.id, "PROGRAM", event=event) for event in executor.module.events
         ]
@@ -273,8 +295,12 @@ class ReadyIndex:
                 continue
             if identifier in tma_ids:
                 transitions.append(Transition(identifier, "TMA_COMPLETION"))
-            else:
+            elif identifier in phase_resources:
                 transitions.append(Transition(identifier, "PHASE_COMPLETION", resource=phase_resources[identifier]))
+            elif identifier in collective_resources:
+                transitions.append(Transition(identifier, "BARRIER_RELEASE", resource=collective_resources[identifier]))
+            else:
+                raise AssertionError(f"unknown synthetic anchor identity: {identifier}")
         ordered_transitions = sorted(transitions, key=Transition.order_key)
         self.rank = {
             transition.id: rank
@@ -287,6 +313,8 @@ class ReadyIndex:
             self._assess_actor(actor)
         for resource in sorted(state.barriers):
             self._refresh_phase(resource)
+        for resource in sorted(state.collectives):
+            self._refresh_collective(resource)
 
     def _hold_id(self) -> str | None:
         return self.hold if isinstance(self.hold, str) else None
@@ -347,6 +375,14 @@ class ReadyIndex:
                 self.blocked_waits.setdefault(event.resource, set()).add(actor)
                 self.counters.wait_registrations += 1
                 return
+        if event.type == "BarrierObserve":
+            status = self.executor._collective_observe_status(
+                event, self.state.collectives[event.resource]
+            )
+            if status == "BLOCKED":
+                self.blocked_waits.setdefault(event.resource, set()).add(actor)
+                self.counters.wait_registrations += 1
+                return
         if event.resource is not None and event.generation is not None:
             barrier = self.state.barriers[event.resource]
             phase = self.executor._phase_transition(event.resource, barrier)
@@ -372,6 +408,24 @@ class ReadyIndex:
         for actor in followers:
             event = self.executor._frontier_event(self.state, actor)
             if event is not None and event.type == "MBarrierWaitParity":
+                self.counters.wait_notifications += 1
+            self._assess_actor(actor)
+
+    def _refresh_collective(self, resource: str) -> None:
+        self.counters.collective_notifications += 1
+        old = self.collective_ready.pop(resource, None)
+        if old is not None:
+            self._deactivate(old)
+        transition = self.executor._collective_transition(
+            resource, self.state.collectives[resource]
+        )
+        if transition is not None:
+            self.collective_ready[resource] = transition.id
+            self._queue(transition)
+        followers = tuple(sorted(self.resource_followers.get(resource, set())))
+        for actor in followers:
+            event = self.executor._frontier_event(self.state, actor)
+            if event is not None and event.type == "BarrierObserve":
                 self.counters.wait_notifications += 1
             self._assess_actor(actor)
 
@@ -416,6 +470,8 @@ class ReadyIndex:
             self._queue(Transition(completion, "TMA_COMPLETION"))
         for resource in sorted(delta.changed_resources):
             self._refresh_resource(resource)
+        for resource in sorted(delta.changed_collectives):
+            self._refresh_collective(resource)
 
 
 @dataclass(slots=True)
@@ -446,6 +502,7 @@ class IncrementalEngine:
             program_streams=sum(stream.kind == "PROGRAM" for stream in self.streams),
             phase_streams=sum(stream.kind == "PHASE_COMPLETION" for stream in self.streams),
             tma_completion_streams=sum(stream.kind == "TMA_COMPLETION" for stream in self.streams),
+            barrier_release_streams=sum(stream.kind == "BARRIER_RELEASE" for stream in self.streams),
             anchor_streams=len(self.streams),
             anchors=len(anchor_ids),
             n_ext=len(anchor_ids) + sum(len(event.depends_on) for event in executor.module.events),

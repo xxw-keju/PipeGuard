@@ -1,3 +1,4 @@
+from .collective import CollectiveBarrierState
 from .common import (
     COMPLETION_KINDS,
     PROTOCOL_KINDS,
@@ -9,6 +10,7 @@ from .common import (
 )
 
 __all__ = [
+    "CollectiveBarrierState",
     "COMPLETION_KINDS",
     "PROTOCOL_KINDS",
     "PROXY_DOMAINS",
