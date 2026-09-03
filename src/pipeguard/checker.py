@@ -142,10 +142,57 @@ def _wgmma_relations(
     return commits, issues, waits
 
 
+def _tma_store_relations(
+    module: Module,
+) -> tuple[
+    dict[str, tuple[str, dict[str, str], tuple[str, ...]]],
+    dict[str, dict[str, str]],
+    dict[str, tuple[str, ...]],
+]:
+    commits: dict[str, tuple[str, dict[str, str], tuple[str, ...]]] = {}
+    issues: dict[str, dict[str, str]] = {}
+    waits: dict[str, tuple[str, ...]] = {}
+    for actor in sorted(module.events_by_actor):
+        staged: dict[str, list[str]] = {}
+        committed: dict[tuple[str, str], list[str]] = {}
+        for event in module.events_by_actor[actor]:
+            if event.type == "TmaStoreIssue":
+                staged.setdefault(event.resource, []).append(event.id)
+            elif event.type == "TmaStoreCommitGroup":
+                group_id = stable_group_id("TMA_STORE", event.group_owner, event.group_seq)
+                completion_ids = {
+                    kind: stable_group_completion_id(
+                        "TMA_STORE",
+                        event.group_owner,
+                        event.group_seq,
+                        kind,
+                    )
+                    for kind in ("SOURCE_RELEASED", "GLOBAL_COMPLETE")
+                }
+                staged_issues = tuple(staged.get(event.resource, ()))
+                commits[event.id] = (group_id, completion_ids, staged_issues)
+                for issue in staged_issues:
+                    issues[issue] = completion_ids
+                staged[event.resource] = []
+                for kind, completion_id in completion_ids.items():
+                    committed.setdefault((event.resource, kind), []).append(completion_id)
+            elif event.type == "TmaStoreWaitGroup":
+                kind = (
+                    "SOURCE_RELEASED"
+                    if event.wait_mode == "READ_ONLY"
+                    else "GLOBAL_COMPLETE"
+                )
+                groups = committed.get((event.resource, kind), [])
+                cutoff = max(0, len(groups) - event.wait_group_count)
+                waits[event.id] = tuple(groups[:cutoff])
+    return commits, issues, waits
+
+
 def _base_pdg(module: Module) -> PDG:
     graph = PDG()
     cp_commits, _cp_issues, cp_waits = _cp_async_relations(module)
     wgmma_commits, _wgmma_issues, wgmma_waits = _wgmma_relations(module)
+    tma_store_commits, _tma_store_issues, tma_store_waits = _tma_store_relations(module)
     graph.nodes.update(event.id for event in module.events)
     for actor in sorted(module.events_by_actor):
         trace = module.events_by_actor[actor]
@@ -184,6 +231,23 @@ def _base_pdg(module: Module) -> PDG:
             for completion in wgmma_waits[event.id]:
                 graph.add_edge(completion, event.id, "COMPLETION_TO_WAIT")
             continue
+        if event.type == "TmaStoreCommitGroup":
+            group, completions, issues = tma_store_commits[event.id]
+            graph.add_edge(event.id, group, "COMMIT_TO_GROUP")
+            for issue in issues:
+                graph.add_edge(issue, group, "ISSUE_TO_GROUP")
+            for completion in completions.values():
+                graph.add_edge(group, completion, "GROUP_TO_COMPLETION")
+            graph.add_edge(
+                completions["SOURCE_RELEASED"],
+                completions["GLOBAL_COMPLETE"],
+                "ENDPOINT_ORDER",
+            )
+            continue
+        if event.type == "TmaStoreWaitGroup":
+            for completion in tma_store_waits[event.id]:
+                graph.add_edge(completion, event.id, "COMPLETION_TO_WAIT")
+            continue
         if event.resource is None or event.generation is None:
             continue
         phase = stable_phase_id(event.resource, event.lifecycle_epoch, event.generation)
@@ -206,6 +270,7 @@ def _base_pdg(module: Module) -> PDG:
 def _anchor_ids(module: Module) -> list[str]:
     cp_commits, _cp_issues, _cp_waits = _cp_async_relations(module)
     wgmma_commits, _wgmma_issues, _wgmma_waits = _wgmma_relations(module)
+    tma_store_commits, _tma_store_issues, _tma_store_waits = _tma_store_relations(module)
     identifiers = {event.id for event in module.events}
     for event in module.events:
         if event.type == "TmaLoadIssue":
@@ -216,6 +281,8 @@ def _anchor_ids(module: Module) -> list[str]:
             identifiers.add(cp_commits[event.id][1])
         if event.type == "WgmmaCommitGroup" and wgmma_commits[event.id][2]:
             identifiers.update(wgmma_commits[event.id][1].values())
+        if event.type == "TmaStoreCommitGroup" and tma_store_commits[event.id][2]:
+            identifiers.update(tma_store_commits[event.id][1].values())
         if event.resource is not None and event.generation is not None:
             identifiers.add(stable_phase_id(event.resource, event.lifecycle_epoch, event.generation))
     return sorted(identifiers)
@@ -225,6 +292,7 @@ def _effects(module: Module) -> list[Effect]:
     result: list[Effect] = []
     _commits, cp_issues, _waits_by_event = _cp_async_relations(module)
     _wgmma_commits, wgmma_issues, _wgmma_waits = _wgmma_relations(module)
+    _tma_store_commits, tma_store_issues, _tma_store_waits = _tma_store_relations(module)
     for event in module.events:
         if event.type in {"MemRead", "MemWrite"}:
             result.append(Effect(event.id, event.actor, "READ" if event.type == "MemRead" else "WRITE", event.region, event.id, event.id, False))
@@ -262,6 +330,28 @@ def _effects(module: Module) -> list[Effect]:
                 event.id,
                 completions["RESULT_READY"],
                 True,
+            ))
+        elif event.type == "TmaStoreIssue" and event.id in tma_store_issues:
+            completions = tma_store_issues[event.id]
+            result.extend((
+                Effect(
+                    f"effect:{event.id}:source",
+                    event.actor,
+                    "READ",
+                    event.source_region,
+                    event.id,
+                    completions["SOURCE_RELEASED"],
+                    True,
+                ),
+                Effect(
+                    f"effect:{event.id}:destination",
+                    event.actor,
+                    "WRITE",
+                    event.destination_region,
+                    event.id,
+                    completions["GLOBAL_COMPLETE"],
+                    True,
+                ),
             ))
     return sorted(result, key=lambda effect: effect.id)
 
@@ -338,7 +428,7 @@ def _collective_visibility(module: Module, graph: PDG, source: Effect, target: E
 
 def _completion_observed(module: Module, graph: PDG, window: Effect, point: Effect) -> bool:
     issue = module.event_map[window.begin]
-    if issue.type in {"CpAsyncIssue", "WgmmaIssue"}:
+    if issue.type in {"CpAsyncIssue", "WgmmaIssue", "TmaStoreIssue"}:
         point_event = module.event_map[point.begin]
         return point_event.actor == issue.actor and graph.reachable(window.end, point.begin)
     point_event = module.event_map[point.begin]
@@ -632,7 +722,7 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
         "verdict": "SAFE", "checker_version": "0.2.0", "summary": "all supported protocol and data checks passed",
         "diagnostics": [], "statistics": statistics,
         "manifest": {
-            "scope": "finite statically-resolved sm90 single_cta mbarrier/TMA-load/collective-barrier/cp.async/WGMMA core",
+            "scope": "finite statically-resolved sm90 single_cta mbarrier/TMA-load/TMA-store/collective-barrier/cp.async/WGMMA core",
             "assumptions": dict(sorted(module.raw["assumptions"].items())), "producer": module.raw["producer"],
             "frontend_provenance": module.raw["frontend_provenance"], "counts": counts,
         },

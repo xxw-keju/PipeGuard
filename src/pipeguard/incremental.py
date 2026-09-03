@@ -259,16 +259,16 @@ def build_anchor_streams(module: Module, anchor_ids: list[str]) -> tuple[AnchorS
         for event in module.events_by_actor[actor]:
             if event.type == "CpAsyncIssue" and event.predicate:
                 staged[event.resource] = staged.get(event.resource, 0) + 1
-            elif event.type == "WgmmaIssue":
+            elif event.type in {"WgmmaIssue", "TmaStoreIssue"}:
                 staged[event.resource] = staged.get(event.resource, 0) + 1
-            elif event.type in {"CpAsyncCommitGroup", "WgmmaCommitGroup"}:
+            elif event.type in {"CpAsyncCommitGroup", "WgmmaCommitGroup", "TmaStoreCommitGroup"}:
                 if staged.get(event.resource, 0):
                     protocol = resource_protocols[event.resource]
-                    completion_kinds = (
-                        ("GROUP_COMPLETE",)
-                        if protocol == "CP_ASYNC"
-                        else ("OPERANDS_RELEASED", "RESULT_READY")
-                    )
+                    completion_kinds = {
+                        "CP_ASYNC": ("GROUP_COMPLETE",),
+                        "WGMMA": ("OPERANDS_RELEASED", "RESULT_READY"),
+                        "TMA_STORE": ("SOURCE_RELEASED", "GLOBAL_COMPLETE"),
+                    }[protocol]
                     for completion_kind in completion_kinds:
                         identifier = stable_group_completion_id(
                             protocol,
@@ -346,13 +346,13 @@ class ReadyIndex:
                 collective_resources[
                     stable_collective_release_id(event.resource, event.invocation_id)
                 ] = event.resource
-            if event.type in {"CpAsyncCommitGroup", "WgmmaCommitGroup"}:
+            if event.type in {"CpAsyncCommitGroup", "WgmmaCommitGroup", "TmaStoreCommitGroup"}:
                 protocol = executor.module.resource_map[event.resource].protocol
-                completion_kinds = (
-                    ("GROUP_COMPLETE",)
-                    if protocol == "CP_ASYNC"
-                    else ("OPERANDS_RELEASED", "RESULT_READY")
-                )
+                completion_kinds = {
+                    "CP_ASYNC": ("GROUP_COMPLETE",),
+                    "WGMMA": ("OPERANDS_RELEASED", "RESULT_READY"),
+                    "TMA_STORE": ("SOURCE_RELEASED", "GLOBAL_COMPLETE"),
+                }[protocol]
                 for completion_kind in completion_kinds:
                     group_resources[
                         stable_group_completion_id(
@@ -472,12 +472,17 @@ class ReadyIndex:
                 self.blocked_waits.setdefault(event.resource, set()).add(actor)
                 self.counters.wait_registrations += 1
                 return
-        if event.type in {"CpAsyncWaitGroup", "WgmmaWaitGroup"}:
-            completion_kind = (
-                "GROUP_COMPLETE"
-                if event.type == "CpAsyncWaitGroup"
-                else event.completion_kind
-            )
+        if event.type in {"CpAsyncWaitGroup", "WgmmaWaitGroup", "TmaStoreWaitGroup"}:
+            if event.type == "CpAsyncWaitGroup":
+                completion_kind = "GROUP_COMPLETE"
+            elif event.type == "WgmmaWaitGroup":
+                completion_kind = event.completion_kind
+            else:
+                completion_kind = (
+                    "SOURCE_RELEASED"
+                    if event.wait_mode == "READ_ONLY"
+                    else "GLOBAL_COMPLETE"
+                )
             status = self.executor._group_wait_status(
                 event,
                 self.state.groups[event.resource],
@@ -552,7 +557,7 @@ class ReadyIndex:
                 self._queue(transition)
         if owner in self.resource_followers.get(resource, set()):
             event = self.executor._frontier_event(self.state, owner)
-            if event is not None and event.type in {"CpAsyncWaitGroup", "WgmmaWaitGroup"}:
+            if event is not None and event.type in {"CpAsyncWaitGroup", "WgmmaWaitGroup", "TmaStoreWaitGroup"}:
                 self.counters.wait_notifications += 1
             self._assess_actor(owner)
 

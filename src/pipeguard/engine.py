@@ -183,15 +183,15 @@ class Executor:
                     resource.protocol,
                     resource.participants,
                     resource.capacity,
-                    (
-                        ("GROUP_COMPLETE",)
-                        if resource.protocol == "CP_ASYNC"
-                        else ("OPERANDS_RELEASED", "RESULT_READY")
-                    ),
+                    {
+                        "CP_ASYNC": ("GROUP_COMPLETE",),
+                        "WGMMA": ("OPERANDS_RELEASED", "RESULT_READY"),
+                        "TMA_STORE": ("SOURCE_RELEASED", "GLOBAL_COMPLETE"),
+                    }[resource.protocol],
                 )
                 for resource in self.module.resources
                 if resource.kind == "async_group"
-                and resource.protocol in {"CP_ASYNC", "WGMMA"}
+                and resource.protocol in {"CP_ASYNC", "WGMMA", "TMA_STORE"}
             },
             remaining={key: set(event_ids) for key, event_ids in self.required_logical_waits.items()},
             observed=set(),
@@ -243,6 +243,12 @@ class Executor:
         if not pending:
             return None
         group = pending[0]
+        if (
+            group_state.protocol == "TMA_STORE"
+            and completion_kind == "GLOBAL_COMPLETE"
+            and not group.is_completed("SOURCE_RELEASED")
+        ):
+            return None
         return Transition(
             group.completion_id(completion_kind),
             "GROUP_COMPLETION",
@@ -328,6 +334,12 @@ class Executor:
                 event,
                 state.groups[event.resource],
                 event.completion_kind,
+            ) == "BLOCKED":
+                continue
+            if event.type == "TmaStoreWaitGroup" and self._group_wait_status(
+                event,
+                state.groups[event.resource],
+                "SOURCE_RELEASED" if event.wait_mode == "READ_ONLY" else "GLOBAL_COMPLETE",
             ) == "BLOCKED":
                 continue
             if event.resource is not None and event.generation is not None:
@@ -486,17 +498,26 @@ class Executor:
                 transition.owner,
                 transition.completion_kind,
             )[0]
-            edge = (group.group_id, transition.id, "GROUP_TO_COMPLETION")
+            edges = [(group.group_id, transition.id, "GROUP_TO_COMPLETION")]
+            if (
+                group_state.protocol == "TMA_STORE"
+                and transition.completion_kind == "GLOBAL_COMPLETE"
+            ):
+                edges.append((
+                    group.completion_id("SOURCE_RELEASED"),
+                    transition.id,
+                    "ENDPOINT_ORDER",
+                ))
             group.mark_completed(transition.completion_kind)
             state.completed_transitions.add(transition.id)
-            state.dynamic_edges.add(edge)
+            state.dynamic_edges.update(edges)
             self._record(state, transition)
             return TransitionDelta(
                 transition.id,
                 transition.kind,
                 changed_groups=frozenset({(transition.resource, transition.owner)}),
                 retired_completions=(transition.id,),
-                dynamic_edges=(edge,),
+                dynamic_edges=tuple(edges),
             )
 
         if transition.kind == "BARRIER_RELEASE":
@@ -893,6 +914,117 @@ class Executor:
                 )
             state.dynamic_edges.update(edges)
             added_edges = edges
+        elif event.type == "TmaStoreIssue":
+            assert event.resource is not None and event.group_owner is not None
+            group_state = state.groups[event.resource]
+            group_state.staged_operations(event.group_owner).append(event.id)
+            changed_groups.add((event.resource, event.group_owner))
+        elif event.type == "TmaStoreCommitGroup":
+            assert event.resource is not None and event.group_owner is not None
+            assert event.group_seq is not None
+            group_state = state.groups[event.resource]
+            expected = group_state.next_group_seq.get(event.group_owner, 0)
+            if event.group_seq != expected:
+                code = "STALE_COMMIT_GROUP" if event.group_seq < expected else "FUTURE_COMMIT_GROUP"
+                snapshot = group_state.snapshot(event.group_owner)
+                snapshot["event_group_seq"] = event.group_seq
+                raise ProtocolError(
+                    code,
+                    "TMA store commit sequence does not name the next group",
+                    event.id,
+                    snapshot,
+                )
+            if len(group_state.pending_groups(event.group_owner)) >= group_state.capacity:
+                raise ProtocolError(
+                    "COMMIT_GROUP_CAPACITY_EXCEEDED",
+                    "TMA store cannot retain more unfinished groups than its resource capacity",
+                    event.id,
+                    group_state.snapshot(event.group_owner),
+                )
+            group_id = stable_group_id(group_state.protocol, event.group_owner, event.group_seq)
+            completion_ids = {
+                kind: stable_group_completion_id(
+                    group_state.protocol,
+                    event.group_owner,
+                    event.group_seq,
+                    kind,
+                )
+                for kind in group_state.completion_kinds
+            }
+            known_ids = {
+                identifier
+                for group in group_state.committed.get(event.group_owner, ())
+                for identifier in group.completion_ids.values()
+            }
+            duplicates = sorted(
+                identifier for identifier in completion_ids.values()
+                if identifier in state.completed_transitions or identifier in known_ids
+            )
+            if duplicates:
+                snapshot = group_state.snapshot(event.group_owner)
+                snapshot["duplicate_completion_ids"] = duplicates
+                raise ProtocolError(
+                    "DUPLICATE_GROUP_COMPLETION",
+                    "TMA store group completion identity is not unique",
+                    event.id,
+                    snapshot,
+                )
+            issues = tuple(group_state.staged.get(event.group_owner, ()))
+            group = CommittedGroup(
+                event.group_seq,
+                group_id,
+                event.id,
+                issues,
+                completion_ids,
+            )
+            edges = tuple(
+                [(event.id, group_id, "COMMIT_TO_GROUP")]
+                + [(issue, group_id, "ISSUE_TO_GROUP") for issue in issues]
+            )
+            group_state.groups(event.group_owner).append(group)
+            group_state.staged[event.group_owner] = []
+            group_state.next_group_seq[event.group_owner] = expected + 1
+            state.dynamic_edges.update(edges)
+            added_edges = edges
+            changed_groups.add((event.resource, event.group_owner))
+        elif event.type == "TmaStoreWaitGroup":
+            assert event.resource is not None and event.group_owner is not None
+            assert event.wait_group_count is not None and event.wait_mode is not None
+            group_state = state.groups[event.resource]
+            completion_kind = (
+                "SOURCE_RELEASED"
+                if event.wait_mode == "READ_ONLY"
+                else "GLOBAL_COMPLETE"
+            )
+            status = self._group_wait_status(event, group_state, completion_kind)
+            if status == "INVALID":
+                raise ProtocolError(
+                    "WAIT_BEFORE_COMMIT",
+                    "TMA store wait reached staged operations that have not been committed",
+                    event.id,
+                    group_state.snapshot(event.group_owner),
+                )
+            if status == "BLOCKED":
+                raise AssertionError("blocked TMA store wait was applied")
+            old_frontier = group_state.observed_frontier(event.group_owner, completion_kind)
+            required = group_state.required_for_wait(
+                event.group_owner,
+                event.wait_group_count,
+                completion_kind,
+            )
+            newly_observed = [group for group in required if group.sequence > old_frontier]
+            edges = tuple(
+                (group.completion_id(completion_kind), event.id, "COMPLETION_TO_WAIT")
+                for group in newly_observed
+            )
+            if required:
+                group_state.set_observed_frontier(
+                    event.group_owner,
+                    completion_kind,
+                    max(old_frontier, required[-1].sequence),
+                )
+            state.dynamic_edges.update(edges)
+            added_edges = edges
         elif event.type == "MBarrierInit":
             barrier = state.barriers[event.resource]
             if barrier.lifecycle == "LIVE":
@@ -1157,11 +1289,11 @@ class Executor:
             for owner in sorted(group_state.participants):
                 if group_state.staged.get(owner):
                     return {
-                        "code": (
-                            "MISSING_CP_ASYNC_COMMIT"
-                            if group_state.protocol == "CP_ASYNC"
-                            else "MISSING_WGMMA_COMMIT"
-                        ),
+                        "code": {
+                            "CP_ASYNC": "MISSING_CP_ASYNC_COMMIT",
+                            "WGMMA": "MISSING_WGMMA_COMMIT",
+                            "TMA_STORE": "MISSING_TMA_STORE_COMMIT",
+                        }[group_state.protocol],
                         "message": f"{group_state.protocol.lower()} operations remain staged without a commit_group",
                         "resource": resource_id,
                         "owner": owner,
@@ -1194,7 +1326,7 @@ class Executor:
         group_waits = [
             event for actor in sorted(state.frontiers)
             if (event := self._frontier_event(state, actor)) is not None
-            and event.type in {"CpAsyncWaitGroup", "WgmmaWaitGroup"}
+            and event.type in {"CpAsyncWaitGroup", "WgmmaWaitGroup", "TmaStoreWaitGroup"}
         ]
         if group_waits:
             protocols = sorted({event.type for event in group_waits})

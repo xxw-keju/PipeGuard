@@ -174,7 +174,7 @@ def test_unknown_and_known_unimplemented_events_are_distinct_and_fail_closed():
     assert unknown.value.code == "UNKNOWN_EVENT"
 
     raw = json.loads((FIXTURES / "unknown_event.json").read_text())
-    raw["events"][0]["type"] = "TmaStoreIssue"
+    raw["events"][0]["type"] = "ProxyFence"
     with pytest.raises(PGIRError) as known:
         module_from_dict(raw)
     assert known.value.code == "KNOWN_EVENT_UNSUPPORTED"
@@ -1848,3 +1848,134 @@ def test_wgmma_capacity_counts_every_unfinished_endpoint():
         result = check_module(module, engine=engine)
         assert result["verdict"] == "SYNC_HAZARD"
         assert result["diagnostics"][0]["code"] == "COMMIT_GROUP_CAPACITY_EXCEEDED"
+
+
+def tma_store_module(
+    read_only_wait: bool = True,
+    global_wait: bool = True,
+    overwrite_source: bool = True,
+    read_destination: bool = True,
+):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["actors"] = [{"id": "store_owner", "kind": "PARTITION", "participants": [0]}]
+    raw["target"]["cta_threads"] = 1
+    raw["resources"] = [{
+        "id": "stores", "kind": "async_group", "participants": ["store_owner"],
+        "capacity": 8, "protocol": "TMA_STORE", "scope": "CTA",
+    }]
+    raw["regions"] = [
+        {"id": "store_source", "allocation_id": "shared-source", "address_space": "SHARED", "offset": 0, "extent": 64},
+        {"id": "store_destination", "allocation_id": "global-destination", "address_space": "GLOBAL", "offset": 0, "extent": 64},
+    ]
+    events = [
+        {
+            "id": "store_issue", "type": "TmaStoreIssue", "actor": "store_owner", "seq": 0,
+            "resource": "stores", "group_owner": "store_owner", "source_region": "store_source",
+            "destination_region": "store_destination", "bytes": 64,
+        },
+        {
+            "id": "store_commit", "type": "TmaStoreCommitGroup", "actor": "store_owner", "seq": 1,
+            "resource": "stores", "group_owner": "store_owner", "group_seq": 0,
+        },
+    ]
+    if read_only_wait:
+        events.append({
+            "id": "store_wait_read", "type": "TmaStoreWaitGroup", "actor": "store_owner", "seq": len(events),
+            "resource": "stores", "group_owner": "store_owner", "wait_group_count": 0, "wait_mode": "READ_ONLY",
+        })
+    if global_wait and not read_only_wait:
+        events.append({
+            "id": "store_wait_global", "type": "TmaStoreWaitGroup", "actor": "store_owner", "seq": len(events),
+            "resource": "stores", "group_owner": "store_owner", "wait_group_count": 0, "wait_mode": "GLOBAL",
+        })
+    if overwrite_source:
+        events.append({"id": "store_source_overwrite", "type": "MemWrite", "actor": "store_owner", "seq": len(events), "region": "store_source"})
+    if global_wait and read_only_wait:
+        events.append({
+            "id": "store_wait_global", "type": "TmaStoreWaitGroup", "actor": "store_owner", "seq": len(events),
+            "resource": "stores", "group_owner": "store_owner", "wait_group_count": 0, "wait_mode": "GLOBAL",
+        })
+    if read_destination:
+        events.append({"id": "store_destination_read", "type": "MemRead", "actor": "store_owner", "seq": len(events), "region": "store_destination"})
+    raw["events"] = events
+    return module_from_dict(raw)
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_tma_store_typed_waits_close_source_and_global_windows(engine):
+    result = check_module(tma_store_module(), engine=engine)
+    assert result["verdict"] == "SAFE"
+    source = stable_group_completion_id("TMA_STORE", "store_owner", 0, "SOURCE_RELEASED")
+    complete = stable_group_completion_id("TMA_STORE", "store_owner", 0, "GLOBAL_COMPLETE")
+    edges = result["artifacts"]["pdg"]["edges"]
+    assert {"from": source, "to": complete, "kind": "ENDPOINT_ORDER"} in edges
+    assert {"from": source, "to": "store_wait_read", "kind": "COMPLETION_TO_WAIT"} in edges
+    assert {"from": complete, "to": "store_wait_global", "kind": "COMPLETION_TO_WAIT"} in edges
+
+
+def test_tma_store_read_only_wait_does_not_imply_global_completion():
+    result = check_module(tma_store_module(global_wait=False), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+    destination = next(effect for effect in result["witness"]["effects"] if effect["id"] == "effect:store_issue:destination")
+    assert destination["window"][1].endswith("global_complete")
+
+
+def test_tma_store_global_wait_also_follows_source_release():
+    result = check_module(tma_store_module(read_only_wait=False), engine="crosscheck")
+    assert result["verdict"] == "SAFE"
+
+
+def test_tma_store_missing_and_empty_commit_fail_closed():
+    raw = json.loads(json.dumps(tma_store_module().raw))
+    raw["events"] = [raw["events"][0]]
+    missing = check_module(module_from_dict(raw))
+    assert missing["verdict"] == "SYNC_HAZARD"
+    assert missing["diagnostics"][0]["code"] == "MISSING_TMA_STORE_COMMIT"
+
+    raw = json.loads(json.dumps(tma_store_module().raw))
+    raw["events"] = [raw["events"][1]]
+    raw["events"][0]["seq"] = 0
+    with pytest.raises(PGIRError) as empty:
+        module_from_dict(raw)
+    assert empty.value.code == "UNSUPPORTED_EMPTY_TMA_STORE_GROUP"
+
+
+def test_tma_store_requires_shared_to_global_regions():
+    raw = json.loads(json.dumps(tma_store_module().raw))
+    next(region for region in raw["regions"] if region["id"] == "store_source")["address_space"] = "GLOBAL"
+    with pytest.raises(PGIRError) as region:
+        module_from_dict(raw)
+    assert region.value.code == "UNSUPPORTED_TMA_STORE_REGION"
+
+
+def test_tma_store_global_completion_replay_is_failure_atomic():
+    executor = Executor(tma_store_module(overwrite_source=False, read_destination=False))
+    state = executor.initial_state()
+    for identifier in ("store_issue", "store_commit"):
+        executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
+    source = next(item for item in executor.enabled(state) if item.kind == "GROUP_COMPLETION" and item.completion_kind == "SOURCE_RELEASED")
+    executor.apply(state, source)
+    complete = next(item for item in executor.enabled(state) if item.kind == "GROUP_COMPLETION" and item.completion_kind == "GLOBAL_COMPLETE")
+    executor.apply(state, complete)
+    before = executor.fingerprint(state)
+    with pytest.raises(ProtocolError) as replay:
+        executor.apply(state, complete)
+    assert replay.value.code == "INVALID_GROUP_COMPLETION_TRANSITION"
+    assert executor.fingerprint(state) == before
+
+
+def test_tma_store_maximal_uses_two_delta_driven_endpoint_streams(monkeypatch):
+    module = tma_store_module()
+    streams = [stream for stream in build_anchor_streams(module, _anchor_ids(module)) if stream.kind == "GROUP_COMPLETION"]
+    assert len(streams) == 2
+
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError("reference scan/clone reached from TMA-store maximal engine")
+
+    monkeypatch.setattr(Executor, "enabled", forbidden)
+    monkeypatch.setattr(ExecutionState, "clone", forbidden)
+    result = check_module(module, engine="maximal")
+    assert result["verdict"] == "SAFE"
+    assert result["statistics"]["group_completion_streams"] == 2
+    assert result["statistics"]["full_enabled_scans"] == 0
+    assert result["statistics"]["state_clones"] == 0

@@ -12,7 +12,7 @@ import jsonschema
 from .protocols import RESOURCE_KINDS, VisibilityMask
 
 IMPLEMENTED_RESOURCE_KINDS = frozenset({"mbarrier", "cta_barrier", "named_barrier", "async_group"})
-IMPLEMENTED_ASYNC_PROTOCOLS = frozenset({"CP_ASYNC", "WGMMA"})
+IMPLEMENTED_ASYNC_PROTOCOLS = frozenset({"CP_ASYNC", "WGMMA", "TMA_STORE"})
 
 IMPLEMENTED_EVENTS = frozenset({
     "MemRead", "MemWrite", "BarrierArrive", "BarrierObserve",
@@ -20,13 +20,13 @@ IMPLEMENTED_EVENTS = frozenset({
     "MBarrierArriveExpectTx", "MBarrierWaitParity", "TmaLoadIssue",
     "CpAsyncIssue", "CpAsyncCommitGroup", "CpAsyncWaitGroup",
     "WgmmaFenceOperand", "WgmmaIssue", "WgmmaCommitGroup", "WgmmaWaitGroup",
+    "TmaStoreIssue", "TmaStoreCommitGroup", "TmaStoreWaitGroup",
 })
 KNOWN_UNSUPPORTED_EVENTS = frozenset({
     "AtomicReadModifyWrite", "Fork", "Join", "BarrierRelease",
     "MBarrierTxComplete", "MBarrierPhaseComplete",
     "CpAsyncGroupComplete",
-    "TmaLoadComplete", "TmaStoreIssue", "TmaStoreSourceReleased",
-    "TmaStoreGlobalComplete", "TmaStoreCommitGroup", "TmaStoreWaitGroup",
+    "TmaLoadComplete", "TmaStoreSourceReleased", "TmaStoreGlobalComplete",
     "WgmmaResultReady", "WgmmaOperandsReleased", "ProxyFence", "ChannelCreate",
     "ProducerAcquire", "ProducerCommit", "ConsumerWait", "ConsumerRelease",
 })
@@ -382,12 +382,12 @@ def _semantic_validate(module: Module) -> None:
                     "async-group protocol is not implemented yet",
                     {"resource": resource.id, "protocol": resource.protocol},
                 )
-            if resource.protocol in {"CP_ASYNC", "WGMMA"} and resource.capacity > 8:
-                code = (
-                    "CP_ASYNC_CAPACITY_UNSUPPORTED"
-                    if resource.protocol == "CP_ASYNC"
-                    else "WGMMA_CAPACITY_UNSUPPORTED"
-                )
+            if resource.protocol in {"CP_ASYNC", "WGMMA", "TMA_STORE"} and resource.capacity > 8:
+                code = {
+                    "CP_ASYNC": "CP_ASYNC_CAPACITY_UNSUPPORTED",
+                    "WGMMA": "WGMMA_CAPACITY_UNSUPPORTED",
+                    "TMA_STORE": "TMA_STORE_CAPACITY_UNSUPPORTED",
+                }[resource.protocol]
                 raise PGIRError(
                     code,
                     f"{resource.protocol.lower()} supports at most eight uncompleted committed groups",
@@ -448,6 +448,9 @@ def _semantic_validate(module: Module) -> None:
         "WgmmaIssue": ("resource", "group_owner", "regions", "destination_region"),
         "WgmmaCommitGroup": ("resource", "group_owner", "group_seq"),
         "WgmmaWaitGroup": ("resource", "group_owner", "wait_group_count", "completion_kind"),
+        "TmaStoreIssue": ("resource", "group_owner", "source_region", "destination_region", "bytes"),
+        "TmaStoreCommitGroup": ("resource", "group_owner", "group_seq"),
+        "TmaStoreWaitGroup": ("resource", "group_owner", "wait_group_count", "wait_mode"),
         "MBarrierInit": ("resource", "count", "lifecycle_epoch"), "MBarrierInvalidate": ("resource", "lifecycle_epoch"),
         "MBarrierArrive": ("resource", "count", "lifecycle_epoch", "generation"),
         "MBarrierExpectTx": ("resource", "bytes", "lifecycle_epoch", "generation"),
@@ -474,6 +477,14 @@ def _semantic_validate(module: Module) -> None:
         "WgmmaCommitGroup": {"resource", "group_owner", "group_seq"},
         "WgmmaWaitGroup": {
             "resource", "group_owner", "wait_group_count", "completion_kind",
+        },
+        "TmaStoreIssue": {
+            "resource", "group_owner", "source_region", "destination_region", "bytes",
+            "engine_id", "engine_seq",
+        },
+        "TmaStoreCommitGroup": {"resource", "group_owner", "group_seq"},
+        "TmaStoreWaitGroup": {
+            "resource", "group_owner", "wait_group_count", "wait_mode",
         },
         "MBarrierInit": {"resource", "count", "lifecycle_epoch"}, "MBarrierInvalidate": {"resource", "lifecycle_epoch"},
         "MBarrierArrive": {"lifecycle_epoch", "resource", "count", "generation", "predicate"},
@@ -618,6 +629,44 @@ def _semantic_validate(module: Module) -> None:
                         "WGMMA wait must explicitly select operands released or result ready",
                         {"event": event.id, "completion_kind": event.completion_kind},
                     )
+        elif event.type in {"TmaStoreIssue", "TmaStoreCommitGroup", "TmaStoreWaitGroup"}:
+            resource = resources[event.resource]
+            if resource.kind != "async_group" or resource.protocol != "TMA_STORE":
+                raise PGIRError(
+                    "RESOURCE_KIND_MISMATCH",
+                    "TMA store event must reference a TMA_STORE group resource",
+                    {"event": event.id, "resource": event.resource, "kind": resource.kind, "protocol": resource.protocol},
+                )
+            if event.group_owner != event.actor:
+                raise PGIRError(
+                    "GROUP_OWNER_MISMATCH",
+                    "TMA store groups are owned by the issuing program actor",
+                    {"event": event.id, "actor": event.actor, "group_owner": event.group_owner},
+                )
+            if actors[event.actor].kind == "ASYNC_ENGINE":
+                raise PGIRError(
+                    "INVALID_GROUP_OWNER",
+                    "an ASYNC_ENGINE actor cannot own a program-visible TMA store group",
+                    {"event": event.id, "actor": event.actor},
+                )
+            if event.type == "TmaStoreIssue" and (
+                regions[event.source_region].address_space != "SHARED"
+                or regions[event.destination_region].address_space != "GLOBAL"
+            ):
+                raise PGIRError(
+                    "UNSUPPORTED_TMA_STORE_REGION",
+                    "TMA store requires an explicit shared source and global destination",
+                    {"event": event.id},
+                )
+            if (
+                event.type == "TmaStoreWaitGroup"
+                and event.wait_group_count >= resource.capacity
+            ):
+                raise PGIRError(
+                    "WAIT_GROUP_COUNT_OUT_OF_RANGE",
+                    "TMA store wait_group count must be smaller than the group capacity",
+                    {"event": event.id, "wait_group_count": event.wait_group_count, "capacity": resource.capacity},
+                )
         elif event.resource is not None and resources[event.resource].kind != "mbarrier":
             raise PGIRError(
                 "RESOURCE_KIND_MISMATCH",
@@ -660,7 +709,7 @@ def _semantic_validate(module: Module) -> None:
 
     commit_streams: dict[tuple[str, str], list[Event]] = {}
     for event in module.events:
-        if event.type in {"CpAsyncCommitGroup", "WgmmaCommitGroup"}:
+        if event.type in {"CpAsyncCommitGroup", "WgmmaCommitGroup", "TmaStoreCommitGroup"}:
             commit_streams.setdefault((event.resource, event.group_owner), []).append(event)
     for stream, commits in sorted(commit_streams.items()):
         commits.sort(key=lambda event: (event.group_seq, event.seq, event.id))
@@ -673,18 +722,19 @@ def _semantic_validate(module: Module) -> None:
             )
 
     for actor, trace in sorted(module.events_by_actor.items()):
-        staged_wgmma: dict[str, int] = {}
+        staged_typed: dict[str, int] = {}
         for event in trace:
-            if event.type == "WgmmaIssue":
-                staged_wgmma[event.resource] = staged_wgmma.get(event.resource, 0) + 1
-            elif event.type == "WgmmaCommitGroup":
-                if staged_wgmma.get(event.resource, 0) == 0:
+            if event.type in {"WgmmaIssue", "TmaStoreIssue"}:
+                staged_typed[event.resource] = staged_typed.get(event.resource, 0) + 1
+            elif event.type in {"WgmmaCommitGroup", "TmaStoreCommitGroup"}:
+                if staged_typed.get(event.resource, 0) == 0:
+                    protocol = resources[event.resource].protocol
                     raise PGIRError(
-                        "UNSUPPORTED_EMPTY_WGMMA_GROUP",
-                        "empty WGMMA commit-group semantics are outside the supported NVIDIA-valid subset",
+                        f"UNSUPPORTED_EMPTY_{protocol}_GROUP",
+                        f"empty {protocol} commit-group semantics are outside the supported NVIDIA-valid subset",
                         {"event": event.id, "actor": actor, "resource": event.resource},
                     )
-                staged_wgmma[event.resource] = 0
+                staged_typed[event.resource] = 0
 
     wait_streams: dict[tuple[str, str, int, str], list[Event]] = {}
     canonical_stream_ids: dict[tuple[str, str, int], set[str]] = {}
@@ -780,6 +830,13 @@ def _semantic_validate(module: Module) -> None:
     } | {
         stable_group_id("WGMMA", event.group_owner, event.group_seq)
         for event in module.events if event.type == "WgmmaCommitGroup"
+    } | {
+        stable_group_completion_id("TMA_STORE", event.group_owner, event.group_seq, completion_kind)
+        for event in module.events if event.type == "TmaStoreCommitGroup"
+        for completion_kind in ("SOURCE_RELEASED", "GLOBAL_COMPLETE")
+    } | {
+        stable_group_id("TMA_STORE", event.group_owner, event.group_seq)
+        for event in module.events if event.type == "TmaStoreCommitGroup"
     }
     collisions = sorted(synthetic_ids & events.keys())
     if collisions:
