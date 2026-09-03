@@ -9,6 +9,7 @@ from .incremental import IncrementalCounters, IncrementalEngine
 from .model import (
     Event,
     Module,
+    engine_completion_streams,
     normalize_module,
     stable_channel_handoff_id,
     stable_collective_release_id,
@@ -199,6 +200,9 @@ def _base_pdg(module: Module) -> PDG:
         trace = module.events_by_actor[actor]
         for first, second in zip(trace, trace[1:]):
             graph.add_edge(first.id, second.id, "PROGRAM_ORDER")
+    for endpoints in engine_completion_streams(module).values():
+        for predecessor, successor in zip(endpoints, endpoints[1:]):
+            graph.add_edge(predecessor, successor, "ENGINE_ORDER")
     for event in module.events:
         for dependency in event.depends_on:
             graph.add_edge(dependency, event.id, "EXPLICIT_DEPENDENCY")
@@ -573,7 +577,36 @@ def _completion_observed(module: Module, graph: PDG, window: Effect, point: Effe
         point_event = module.event_map[point.begin]
         return point_event.actor == issue.actor and graph.reachable(window.end, point.begin)
     point_event = module.event_map[point.begin]
-    return any(wait.actor == point_event.actor and graph.reachable(wait.id, point.begin) for wait in _waits(module, issue.resource, issue.lifecycle_epoch, issue.generation))
+    streams = engine_completion_streams(module).values()
+
+    def orders(earlier: str, later: str) -> bool:
+        if earlier == later:
+            return True
+        return any(
+            earlier in endpoints
+            and later in endpoints
+            and endpoints.index(earlier) < endpoints.index(later)
+            for endpoints in streams
+        )
+
+    for wait in module.events:
+        if (
+            wait.type != "MBarrierWaitParity"
+            or wait.actor != point_event.actor
+            or not graph.reachable(wait.id, point.begin)
+        ):
+            continue
+        observed = (
+            stable_completion_id(candidate.id, candidate.generation)
+            for candidate in module.events
+            if candidate.type == "TmaLoadIssue"
+            and candidate.resource == wait.resource
+            and candidate.lifecycle_epoch == wait.lifecycle_epoch
+            and candidate.generation == wait.generation
+        )
+        if any(orders(window.end, completion) for completion in observed):
+            return True
+    return False
 
 
 def _data_hazard(module: Module, graph: PDG) -> dict[str, Any] | None:
@@ -650,6 +683,7 @@ def _finish_incremental_statistics(statistics: dict[str, Any], counters: Increme
     statistics["barrier_release_streams"] = counters.barrier_release_streams
     statistics["group_completion_streams"] = counters.group_completion_streams
     statistics["channel_handoff_streams"] = counters.channel_handoff_streams
+    statistics["engine_completion_streams"] = counters.engine_completion_streams
     statistics["anchor_streams"] = counters.anchor_streams
     statistics["anchors"] = counters.anchors
     for key in (
@@ -657,7 +691,7 @@ def _finish_incremental_statistics(statistics: dict[str, Any], counters: Increme
         "transition_attempts", "scheduler_work_units", "worklist_pushes", "worklist_pops",
         "stale_worklist_pops",
         "dependency_registrations", "dependency_notifications", "wait_registrations",
-        "wait_notifications", "resource_notifications", "collective_notifications", "group_notifications", "channel_notifications", "frontier_exposures",
+        "wait_notifications", "resource_notifications", "collective_notifications", "group_notifications", "channel_notifications", "engine_notifications", "frontier_exposures",
         "phase_enable_checks", "remaining_removals", "boundary_evaluations",
         "full_enabled_scans", "state_clones", "replayed_prefix_steps",
     ):
@@ -836,9 +870,14 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
 
     _add_dynamic_edges(graph, canonical.state)
     hazard = _data_hazard(module, graph)
+    engine_streams = engine_completion_streams(module)
     artifacts = {
         "normalized_sha256": digest, "canonical_trace": canonical.state.trace,
         "boundaries": sorted(boundaries, key=lambda item: item["anchor"]),
+        "engine_completion_streams": {
+            engine: list(endpoints)
+            for engine, endpoints in sorted(engine_streams.items())
+        },
         "pdg": graph.artifact(),
     }
     counts = {key: statistics[key] for key in ("actors", "events", "resources", "regions")}
@@ -873,7 +912,7 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
         "verdict": "SAFE", "checker_version": "0.2.0", "summary": "all supported protocol and data checks passed",
         "diagnostics": [], "statistics": statistics,
         "manifest": {
-            "scope": "finite statically-resolved sm90 single_cta mbarrier/TMA-load/TMA-store/collective-barrier/cp.async/WGMMA/channel/proxy-visibility core",
+            "scope": "finite statically-resolved sm90 single_cta mbarrier/TMA-load/TMA-store/collective-barrier/cp.async/WGMMA/channel/proxy-visibility/explicit-engine-order core",
             "assumptions": dict(sorted(module.raw["assumptions"].items())), "producer": module.raw["producer"],
             "frontend_provenance": module.raw["frontend_provenance"], "counts": counts,
         },

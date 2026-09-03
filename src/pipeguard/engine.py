@@ -7,6 +7,7 @@ from typing import Any, Literal
 from .model import (
     Event,
     Module,
+    engine_completion_streams,
     stable_channel_handoff_id,
     stable_collective_release_id,
     stable_completion_id,
@@ -175,6 +176,30 @@ class Executor:
         self.module = module
         self.events = module.event_map
         self.required_logical_waits = module.required_logical_waits
+        self.engine_streams = engine_completion_streams(module)
+        self.engine_predecessors: dict[str, str] = {}
+        self.engine_successors: dict[str, tuple[str, ...]] = {}
+        successors: dict[str, list[str]] = {}
+        for endpoints in self.engine_streams.values():
+            for predecessor, successor in zip(endpoints, endpoints[1:]):
+                self.engine_predecessors[successor] = predecessor
+                successors.setdefault(predecessor, []).append(successor)
+        self.engine_successors = {
+            predecessor: tuple(sorted(items))
+            for predecessor, items in sorted(successors.items())
+        }
+
+    def _engine_completion_ready(self, state: ExecutionState, completion: str) -> bool:
+        predecessor = self.engine_predecessors.get(completion)
+        return predecessor is None or predecessor in state.completed_transitions
+
+    def _engine_order_state(self, state: ExecutionState, completion: str) -> dict[str, Any]:
+        predecessor = self.engine_predecessors.get(completion)
+        return {
+            "completion": completion,
+            "required_predecessor": predecessor,
+            "predecessor_completed": predecessor in state.completed_transitions if predecessor else True,
+        }
 
     def initial_state(self) -> ExecutionState:
         return ExecutionState(
@@ -313,6 +338,7 @@ class Executor:
         owner: str,
         completion_kind: str,
         group_state: CommitGroupState,
+        state: ExecutionState,
     ) -> Transition | None:
         pending = group_state.pending(owner, completion_kind)
         if not pending:
@@ -324,8 +350,11 @@ class Executor:
             and not group.is_completed("SOURCE_RELEASED")
         ):
             return None
+        completion = group.completion_id(completion_kind)
+        if not self._engine_completion_ready(state, completion):
+            return None
         return Transition(
-            group.completion_id(completion_kind),
+            completion,
             "GROUP_COMPLETION",
             resource=resource_id,
             owner=owner,
@@ -367,7 +396,7 @@ class Executor:
     def enabled(self, state: ExecutionState, hold: str | None = None) -> list[Transition]:
         result: list[Transition] = []
         for completion_id in sorted(state.pending_completions):
-            if completion_id != hold:
+            if completion_id != hold and self._engine_completion_ready(state, completion_id):
                 result.append(Transition(completion_id, "TMA_COMPLETION"))
         for resource_id in sorted(state.barriers):
             transition = self._phase_transition(resource_id, state.barriers[resource_id])
@@ -386,6 +415,7 @@ class Executor:
                         owner,
                         completion_kind,
                         group_state,
+                        state,
                     )
                     if transition is not None and transition.id != hold:
                         result.append(transition)
@@ -526,6 +556,13 @@ class Executor:
                     "TMA completion is not pending in the current execution state",
                     transition.id,
                 )
+            if not self._engine_completion_ready(state, transition.id):
+                raise ProtocolError(
+                    "ENGINE_ORDER_VIOLATION",
+                    "async completion occurred before its explicit engine predecessor",
+                    transition.id,
+                    self._engine_order_state(state, transition.id),
+                )
             barrier = state.barriers[op.resource]
             if op.lifecycle_epoch != barrier.lifecycle_epoch:
                 raise ProtocolError("STALE_COMPLETION", "transaction completed outside its mbarrier lifecycle", op.issue_id, barrier.snapshot())
@@ -564,6 +601,13 @@ class Executor:
                     "group completion lacks its resource, owner, or endpoint identity",
                     transition.id,
                 )
+            if not self._engine_completion_ready(state, transition.id):
+                raise ProtocolError(
+                    "ENGINE_ORDER_VIOLATION",
+                    "async completion occurred before its explicit engine predecessor",
+                    transition.id,
+                    self._engine_order_state(state, transition.id),
+                )
             group_state = state.groups.get(transition.resource)
             enabled_transition = (
                 self._group_transition(
@@ -571,6 +615,7 @@ class Executor:
                     transition.owner,
                     transition.completion_kind,
                     group_state,
+                    state,
                 )
                 if group_state is not None
                 else None

@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from pipeguard.checker import _anchor_ids, check_module
-from pipeguard.engine import ExecutionState, Executor, ProtocolError
+from pipeguard.engine import ExecutionState, Executor, ProtocolError, Transition
 from pipeguard.incremental import END, IncrementalEngine, StableReadySet, build_anchor_streams
 from pipeguard.model import (
     PGIRError,
@@ -1017,6 +1017,7 @@ def test_incremental_statistics_certificate_is_deterministic():
         "barrier_release": 0,
         "group_completion": 0,
         "channel_handoff": 0,
+        "engine_completion": 0,
         "total": 3,
     }
     assert first["boundary_evaluations"] == 6
@@ -2184,3 +2185,179 @@ def test_proxy_reverse_direction_and_mask_mismatch_fail_closed():
     with pytest.raises(PGIRError) as mask:
         module_from_dict(raw)
     assert mask.value.code == "PROXY_REGION_MASK_MISMATCH"
+
+
+def tma_engine_order_module(order: tuple[int, int] | None):
+    raw = json.loads((FIXTURES / "tma_completion_before_arrival.json").read_text())
+    raw["actors"].append({"id": "dma", "kind": "ASYNC_ENGINE", "participants": [0]})
+    raw["resources"] = [
+        {"id": f"bar{index}", "kind": "mbarrier", "participants": ["a"]}
+        for index in range(2)
+    ]
+    raw["regions"] = [
+        {
+            "id": f"source{index}", "allocation_id": f"global-input-{index}",
+            "address_space": "GLOBAL", "offset": 0, "extent": 16,
+        }
+        for index in range(2)
+    ] + [
+        {
+            "id": f"tile{index}", "allocation_id": f"shared-{index}",
+            "address_space": "SHARED", "offset": 0, "extent": 16,
+        }
+        for index in range(2)
+    ]
+    events = []
+    for index in range(2):
+        events.extend([
+            {
+                "id": f"init{index}", "type": "MBarrierInit", "actor": "a",
+                "seq": len(events), "resource": f"bar{index}", "count": 1,
+                "lifecycle_epoch": 0,
+            },
+            {
+                "id": f"expect{index}", "type": "MBarrierExpectTx", "actor": "a",
+                "seq": len(events) + 1, "resource": f"bar{index}", "bytes": 4,
+                "lifecycle_epoch": 0, "generation": 0,
+            },
+            {
+                "id": f"issue{index}", "type": "TmaLoadIssue", "actor": "a",
+                "seq": len(events) + 2, "resource": f"bar{index}", "bytes": 4,
+                "source_region": f"source{index}", "destination_region": f"tile{index}",
+                "lifecycle_epoch": 0, "generation": 0,
+            },
+            {
+                "id": f"arrive{index}", "type": "MBarrierArrive", "actor": "a",
+                "seq": len(events) + 3, "resource": f"bar{index}", "count": 1,
+                "lifecycle_epoch": 0, "generation": 0,
+            },
+        ])
+    if order is not None:
+        for index, engine_seq in enumerate(order):
+            next(event for event in events if event["id"] == f"issue{index}").update({
+                "engine_id": "dma",
+                "engine_seq": engine_seq,
+            })
+    events.extend([
+        {
+            "id": "wait1", "type": "MBarrierWaitParity", "actor": "a",
+            "seq": len(events), "resource": "bar1", "lifecycle_epoch": 0,
+            "generation": 0, "raw_parity": 0,
+            "parity_evidence": {
+                "derivation_kind": "BARRIER_HISTORY", "logical_stream_id": "a:bar1",
+                "lifecycle_epoch": 0, "stream_rank": 0, "polling_coalesced": True,
+            },
+        },
+        {
+            "id": "overwrite0", "type": "MemWrite", "actor": "a",
+            "seq": len(events) + 1, "region": "source0",
+        },
+    ])
+    raw["events"] = events
+    return raw
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_explicit_engine_order_makes_later_observation_cover_prior_completion(engine):
+    result = check_module(module_from_dict(tma_engine_order_module((0, 1))), engine=engine)
+    first = stable_completion_id("issue0", 0)
+    second = stable_completion_id("issue1", 0)
+    assert result["verdict"] == "SAFE"
+    assert result["artifacts"]["engine_completion_streams"] == {"dma": [first, second]}
+    assert {"from": first, "to": second, "kind": "ENGINE_ORDER"} in result["artifacts"]["pdg"]["edges"]
+    if engine == "maximal":
+        assert result["statistics"]["engine_completion_streams"] == 1
+        assert result["statistics"]["tma_completion_streams"] == 0
+        assert result["statistics"]["engine_notifications"] > 0
+        assert result["statistics"]["full_enabled_scans"] == 0
+
+
+@pytest.mark.parametrize(
+    ("module", "issue_id", "completion"),
+    [
+        (
+            cp_async_module(overwrite_group=None),
+            "issue0",
+            stable_group_completion_id("CP_ASYNC", "owner", 0, "GROUP_COMPLETE"),
+        ),
+        (
+            wgmma_module(),
+            "mma_issue",
+            stable_group_completion_id("WGMMA", "wg", 0, "RESULT_READY"),
+        ),
+        (
+            tma_store_module(),
+            "store_issue",
+            stable_group_completion_id("TMA_STORE", "store_owner", 0, "GLOBAL_COMPLETE"),
+        ),
+    ],
+)
+def test_group_protocols_lift_engine_order_evidence_to_terminal_endpoint(module, issue_id, completion):
+    raw = json.loads(json.dumps(module.raw))
+    raw["actors"].append({"id": "dma", "kind": "ASYNC_ENGINE", "participants": [0]})
+    next(event for event in raw["events"] if event["id"] == issue_id).update({
+        "engine_id": "dma",
+        "engine_seq": 0,
+    })
+    result = check_module(module_from_dict(raw), engine="maximal")
+    assert result["verdict"] == "SAFE"
+    assert result["artifacts"]["engine_completion_streams"] == {"dma": [completion]}
+    assert result["statistics"]["engine_completion_streams"] == 1
+    assert result["statistics"]["full_enabled_scans"] == 0
+
+
+def test_missing_or_reverse_engine_order_preserves_completion_race():
+    assert check_module(module_from_dict(tma_engine_order_module(None)), engine="crosscheck")["verdict"] == "DATA_HAZARD"
+    assert check_module(module_from_dict(tma_engine_order_module((1, 0))), engine="crosscheck")["verdict"] == "DATA_HAZARD"
+
+
+def test_engine_order_blocks_forced_out_of_order_completion_atomically():
+    module = module_from_dict(tma_engine_order_module((0, 1)))
+    executor = Executor(module)
+    state = executor.initial_state()
+    for event in module.events_by_actor["a"]:
+        if event.id == "wait1":
+            break
+        executor.apply(state, Transition(event.id, "PROGRAM", event=event))
+    before = executor.fingerprint(state)
+    second = stable_completion_id("issue1", 0)
+    with pytest.raises(ProtocolError) as caught:
+        executor.apply(state, Transition(second, "TMA_COMPLETION"))
+    assert caught.value.code == "ENGINE_ORDER_VIOLATION"
+    assert executor.fingerprint(state) == before
+
+
+def test_engine_order_requires_resolved_acyclic_typed_endpoints():
+    unresolved = json.loads(json.dumps(cp_async_module(overwrite_group=None).raw))
+    unresolved["actors"].append({"id": "dma", "kind": "ASYNC_ENGINE", "participants": [0]})
+    issue = next(event for event in unresolved["events"] if event["id"] == "issue0")
+    issue.update({"engine_id": "dma", "engine_seq": 0})
+    unresolved["events"] = [event for event in unresolved["events"] if event["id"] != "commit0"]
+    for seq, event in enumerate(unresolved["events"]):
+        event["seq"] = seq
+    with pytest.raises(PGIRError) as missing:
+        module_from_dict(unresolved)
+    assert missing.value.code == "ASYNC_ENGINE_COMPLETION_UNRESOLVED"
+
+    predicated_off = json.loads(json.dumps(cp_async_module(overwrite_group=None).raw))
+    predicated_off["actors"].append({"id": "dma", "kind": "ASYNC_ENGINE", "participants": [0]})
+    issue = next(event for event in predicated_off["events"] if event["id"] == "issue0")
+    issue.update({"engine_id": "dma", "engine_seq": 0, "predicate": False})
+    with pytest.raises(PGIRError) as inactive:
+        module_from_dict(predicated_off)
+    assert inactive.value.code == "ASYNC_ENGINE_COMPLETION_UNRESOLVED"
+
+    ambiguous = json.loads(json.dumps(cp_async_module(group_count=2, overwrite_group=None).raw))
+    ambiguous["actors"].append({"id": "dma", "kind": "ASYNC_ENGINE", "participants": [0]})
+    issue0 = next(event for event in ambiguous["events"] if event["id"] == "issue0")
+    issue1 = next(event for event in ambiguous["events"] if event["id"] == "issue1")
+    duplicate = {**issue0, "id": "issue0b", "engine_id": "dma", "engine_seq": 2}
+    issue0.update({"engine_id": "dma", "engine_seq": 0})
+    issue1.update({"engine_id": "dma", "engine_seq": 1})
+    commit_index = next(index for index, event in enumerate(ambiguous["events"]) if event["id"] == "commit0")
+    ambiguous["events"].insert(commit_index, duplicate)
+    for seq, event in enumerate(ambiguous["events"]):
+        event["seq"] = seq
+    with pytest.raises(PGIRError) as cycle:
+        module_from_dict(ambiguous)
+    assert cycle.value.code == "AMBIGUOUS_ASYNC_ENGINE_COMPLETION"

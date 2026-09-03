@@ -13,6 +13,7 @@ from .engine import (
 )
 from .model import (
     Module,
+    engine_completion_streams,
     stable_channel_handoff_id,
     stable_collective_release_id,
     stable_completion_id,
@@ -39,6 +40,7 @@ class AnchorStream:
         "BARRIER_RELEASE",
         "GROUP_COMPLETION",
         "CHANNEL_HANDOFF",
+        "ENGINE_COMPLETION",
     ]
     name: str
     anchors: tuple[str, ...]
@@ -128,6 +130,7 @@ class IncrementalCounters:
     barrier_release_streams: int = 0
     group_completion_streams: int = 0
     channel_handoff_streams: int = 0
+    engine_completion_streams: int = 0
     anchor_streams: int = 0
     anchors: int = 0
     n_ext: int = 0
@@ -155,6 +158,7 @@ class IncrementalCounters:
     collective_notifications: int = 0
     group_notifications: int = 0
     channel_notifications: int = 0
+    engine_notifications: int = 0
     frontier_exposures: int = 0
     phase_enable_checks: int = 0
     remaining_removals: int = 0
@@ -181,6 +185,7 @@ class IncrementalCounters:
             self.collective_notifications,
             self.group_notifications,
             self.channel_notifications,
+            self.engine_notifications,
             self.frontier_exposures,
             self.phase_enable_checks,
             self.remaining_removals,
@@ -196,6 +201,7 @@ class IncrementalCounters:
                 "barrier_release": self.barrier_release_streams,
                 "group_completion": self.group_completion_streams,
                 "channel_handoff": self.channel_handoff_streams,
+                "engine_completion": self.engine_completion_streams,
                 "total": self.anchor_streams,
             },
             "anchors": self.anchors,
@@ -218,6 +224,7 @@ class IncrementalCounters:
             "collective_notifications": self.collective_notifications,
             "group_notifications": self.group_notifications,
             "channel_notifications": self.channel_notifications,
+            "engine_notifications": self.engine_notifications,
             "frontier_exposures": self.frontier_exposures,
             "phase_enable_checks": self.phase_enable_checks,
             "remaining_removals": self.remaining_removals,
@@ -232,6 +239,12 @@ def build_anchor_streams(module: Module, anchor_ids: list[str]) -> tuple[AnchorS
     """Partition every checker anchor into its naturally ordered stream."""
 
     streams: list[AnchorStream] = []
+    explicit_engine_streams = engine_completion_streams(module)
+    engine_anchors = {
+        anchor
+        for anchors in explicit_engine_streams.values()
+        for anchor in anchors
+    }
     for actor in sorted(module.events_by_actor):
         anchors = tuple(event.id for event in module.events_by_actor[actor])
         if anchors:
@@ -290,14 +303,19 @@ def build_anchor_streams(module: Module, anchor_ids: list[str]) -> tuple[AnchorS
                         ).append((event.group_seq, identifier))
                 staged[event.resource] = 0
     for (resource, owner, protocol, completion_kind), group_items in sorted(groups.items()):
-        ordered = tuple(identifier for _sequence, identifier in sorted(group_items))
-        streams.append(
-            AnchorStream(
-                "GROUP_COMPLETION",
-                f"group:{protocol.lower()}:{resource}:{owner}:{completion_kind.lower()}",
-                ordered,
-            )
+        ordered = tuple(
+            identifier
+            for _sequence, identifier in sorted(group_items)
+            if identifier not in engine_anchors
         )
+        if ordered:
+            streams.append(
+                AnchorStream(
+                    "GROUP_COMPLETION",
+                    f"group:{protocol.lower()}:{resource}:{owner}:{completion_kind.lower()}",
+                    ordered,
+                )
+            )
 
     channels: dict[tuple[str, int], list[tuple[int, str]]] = {}
     for event in module.events:
@@ -323,7 +341,12 @@ def build_anchor_streams(module: Module, anchor_ids: list[str]) -> tuple[AnchorS
         if event.type != "TmaLoadIssue":
             continue
         identifier = stable_completion_id(event.id, event.generation)
-        streams.append(AnchorStream("TMA_COMPLETION", f"tma:{identifier}", (identifier,)))
+        if identifier not in engine_anchors:
+            streams.append(AnchorStream("TMA_COMPLETION", f"tma:{identifier}", (identifier,)))
+
+    for engine, anchors in sorted(explicit_engine_streams.items()):
+        if anchors:
+            streams.append(AnchorStream("ENGINE_COMPLETION", f"engine:{engine}", anchors))
 
     covered = [anchor for stream in streams for anchor in stream.anchors]
     if len(covered) != len(set(covered)) or set(covered) != set(anchor_ids):
@@ -365,6 +388,7 @@ class ReadyIndex:
             stable_completion_id(event.id, event.generation)
             for event in executor.module.events if event.type == "TmaLoadIssue"
         }
+        self.tma_ids = tma_ids
         phase_resources: dict[str, str] = {}
         collective_resources: dict[str, str] = {}
         group_resources: dict[str, tuple[str, str, str]] = {}
@@ -400,6 +424,7 @@ class ReadyIndex:
                         event.logical_phase,
                     )
                 ] = (event.resource, event.slot)
+        self.group_resources = group_resources
         transitions: list[Transition] = [
             Transition(event.id, "PROGRAM", event=event) for event in executor.module.events
         ]
@@ -568,6 +593,14 @@ class ReadyIndex:
                 return
         self._queue(Transition(event.id, "PROGRAM", event=event))
 
+    def _refresh_tma_completion(self, completion: str) -> None:
+        self._deactivate(completion)
+        if (
+            completion in self.state.pending_completions
+            and self.executor._engine_completion_ready(self.state, completion)
+        ):
+            self._queue(Transition(completion, "TMA_COMPLETION"))
+
     def _refresh_phase(self, resource: str) -> None:
         self.counters.phase_enable_checks += 1
         old = self.phase_ready.pop(resource, None)
@@ -619,6 +652,7 @@ class ReadyIndex:
                 owner,
                 completion_kind,
                 group_state,
+                self.state,
             )
             if transition is not None:
                 self.group_ready[key] = transition.id
@@ -691,7 +725,15 @@ class ReadyIndex:
             for actor in waiters:
                 self._assess_actor(actor)
         for completion in delta.spawned_completions:
-            self._queue(Transition(completion, "TMA_COMPLETION"))
+            self._refresh_tma_completion(completion)
+        for completion in delta.retired_completions:
+            for successor in self.executor.engine_successors.get(completion, ()):
+                self.counters.engine_notifications += 1
+                if successor in self.tma_ids:
+                    self._refresh_tma_completion(successor)
+                else:
+                    resource, owner, _completion_kind = self.group_resources[successor]
+                    self._refresh_group(resource, owner)
         for resource in sorted(delta.changed_resources):
             self._refresh_resource(resource)
         for resource in sorted(delta.changed_collectives):
@@ -733,6 +775,7 @@ class IncrementalEngine:
             barrier_release_streams=sum(stream.kind == "BARRIER_RELEASE" for stream in self.streams),
             group_completion_streams=sum(stream.kind == "GROUP_COMPLETION" for stream in self.streams),
             channel_handoff_streams=sum(stream.kind == "CHANNEL_HANDOFF" for stream in self.streams),
+            engine_completion_streams=sum(stream.kind == "ENGINE_COMPLETION" for stream in self.streams),
             anchor_streams=len(self.streams),
             anchors=len(anchor_ids),
             n_ext=len(anchor_ids) + sum(len(event.depends_on) for event in executor.module.events),

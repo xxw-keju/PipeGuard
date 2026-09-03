@@ -189,6 +189,83 @@ def stable_channel_handoff_id(resource_id: str, slot: int, logical_phase: int) -
     )
 
 
+def engine_completion_streams(module: Module) -> dict[str, tuple[str, ...]]:
+    """Lift explicit issue order into finite typed completion streams."""
+
+    terminal_by_issue: dict[str, str] = {}
+    for event in module.events:
+        if event.type == "TmaLoadIssue":
+            assert event.generation is not None
+            terminal_by_issue[event.id] = stable_completion_id(event.id, event.generation)
+
+    terminal_kinds = {
+        "CpAsyncCommitGroup": ("CP_ASYNC", "GROUP_COMPLETE"),
+        "WgmmaCommitGroup": ("WGMMA", "RESULT_READY"),
+        "TmaStoreCommitGroup": ("TMA_STORE", "GLOBAL_COMPLETE"),
+    }
+    issue_types = {"CpAsyncIssue", "WgmmaIssue", "TmaStoreIssue"}
+    for actor in sorted(module.events_by_actor):
+        staged: dict[str, list[str]] = {}
+        for event in module.events_by_actor[actor]:
+            if event.type in issue_types:
+                assert event.resource is not None
+                if event.type != "CpAsyncIssue" or event.predicate:
+                    staged.setdefault(event.resource, []).append(event.id)
+                continue
+            terminal = terminal_kinds.get(event.type)
+            if terminal is None:
+                continue
+            assert event.resource is not None and event.group_owner is not None
+            assert event.group_seq is not None
+            protocol, completion_kind = terminal
+            completion = stable_group_completion_id(
+                protocol,
+                event.group_owner,
+                event.group_seq,
+                completion_kind,
+            )
+            for issue in staged.pop(event.resource, []):
+                terminal_by_issue[issue] = completion
+
+    engine_events: dict[str, list[Event]] = {}
+    for event in module.events:
+        if event.engine_id is not None:
+            engine_events.setdefault(event.engine_id, []).append(event)
+
+    streams: dict[str, tuple[str, ...]] = {}
+    endpoint_engines: dict[str, str] = {}
+    for engine, events in sorted(engine_events.items()):
+        endpoints: list[str] = []
+        seen: set[str] = set()
+        for event in sorted(events, key=lambda item: (item.engine_seq, item.id)):
+            endpoint = terminal_by_issue.get(event.id)
+            if endpoint is None:
+                raise PGIRError(
+                    "ASYNC_ENGINE_COMPLETION_UNRESOLVED",
+                    "explicit async-engine issue has no statically resolved terminal completion",
+                    {"engine": engine, "event": event.id},
+                )
+            previous_engine = endpoint_engines.setdefault(endpoint, engine)
+            if previous_engine != engine:
+                raise PGIRError(
+                    "AMBIGUOUS_ASYNC_ENGINE_COMPLETION",
+                    "one typed completion endpoint cannot belong to multiple async engines",
+                    {"completion": endpoint, "engines": sorted({previous_engine, engine})},
+                )
+            if endpoints and endpoints[-1] == endpoint:
+                continue
+            if endpoint in seen:
+                raise PGIRError(
+                    "AMBIGUOUS_ASYNC_ENGINE_COMPLETION",
+                    "one typed completion endpoint cannot reappear non-contiguously in an engine stream",
+                    {"engine": engine, "completion": endpoint},
+                )
+            endpoints.append(endpoint)
+            seen.add(endpoint)
+        streams[engine] = tuple(endpoints)
+    return streams
+
+
 def stable_digest(data: dict[str, Any]) -> str:
     canonical = json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
     return hashlib.sha256(canonical.encode()).hexdigest()
@@ -799,6 +876,7 @@ def _semantic_validate(module: Module) -> None:
                 "explicit async-engine sequence must be unique, gap-free, and start at zero",
                 {"engine": engine_id, "sequence": sequence},
             )
+    engine_completion_streams(module)
 
     commit_streams: dict[tuple[str, str], list[Event]] = {}
     for event in module.events:
