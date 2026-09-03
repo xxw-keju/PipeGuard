@@ -90,7 +90,7 @@ The data checker constructs a full-boundary PDG with program-order, explicit dep
 
 ## Assurance scope
 
-See [`ASSURANCE.md`](ASSURANCE.md) for the exact theorem domain, the independent 460-program raw NVIDIA-validity enumeration, SAFE-program PDG comparison, and operation-count complexity certificate. The held-anchor theorem applies to the fresh, transaction-free mbarrier core with its static actor and phase streams. Transaction completions, multi-lifecycle behavior, CTA/cluster collective releases, cp.async groups, WGMMA/TMA-store typed endpoints, channel handoff streams, and explicit async-engine ordering are supported by the implementation and covered by focused tests, but are stated conservatively as extensions crosschecked against memoized all-state exploration of the same operational FSM rather than as part of that theorem.
+See [`ASSURANCE.md`](ASSURANCE.md) for the core theorem and 460-program raw NVIDIA-validity enumeration, and [`EXTENDED_ASSURANCE.md`](EXTENDED_ASSURANCE.md) for the separate finite SM90 protocol, PDG, typed-window, and `O(T_eff * N_ext)` argument plus its 65-case independent endpoint/visibility enumeration. The held-anchor theorem applies to the fresh, transaction-free mbarrier core with its static actor and phase streams. Transaction completions, multi-lifecycle behavior, CTA/cluster collective releases, cp.async groups, WGMMA/TMA-store typed endpoints, channel handoff streams, and explicit async-engine ordering are supported by the implementation and covered by focused tests, but are stated conservatively as extensions crosschecked against memoized all-state exploration of the same operational FSM rather than as part of that theorem.
 
 ## Deliberate unsupported scope
 

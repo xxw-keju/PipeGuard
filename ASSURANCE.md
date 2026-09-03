@@ -72,7 +72,7 @@ For the original core notation, where `T` is the actor count and `N` is the numb
 
 TMA transaction completion, lifecycle reuse, CTA/named/cluster barriers, cp.async groups, WGMMA and TMA-store typed endpoints, channels, proxy visibility, and explicit async-engine ordering use the same finite transition framework. They are covered by focused tests and maximal-versus-memoized-all-state crosschecks over the operational FSM.
 
-They are conservatively classified as tested protocol extensions, not as consequences of the Arrive/LogicalWait theorem. A full extension requires independent refinement/conformance arguments for completion fairness, closure order-independence, and typed visibility-aware access-window separation.
+They are not consequences of the Arrive/LogicalWait theorem. [`EXTENDED_ASSURANCE.md`](EXTENDED_ASSURANCE.md) gives the separate finite-product argument for completion fairness normalization, held-anchor trace absorption, full-boundary PDG exactness, and typed visibility-aware window separation in the validated exact domain. The 65-case independent endpoint/visibility enumeration checks each extension class against both execution engines.
 
 ## Frontend obligation
 
