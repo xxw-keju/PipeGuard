@@ -6,7 +6,7 @@ import sys
 from typing import Any
 
 from .checker import check_module
-from .frontends import FrontendError, load_tilelang_snapshot
+from .frontends import FrontendError, load_tilelang_snapshot, load_triton_snapshot
 from .model import PGIRError, load_module, normalize_module, stable_digest
 
 
@@ -49,6 +49,8 @@ def _load_input(path: str, frontend: str):
         return load_module(path)
     if frontend == "tilelang":
         return load_tilelang_snapshot(path)
+    if frontend == "triton":
+        return load_triton_snapshot(path)
     raise ValueError(f"unknown frontend: {frontend}")
 
 
@@ -60,7 +62,7 @@ def build_parser() -> argparse.ArgumentParser:
         child.add_argument("input", help="path to a PGIR or frontend snapshot JSON document")
         child.add_argument(
             "--frontend",
-            choices=("pgir", "tilelang"),
+            choices=("pgir", "tilelang", "triton"),
             default="pgir",
             help="input format (default: pgir)",
         )
