@@ -252,30 +252,41 @@ def build_anchor_streams(module: Module, anchor_ids: list[str]) -> tuple[AnchorS
         ordered = tuple(item[1] for item in sorted(collectives[resource].values()))
         streams.append(AnchorStream("BARRIER_RELEASE", f"barrier:{resource}", ordered))
 
-    groups: dict[tuple[str, str], list[tuple[int, str]]] = {}
+    groups: dict[tuple[str, str, str, str], list[tuple[int, str]]] = {}
+    resource_protocols = {resource.id: resource.protocol for resource in module.resources}
     for actor in sorted(module.events_by_actor):
         staged: dict[str, int] = {}
         for event in module.events_by_actor[actor]:
             if event.type == "CpAsyncIssue" and event.predicate:
                 staged[event.resource] = staged.get(event.resource, 0) + 1
-            elif event.type == "CpAsyncCommitGroup":
+            elif event.type == "WgmmaIssue":
+                staged[event.resource] = staged.get(event.resource, 0) + 1
+            elif event.type in {"CpAsyncCommitGroup", "WgmmaCommitGroup"}:
                 if staged.get(event.resource, 0):
-                    identifier = stable_group_completion_id(
-                        "CP_ASYNC",
-                        event.group_owner,
-                        event.group_seq,
-                        "GROUP_COMPLETE",
+                    protocol = resource_protocols[event.resource]
+                    completion_kinds = (
+                        ("GROUP_COMPLETE",)
+                        if protocol == "CP_ASYNC"
+                        else ("OPERANDS_RELEASED", "RESULT_READY")
                     )
-                    groups.setdefault((event.resource, event.group_owner), []).append(
-                        (event.group_seq, identifier)
-                    )
+                    for completion_kind in completion_kinds:
+                        identifier = stable_group_completion_id(
+                            protocol,
+                            event.group_owner,
+                            event.group_seq,
+                            completion_kind,
+                        )
+                        groups.setdefault(
+                            (event.resource, event.group_owner, protocol, completion_kind),
+                            [],
+                        ).append((event.group_seq, identifier))
                 staged[event.resource] = 0
-    for (resource, owner), group_items in sorted(groups.items()):
+    for (resource, owner, protocol, completion_kind), group_items in sorted(groups.items()):
         ordered = tuple(identifier for _sequence, identifier in sorted(group_items))
         streams.append(
             AnchorStream(
                 "GROUP_COMPLETION",
-                f"group:cp_async:{resource}:{owner}",
+                f"group:{protocol.lower()}:{resource}:{owner}:{completion_kind.lower()}",
                 ordered,
             )
         )
@@ -313,7 +324,7 @@ class ReadyIndex:
         self.held_candidates: dict[str, Transition] = {}
         self.phase_ready: dict[str, str] = {}
         self.collective_ready: dict[str, str] = {}
-        self.group_ready: dict[tuple[str, str], str] = {}
+        self.group_ready: dict[tuple[str, str, str], str] = {}
         self.actor_dependencies: dict[str, set[str]] = {}
         self.dependency_waiters: dict[str, set[str]] = {}
         self.actor_resource: dict[str, str] = {}
@@ -327,7 +338,7 @@ class ReadyIndex:
         }
         phase_resources: dict[str, str] = {}
         collective_resources: dict[str, str] = {}
-        group_resources: dict[str, tuple[str, str]] = {}
+        group_resources: dict[str, tuple[str, str, str]] = {}
         for event in executor.module.events:
             if event.resource is not None and event.generation is not None:
                 phase_resources[stable_phase_id(event.resource, event.lifecycle_epoch, event.generation)] = event.resource
@@ -335,15 +346,22 @@ class ReadyIndex:
                 collective_resources[
                     stable_collective_release_id(event.resource, event.invocation_id)
                 ] = event.resource
-            if event.type == "CpAsyncCommitGroup":
-                group_resources[
-                    stable_group_completion_id(
-                        "CP_ASYNC",
-                        event.group_owner,
-                        event.group_seq,
-                        "GROUP_COMPLETE",
-                    )
-                ] = (event.resource, event.group_owner)
+            if event.type in {"CpAsyncCommitGroup", "WgmmaCommitGroup"}:
+                protocol = executor.module.resource_map[event.resource].protocol
+                completion_kinds = (
+                    ("GROUP_COMPLETE",)
+                    if protocol == "CP_ASYNC"
+                    else ("OPERANDS_RELEASED", "RESULT_READY")
+                )
+                for completion_kind in completion_kinds:
+                    group_resources[
+                        stable_group_completion_id(
+                            protocol,
+                            event.group_owner,
+                            event.group_seq,
+                            completion_kind,
+                        )
+                    ] = (event.resource, event.group_owner, completion_kind)
         transitions: list[Transition] = [
             Transition(event.id, "PROGRAM", event=event) for event in executor.module.events
         ]
@@ -357,13 +375,14 @@ class ReadyIndex:
             elif identifier in collective_resources:
                 transitions.append(Transition(identifier, "BARRIER_RELEASE", resource=collective_resources[identifier]))
             elif identifier in group_resources:
-                resource, owner = group_resources[identifier]
+                resource, owner, completion_kind = group_resources[identifier]
                 transitions.append(
                     Transition(
                         identifier,
                         "GROUP_COMPLETION",
                         resource=resource,
                         owner=owner,
+                        completion_kind=completion_kind,
                     )
                 )
             else:
@@ -453,9 +472,16 @@ class ReadyIndex:
                 self.blocked_waits.setdefault(event.resource, set()).add(actor)
                 self.counters.wait_registrations += 1
                 return
-        if event.type == "CpAsyncWaitGroup":
+        if event.type in {"CpAsyncWaitGroup", "WgmmaWaitGroup"}:
+            completion_kind = (
+                "GROUP_COMPLETE"
+                if event.type == "CpAsyncWaitGroup"
+                else event.completion_kind
+            )
             status = self.executor._group_wait_status(
-                event, self.state.groups[event.resource]
+                event,
+                self.state.groups[event.resource],
+                completion_kind,
             )
             if status == "BLOCKED":
                 self.blocked_waits.setdefault(event.resource, set()).add(actor)
@@ -509,21 +535,24 @@ class ReadyIndex:
 
     def _refresh_group(self, resource: str, owner: str) -> None:
         self.counters.group_notifications += 1
-        key = (resource, owner)
-        old = self.group_ready.pop(key, None)
-        if old is not None:
-            self._deactivate(old)
-        transition = self.executor._group_transition(
-            resource,
-            owner,
-            self.state.groups[resource],
-        )
-        if transition is not None:
-            self.group_ready[key] = transition.id
-            self._queue(transition)
+        group_state = self.state.groups[resource]
+        for completion_kind in group_state.completion_kinds:
+            key = (resource, owner, completion_kind)
+            old = self.group_ready.pop(key, None)
+            if old is not None:
+                self._deactivate(old)
+            transition = self.executor._group_transition(
+                resource,
+                owner,
+                completion_kind,
+                group_state,
+            )
+            if transition is not None:
+                self.group_ready[key] = transition.id
+                self._queue(transition)
         if owner in self.resource_followers.get(resource, set()):
             event = self.executor._frontier_event(self.state, owner)
-            if event is not None and event.type == "CpAsyncWaitGroup":
+            if event is not None and event.type in {"CpAsyncWaitGroup", "WgmmaWaitGroup"}:
                 self.counters.wait_notifications += 1
             self._assess_actor(owner)
 

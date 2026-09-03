@@ -174,7 +174,7 @@ def test_unknown_and_known_unimplemented_events_are_distinct_and_fail_closed():
     assert unknown.value.code == "UNKNOWN_EVENT"
 
     raw = json.loads((FIXTURES / "unknown_event.json").read_text())
-    raw["events"][0]["type"] = "WgmmaIssue"
+    raw["events"][0]["type"] = "TmaStoreIssue"
     with pytest.raises(PGIRError) as known:
         module_from_dict(raw)
     assert known.value.code == "KNOWN_EVENT_UNSUPPORTED"
@@ -1583,3 +1583,268 @@ def test_cp_async_incremental_work_scales_linearly_by_count():
     large = reports[32]["statistics"]
     assert large["transition_attempts"] == 2 * small["transition_attempts"]
     assert large["scheduler_work_units"] <= 2 * small["scheduler_work_units"] + 16
+
+
+def wgmma_module(
+    wait_operands: bool = True,
+    wait_result: bool = True,
+    overwrite_operand: bool = True,
+    read_accumulator: bool = True,
+):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["actors"] = [{
+        "id": "wg",
+        "kind": "WARPGROUP",
+        "participants": list(range(128)),
+    }]
+    raw["target"]["cta_threads"] = 128
+    raw["resources"] = [{
+        "id": "mma",
+        "kind": "async_group",
+        "participants": ["wg"],
+        "capacity": 8,
+        "protocol": "WGMMA",
+        "scope": "CTA",
+    }]
+    raw["regions"] = [
+        {
+            "id": "operand",
+            "allocation_id": "shared-operand",
+            "address_space": "SHARED",
+            "offset": 0,
+            "extent": 64,
+        },
+        {
+            "id": "accumulator",
+            "allocation_id": "register-accumulator",
+            "address_space": "REGISTER",
+            "offset": 0,
+            "extent": 64,
+        },
+    ]
+    events = [
+        {
+            "id": "fence",
+            "type": "WgmmaFenceOperand",
+            "actor": "wg",
+            "seq": 0,
+            "resource": "mma",
+            "group_owner": "wg",
+            "regions": ["operand"],
+        },
+        {
+            "id": "mma_issue",
+            "type": "WgmmaIssue",
+            "actor": "wg",
+            "seq": 1,
+            "resource": "mma",
+            "group_owner": "wg",
+            "regions": ["operand"],
+            "destination_region": "accumulator",
+        },
+        {
+            "id": "mma_commit",
+            "type": "WgmmaCommitGroup",
+            "actor": "wg",
+            "seq": 2,
+            "resource": "mma",
+            "group_owner": "wg",
+            "group_seq": 0,
+        },
+    ]
+    if wait_operands:
+        events.append({
+            "id": "wait_operands",
+            "type": "WgmmaWaitGroup",
+            "actor": "wg",
+            "seq": len(events),
+            "resource": "mma",
+            "group_owner": "wg",
+            "wait_group_count": 0,
+            "completion_kind": "OPERANDS_RELEASED",
+        })
+    if overwrite_operand:
+        events.append({
+            "id": "operand_overwrite",
+            "type": "MemWrite",
+            "actor": "wg",
+            "seq": len(events),
+            "region": "operand",
+        })
+    if wait_result:
+        events.append({
+            "id": "wait_result",
+            "type": "WgmmaWaitGroup",
+            "actor": "wg",
+            "seq": len(events),
+            "resource": "mma",
+            "group_owner": "wg",
+            "wait_group_count": 0,
+            "completion_kind": "RESULT_READY",
+        })
+    if read_accumulator:
+        events.append({
+            "id": "accumulator_read",
+            "type": "MemRead",
+            "actor": "wg",
+            "seq": len(events),
+            "region": "accumulator",
+        })
+    raw["events"] = events
+    return module_from_dict(raw)
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_wgmma_typed_endpoints_close_their_own_windows(engine):
+    result = check_module(wgmma_module(), engine=engine)
+    assert result["verdict"] == "SAFE"
+    operands = stable_group_completion_id("WGMMA", "wg", 0, "OPERANDS_RELEASED")
+    result_ready = stable_group_completion_id("WGMMA", "wg", 0, "RESULT_READY")
+    edges = result["artifacts"]["pdg"]["edges"]
+    assert {"from": operands, "to": "wait_operands", "kind": "COMPLETION_TO_WAIT"} in edges
+    assert {"from": result_ready, "to": "wait_result", "kind": "COMPLETION_TO_WAIT"} in edges
+    anchors = {item["anchor"] for item in result["artifacts"]["boundaries"]}
+    assert {operands, result_ready}.issubset(anchors)
+
+
+def test_wgmma_result_ready_does_not_release_shared_operands():
+    result = check_module(
+        wgmma_module(wait_operands=False, wait_result=True, read_accumulator=False),
+        engine="crosscheck",
+    )
+    assert result["verdict"] == "DATA_HAZARD"
+    operand_effect = next(
+        effect for effect in result["witness"]["effects"]
+        if effect["id"] == "effect:mma_issue:operand:0"
+    )
+    assert operand_effect["window"][1].endswith("operands_released")
+
+
+def test_wgmma_operands_released_does_not_make_result_ready():
+    result = check_module(
+        wgmma_module(wait_result=False, overwrite_operand=False, read_accumulator=True),
+        engine="crosscheck",
+    )
+    assert result["verdict"] == "DATA_HAZARD"
+    accumulator = next(
+        effect for effect in result["witness"]["effects"]
+        if effect["id"] == "effect:mma_issue:accumulator"
+    )
+    assert accumulator["window"][1].endswith("result_ready")
+
+
+def test_wgmma_missing_operand_fence_has_protocol_witness():
+    raw = json.loads(json.dumps(wgmma_module().raw))
+    raw["events"] = [event for event in raw["events"] if event["id"] != "fence"]
+    for seq, event in enumerate(raw["events"]):
+        event["seq"] = seq
+    result = check_module(module_from_dict(raw), engine="crosscheck")
+    assert result["verdict"] == "SYNC_HAZARD"
+    assert result["diagnostics"][0]["code"] == "WGMMA_OPERAND_FENCE_MISSING"
+    assert result["witness"]["protocol_state"]["missing_operand_fence_regions"] == ["operand"]
+
+
+def test_wgmma_requires_complete_warpgroup_and_typed_wait_endpoint():
+    raw = json.loads(json.dumps(wgmma_module().raw))
+    raw["actors"][0]["participants"] = list(range(127))
+    with pytest.raises(PGIRError) as participants:
+        module_from_dict(raw)
+    assert participants.value.code == "INVALID_WGMMA_PARTICIPANTS"
+
+    raw = json.loads(json.dumps(wgmma_module().raw))
+    next(event for event in raw["events"] if event["id"] == "wait_result")["completion_kind"] = "GROUP_COMPLETE"
+    with pytest.raises(PGIRError) as endpoint:
+        module_from_dict(raw)
+    assert endpoint.value.code == "INVALID_WGMMA_WAIT_ENDPOINT"
+
+
+def test_wgmma_empty_group_is_fail_closed_without_ptx_contract():
+    raw = json.loads(json.dumps(wgmma_module().raw))
+    raw["events"] = [
+        next(event for event in raw["events"] if event["id"] == "mma_commit"),
+        next(event for event in raw["events"] if event["id"] == "wait_result"),
+    ]
+    for seq, event in enumerate(raw["events"]):
+        event["seq"] = seq
+    with pytest.raises(PGIRError) as empty:
+        module_from_dict(raw)
+    assert empty.value.code == "UNSUPPORTED_EMPTY_WGMMA_GROUP"
+
+
+def test_wgmma_endpoint_replay_is_failure_atomic():
+    executor = Executor(wgmma_module(
+        wait_operands=False,
+        wait_result=False,
+        overwrite_operand=False,
+        read_accumulator=False,
+    ))
+    state = executor.initial_state()
+    for identifier in ("fence", "mma_issue", "mma_commit"):
+        executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
+    endpoint = next(
+        item for item in executor.enabled(state)
+        if item.kind == "GROUP_COMPLETION" and item.completion_kind == "RESULT_READY"
+    )
+    executor.apply(state, endpoint)
+    before = executor.fingerprint(state)
+    with pytest.raises(ProtocolError) as caught:
+        executor.apply(state, endpoint)
+    assert caught.value.code == "INVALID_GROUP_COMPLETION_TRANSITION"
+    assert executor.fingerprint(state) == before
+
+
+def test_wgmma_maximal_uses_two_delta_driven_endpoint_streams(monkeypatch):
+    module = wgmma_module()
+    streams = [
+        stream for stream in build_anchor_streams(module, _anchor_ids(module))
+        if stream.kind == "GROUP_COMPLETION"
+    ]
+    assert len(streams) == 2
+
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError("reference scan/clone reached from WGMMA maximal engine")
+
+    monkeypatch.setattr(Executor, "enabled", forbidden)
+    monkeypatch.setattr(ExecutionState, "clone", forbidden)
+    result = check_module(module, engine="maximal")
+    assert result["verdict"] == "SAFE"
+    assert result["statistics"]["group_completion_streams"] == 2
+    assert result["statistics"]["full_enabled_scans"] == 0
+    assert result["statistics"]["state_clones"] == 0
+
+
+def test_wgmma_capacity_counts_every_unfinished_endpoint():
+    raw = json.loads(json.dumps(wgmma_module(
+        wait_operands=False,
+        overwrite_operand=False,
+        read_accumulator=False,
+    ).raw))
+    raw["resources"][0]["capacity"] = 1
+    wait_result = next(event for event in raw["events"] if event["id"] == "wait_result")
+    wait_result["seq"] = 3
+    raw["events"].extend([
+        {
+            "id": "mma_issue1",
+            "type": "WgmmaIssue",
+            "actor": "wg",
+            "seq": 4,
+            "resource": "mma",
+            "group_owner": "wg",
+            "regions": ["operand"],
+            "destination_region": "accumulator",
+        },
+        {
+            "id": "mma_commit1",
+            "type": "WgmmaCommitGroup",
+            "actor": "wg",
+            "seq": 5,
+            "resource": "mma",
+            "group_owner": "wg",
+            "group_seq": 1,
+        },
+    ])
+    module = module_from_dict(raw)
+    for engine in ("maximal", "exhaustive", "crosscheck"):
+        result = check_module(module, engine=engine)
+        assert result["verdict"] == "SYNC_HAZARD"
+        assert result["diagnostics"][0]["code"] == "COMMIT_GROUP_CAPACITY_EXCEEDED"

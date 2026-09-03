@@ -12,13 +12,14 @@ import jsonschema
 from .protocols import RESOURCE_KINDS, VisibilityMask
 
 IMPLEMENTED_RESOURCE_KINDS = frozenset({"mbarrier", "cta_barrier", "named_barrier", "async_group"})
-IMPLEMENTED_ASYNC_PROTOCOLS = frozenset({"CP_ASYNC"})
+IMPLEMENTED_ASYNC_PROTOCOLS = frozenset({"CP_ASYNC", "WGMMA"})
 
 IMPLEMENTED_EVENTS = frozenset({
     "MemRead", "MemWrite", "BarrierArrive", "BarrierObserve",
     "MBarrierInit", "MBarrierInvalidate", "MBarrierArrive", "MBarrierExpectTx",
     "MBarrierArriveExpectTx", "MBarrierWaitParity", "TmaLoadIssue",
     "CpAsyncIssue", "CpAsyncCommitGroup", "CpAsyncWaitGroup",
+    "WgmmaFenceOperand", "WgmmaIssue", "WgmmaCommitGroup", "WgmmaWaitGroup",
 })
 KNOWN_UNSUPPORTED_EVENTS = frozenset({
     "AtomicReadModifyWrite", "Fork", "Join", "BarrierRelease",
@@ -26,8 +27,7 @@ KNOWN_UNSUPPORTED_EVENTS = frozenset({
     "CpAsyncGroupComplete",
     "TmaLoadComplete", "TmaStoreIssue", "TmaStoreSourceReleased",
     "TmaStoreGlobalComplete", "TmaStoreCommitGroup", "TmaStoreWaitGroup",
-    "WgmmaFenceOperand", "WgmmaIssue", "WgmmaCommitGroup", "WgmmaResultReady",
-    "WgmmaOperandsReleased", "WgmmaWaitGroup", "ProxyFence", "ChannelCreate",
+    "WgmmaResultReady", "WgmmaOperandsReleased", "ProxyFence", "ChannelCreate",
     "ProducerAcquire", "ProducerCommit", "ConsumerWait", "ConsumerRelease",
 })
 
@@ -249,7 +249,11 @@ def _unique(kind: str, values: list[str]) -> None:
 
 
 def _require(event: Event, *fields: str) -> None:
-    missing = [name for name in fields if getattr(event, name) is None]
+    missing = [
+        name for name in fields
+        if getattr(event, name) is None
+        or (name == "regions" and not getattr(event, name))
+    ]
     if missing:
         raise PGIRError("EVENT_FIELDS_MISSING", f"{event.type} requires {', '.join(missing)}", {"event": event.id, "fields": missing})
 
@@ -378,27 +382,58 @@ def _semantic_validate(module: Module) -> None:
                     "async-group protocol is not implemented yet",
                     {"resource": resource.id, "protocol": resource.protocol},
                 )
-            if resource.protocol == "CP_ASYNC" and resource.capacity > 8:
+            if resource.protocol in {"CP_ASYNC", "WGMMA"} and resource.capacity > 8:
+                code = (
+                    "CP_ASYNC_CAPACITY_UNSUPPORTED"
+                    if resource.protocol == "CP_ASYNC"
+                    else "WGMMA_CAPACITY_UNSUPPORTED"
+                )
                 raise PGIRError(
-                    "CP_ASYNC_CAPACITY_UNSUPPORTED",
-                    "cp.async supports at most eight uncompleted committed groups",
+                    code,
+                    f"{resource.protocol.lower()} supports at most eight uncompleted committed groups",
                     {"resource": resource.id, "capacity": resource.capacity},
                 )
+            if resource.protocol == "WGMMA":
+                participant_lanes = [
+                    lane
+                    for owner in resource.participants
+                    for lane in actors[owner].participants
+                ]
+                if len(participant_lanes) != len(set(participant_lanes)):
+                    raise PGIRError(
+                        "OVERLAPPING_WGMMA_PARTICIPANTS",
+                        "WGMMA owner warpgroups must have disjoint lane sets",
+                        {"resource": resource.id},
+                    )
+                for owner in resource.participants:
+                    actor = actors[owner]
+                    lanes = tuple(sorted(actor.participants))
+                    if (
+                        actor.kind != "WARPGROUP"
+                        or len(lanes) != 128
+                        or lanes != tuple(range(lanes[0], lanes[0] + 128))
+                        or lanes[0] % 128 != 0
+                    ):
+                        raise PGIRError(
+                            "INVALID_WGMMA_PARTICIPANTS",
+                            "WGMMA owners must be complete aligned 128-lane warpgroups",
+                            {"resource": resource.id, "owner": owner, "lanes": list(lanes)},
+                        )
 
-    cp_async_owners: dict[str, list[str]] = {}
+    group_owners: dict[tuple[str, str], list[str]] = {}
     for resource in module.resources:
-        if resource.kind == "async_group" and resource.protocol == "CP_ASYNC":
+        if resource.kind == "async_group" and resource.protocol in IMPLEMENTED_ASYNC_PROTOCOLS:
             for owner in resource.participants:
-                cp_async_owners.setdefault(owner, []).append(resource.id)
+                group_owners.setdefault((resource.protocol, owner), []).append(resource.id)
     ambiguous_owners = {
-        owner: sorted(resource_ids)
-        for owner, resource_ids in cp_async_owners.items()
+        f"{protocol}:{owner}": sorted(resource_ids)
+        for (protocol, owner), resource_ids in group_owners.items()
         if len(resource_ids) > 1
     }
     if ambiguous_owners:
         raise PGIRError(
             "AMBIGUOUS_GROUP_OWNER_RESOURCE",
-            "one cp.async owner cannot span multiple async-group resources in PGIR v1",
+            "one protocol owner cannot span multiple async-group resources in PGIR v1",
             {"owners": ambiguous_owners},
         )
 
@@ -409,6 +444,10 @@ def _semantic_validate(module: Module) -> None:
         "CpAsyncIssue": ("resource", "source_region", "destination_region", "bytes", "group_owner"),
         "CpAsyncCommitGroup": ("resource", "group_owner", "group_seq"),
         "CpAsyncWaitGroup": ("resource", "group_owner", "wait_group_count"),
+        "WgmmaFenceOperand": ("resource", "group_owner", "regions"),
+        "WgmmaIssue": ("resource", "group_owner", "regions", "destination_region"),
+        "WgmmaCommitGroup": ("resource", "group_owner", "group_seq"),
+        "WgmmaWaitGroup": ("resource", "group_owner", "wait_group_count", "completion_kind"),
         "MBarrierInit": ("resource", "count", "lifecycle_epoch"), "MBarrierInvalidate": ("resource", "lifecycle_epoch"),
         "MBarrierArrive": ("resource", "count", "lifecycle_epoch", "generation"),
         "MBarrierExpectTx": ("resource", "bytes", "lifecycle_epoch", "generation"),
@@ -427,6 +466,15 @@ def _semantic_validate(module: Module) -> None:
         },
         "CpAsyncCommitGroup": {"resource", "group_owner", "group_seq"},
         "CpAsyncWaitGroup": {"resource", "group_owner", "wait_group_count"},
+        "WgmmaFenceOperand": {"resource", "group_owner", "regions"},
+        "WgmmaIssue": {
+            "resource", "group_owner", "regions", "destination_region",
+            "engine_id", "engine_seq",
+        },
+        "WgmmaCommitGroup": {"resource", "group_owner", "group_seq"},
+        "WgmmaWaitGroup": {
+            "resource", "group_owner", "wait_group_count", "completion_kind",
+        },
         "MBarrierInit": {"resource", "count", "lifecycle_epoch"}, "MBarrierInvalidate": {"resource", "lifecycle_epoch"},
         "MBarrierArrive": {"lifecycle_epoch", "resource", "count", "generation", "predicate"},
         "MBarrierExpectTx": {"lifecycle_epoch", "resource", "bytes", "generation"},
@@ -524,6 +572,52 @@ def _semantic_validate(module: Module) -> None:
                     "cp.async requires an explicit global source and shared destination",
                     {"event": event.id},
                 )
+        elif event.type in {
+            "WgmmaFenceOperand",
+            "WgmmaIssue",
+            "WgmmaCommitGroup",
+            "WgmmaWaitGroup",
+        }:
+            resource = resources[event.resource]
+            if resource.kind != "async_group" or resource.protocol != "WGMMA":
+                raise PGIRError(
+                    "RESOURCE_KIND_MISMATCH",
+                    "WGMMA event must reference a WGMMA group resource",
+                    {"event": event.id, "resource": event.resource, "kind": resource.kind, "protocol": resource.protocol},
+                )
+            if event.group_owner != event.actor:
+                raise PGIRError(
+                    "GROUP_OWNER_MISMATCH",
+                    "WGMMA groups are owned by the issuing warpgroup actor",
+                    {"event": event.id, "actor": event.actor, "group_owner": event.group_owner},
+                )
+            if event.type in {"WgmmaFenceOperand", "WgmmaIssue"} and any(
+                regions[region].address_space != "SHARED" for region in event.regions
+            ):
+                raise PGIRError(
+                    "UNSUPPORTED_WGMMA_OPERAND_REGION",
+                    "WGMMA operands must be explicit shared-memory regions",
+                    {"event": event.id, "regions": list(event.regions)},
+                )
+            if event.type == "WgmmaIssue" and regions[event.destination_region].address_space != "REGISTER":
+                raise PGIRError(
+                    "UNSUPPORTED_WGMMA_ACCUMULATOR_REGION",
+                    "WGMMA accumulator output must be an explicit register region",
+                    {"event": event.id, "region": event.destination_region},
+                )
+            if event.type == "WgmmaWaitGroup":
+                if event.wait_group_count >= resource.capacity:
+                    raise PGIRError(
+                        "WAIT_GROUP_COUNT_OUT_OF_RANGE",
+                        "WGMMA wait_group count must be smaller than the group capacity",
+                        {"event": event.id, "wait_group_count": event.wait_group_count, "capacity": resource.capacity},
+                    )
+                if event.completion_kind not in {"OPERANDS_RELEASED", "RESULT_READY"}:
+                    raise PGIRError(
+                        "INVALID_WGMMA_WAIT_ENDPOINT",
+                        "WGMMA wait must explicitly select operands released or result ready",
+                        {"event": event.id, "completion_kind": event.completion_kind},
+                    )
         elif event.resource is not None and resources[event.resource].kind != "mbarrier":
             raise PGIRError(
                 "RESOURCE_KIND_MISMATCH",
@@ -566,7 +660,7 @@ def _semantic_validate(module: Module) -> None:
 
     commit_streams: dict[tuple[str, str], list[Event]] = {}
     for event in module.events:
-        if event.type == "CpAsyncCommitGroup":
+        if event.type in {"CpAsyncCommitGroup", "WgmmaCommitGroup"}:
             commit_streams.setdefault((event.resource, event.group_owner), []).append(event)
     for stream, commits in sorted(commit_streams.items()):
         commits.sort(key=lambda event: (event.group_seq, event.seq, event.id))
@@ -577,6 +671,20 @@ def _semantic_validate(module: Module) -> None:
                 "commit-group sequence must be unique, gap-free, and start at zero",
                 {"stream": stream, "sequence": sequence},
             )
+
+    for actor, trace in sorted(module.events_by_actor.items()):
+        staged_wgmma: dict[str, int] = {}
+        for event in trace:
+            if event.type == "WgmmaIssue":
+                staged_wgmma[event.resource] = staged_wgmma.get(event.resource, 0) + 1
+            elif event.type == "WgmmaCommitGroup":
+                if staged_wgmma.get(event.resource, 0) == 0:
+                    raise PGIRError(
+                        "UNSUPPORTED_EMPTY_WGMMA_GROUP",
+                        "empty WGMMA commit-group semantics are outside the supported NVIDIA-valid subset",
+                        {"event": event.id, "actor": actor, "resource": event.resource},
+                    )
+                staged_wgmma[event.resource] = 0
 
     wait_streams: dict[tuple[str, str, int, str], list[Event]] = {}
     canonical_stream_ids: dict[tuple[str, str, int], set[str]] = {}
@@ -665,6 +773,13 @@ def _semantic_validate(module: Module) -> None:
     } | {
         stable_group_id("CP_ASYNC", event.group_owner, event.group_seq)
         for event in module.events if event.type == "CpAsyncCommitGroup"
+    } | {
+        stable_group_completion_id("WGMMA", event.group_owner, event.group_seq, completion_kind)
+        for event in module.events if event.type == "WgmmaCommitGroup"
+        for completion_kind in ("OPERANDS_RELEASED", "RESULT_READY")
+    } | {
+        stable_group_id("WGMMA", event.group_owner, event.group_seq)
+        for event in module.events if event.type == "WgmmaCommitGroup"
     }
     collisions = sorted(synthetic_ids & events.keys())
     if collisions:

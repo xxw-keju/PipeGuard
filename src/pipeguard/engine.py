@@ -84,6 +84,7 @@ class Transition:
     event: Event | None = None
     resource: str | None = None
     owner: str | None = None
+    completion_kind: str | None = None
 
     def order_key(self) -> tuple[Any, ...]:
         if self.kind != "PROGRAM":
@@ -182,9 +183,15 @@ class Executor:
                     resource.protocol,
                     resource.participants,
                     resource.capacity,
+                    (
+                        ("GROUP_COMPLETE",)
+                        if resource.protocol == "CP_ASYNC"
+                        else ("OPERANDS_RELEASED", "RESULT_READY")
+                    ),
                 )
                 for resource in self.module.resources
-                if resource.kind == "async_group" and resource.protocol == "CP_ASYNC"
+                if resource.kind == "async_group"
+                and resource.protocol in {"CP_ASYNC", "WGMMA"}
             },
             remaining={key: set(event_ids) for key, event_ids in self.required_logical_waits.items()},
             observed=set(),
@@ -229,29 +236,40 @@ class Executor:
         self,
         resource_id: str,
         owner: str,
+        completion_kind: str,
         group_state: CommitGroupState,
     ) -> Transition | None:
-        pending = group_state.pending(owner)
+        pending = group_state.pending(owner, completion_kind)
         if not pending:
             return None
         group = pending[0]
         return Transition(
-            group.completion_id,
+            group.completion_id(completion_kind),
             "GROUP_COMPLETION",
             resource=resource_id,
             owner=owner,
+            completion_kind=completion_kind,
         )
 
     def _group_wait_status(
         self,
         event: Event,
         group_state: CommitGroupState,
+        completion_kind: str,
     ) -> Literal["READY", "BLOCKED", "INVALID"]:
         assert event.group_owner is not None and event.wait_group_count is not None
         if group_state.staged.get(event.group_owner):
             return "INVALID"
-        required = group_state.required_for_wait(event.group_owner, event.wait_group_count)
-        return "READY" if all(group.completed for group in required) else "BLOCKED"
+        required = group_state.required_for_wait(
+            event.group_owner,
+            event.wait_group_count,
+            completion_kind,
+        )
+        return (
+            "READY"
+            if all(group.is_completed(completion_kind) for group in required)
+            else "BLOCKED"
+        )
 
     def _wait_status(self, event: Event, barrier: BarrierState) -> Literal["READY", "BLOCKED", "INVALID"]:
         assert event.generation is not None and event.raw_parity is not None and event.parity_evidence is not None
@@ -281,9 +299,15 @@ class Executor:
         for resource_id in sorted(state.groups):
             group_state = state.groups[resource_id]
             for owner in sorted(group_state.participants):
-                transition = self._group_transition(resource_id, owner, group_state)
-                if transition is not None and transition.id != hold:
-                    result.append(transition)
+                for completion_kind in group_state.completion_kinds:
+                    transition = self._group_transition(
+                        resource_id,
+                        owner,
+                        completion_kind,
+                        group_state,
+                    )
+                    if transition is not None and transition.id != hold:
+                        result.append(transition)
         for actor in sorted(state.frontiers):
             event = self._frontier_event(state, actor)
             if event is None or event.id == hold or not set(event.depends_on).issubset(state.executed):
@@ -295,7 +319,15 @@ class Executor:
             ) == "BLOCKED":
                 continue
             if event.type == "CpAsyncWaitGroup" and self._group_wait_status(
-                event, state.groups[event.resource]
+                event,
+                state.groups[event.resource],
+                "GROUP_COMPLETE",
+            ) == "BLOCKED":
+                continue
+            if event.type == "WgmmaWaitGroup" and self._group_wait_status(
+                event,
+                state.groups[event.resource],
+                event.completion_kind,
             ) == "BLOCKED":
                 continue
             if event.resource is not None and event.generation is not None:
@@ -418,15 +450,24 @@ class Executor:
             )
 
         if transition.kind == "GROUP_COMPLETION":
-            if transition.resource is None or transition.owner is None:
+            if (
+                transition.resource is None
+                or transition.owner is None
+                or transition.completion_kind is None
+            ):
                 raise ProtocolError(
                     "INVALID_GROUP_COMPLETION_TRANSITION",
-                    "group completion lacks its resource or owner identity",
+                    "group completion lacks its resource, owner, or endpoint identity",
                     transition.id,
                 )
             group_state = state.groups.get(transition.resource)
             enabled_transition = (
-                self._group_transition(transition.resource, transition.owner, group_state)
+                self._group_transition(
+                    transition.resource,
+                    transition.owner,
+                    transition.completion_kind,
+                    group_state,
+                )
                 if group_state is not None
                 else None
             )
@@ -437,13 +478,16 @@ class Executor:
                 )
                 raise ProtocolError(
                     "INVALID_GROUP_COMPLETION_TRANSITION",
-                    "cp.async group completion is not the next enabled group for this owner",
+                    "group completion is not the next enabled endpoint for this owner",
                     transition.id,
                     snapshot,
                 )
-            group = group_state.pending(transition.owner)[0]
+            group = group_state.pending(
+                transition.owner,
+                transition.completion_kind,
+            )[0]
             edge = (group.group_id, transition.id, "GROUP_TO_COMPLETION")
-            group.completed = True
+            group.mark_completed(transition.completion_kind)
             state.completed_transitions.add(transition.id)
             state.dynamic_edges.add(edge)
             self._record(state, transition)
@@ -625,7 +669,7 @@ class Executor:
                     event.id,
                     snapshot,
                 )
-            if len(group_state.pending(event.group_owner)) >= group_state.capacity:
+            if len(group_state.pending_groups(event.group_owner)) >= group_state.capacity:
                 raise ProtocolError(
                     "COMMIT_GROUP_CAPACITY_EXCEEDED",
                     "cp.async cannot retain more uncompleted groups than its resource capacity",
@@ -641,7 +685,10 @@ class Executor:
             )
             if (
                 completion_id in state.completed_transitions
-                or any(group.completion_id == completion_id for group in group_state.groups(event.group_owner))
+                or any(
+                    completion_id in group.completion_ids.values()
+                    for group in group_state.groups(event.group_owner)
+                )
             ):
                 raise ProtocolError(
                     "DUPLICATE_GROUP_COMPLETION",
@@ -655,8 +702,8 @@ class Executor:
                 group_id,
                 event.id,
                 issues,
-                completion_id,
-                completed=not issues,
+                {"GROUP_COMPLETE": completion_id},
+                completed_endpoints={"GROUP_COMPLETE"} if not issues else set(),
             )
             edges = tuple(
                 [(event.id, group_id, "COMMIT_TO_GROUP")]
@@ -675,7 +722,11 @@ class Executor:
             assert event.resource is not None and event.group_owner is not None
             assert event.wait_group_count is not None
             group_state = state.groups[event.resource]
-            status = self._group_wait_status(event, group_state)
+            status = self._group_wait_status(
+                event,
+                group_state,
+                "GROUP_COMPLETE",
+            )
             if status == "INVALID":
                 raise ProtocolError(
                     "WAIT_BEFORE_COMMIT",
@@ -685,17 +736,160 @@ class Executor:
                 )
             if status == "BLOCKED":
                 raise AssertionError("blocked cp.async wait was applied")
-            old_frontier = group_state.observed_frontier.get(event.group_owner, -1)
-            required = group_state.required_for_wait(event.group_owner, event.wait_group_count)
+            completion_kind = "GROUP_COMPLETE"
+            old_frontier = group_state.observed_frontier(
+                event.group_owner,
+                completion_kind,
+            )
+            required = group_state.required_for_wait(
+                event.group_owner,
+                event.wait_group_count,
+                completion_kind,
+            )
             newly_observed = [group for group in required if group.sequence > old_frontier]
             edges = tuple(
-                (group.completion_id, event.id, "COMPLETION_TO_WAIT")
+                (group.completion_id(completion_kind), event.id, "COMPLETION_TO_WAIT")
                 for group in newly_observed
             )
             if required:
-                group_state.observed_frontier[event.group_owner] = max(
-                    old_frontier,
-                    required[-1].sequence,
+                group_state.set_observed_frontier(
+                    event.group_owner,
+                    completion_kind,
+                    max(old_frontier, required[-1].sequence),
+                )
+            state.dynamic_edges.update(edges)
+            added_edges = edges
+        elif event.type == "WgmmaFenceOperand":
+            assert event.resource is not None and event.group_owner is not None
+            group_state = state.groups[event.resource]
+            group_state.operand_fences.setdefault(event.group_owner, set()).update(event.regions)
+            changed_groups.add((event.resource, event.group_owner))
+        elif event.type == "WgmmaIssue":
+            assert event.resource is not None and event.group_owner is not None
+            group_state = state.groups[event.resource]
+            covered = group_state.operand_fences.get(event.group_owner, set())
+            missing = sorted(set(event.regions) - covered)
+            if missing:
+                snapshot = group_state.snapshot(event.group_owner)
+                snapshot["missing_operand_fence_regions"] = missing
+                raise ProtocolError(
+                    "WGMMA_OPERAND_FENCE_MISSING",
+                    "WGMMA issue requires a prior operand fence covering every shared operand",
+                    event.id,
+                    snapshot,
+                )
+            group_state.staged_operations(event.group_owner).append(event.id)
+            changed_groups.add((event.resource, event.group_owner))
+        elif event.type == "WgmmaCommitGroup":
+            assert event.resource is not None and event.group_owner is not None
+            assert event.group_seq is not None
+            group_state = state.groups[event.resource]
+            expected = group_state.next_group_seq.get(event.group_owner, 0)
+            if event.group_seq != expected:
+                code = "STALE_COMMIT_GROUP" if event.group_seq < expected else "FUTURE_COMMIT_GROUP"
+                snapshot = group_state.snapshot(event.group_owner)
+                snapshot["event_group_seq"] = event.group_seq
+                raise ProtocolError(
+                    code,
+                    "WGMMA commit sequence does not name the next group",
+                    event.id,
+                    snapshot,
+                )
+            if len(group_state.pending_groups(event.group_owner)) >= group_state.capacity:
+                raise ProtocolError(
+                    "COMMIT_GROUP_CAPACITY_EXCEEDED",
+                    "WGMMA cannot retain more result-pending groups than its resource capacity",
+                    event.id,
+                    group_state.snapshot(event.group_owner),
+                )
+            group_id = stable_group_id(group_state.protocol, event.group_owner, event.group_seq)
+            completion_ids = {
+                kind: stable_group_completion_id(
+                    group_state.protocol,
+                    event.group_owner,
+                    event.group_seq,
+                    kind,
+                )
+                for kind in group_state.completion_kinds
+            }
+            known_ids = {
+                identifier
+                for group in group_state.committed.get(event.group_owner, ())
+                for identifier in group.completion_ids.values()
+            }
+            duplicates = sorted(
+                identifier for identifier in completion_ids.values()
+                if identifier in state.completed_transitions or identifier in known_ids
+            )
+            if duplicates:
+                snapshot = group_state.snapshot(event.group_owner)
+                snapshot["duplicate_completion_ids"] = duplicates
+                raise ProtocolError(
+                    "DUPLICATE_GROUP_COMPLETION",
+                    "WGMMA group completion identity is not unique",
+                    event.id,
+                    snapshot,
+                )
+            issues = tuple(group_state.staged.get(event.group_owner, ()))
+            completed_endpoints = set(group_state.completion_kinds) if not issues else set()
+            group = CommittedGroup(
+                event.group_seq,
+                group_id,
+                event.id,
+                issues,
+                completion_ids,
+                completed_endpoints=completed_endpoints,
+            )
+            edges = tuple(
+                [(event.id, group_id, "COMMIT_TO_GROUP")]
+                + [(issue, group_id, "ISSUE_TO_GROUP") for issue in issues]
+                + (
+                    [
+                        (group_id, completion_ids[kind], "GROUP_TO_COMPLETION")
+                        for kind in group_state.completion_kinds
+                    ]
+                    if not issues else []
+                )
+            )
+            group_state.groups(event.group_owner).append(group)
+            group_state.staged[event.group_owner] = []
+            group_state.next_group_seq[event.group_owner] = expected + 1
+            if not issues:
+                state.completed_transitions.update(completion_ids.values())
+            state.dynamic_edges.update(edges)
+            added_edges = edges
+            changed_groups.add((event.resource, event.group_owner))
+        elif event.type == "WgmmaWaitGroup":
+            assert event.resource is not None and event.group_owner is not None
+            assert event.wait_group_count is not None and event.completion_kind is not None
+            group_state = state.groups[event.resource]
+            completion_kind = event.completion_kind
+            status = self._group_wait_status(event, group_state, completion_kind)
+            if status == "INVALID":
+                raise ProtocolError(
+                    "WAIT_BEFORE_COMMIT",
+                    "WGMMA wait reached staged operations that have not been committed",
+                    event.id,
+                    group_state.snapshot(event.group_owner),
+                )
+            if status == "BLOCKED":
+                raise AssertionError("blocked WGMMA wait was applied")
+            old_frontier = group_state.observed_frontier(event.group_owner, completion_kind)
+            required = group_state.required_for_wait(
+                event.group_owner,
+                event.wait_group_count,
+                completion_kind,
+            )
+            newly_observed = [group for group in required if group.sequence > old_frontier]
+            edges = tuple(
+                (group.completion_id(completion_kind), event.id, "COMPLETION_TO_WAIT")
+                for group in newly_observed
+            )
+            if required:
+                group_state.set_observed_frontier(
+                    event.group_owner,
+                    completion_kind,
+                    max(old_frontier, required[-1].sequence),
                 )
             state.dynamic_edges.update(edges)
             added_edges = edges
@@ -819,7 +1013,11 @@ class Executor:
         ):
             return True
         if any(
-            bool(group_state.staged.get(owner)) or group_state.pending(owner)
+            bool(group_state.staged.get(owner))
+            or any(
+                group_state.pending(owner, completion_kind)
+                for completion_kind in group_state.completion_kinds
+            )
             for group_state in state.groups.values()
             for owner in group_state.participants
         ):
@@ -851,23 +1049,27 @@ class Executor:
                 group_state.protocol,
                 group_state.participants,
                 group_state.capacity,
+                group_state.completion_kinds,
                 tuple(
                     (
                         owner,
                         group_state.next_group_seq.get(owner, 0),
                         tuple(group_state.staged.get(owner, ())),
+                        tuple(sorted(group_state.operand_fences.get(owner, set()))),
                         tuple(
                             (
                                 group.sequence,
                                 group.group_id,
                                 group.commit_event,
                                 group.issue_events,
-                                group.completion_id,
-                                group.completed,
+                                tuple(sorted(group.completion_ids.items())),
+                                tuple(sorted(group.completed_endpoints)),
                             )
                             for group in group_state.committed.get(owner, ())
                         ),
-                        group_state.observed_frontier.get(owner, -1),
+                        tuple(sorted(
+                            group_state.observed_frontiers.get(owner, {}).items()
+                        )),
                     )
                     for owner in sorted(group_state.participants)
                 ),
@@ -955,16 +1157,23 @@ class Executor:
             for owner in sorted(group_state.participants):
                 if group_state.staged.get(owner):
                     return {
-                        "code": "MISSING_CP_ASYNC_COMMIT",
-                        "message": "cp.async operations remain staged without a commit_group",
+                        "code": (
+                            "MISSING_CP_ASYNC_COMMIT"
+                            if group_state.protocol == "CP_ASYNC"
+                            else "MISSING_WGMMA_COMMIT"
+                        ),
+                        "message": f"{group_state.protocol.lower()} operations remain staged without a commit_group",
                         "resource": resource_id,
                         "owner": owner,
                         "protocol_state": group_state.snapshot(owner),
                     }
-                if group_state.pending(owner):
+                if any(
+                    group_state.pending(owner, completion_kind)
+                    for completion_kind in group_state.completion_kinds
+                ):
                     return {
-                        "code": "STUCK_CP_ASYNC_COMPLETION",
-                        "message": "a committed cp.async group cannot reach its synthetic completion",
+                        "code": "STUCK_GROUP_COMPLETION",
+                        "message": "a committed async group cannot reach all synthetic completions",
                         "resource": resource_id,
                         "owner": owner,
                         "protocol_state": group_state.snapshot(owner),
@@ -983,14 +1192,16 @@ class Executor:
                 "events": observes,
             }
         group_waits = [
-            event.id for actor in sorted(state.frontiers)
+            event for actor in sorted(state.frontiers)
             if (event := self._frontier_event(state, actor)) is not None
-            and event.type == "CpAsyncWaitGroup"
+            and event.type in {"CpAsyncWaitGroup", "WgmmaWaitGroup"}
         ]
         if group_waits:
+            protocols = sorted({event.type for event in group_waits})
             return {
-                "code": "STUCK_CP_ASYNC_WAIT",
-                "message": "no cp.async group completion can satisfy one or more waits",
-                "events": group_waits,
+                "code": "STUCK_GROUP_WAIT",
+                "message": "no typed group completion can satisfy one or more waits",
+                "events": [event.id for event in group_waits],
+                "protocols": protocols,
             }
         return {"code": "STUCK_DEPENDENCY", "message": "no program or completion transition is enabled", "boundary": list(self.boundary(state))}

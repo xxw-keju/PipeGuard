@@ -74,7 +74,7 @@
       "type": "object", "additionalProperties": false, "required": ["id", "allocation_id", "address_space", "offset", "extent"],
       "properties": {
         "id": {"type": "string", "minLength": 1}, "allocation_id": {"type": "string", "minLength": 1},
-        "address_space": {"enum": ["SHARED", "GLOBAL"]}, "offset": {"type": "integer", "minimum": 0},
+        "address_space": {"enum": ["SHARED", "GLOBAL", "REGISTER", "TENSOR"]}, "offset": {"type": "integer", "minimum": 0},
         "extent": {"type": "integer", "minimum": 1}
       }
     },
