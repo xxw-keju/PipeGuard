@@ -11,7 +11,7 @@ import jsonschema
 
 from .protocols import RESOURCE_KINDS, VisibilityMask
 
-IMPLEMENTED_RESOURCE_KINDS = frozenset({"mbarrier", "cta_barrier", "named_barrier", "async_group"})
+IMPLEMENTED_RESOURCE_KINDS = frozenset({"mbarrier", "cta_barrier", "named_barrier", "async_group", "channel"})
 IMPLEMENTED_ASYNC_PROTOCOLS = frozenset({"CP_ASYNC", "WGMMA", "TMA_STORE"})
 
 IMPLEMENTED_EVENTS = frozenset({
@@ -21,14 +21,14 @@ IMPLEMENTED_EVENTS = frozenset({
     "CpAsyncIssue", "CpAsyncCommitGroup", "CpAsyncWaitGroup",
     "WgmmaFenceOperand", "WgmmaIssue", "WgmmaCommitGroup", "WgmmaWaitGroup",
     "TmaStoreIssue", "TmaStoreCommitGroup", "TmaStoreWaitGroup",
+    "ChannelCreate", "ProducerAcquire", "ProducerCommit", "ConsumerWait", "ConsumerRelease",
 })
 KNOWN_UNSUPPORTED_EVENTS = frozenset({
     "AtomicReadModifyWrite", "Fork", "Join", "BarrierRelease",
     "MBarrierTxComplete", "MBarrierPhaseComplete",
     "CpAsyncGroupComplete",
     "TmaLoadComplete", "TmaStoreSourceReleased", "TmaStoreGlobalComplete",
-    "WgmmaResultReady", "WgmmaOperandsReleased", "ProxyFence", "ChannelCreate",
-    "ProducerAcquire", "ProducerCommit", "ConsumerWait", "ConsumerRelease",
+    "WgmmaResultReady", "WgmmaOperandsReleased", "ProxyFence",
 })
 
 
@@ -359,6 +359,37 @@ def _semantic_validate(module: Module) -> None:
                     "collective barrier must select either control-only or at least one data visibility domain",
                     {"resource": resource.id, "visibility_mask": mask.artifact()},
                 )
+        elif resource.kind == "channel":
+            missing = [
+                name for name in ("capacity", "scope", "visibility_mask")
+                if getattr(resource, name) is None
+            ]
+            if missing:
+                raise PGIRError(
+                    "RESOURCE_FIELDS_MISSING",
+                    "channel resource lacks required metadata",
+                    {"resource": resource.id, "fields": missing},
+                )
+            if resource.protocol is not None:
+                raise PGIRError(
+                    "RESOURCE_FIELDS_UNEXPECTED",
+                    "channel resource cannot carry an async-group protocol",
+                    {"resource": resource.id, "fields": ["protocol"]},
+                )
+            mask = resource.visibility_mask
+            data_visibility = any((
+                mask.shared,
+                mask.global_read,
+                mask.global_write,
+                mask.tensor_read,
+                mask.tensor_write,
+            ))
+            if mask.control_only == data_visibility:
+                raise PGIRError(
+                    "INVALID_VISIBILITY_MASK",
+                    "channel must select either control-only or at least one data visibility domain",
+                    {"resource": resource.id, "visibility_mask": mask.artifact()},
+                )
         else:
             missing = [
                 name for name in ("capacity", "protocol", "scope")
@@ -451,6 +482,11 @@ def _semantic_validate(module: Module) -> None:
         "TmaStoreIssue": ("resource", "group_owner", "source_region", "destination_region", "bytes"),
         "TmaStoreCommitGroup": ("resource", "group_owner", "group_seq"),
         "TmaStoreWaitGroup": ("resource", "group_owner", "wait_group_count", "wait_mode"),
+        "ChannelCreate": ("resource",),
+        "ProducerAcquire": ("resource", "slot", "logical_phase"),
+        "ProducerCommit": ("resource", "slot", "logical_phase"),
+        "ConsumerWait": ("resource", "slot", "logical_phase"),
+        "ConsumerRelease": ("resource", "slot", "logical_phase"),
         "MBarrierInit": ("resource", "count", "lifecycle_epoch"), "MBarrierInvalidate": ("resource", "lifecycle_epoch"),
         "MBarrierArrive": ("resource", "count", "lifecycle_epoch", "generation"),
         "MBarrierExpectTx": ("resource", "bytes", "lifecycle_epoch", "generation"),
@@ -486,6 +522,11 @@ def _semantic_validate(module: Module) -> None:
         "TmaStoreWaitGroup": {
             "resource", "group_owner", "wait_group_count", "wait_mode",
         },
+        "ChannelCreate": {"resource"},
+        "ProducerAcquire": {"resource", "slot", "logical_phase"},
+        "ProducerCommit": {"resource", "slot", "logical_phase"},
+        "ConsumerWait": {"resource", "slot", "logical_phase"},
+        "ConsumerRelease": {"resource", "slot", "logical_phase"},
         "MBarrierInit": {"resource", "count", "lifecycle_epoch"}, "MBarrierInvalidate": {"resource", "lifecycle_epoch"},
         "MBarrierArrive": {"lifecycle_epoch", "resource", "count", "generation", "predicate"},
         "MBarrierExpectTx": {"lifecycle_epoch", "resource", "bytes", "generation"},
@@ -667,6 +708,20 @@ def _semantic_validate(module: Module) -> None:
                     "TMA store wait_group count must be smaller than the group capacity",
                     {"event": event.id, "wait_group_count": event.wait_group_count, "capacity": resource.capacity},
                 )
+        elif event.type in {"ChannelCreate", "ProducerAcquire", "ProducerCommit", "ConsumerWait", "ConsumerRelease"}:
+            resource = resources[event.resource]
+            if resource.kind != "channel":
+                raise PGIRError(
+                    "RESOURCE_KIND_MISMATCH",
+                    "channel event must reference a channel resource",
+                    {"event": event.id, "resource": event.resource, "kind": resource.kind},
+                )
+            if event.type != "ChannelCreate" and event.slot >= resource.capacity:
+                raise PGIRError(
+                    "CHANNEL_SLOT_OUT_OF_RANGE",
+                    "channel event slot exceeds the declared capacity",
+                    {"event": event.id, "slot": event.slot, "capacity": resource.capacity},
+                )
         elif event.resource is not None and resources[event.resource].kind != "mbarrier":
             raise PGIRError(
                 "RESOURCE_KIND_MISMATCH",
@@ -837,6 +892,9 @@ def _semantic_validate(module: Module) -> None:
     } | {
         stable_group_id("TMA_STORE", event.group_owner, event.group_seq)
         for event in module.events if event.type == "TmaStoreCommitGroup"
+    } | {
+        stable_channel_handoff_id(event.resource, event.slot, event.logical_phase)
+        for event in module.events if event.type in {"ProducerCommit", "ConsumerWait"}
     }
     collisions = sorted(synthetic_ids & events.keys())
     if collisions:

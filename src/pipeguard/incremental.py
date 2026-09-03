@@ -13,6 +13,7 @@ from .engine import (
 )
 from .model import (
     Module,
+    stable_channel_handoff_id,
     stable_collective_release_id,
     stable_completion_id,
     stable_group_completion_id,
@@ -37,6 +38,7 @@ class AnchorStream:
         "TMA_COMPLETION",
         "BARRIER_RELEASE",
         "GROUP_COMPLETION",
+        "CHANNEL_HANDOFF",
     ]
     name: str
     anchors: tuple[str, ...]
@@ -125,6 +127,7 @@ class IncrementalCounters:
     tma_completion_streams: int = 0
     barrier_release_streams: int = 0
     group_completion_streams: int = 0
+    channel_handoff_streams: int = 0
     anchor_streams: int = 0
     anchors: int = 0
     n_ext: int = 0
@@ -138,6 +141,7 @@ class IncrementalCounters:
         "PHASE_COMPLETION": 0,
         "BARRIER_RELEASE": 0,
         "GROUP_COMPLETION": 0,
+        "CHANNEL_HANDOFF": 0,
     })
     transition_attempts: int = 0
     worklist_pushes: int = 0
@@ -150,6 +154,7 @@ class IncrementalCounters:
     resource_notifications: int = 0
     collective_notifications: int = 0
     group_notifications: int = 0
+    channel_notifications: int = 0
     frontier_exposures: int = 0
     phase_enable_checks: int = 0
     remaining_removals: int = 0
@@ -175,6 +180,7 @@ class IncrementalCounters:
             self.resource_notifications,
             self.collective_notifications,
             self.group_notifications,
+            self.channel_notifications,
             self.frontier_exposures,
             self.phase_enable_checks,
             self.remaining_removals,
@@ -189,6 +195,7 @@ class IncrementalCounters:
                 "tma_completion": self.tma_completion_streams,
                 "barrier_release": self.barrier_release_streams,
                 "group_completion": self.group_completion_streams,
+                "channel_handoff": self.channel_handoff_streams,
                 "total": self.anchor_streams,
             },
             "anchors": self.anchors,
@@ -210,6 +217,7 @@ class IncrementalCounters:
             "resource_notifications": self.resource_notifications,
             "collective_notifications": self.collective_notifications,
             "group_notifications": self.group_notifications,
+            "channel_notifications": self.channel_notifications,
             "frontier_exposures": self.frontier_exposures,
             "phase_enable_checks": self.phase_enable_checks,
             "remaining_removals": self.remaining_removals,
@@ -291,6 +299,26 @@ def build_anchor_streams(module: Module, anchor_ids: list[str]) -> tuple[AnchorS
             )
         )
 
+    channels: dict[tuple[str, int], list[tuple[int, str]]] = {}
+    for event in module.events:
+        if event.type != "ProducerCommit":
+            continue
+        identifier = stable_channel_handoff_id(
+            event.resource,
+            event.slot,
+            event.logical_phase,
+        )
+        channels.setdefault((event.resource, event.slot), []).append(
+            (event.logical_phase, identifier)
+        )
+    for (resource, slot), handoffs in sorted(channels.items()):
+        ordered = tuple(identifier for _phase, identifier in sorted(handoffs))
+        streams.append(AnchorStream(
+            "CHANNEL_HANDOFF",
+            f"channel:{resource}:slot:{slot}",
+            ordered,
+        ))
+
     for event in sorted(module.events, key=lambda item: stable_completion_id(item.id, item.generation or 0)):
         if event.type != "TmaLoadIssue":
             continue
@@ -325,6 +353,7 @@ class ReadyIndex:
         self.phase_ready: dict[str, str] = {}
         self.collective_ready: dict[str, str] = {}
         self.group_ready: dict[tuple[str, str, str], str] = {}
+        self.channel_ready: dict[tuple[str, int], str] = {}
         self.actor_dependencies: dict[str, set[str]] = {}
         self.dependency_waiters: dict[str, set[str]] = {}
         self.actor_resource: dict[str, str] = {}
@@ -339,6 +368,7 @@ class ReadyIndex:
         phase_resources: dict[str, str] = {}
         collective_resources: dict[str, str] = {}
         group_resources: dict[str, tuple[str, str, str]] = {}
+        channel_resources: dict[str, tuple[str, int]] = {}
         for event in executor.module.events:
             if event.resource is not None and event.generation is not None:
                 phase_resources[stable_phase_id(event.resource, event.lifecycle_epoch, event.generation)] = event.resource
@@ -362,6 +392,14 @@ class ReadyIndex:
                             completion_kind,
                         )
                     ] = (event.resource, event.group_owner, completion_kind)
+            if event.type in {"ProducerCommit", "ConsumerWait"}:
+                channel_resources[
+                    stable_channel_handoff_id(
+                        event.resource,
+                        event.slot,
+                        event.logical_phase,
+                    )
+                ] = (event.resource, event.slot)
         transitions: list[Transition] = [
             Transition(event.id, "PROGRAM", event=event) for event in executor.module.events
         ]
@@ -385,6 +423,14 @@ class ReadyIndex:
                         completion_kind=completion_kind,
                     )
                 )
+            elif identifier in channel_resources:
+                resource, slot = channel_resources[identifier]
+                transitions.append(Transition(
+                    identifier,
+                    "CHANNEL_HANDOFF",
+                    resource=resource,
+                    slot=slot,
+                ))
             else:
                 raise AssertionError(f"unknown synthetic anchor identity: {identifier}")
         ordered_transitions = sorted(transitions, key=Transition.order_key)
@@ -404,6 +450,10 @@ class ReadyIndex:
         for resource in sorted(state.groups):
             for owner in sorted(state.groups[resource].participants):
                 self._refresh_group(resource, owner)
+        for resource in sorted(state.channels):
+            channel = state.channels[resource]
+            for slot in range(channel.capacity):
+                self._refresh_channel(resource, slot)
 
     def _hold_id(self) -> str | None:
         return self.hold if isinstance(self.hold, str) else None
@@ -492,6 +542,24 @@ class ReadyIndex:
                 self.blocked_waits.setdefault(event.resource, set()).add(actor)
                 self.counters.wait_registrations += 1
                 return
+        if event.type == "ProducerAcquire":
+            status = self.executor._producer_acquire_status(
+                event,
+                self.state.channels[event.resource],
+            )
+            if status == "BLOCKED":
+                self.blocked_waits.setdefault(event.resource, set()).add(actor)
+                self.counters.wait_registrations += 1
+                return
+        if event.type == "ConsumerWait":
+            status = self.executor._consumer_wait_status(
+                event,
+                self.state.channels[event.resource],
+            )
+            if status == "BLOCKED":
+                self.blocked_waits.setdefault(event.resource, set()).add(actor)
+                self.counters.wait_registrations += 1
+                return
         if event.resource is not None and event.generation is not None:
             barrier = self.state.barriers[event.resource]
             phase = self.executor._phase_transition(event.resource, barrier)
@@ -561,6 +629,30 @@ class ReadyIndex:
                 self.counters.wait_notifications += 1
             self._assess_actor(owner)
 
+    def _refresh_channel(self, resource: str, slot: int) -> None:
+        self.counters.channel_notifications += 1
+        key = (resource, slot)
+        old = self.channel_ready.pop(key, None)
+        if old is not None:
+            self._deactivate(old)
+        channel = self.state.channels[resource]
+        transition = (
+            self.executor._channel_transition(resource, slot, channel)
+            if channel.initialized and slot in channel.slots
+            else None
+        )
+        if transition is not None:
+            self.channel_ready[key] = transition.id
+            self._queue(transition)
+        followers = tuple(sorted(self.resource_followers.get(resource, set())))
+        for actor in followers:
+            event = self.executor._frontier_event(self.state, actor)
+            if event is None or event.slot != slot:
+                continue
+            if event.type == "ConsumerWait":
+                self.counters.wait_notifications += 1
+            self._assess_actor(actor)
+
     def pop(self) -> Transition | None:
         rank = self.ready.pop_min()
         if rank is None:
@@ -606,6 +698,8 @@ class ReadyIndex:
             self._refresh_collective(resource)
         for resource, owner in sorted(delta.changed_groups):
             self._refresh_group(resource, owner)
+        for resource, slot in sorted(delta.changed_channels):
+            self._refresh_channel(resource, slot)
 
 
 @dataclass(slots=True)
@@ -638,6 +732,7 @@ class IncrementalEngine:
             tma_completion_streams=sum(stream.kind == "TMA_COMPLETION" for stream in self.streams),
             barrier_release_streams=sum(stream.kind == "BARRIER_RELEASE" for stream in self.streams),
             group_completion_streams=sum(stream.kind == "GROUP_COMPLETION" for stream in self.streams),
+            channel_handoff_streams=sum(stream.kind == "CHANNEL_HANDOFF" for stream in self.streams),
             anchor_streams=len(self.streams),
             anchors=len(anchor_ids),
             n_ext=len(anchor_ids) + sum(len(event.depends_on) for event in executor.module.events),

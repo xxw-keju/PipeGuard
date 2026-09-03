@@ -913,6 +913,7 @@ def test_incremental_program_stream_first_middle_final_and_end_flush():
         "PHASE_COMPLETION": 0,
         "BARRIER_RELEASE": 0,
         "GROUP_COMPLETION": 0,
+        "CHANNEL_HANDOFF": 0,
     }
     assert engine.counters.state_initializations == 2
 
@@ -1015,6 +1016,7 @@ def test_incremental_statistics_certificate_is_deterministic():
         "tma_completion": 0,
         "barrier_release": 0,
         "group_completion": 0,
+        "channel_handoff": 0,
         "total": 3,
     }
     assert first["boundary_evaluations"] == 6
@@ -1081,7 +1083,7 @@ def test_future_protocol_fields_are_structured_but_still_unsupported():
     assert malformed.value.code == "SCHEMA_INVALID"
 
 
-def test_future_resource_kinds_cannot_expand_safe_scope_early():
+def test_channel_and_mbarrier_resource_metadata_fail_closed():
     raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
     raw["resources"][0].update({
         "kind": "channel",
@@ -1090,7 +1092,7 @@ def test_future_resource_kinds_cannot_expand_safe_scope_early():
     })
     with pytest.raises(PGIRError) as caught:
         module_from_dict(raw)
-    assert caught.value.code == "KNOWN_RESOURCE_UNSUPPORTED"
+    assert caught.value.code == "RESOURCE_FIELDS_MISSING"
 
     raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
     raw["resources"][0]["capacity"] = 2
@@ -1977,5 +1979,130 @@ def test_tma_store_maximal_uses_two_delta_driven_endpoint_streams(monkeypatch):
     result = check_module(module, engine="maximal")
     assert result["verdict"] == "SAFE"
     assert result["statistics"]["group_completion_streams"] == 2
+    assert result["statistics"]["full_enabled_scans"] == 0
+    assert result["statistics"]["state_clones"] == 0
+
+
+def channel_module(phases: int = 1, control_only: bool = False):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["actors"] = [
+        {"id": "producer", "kind": "PARTITION", "participants": [0]},
+        {"id": "consumer", "kind": "PARTITION", "participants": [1]},
+    ]
+    raw["target"]["cta_threads"] = 2
+    mask = {name: False for name in full_visibility_mask()}
+    mask["control_only" if control_only else "shared"] = True
+    raw["resources"] = [{
+        "id": "pipe", "kind": "channel", "participants": ["producer", "consumer"],
+        "capacity": 1, "scope": "CTA", "visibility_mask": mask,
+    }]
+    raw["regions"] = [{"id": "tile", "allocation_id": "shared-tile", "address_space": "SHARED", "offset": 0, "extent": 64}]
+    producer_events = [{"id": "create", "type": "ChannelCreate", "actor": "producer", "seq": 0, "resource": "pipe"}]
+    consumer_events = []
+    for phase in range(phases):
+        producer_events.extend([
+            {"id": f"acquire{phase}", "type": "ProducerAcquire", "actor": "producer", "seq": 1 + 3 * phase, "resource": "pipe", "slot": 0, "logical_phase": phase},
+            {"id": f"produce{phase}", "type": "MemWrite", "actor": "producer", "seq": 2 + 3 * phase, "region": "tile"},
+            {"id": f"commit{phase}", "type": "ProducerCommit", "actor": "producer", "seq": 3 + 3 * phase, "resource": "pipe", "slot": 0, "logical_phase": phase},
+        ])
+        consumer_events.extend([
+            {"id": f"consume_wait{phase}", "type": "ConsumerWait", "actor": "consumer", "seq": 3 * phase, "resource": "pipe", "slot": 0, "logical_phase": phase},
+            {"id": f"consume{phase}", "type": "MemRead", "actor": "consumer", "seq": 1 + 3 * phase, "region": "tile"},
+            {"id": f"release{phase}", "type": "ConsumerRelease", "actor": "consumer", "seq": 2 + 3 * phase, "resource": "pipe", "slot": 0, "logical_phase": phase},
+        ])
+    raw["events"] = producer_events + consumer_events
+    return module_from_dict(raw)
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_channel_handoff_and_two_sided_reuse_are_safe(engine):
+    module = channel_module(phases=2)
+    result = check_module(module, engine=engine)
+    assert result["verdict"] == "SAFE"
+    handoffs = [stable_channel_handoff_id("pipe", 0, phase) for phase in range(2)]
+    anchors = {item["anchor"] for item in result["artifacts"]["boundaries"]}
+    assert set(handoffs).issubset(anchors)
+    edges = result["artifacts"]["pdg"]["edges"]
+    assert {"from": "commit0", "to": handoffs[0], "kind": "CHANNEL_COMMIT"} in edges
+    assert {"from": handoffs[0], "to": "consume_wait0", "kind": "CHANNEL_HANDOFF"} in edges
+    assert {"from": "release0", "to": "acquire1", "kind": "CHANNEL_RELEASE"} in edges
+
+
+def test_control_only_channel_orders_execution_but_not_shared_visibility():
+    result = check_module(channel_module(control_only=True), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+
+
+def test_channel_missing_commit_and_release_have_structured_witnesses():
+    raw = json.loads(json.dumps(channel_module().raw))
+    raw["events"] = [event for event in raw["events"] if event["id"] != "commit0"]
+    for actor in ("producer", "consumer"):
+        actor_events = [event for event in raw["events"] if event["actor"] == actor]
+        for seq, event in enumerate(actor_events):
+            event["seq"] = seq
+    missing_commit = check_module(module_from_dict(raw))
+    assert missing_commit["verdict"] == "SYNC_HAZARD"
+    assert missing_commit["diagnostics"][0]["code"] == "MISSING_PRODUCER_COMMIT"
+
+    raw = json.loads(json.dumps(channel_module().raw))
+    raw["events"] = [event for event in raw["events"] if event["id"] != "release0"]
+    missing_release = check_module(module_from_dict(raw))
+    assert missing_release["verdict"] == "SYNC_HAZARD"
+    assert missing_release["diagnostics"][0]["code"] == "MISSING_CONSUMER_RELEASE"
+
+
+def test_channel_wrong_owner_and_slot_fail_closed():
+    raw = json.loads(json.dumps(channel_module().raw))
+    commit = next(event for event in raw["events"] if event["id"] == "commit0")
+    commit.update({"actor": "consumer", "seq": 0, "depends_on": ["produce0"]})
+    producer_events = [event for event in raw["events"] if event["actor"] == "producer"]
+    for seq, event in enumerate(producer_events):
+        event["seq"] = seq
+    consumer_events = [commit] + [
+        event for event in raw["events"]
+        if event["actor"] == "consumer" and event["id"] != "commit0"
+    ]
+    for seq, event in enumerate(consumer_events):
+        event["seq"] = seq
+    wrong_owner = check_module(module_from_dict(raw))
+    assert wrong_owner["verdict"] == "SYNC_HAZARD"
+    assert wrong_owner["diagnostics"][0]["code"] == "CHANNEL_PRODUCER_OWNERSHIP"
+
+    raw = json.loads(json.dumps(channel_module().raw))
+    next(event for event in raw["events"] if event["id"] == "acquire0")["slot"] = 1
+    with pytest.raises(PGIRError) as slot:
+        module_from_dict(raw)
+    assert slot.value.code == "CHANNEL_SLOT_OUT_OF_RANGE"
+
+
+def test_channel_handoff_replay_is_failure_atomic():
+    executor = Executor(channel_module())
+    state = executor.initial_state()
+    for identifier in ("create", "acquire0", "produce0", "commit0"):
+        executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
+    handoff = next(item for item in executor.enabled(state) if item.kind == "CHANNEL_HANDOFF")
+    executor.apply(state, handoff)
+    before = executor.fingerprint(state)
+    with pytest.raises(ProtocolError) as replay:
+        executor.apply(state, handoff)
+    assert replay.value.code == "INVALID_CHANNEL_HANDOFF_TRANSITION"
+    assert executor.fingerprint(state) == before
+
+
+def test_channel_maximal_uses_delta_driven_handoff_stream(monkeypatch):
+    module = channel_module(phases=2)
+    streams = [stream for stream in build_anchor_streams(module, _anchor_ids(module)) if stream.kind == "CHANNEL_HANDOFF"]
+    assert len(streams) == 1
+    assert streams[0].anchors == tuple(stable_channel_handoff_id("pipe", 0, phase) for phase in range(2))
+
+    def forbidden(*_args, **_kwargs):
+        raise AssertionError("reference scan/clone reached from channel maximal engine")
+
+    monkeypatch.setattr(Executor, "enabled", forbidden)
+    monkeypatch.setattr(ExecutionState, "clone", forbidden)
+    result = check_module(module, engine="maximal")
+    assert result["verdict"] == "SAFE"
+    assert result["statistics"]["channel_handoff_streams"] == 1
+    assert result["statistics"]["channel_notifications"] > 0
     assert result["statistics"]["full_enabled_scans"] == 0
     assert result["statistics"]["state_clones"] == 0

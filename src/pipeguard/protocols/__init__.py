@@ -1,3 +1,4 @@
+from .channel import ChannelSlotState, ProducerConsumerChannelState
 from .collective import CollectiveBarrierState
 from .commit_group import CommittedGroup, CommitGroupState
 from .common import (
@@ -11,6 +12,8 @@ from .common import (
 )
 
 __all__ = [
+    "ChannelSlotState",
+    "ProducerConsumerChannelState",
     "CollectiveBarrierState",
     "CommittedGroup",
     "CommitGroupState",

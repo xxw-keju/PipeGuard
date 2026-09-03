@@ -10,6 +10,7 @@ from .model import (
     Event,
     Module,
     normalize_module,
+    stable_channel_handoff_id,
     stable_collective_release_id,
     stable_completion_id,
     stable_digest,
@@ -208,6 +209,28 @@ def _base_pdg(module: Module) -> PDG:
             elif event.type == "BarrierObserve":
                 graph.add_edge(release, event.id, "BARRIER_RELEASE")
             continue
+        if event.type in {"ProducerCommit", "ConsumerWait"}:
+            handoff = stable_channel_handoff_id(
+                event.resource,
+                event.slot,
+                event.logical_phase,
+            )
+            if event.type == "ProducerCommit":
+                graph.add_edge(event.id, handoff, "CHANNEL_COMMIT")
+            else:
+                graph.add_edge(handoff, event.id, "CHANNEL_HANDOFF")
+            continue
+        if event.type == "ProducerAcquire" and event.logical_phase > 0:
+            releases = [
+                candidate for candidate in module.events
+                if candidate.type == "ConsumerRelease"
+                and candidate.resource == event.resource
+                and candidate.slot == event.slot
+                and candidate.logical_phase == event.logical_phase - 1
+            ]
+            for release in releases:
+                graph.add_edge(release.id, event.id, "CHANNEL_RELEASE")
+            continue
         if event.type == "CpAsyncCommitGroup":
             group, completion, issues = cp_commits[event.id]
             graph.add_edge(event.id, group, "COMMIT_TO_GROUP")
@@ -279,6 +302,12 @@ def _anchor_ids(module: Module) -> list[str]:
             identifiers.add(stable_collective_release_id(event.resource, event.invocation_id))
         if event.type == "CpAsyncCommitGroup" and cp_commits[event.id][2]:
             identifiers.add(cp_commits[event.id][1])
+        if event.type == "ProducerCommit":
+            identifiers.add(stable_channel_handoff_id(
+                event.resource,
+                event.slot,
+                event.logical_phase,
+            ))
         if event.type == "WgmmaCommitGroup" and wgmma_commits[event.id][2]:
             identifiers.update(wgmma_commits[event.id][1].values())
         if event.type == "TmaStoreCommitGroup" and tma_store_commits[event.id][2]:
@@ -426,6 +455,70 @@ def _collective_visibility(module: Module, graph: PDG, source: Effect, target: E
     return False
 
 
+def _channel_visibility(module: Module, graph: PDG, source: Effect, target: Effect) -> bool:
+    region = module.region_map[source.region]
+    source_event = module.event_map[source.end]
+    target_event = module.event_map[target.begin]
+    for resource in module.resources:
+        if resource.kind != "channel":
+            continue
+        mask = resource.visibility_mask
+        assert mask is not None
+        if mask.control_only:
+            continue
+        if region.address_space == "SHARED" and not mask.shared:
+            continue
+        if region.address_space == "GLOBAL" and not (
+            (source.mode == "READ" and mask.global_read)
+            or (source.mode == "WRITE" and mask.global_write)
+        ):
+            continue
+        if region.address_space == "TENSOR" and not (
+            (source.mode == "READ" and mask.tensor_read)
+            or (source.mode == "WRITE" and mask.tensor_write)
+        ):
+            continue
+        if region.address_space == "REGISTER":
+            continue
+        commits = [
+            event for event in module.events
+            if event.type == "ProducerCommit"
+            and event.resource == resource.id
+            and event.actor == source_event.actor
+            and graph.reachable(source.end, event.id)
+        ]
+        for commit in commits:
+            for wait in module.events:
+                if (
+                    wait.type == "ConsumerWait"
+                    and wait.resource == resource.id
+                    and wait.slot == commit.slot
+                    and wait.logical_phase == commit.logical_phase
+                    and wait.actor == target_event.actor
+                    and graph.reachable(wait.id, target.begin)
+                ):
+                    return True
+        releases = [
+            event for event in module.events
+            if event.type == "ConsumerRelease"
+            and event.resource == resource.id
+            and event.actor == source_event.actor
+            and graph.reachable(source.end, event.id)
+        ]
+        for release in releases:
+            for acquire in module.events:
+                if (
+                    acquire.type == "ProducerAcquire"
+                    and acquire.resource == resource.id
+                    and acquire.slot == release.slot
+                    and acquire.logical_phase == release.logical_phase + 1
+                    and acquire.actor == target_event.actor
+                    and graph.reachable(acquire.id, target.begin)
+                ):
+                    return True
+    return False
+
+
 def _completion_observed(module: Module, graph: PDG, window: Effect, point: Effect) -> bool:
     issue = module.event_map[window.begin]
     if issue.type in {"CpAsyncIssue", "WgmmaIssue", "TmaStoreIssue"}:
@@ -454,8 +547,10 @@ def _data_hazard(module: Module, graph: PDG) -> dict[str, Any] | None:
                         or _mbarrier_visibility(module, graph, right, left)
                         or _collective_visibility(module, graph, left, right)
                         or _collective_visibility(module, graph, right, left)
+                        or _channel_visibility(module, graph, left, right)
+                        or _channel_visibility(module, graph, right, left)
                     )
-                query = "point conflict requires same-actor order or a typed mbarrier/collective visibility transfer"
+                query = "point conflict requires same-actor order or a typed mbarrier/collective/channel visibility transfer"
             elif left.async_window and right.async_window:
                 safe = graph.reachable(left.end, right.begin) or graph.reachable(right.end, left.begin)
                 query = "async windows must be non-overlapping"
@@ -507,6 +602,7 @@ def _finish_incremental_statistics(statistics: dict[str, Any], counters: Increme
     statistics["tma_completion_streams"] = counters.tma_completion_streams
     statistics["barrier_release_streams"] = counters.barrier_release_streams
     statistics["group_completion_streams"] = counters.group_completion_streams
+    statistics["channel_handoff_streams"] = counters.channel_handoff_streams
     statistics["anchor_streams"] = counters.anchor_streams
     statistics["anchors"] = counters.anchors
     for key in (
@@ -514,7 +610,7 @@ def _finish_incremental_statistics(statistics: dict[str, Any], counters: Increme
         "transition_attempts", "scheduler_work_units", "worklist_pushes", "worklist_pops",
         "stale_worklist_pops",
         "dependency_registrations", "dependency_notifications", "wait_registrations",
-        "wait_notifications", "resource_notifications", "collective_notifications", "group_notifications", "frontier_exposures",
+        "wait_notifications", "resource_notifications", "collective_notifications", "group_notifications", "channel_notifications", "frontier_exposures",
         "phase_enable_checks", "remaining_removals", "boundary_evaluations",
         "full_enabled_scans", "state_clones", "replayed_prefix_steps",
     ):
@@ -711,6 +807,10 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
                 f"group:{key}": value.snapshot()
                 for key, value in sorted(canonical.state.groups.items())
             },
+            **{
+                f"channel:{key}": value.snapshot()
+                for key, value in sorted(canonical.state.channels.items())
+            },
         }
         return {
             "verdict": "DATA_HAZARD", "checker_version": "0.2.0",
@@ -722,7 +822,7 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
         "verdict": "SAFE", "checker_version": "0.2.0", "summary": "all supported protocol and data checks passed",
         "diagnostics": [], "statistics": statistics,
         "manifest": {
-            "scope": "finite statically-resolved sm90 single_cta mbarrier/TMA-load/TMA-store/collective-barrier/cp.async/WGMMA core",
+            "scope": "finite statically-resolved sm90 single_cta mbarrier/TMA-load/TMA-store/collective-barrier/cp.async/WGMMA/channel core",
             "assumptions": dict(sorted(module.raw["assumptions"].items())), "producer": module.raw["producer"],
             "frontend_provenance": module.raw["frontend_provenance"], "counts": counts,
         },

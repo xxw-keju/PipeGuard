@@ -7,13 +7,19 @@ from typing import Any, Literal
 from .model import (
     Event,
     Module,
+    stable_channel_handoff_id,
     stable_collective_release_id,
     stable_completion_id,
     stable_group_completion_id,
     stable_group_id,
     stable_phase_id,
 )
-from .protocols import CollectiveBarrierState, CommittedGroup, CommitGroupState
+from .protocols import (
+    CollectiveBarrierState,
+    CommittedGroup,
+    CommitGroupState,
+    ProducerConsumerChannelState,
+)
 
 
 class ProtocolError(Exception):
@@ -80,11 +86,12 @@ class BarrierState:
 @dataclass(frozen=True, slots=True)
 class Transition:
     id: str
-    kind: Literal["PROGRAM", "TMA_COMPLETION", "PHASE_COMPLETION", "BARRIER_RELEASE", "GROUP_COMPLETION"]
+    kind: Literal["PROGRAM", "TMA_COMPLETION", "PHASE_COMPLETION", "BARRIER_RELEASE", "GROUP_COMPLETION", "CHANNEL_HANDOFF"]
     event: Event | None = None
     resource: str | None = None
     owner: str | None = None
     completion_kind: str | None = None
+    slot: int | None = None
 
     def order_key(self) -> tuple[Any, ...]:
         if self.kind != "PROGRAM":
@@ -103,12 +110,13 @@ class TransitionDelta:
     """
 
     transition_id: str
-    kind: Literal["PROGRAM", "TMA_COMPLETION", "PHASE_COMPLETION", "BARRIER_RELEASE", "GROUP_COMPLETION"]
+    kind: Literal["PROGRAM", "TMA_COMPLETION", "PHASE_COMPLETION", "BARRIER_RELEASE", "GROUP_COMPLETION", "CHANNEL_HANDOFF"]
     advanced_actor: str | None = None
     executed_event: str | None = None
     changed_resources: frozenset[str] = frozenset()
     changed_collectives: frozenset[str] = frozenset()
     changed_groups: frozenset[tuple[str, str]] = frozenset()
+    changed_channels: frozenset[tuple[str, int]] = frozenset()
     spawned_completions: tuple[str, ...] = ()
     retired_completions: tuple[str, ...] = ()
     consumed_waits: tuple[str, ...] = ()
@@ -122,6 +130,7 @@ class ExecutionState:
     barriers: dict[str, BarrierState]
     collectives: dict[str, CollectiveBarrierState] = field(default_factory=dict)
     groups: dict[str, CommitGroupState] = field(default_factory=dict)
+    channels: dict[str, ProducerConsumerChannelState] = field(default_factory=dict)
     remaining: dict[tuple[str, int, int], set[str]] = field(default_factory=dict)
     observed: set[str] = field(default_factory=set)
     pending_completions: dict[str, AsyncOp] = field(default_factory=dict)
@@ -193,6 +202,14 @@ class Executor:
                 if resource.kind == "async_group"
                 and resource.protocol in {"CP_ASYNC", "WGMMA", "TMA_STORE"}
             },
+            channels={
+                resource.id: ProducerConsumerChannelState(
+                    resource.participants,
+                    resource.capacity,
+                )
+                for resource in self.module.resources
+                if resource.kind == "channel"
+            },
             remaining={key: set(event_ids) for key, event_ids in self.required_logical_waits.items()},
             observed=set(),
         )
@@ -229,6 +246,62 @@ class Executor:
         if event.invocation_id in collective.publications:
             return "READY"
         if event.invocation_id >= collective.invocation:
+            return "BLOCKED"
+        return "INVALID"
+
+    def _channel_transition(
+        self,
+        resource_id: str,
+        slot: int,
+        channel: ProducerConsumerChannelState,
+    ) -> Transition | None:
+        if not channel.initialized:
+            return None
+        slot_state = channel.slots[slot]
+        if slot_state.state != "COMMITTED":
+            return None
+        return Transition(
+            stable_channel_handoff_id(resource_id, slot, slot_state.logical_phase),
+            "CHANNEL_HANDOFF",
+            resource=resource_id,
+            slot=slot,
+        )
+
+    def _producer_acquire_status(
+        self,
+        event: Event,
+        channel: ProducerConsumerChannelState,
+    ) -> Literal["READY", "BLOCKED", "INVALID"]:
+        assert event.slot is not None and event.logical_phase is not None
+        if not channel.initialized:
+            return "BLOCKED"
+        slot_state = channel.slots[event.slot]
+        if event.logical_phase < slot_state.logical_phase:
+            return "INVALID"
+        if event.logical_phase > slot_state.logical_phase + 1:
+            return "INVALID"
+        if event.logical_phase == slot_state.logical_phase + 1:
+            return "BLOCKED"
+        return "READY" if slot_state.state == "PRODUCER_AVAILABLE" else "INVALID"
+
+    def _consumer_wait_status(
+        self,
+        event: Event,
+        channel: ProducerConsumerChannelState,
+    ) -> Literal["READY", "BLOCKED", "INVALID"]:
+        assert event.slot is not None and event.logical_phase is not None
+        if not channel.initialized:
+            return "BLOCKED"
+        slot_state = channel.slots[event.slot]
+        if event.logical_phase < slot_state.logical_phase:
+            return "INVALID"
+        if event.logical_phase > slot_state.logical_phase + 1:
+            return "INVALID"
+        if event.logical_phase > slot_state.logical_phase:
+            return "BLOCKED"
+        if slot_state.state == "CONSUMER_AVAILABLE":
+            return "READY"
+        if slot_state.state in {"PRODUCER_AVAILABLE", "PRODUCER_OWNED", "COMMITTED"}:
             return "BLOCKED"
         return "INVALID"
 
@@ -314,6 +387,13 @@ class Executor:
                     )
                     if transition is not None and transition.id != hold:
                         result.append(transition)
+        for resource_id in sorted(state.channels):
+            channel = state.channels[resource_id]
+            if channel.initialized:
+                for slot in sorted(channel.slots):
+                    transition = self._channel_transition(resource_id, slot, channel)
+                    if transition is not None and transition.id != hold:
+                        result.append(transition)
         for actor in sorted(state.frontiers):
             event = self._frontier_event(state, actor)
             if event is None or event.id == hold or not set(event.depends_on).issubset(state.executed):
@@ -340,6 +420,16 @@ class Executor:
                 event,
                 state.groups[event.resource],
                 "SOURCE_RELEASED" if event.wait_mode == "READ_ONLY" else "GLOBAL_COMPLETE",
+            ) == "BLOCKED":
+                continue
+            if event.type == "ProducerAcquire" and self._producer_acquire_status(
+                event,
+                state.channels[event.resource],
+            ) == "BLOCKED":
+                continue
+            if event.type == "ConsumerWait" and self._consumer_wait_status(
+                event,
+                state.channels[event.resource],
             ) == "BLOCKED":
                 continue
             if event.resource is not None and event.generation is not None:
@@ -520,6 +610,43 @@ class Executor:
                 dynamic_edges=tuple(edges),
             )
 
+        if transition.kind == "CHANNEL_HANDOFF":
+            if transition.resource is None or transition.slot is None:
+                raise ProtocolError(
+                    "INVALID_CHANNEL_HANDOFF_TRANSITION",
+                    "channel handoff lacks its resource or slot identity",
+                    transition.id,
+                )
+            channel = state.channels.get(transition.resource)
+            expected = (
+                self._channel_transition(transition.resource, transition.slot, channel)
+                if channel is not None and channel.initialized and transition.slot in channel.slots
+                else None
+            )
+            if expected is None or expected.id != transition.id:
+                snapshot = channel.snapshot(transition.slot) if channel is not None else {}
+                snapshot["expected_channel_handoff"] = expected.id if expected is not None else None
+                raise ProtocolError(
+                    "INVALID_CHANNEL_HANDOFF_TRANSITION",
+                    "channel handoff is not enabled for this slot and phase",
+                    transition.id,
+                    snapshot,
+                )
+            slot_state = channel.slots[transition.slot]
+            edge = (slot_state.commit_event, transition.id, "CHANNEL_COMMIT")
+            slot_state.state = "CONSUMER_AVAILABLE"
+            slot_state.handoff_id = transition.id
+            channel.handoffs[(transition.slot, slot_state.logical_phase)] = transition.id
+            state.completed_transitions.add(transition.id)
+            state.dynamic_edges.add(edge)
+            self._record(state, transition)
+            return TransitionDelta(
+                transition.id,
+                transition.kind,
+                changed_channels=frozenset({(transition.resource, transition.slot)}),
+                dynamic_edges=(edge,),
+            )
+
         if transition.kind == "BARRIER_RELEASE":
             assert transition.resource is not None
             collective = state.collectives[transition.resource]
@@ -603,6 +730,7 @@ class Executor:
         changed_resources: set[str] = set()
         changed_collectives: set[str] = set()
         changed_groups: set[tuple[str, str]] = set()
+        changed_channels: set[tuple[str, int]] = set()
         spawned_completions: tuple[str, ...] = ()
         consumed_waits: tuple[str, ...] = ()
         added_edges: tuple[tuple[str, str, str], ...] = ()
@@ -1025,6 +1153,129 @@ class Executor:
                 )
             state.dynamic_edges.update(edges)
             added_edges = edges
+        elif event.type == "ChannelCreate":
+            assert event.resource is not None
+            channel = state.channels[event.resource]
+            if channel.initialized:
+                raise ProtocolError(
+                    "CHANNEL_REINITIALIZED",
+                    "producer-consumer channel cannot be initialized more than once",
+                    event.id,
+                    channel.snapshot(),
+                )
+            channel.initialize(event.id)
+            changed_channels.update((event.resource, slot) for slot in channel.slots)
+        elif event.type == "ProducerAcquire":
+            assert event.resource is not None and event.slot is not None and event.logical_phase is not None
+            channel = state.channels[event.resource]
+            if not channel.initialized:
+                raise ProtocolError(
+                    "CHANNEL_USE_BEFORE_CREATE",
+                    "producer acquire used a channel before ChannelCreate",
+                    event.id,
+                    channel.snapshot(),
+                )
+            slot_state = channel.slots[event.slot]
+            if event.logical_phase != slot_state.logical_phase:
+                code = "STALE_CHANNEL_PHASE" if event.logical_phase < slot_state.logical_phase else "FUTURE_CHANNEL_PHASE"
+                raise ProtocolError(code, "producer acquire phase does not match the slot", event.id, channel.snapshot(event.slot))
+            if slot_state.state != "PRODUCER_AVAILABLE":
+                raise ProtocolError(
+                    "CHANNEL_SLOT_NOT_PRODUCER_AVAILABLE",
+                    "producer acquire requires a released producer-available slot",
+                    event.id,
+                    channel.snapshot(event.slot),
+                )
+            edges: list[tuple[str, str, str]] = []
+            if event.logical_phase > 0:
+                release = channel.releases.get((event.slot, event.logical_phase - 1))
+                if release is None:
+                    raise ProtocolError(
+                        "CHANNEL_RELEASE_EVIDENCE_MISSING",
+                        "reused channel slot lacks the prior consumer release",
+                        event.id,
+                        channel.snapshot(event.slot),
+                    )
+                edges.append((release, event.id, "CHANNEL_RELEASE"))
+            slot_state.state = "PRODUCER_OWNED"
+            slot_state.producer = event.actor
+            slot_state.consumer = None
+            slot_state.acquire_event = event.id
+            slot_state.commit_event = None
+            slot_state.handoff_id = None
+            slot_state.wait_event = None
+            state.dynamic_edges.update(edges)
+            added_edges = tuple(edges)
+            changed_channels.add((event.resource, event.slot))
+        elif event.type == "ProducerCommit":
+            assert event.resource is not None and event.slot is not None and event.logical_phase is not None
+            channel = state.channels[event.resource]
+            if not channel.initialized:
+                raise ProtocolError("CHANNEL_USE_BEFORE_CREATE", "producer commit used a channel before ChannelCreate", event.id, channel.snapshot())
+            slot_state = channel.slots[event.slot]
+            if event.logical_phase != slot_state.logical_phase:
+                code = "STALE_CHANNEL_PHASE" if event.logical_phase < slot_state.logical_phase else "FUTURE_CHANNEL_PHASE"
+                raise ProtocolError(code, "producer commit phase does not match the slot", event.id, channel.snapshot(event.slot))
+            if slot_state.state != "PRODUCER_OWNED" or slot_state.producer != event.actor:
+                raise ProtocolError(
+                    "CHANNEL_PRODUCER_OWNERSHIP",
+                    "only the actor owning a producer-acquired slot may commit it",
+                    event.id,
+                    channel.snapshot(event.slot),
+                )
+            slot_state.state = "COMMITTED"
+            slot_state.commit_event = event.id
+            changed_channels.add((event.resource, event.slot))
+        elif event.type == "ConsumerWait":
+            assert event.resource is not None and event.slot is not None and event.logical_phase is not None
+            channel = state.channels[event.resource]
+            status = self._consumer_wait_status(event, channel)
+            if status == "BLOCKED":
+                raise AssertionError("blocked channel consumer wait was applied")
+            if status == "INVALID":
+                raise ProtocolError(
+                    "INVALID_CHANNEL_CONSUMER_WAIT",
+                    "consumer wait does not name a published current slot phase",
+                    event.id,
+                    channel.snapshot(event.slot),
+                )
+            slot_state = channel.slots[event.slot]
+            slot_state.state = "CONSUMER_OWNED"
+            slot_state.consumer = event.actor
+            slot_state.wait_event = event.id
+            edge = (slot_state.handoff_id, event.id, "CHANNEL_HANDOFF")
+            state.dynamic_edges.add(edge)
+            added_edges = (edge,)
+            changed_channels.add((event.resource, event.slot))
+        elif event.type == "ConsumerRelease":
+            assert event.resource is not None and event.slot is not None and event.logical_phase is not None
+            channel = state.channels[event.resource]
+            if not channel.initialized:
+                raise ProtocolError("CHANNEL_USE_BEFORE_CREATE", "consumer release used a channel before ChannelCreate", event.id, channel.snapshot())
+            slot_state = channel.slots[event.slot]
+            if event.logical_phase != slot_state.logical_phase:
+                code = "STALE_CHANNEL_PHASE" if event.logical_phase < slot_state.logical_phase else "FUTURE_CHANNEL_PHASE"
+                raise ProtocolError(code, "consumer release phase does not match the slot", event.id, channel.snapshot(event.slot))
+            if slot_state.state != "CONSUMER_OWNED" or slot_state.consumer != event.actor:
+                raise ProtocolError(
+                    "CHANNEL_CONSUMER_OWNERSHIP",
+                    "only the actor owning a consumer-waited slot may release it",
+                    event.id,
+                    channel.snapshot(event.slot),
+                )
+            edge = (slot_state.wait_event, event.id, "CHANNEL_RELEASE")
+            channel.releases[(event.slot, event.logical_phase)] = event.id
+            slot_state.logical_phase += 1
+            slot_state.state = "PRODUCER_AVAILABLE"
+            slot_state.producer = None
+            slot_state.consumer = None
+            slot_state.acquire_event = None
+            slot_state.commit_event = None
+            slot_state.handoff_id = None
+            slot_state.wait_event = None
+            state.dynamic_edges.add(edge)
+            added_edges = (edge,)
+            changed_channels.add((event.resource, event.slot))
         elif event.type == "MBarrierInit":
             barrier = state.barriers[event.resource]
             if barrier.lifecycle == "LIVE":
@@ -1126,6 +1377,7 @@ class Executor:
             changed_resources=frozenset(changed_resources),
             changed_collectives=frozenset(changed_collectives),
             changed_groups=frozenset(changed_groups),
+            changed_channels=frozenset(changed_channels),
             spawned_completions=spawned_completions,
             consumed_waits=consumed_waits,
             dynamic_edges=added_edges,
@@ -1152,6 +1404,12 @@ class Executor:
             )
             for group_state in state.groups.values()
             for owner in group_state.participants
+        ):
+            return True
+        if any(
+            channel.initialized
+            and any(slot.state != "PRODUCER_AVAILABLE" for slot in channel.slots.values())
+            for channel in state.channels.values()
         ):
             return True
         return any(barrier.generation_started for barrier in state.barriers.values() if barrier.lifecycle == "LIVE")
@@ -1208,10 +1466,36 @@ class Executor:
             )
             for resource, group_state in sorted(state.groups.items())
         )
+        channels = tuple(
+            (
+                resource,
+                channel.participants,
+                channel.capacity,
+                channel.initialized,
+                channel.create_event,
+                tuple(
+                    (
+                        slot,
+                        item.logical_phase,
+                        item.state,
+                        item.producer,
+                        item.consumer,
+                        item.acquire_event,
+                        item.commit_event,
+                        item.handoff_id,
+                        item.wait_event,
+                    )
+                    for slot, item in sorted(channel.slots.items())
+                ),
+                tuple(sorted(channel.handoffs.items())),
+                tuple(sorted(channel.releases.items())),
+            )
+            for resource, channel in sorted(state.channels.items())
+        )
         remaining = tuple((key, tuple(sorted(event_ids))) for key, event_ids in sorted(state.remaining.items()))
         pending = tuple((key, op.issue_id, op.actor, op.resource, op.destination_region, op.lifecycle_epoch, op.generation, op.bytes)
                         for key, op in sorted(state.pending_completions.items()))
-        return (tuple(sorted(state.frontiers.items())), tuple(sorted(state.executed)), barriers, collectives, groups, remaining,
+        return (tuple(sorted(state.frontiers.items())), tuple(sorted(state.executed)), barriers, collectives, groups, channels, remaining,
                 tuple(sorted(state.observed)), pending, tuple(sorted(state.completed_transitions)))
 
     def explore(self, hold: str | None = None) -> ExplorationResult:
@@ -1310,6 +1594,35 @@ class Executor:
                         "owner": owner,
                         "protocol_state": group_state.snapshot(owner),
                     }
+        for resource_id in sorted(state.channels):
+            channel = state.channels[resource_id]
+            if not channel.initialized:
+                continue
+            for slot, slot_state in sorted(channel.slots.items()):
+                if slot_state.state == "PRODUCER_OWNED":
+                    return {
+                        "code": "MISSING_PRODUCER_COMMIT",
+                        "message": "channel producer owns a slot but never commits it",
+                        "resource": resource_id,
+                        "slot": slot,
+                        "protocol_state": channel.snapshot(slot),
+                    }
+                if slot_state.state == "CONSUMER_AVAILABLE":
+                    return {
+                        "code": "MISSING_CONSUMER_WAIT",
+                        "message": "published channel slot is never acquired by a consumer",
+                        "resource": resource_id,
+                        "slot": slot,
+                        "protocol_state": channel.snapshot(slot),
+                    }
+                if slot_state.state == "CONSUMER_OWNED":
+                    return {
+                        "code": "MISSING_CONSUMER_RELEASE",
+                        "message": "channel consumer owns a slot but never releases it",
+                        "resource": resource_id,
+                        "slot": slot,
+                        "protocol_state": channel.snapshot(slot),
+                    }
         waits = [event.id for actor in sorted(state.frontiers) if (event := self._frontier_event(state, actor)) is not None and event.type == "MBarrierWaitParity"]
         if waits:
             return {"code": "STUCK_WAIT", "message": "no transition can satisfy one or more waits", "events": waits}
@@ -1322,6 +1635,17 @@ class Executor:
                 "code": "STUCK_BARRIER_OBSERVE",
                 "message": "no collective release can satisfy one or more barrier observes",
                 "events": observes,
+            }
+        channel_waits = [
+            event.id for actor in sorted(state.frontiers)
+            if (event := self._frontier_event(state, actor)) is not None
+            and event.type == "ConsumerWait"
+        ]
+        if channel_waits:
+            return {
+                "code": "STUCK_CHANNEL_WAIT",
+                "message": "no producer handoff can satisfy one or more consumer waits",
+                "events": channel_waits,
             }
         group_waits = [
             event for actor in sorted(state.frontiers)
