@@ -7,6 +7,7 @@ RESOURCE_KINDS = frozenset({
     "mbarrier",
     "cta_barrier",
     "named_barrier",
+    "cluster_barrier",
     "async_group",
     "channel",
 })
@@ -19,7 +20,7 @@ COMPLETION_KINDS = frozenset({
     "GLOBAL_COMPLETE",
 })
 PROXY_DOMAINS = frozenset({"GENERIC", "ASYNC_COPY", "TMA", "TENSOR_CORE"})
-SCOPES = frozenset({"CTA"})
+SCOPES = frozenset({"CTA", "CLUSTER"})
 WAIT_MODES = frozenset({"READ_ONLY", "GLOBAL"})
 
 
@@ -31,6 +32,7 @@ class VisibilityMask:
     tensor_read: bool
     tensor_write: bool
     control_only: bool
+    dsmem: bool = False
 
     @classmethod
     def from_mapping(cls, value: dict[str, Any]) -> "VisibilityMask":
@@ -39,6 +41,7 @@ class VisibilityMask:
     def artifact(self) -> dict[str, bool]:
         return {
             "shared": self.shared,
+            "dsmem": self.dsmem,
             "global_read": self.global_read,
             "global_write": self.global_write,
             "tensor_read": self.tensor_read,

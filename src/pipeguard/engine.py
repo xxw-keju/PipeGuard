@@ -212,7 +212,7 @@ class Executor:
             collectives={
                 resource.id: CollectiveBarrierState(resource.participants, resource.capacity)
                 for resource in self.module.resources
-                if resource.kind in {"cta_barrier", "named_barrier"}
+                if resource.kind in {"cta_barrier", "named_barrier", "cluster_barrier"}
             },
             groups={
                 resource.id: CommitGroupState(

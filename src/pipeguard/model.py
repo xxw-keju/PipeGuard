@@ -11,7 +11,7 @@ import jsonschema
 
 from .protocols import RESOURCE_KINDS, VisibilityMask
 
-IMPLEMENTED_RESOURCE_KINDS = frozenset({"mbarrier", "cta_barrier", "named_barrier", "async_group", "channel"})
+IMPLEMENTED_RESOURCE_KINDS = frozenset({"mbarrier", "cta_barrier", "named_barrier", "cluster_barrier", "async_group", "channel"})
 IMPLEMENTED_ASYNC_PROTOCOLS = frozenset({"CP_ASYNC", "WGMMA", "TMA_STORE"})
 
 IMPLEMENTED_EVENTS = frozenset({
@@ -49,6 +49,7 @@ class Actor:
     id: str
     kind: str
     participants: tuple[int, ...]
+    cta_rank: int | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -69,6 +70,7 @@ class Region:
     address_space: str
     offset: int
     extent: int
+    owner_cta_rank: int | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -151,8 +153,14 @@ class Module:
         return {key: frozenset(event_ids) for key, event_ids in required.items()}
 
 
-def _schema() -> dict[str, Any]:
-    return json.loads(files("pipeguard.specs").joinpath("pgir-v1.schema.json").read_text())
+def _schema(version: str) -> dict[str, Any]:
+    if not isinstance(version, str) or version not in {"pgir-v1", "pgir-v2"}:
+        raise PGIRError(
+            "UNKNOWN_SCHEMA_VERSION",
+            "PGIR schema version is not supported",
+            {"schema_version": version},
+        )
+    return json.loads(files("pipeguard.specs").joinpath(f"{version}.schema.json").read_text())
 
 
 def stable_completion_id(issue_id: str, generation: int) -> str:
@@ -284,14 +292,21 @@ def _strict_integers(data: Any) -> None:
         for name in ("warp_size", "cta_threads", "shared_memory_bytes"):
             if name in target:
                 _strict_integer(target[name], f"/target/{name}")
+        shape = target.get("cluster_shape")
+        if isinstance(shape, dict):
+            for name in ("x", "y", "z"):
+                if name in shape:
+                    _strict_integer(shape[name], f"/target/cluster_shape/{name}")
     for index, actor in enumerate(data.get("actors", [])):
+        if "cta_rank" in actor:
+            _strict_integer(actor["cta_rank"], f"/actors/{index}/cta_rank")
         for lane_index, lane in enumerate(actor.get("participants", [])):
             _strict_integer(lane, f"/actors/{index}/participants/{lane_index}")
     for index, resource in enumerate(data.get("resources", [])):
         if "capacity" in resource:
             _strict_integer(resource["capacity"], f"/resources/{index}/capacity")
     for index, region in enumerate(data.get("regions", [])):
-        for name in ("offset", "extent"):
+        for name in ("offset", "extent", "owner_cta_rank"):
             if name in region:
                 _strict_integer(region[name], f"/regions/{index}/{name}")
     for index, event in enumerate(data.get("events", [])):
@@ -311,7 +326,8 @@ def _strict_integers(data: Any) -> None:
 
 def _schema_validate(data: Any) -> None:
     _strict_integers(data)
-    validator = jsonschema.Draft202012Validator(_schema())
+    version = data.get("schema_version") if isinstance(data, dict) else None
+    validator = jsonschema.Draft202012Validator(_schema(version))
     errors = sorted(validator.iter_errors(data), key=lambda error: (list(error.absolute_path), error.message))
     if errors:
         error = errors[0]
@@ -347,12 +363,23 @@ def _semantic_validate(module: Module) -> None:
     _unique("event", [event.id for event in module.events])
 
     assumptions = module.raw["assumptions"]
+    schema_version = module.raw["schema_version"]
+    expected_assumptions: dict[str, Any] = {
+        "finite_control_flow": True,
+        "statically_known_participants": True,
+        "parity_normalization_status": "RESOLVED",
+        "alias_precision": "EXACT",
+        "fair_async_completion": True,
+        "no_cluster_effects": schema_version == "pgir-v1",
+    }
+    if schema_version == "pgir-v2":
+        expected_assumptions.update({
+            "cluster_topology_resolved": True,
+            "remote_alias_precision": "EXACT",
+        })
     unresolved = sorted(
-        key for key, expected in {
-            "finite_control_flow": True, "statically_known_participants": True,
-            "parity_normalization_status": "RESOLVED", "alias_precision": "EXACT",
-            "fair_async_completion": True, "no_cluster_effects": True,
-        }.items() if assumptions.get(key) != expected
+        key for key, expected in expected_assumptions.items()
+        if assumptions.get(key) != expected
     )
     if unresolved:
         code = "INCONCLUSIVE_PARITY" if "parity_normalization_status" in unresolved else "UNRESOLVED_ASSUMPTIONS"
@@ -361,10 +388,51 @@ def _semantic_validate(module: Module) -> None:
         raise PGIRError("UNSUPPORTED_CONSTRUCT", "frontend reported unsupported constructs", {"constructs": sorted(module.raw["unsupported_constructs"])})
 
     cta_threads = module.raw["target"]["cta_threads"]
+    cluster_ctas = 1
+    if schema_version == "pgir-v2":
+        shape = module.raw["target"]["cluster_shape"]
+        cluster_ctas = shape["x"] * shape["y"] * shape["z"]
+        if cluster_ctas > 8:
+            raise PGIRError(
+                "NONPORTABLE_CLUSTER_SIZE",
+                "the supported portable SM90 cluster subset contains at most eight CTAs",
+                {"cluster_shape": shape, "cluster_ctas": cluster_ctas},
+            )
     for actor in module.actors:
+        if schema_version == "pgir-v1" and actor.cta_rank is not None:
+            raise PGIRError(
+                "V1_CLUSTER_FIELD_FORBIDDEN",
+                "PGIR v1 actors cannot carry a CTA rank",
+                {"actor": actor.id},
+            )
+        if schema_version == "pgir-v2" and (
+            actor.cta_rank is None or actor.cta_rank >= cluster_ctas
+        ):
+            raise PGIRError(
+                "CTA_RANK_OUT_OF_RANGE",
+                "actor CTA rank is outside the static cluster shape",
+                {"actor": actor.id, "cta_rank": actor.cta_rank, "cluster_ctas": cluster_ctas},
+            )
         invalid_lanes = sorted(lane for lane in actor.participants if lane >= cta_threads)
         if invalid_lanes:
             raise PGIRError("PARTICIPANT_OUT_OF_RANGE", "actor participant exceeds CTA bounds", {"actor": actor.id, "lanes": invalid_lanes, "cta_threads": cta_threads})
+    if schema_version == "pgir-v2":
+        represented_ranks = {actor.cta_rank for actor in module.actors if actor.kind != "ASYNC_ENGINE"}
+        if represented_ranks != set(range(cluster_ctas)):
+            raise PGIRError(
+                "CLUSTER_TOPOLOGY_INCOMPLETE",
+                "every CTA in the static cluster must have at least one program actor",
+                {"represented_ranks": sorted(represented_ranks), "cluster_ctas": cluster_ctas},
+            )
+        for region in module.regions:
+            if region.address_space == "DSMEM" and (
+                region.owner_cta_rank is None or region.owner_cta_rank >= cluster_ctas
+            ):
+                raise PGIRError(
+                    "DSMEM_OWNER_OUT_OF_RANGE",
+                    "DSMEM region owner is outside the static cluster shape",
+                    {"region": region.id, "owner_cta_rank": region.owner_cta_rank, "cluster_ctas": cluster_ctas},
+                )
     for resource in module.resources:
         dangling = sorted(set(resource.participants) - actors.keys())
         if dangling:
@@ -373,6 +441,26 @@ def _semantic_validate(module: Module) -> None:
             raise PGIRError("UNKNOWN_RESOURCE_KIND", "resource kind is unknown", {"resource": resource.id, "kind": resource.kind})
         if resource.kind not in IMPLEMENTED_RESOURCE_KINDS:
             raise PGIRError("KNOWN_RESOURCE_UNSUPPORTED", "resource kind is not implemented yet", {"resource": resource.id, "kind": resource.kind})
+        if schema_version == "pgir-v2" and resource.kind != "cluster_barrier":
+            participant_ranks = {actors[actor].cta_rank for actor in resource.participants}
+            if len(participant_ranks) != 1:
+                raise PGIRError(
+                    "CROSS_CTA_LOCAL_RESOURCE",
+                    "non-cluster resources cannot span multiple CTAs",
+                    {"resource": resource.id, "cta_ranks": sorted(participant_ranks)},
+                )
+            if resource.scope == "CLUSTER":
+                raise PGIRError(
+                    "RESOURCE_SCOPE_MISMATCH",
+                    "only cluster barriers may use CLUSTER scope in the supported PGIR v2 subset",
+                    {"resource": resource.id, "kind": resource.kind},
+                )
+            if resource.visibility_mask is not None and resource.visibility_mask.dsmem:
+                raise PGIRError(
+                    "UNSUPPORTED_DSMEM_VISIBILITY",
+                    "only cluster barriers may publish DSMEM visibility",
+                    {"resource": resource.id, "kind": resource.kind},
+                )
         if resource.kind == "mbarrier":
             unexpected_resource_fields = [
                 name for name in ("capacity", "protocol", "scope", "visibility_mask")
@@ -384,7 +472,7 @@ def _semantic_validate(module: Module) -> None:
                     "mbarrier resource carries fields for another protocol",
                     {"resource": resource.id, "fields": unexpected_resource_fields},
                 )
-        elif resource.kind in {"cta_barrier", "named_barrier"}:
+        elif resource.kind in {"cta_barrier", "named_barrier", "cluster_barrier"}:
             missing = [
                 name for name in ("capacity", "scope", "visibility_mask")
                 if getattr(resource, name) is None
@@ -401,31 +489,55 @@ def _semantic_validate(module: Module) -> None:
                     "collective barrier cannot carry an async-group protocol",
                     {"resource": resource.id, "fields": ["protocol"]},
                 )
-            participant_lanes: list[int] = []
-            for actor_id in resource.participants:
-                participant_lanes.extend(actors[actor_id].participants)
-            if len(participant_lanes) != len(set(participant_lanes)):
+            participant_slots = [
+                (actors[actor_id].cta_rank or 0, lane)
+                for actor_id in resource.participants
+                for lane in actors[actor_id].participants
+            ]
+            if len(participant_slots) != len(set(participant_slots)):
                 raise PGIRError(
                     "OVERLAPPING_COLLECTIVE_PARTICIPANTS",
-                    "collective barrier actors must provide disjoint lane sets",
+                    "collective barrier actors must provide disjoint CTA-qualified lane sets",
                     {"resource": resource.id},
                 )
-            if resource.capacity != len(participant_lanes):
+            if resource.capacity != len(participant_slots):
                 raise PGIRError(
                     "COLLECTIVE_CAPACITY_MISMATCH",
                     "collective barrier capacity must equal its complete participant lane set",
-                    {"resource": resource.id, "capacity": resource.capacity, "participant_lanes": sorted(participant_lanes)},
+                    {"resource": resource.id, "capacity": resource.capacity, "participant_slots": participant_slots},
                 )
-            if resource.kind == "cta_barrier" and set(participant_lanes) != set(range(cta_threads)):
-                raise PGIRError(
-                    "CTA_PARTICIPANT_SET_INCOMPLETE",
-                    "CTA barrier must cover every lane in the CTA exactly once",
-                    {"resource": resource.id, "participant_lanes": sorted(participant_lanes), "cta_threads": cta_threads},
-                )
+            if resource.kind == "cta_barrier":
+                rank = participant_slots[0][0]
+                expected_slots = {(rank, lane) for lane in range(cta_threads)}
+                if set(participant_slots) != expected_slots:
+                    raise PGIRError(
+                        "CTA_PARTICIPANT_SET_INCOMPLETE",
+                        "CTA barrier must cover every lane in one CTA exactly once",
+                        {"resource": resource.id, "participant_slots": participant_slots, "cta_threads": cta_threads},
+                    )
+            if resource.kind == "cluster_barrier":
+                expected_slots = {
+                    (rank, lane)
+                    for rank in range(cluster_ctas)
+                    for lane in range(cta_threads)
+                }
+                if schema_version != "pgir-v2" or resource.scope != "CLUSTER":
+                    raise PGIRError(
+                        "RESOURCE_SCOPE_MISMATCH",
+                        "cluster barriers require PGIR v2 CLUSTER scope",
+                        {"resource": resource.id, "scope": resource.scope},
+                    )
+                if set(participant_slots) != expected_slots:
+                    raise PGIRError(
+                        "CLUSTER_PARTICIPANT_SET_INCOMPLETE",
+                        "cluster barrier must cover every lane in every CTA exactly once",
+                        {"resource": resource.id, "participant_slots": participant_slots, "cluster_ctas": cluster_ctas, "cta_threads": cta_threads},
+                    )
             assert resource.visibility_mask is not None
             mask = resource.visibility_mask
             data_visibility = any((
                 mask.shared,
+                mask.dsmem,
                 mask.global_read,
                 mask.global_write,
                 mask.tensor_read,
@@ -435,6 +547,19 @@ def _semantic_validate(module: Module) -> None:
                 raise PGIRError(
                     "INVALID_VISIBILITY_MASK",
                     "collective barrier must select either control-only or at least one data visibility domain",
+                    {"resource": resource.id, "visibility_mask": mask.artifact()},
+                )
+            if resource.kind == "cluster_barrier" and data_visibility and (
+                not mask.dsmem
+                or mask.shared
+                or mask.global_read
+                or mask.global_write
+                or mask.tensor_read
+                or mask.tensor_write
+            ):
+                raise PGIRError(
+                    "UNSUPPORTED_CLUSTER_VISIBILITY",
+                    "cluster barrier data visibility is limited to DSMEM in PGIR v2",
                     {"resource": resource.id, "visibility_mask": mask.artifact()},
                 )
         elif resource.kind == "channel":
@@ -650,7 +775,7 @@ def _semantic_validate(module: Module) -> None:
             raise PGIRError("UNRESOLVED_PARTICIPANTS", "event actor is outside resource participant set", {"event": event.id, "resource": event.resource})
         if event.type in {"BarrierArrive", "BarrierObserve"}:
             resource = resources[event.resource]
-            if resource.kind not in {"cta_barrier", "named_barrier"}:
+            if resource.kind not in {"cta_barrier", "named_barrier", "cluster_barrier"}:
                 raise PGIRError(
                     "RESOURCE_KIND_MISMATCH",
                     "collective barrier event must reference a CTA or named barrier resource",
@@ -803,6 +928,16 @@ def _semantic_validate(module: Module) -> None:
                     {"event": event.id, "slot": event.slot, "capacity": resource.capacity},
                 )
         elif event.type == "ProxyFence":
+            assert event.visibility_mask is not None
+            if event.visibility_mask.dsmem or any(
+                regions[region_id].address_space == "DSMEM"
+                for region_id in event.regions
+            ):
+                raise PGIRError(
+                    "UNSUPPORTED_DSMEM_PROXY",
+                    "DSMEM proxy-fence semantics are outside the supported PGIR v2 subset",
+                    {"event": event.id},
+                )
             if event.from_domain != "GENERIC" or event.to_domain not in {"ASYNC_COPY", "TMA", "TENSOR_CORE"}:
                 raise PGIRError(
                     "UNSUPPORTED_PROXY_DIRECTION",
@@ -979,6 +1114,76 @@ def _semantic_validate(module: Module) -> None:
                 )
             generation += 1
 
+    if schema_version == "pgir-v2":
+        cluster_resources = {
+            resource.id
+            for resource in module.resources
+            if resource.kind == "cluster_barrier"
+        }
+        for resource_id in sorted(cluster_resources):
+            resource = resources[resource_id]
+            collective_events = [
+                event
+                for event in module.events
+                if event.resource == resource_id
+                and event.type in {"BarrierArrive", "BarrierObserve"}
+            ]
+            invocations = sorted({event.invocation_id for event in collective_events})
+            if invocations and invocations != list(range(len(invocations))):
+                raise PGIRError(
+                    "CLUSTER_INVOCATION_SEQUENCE_GAP",
+                    "cluster barrier invocation IDs must be gap-free and start at zero",
+                    {"resource": resource_id, "invocations": invocations},
+                )
+            for invocation in invocations:
+                arrivals = sorted(
+                    event.actor
+                    for event in collective_events
+                    if event.invocation_id == invocation
+                    and event.type == "BarrierArrive"
+                    and event.predicate
+                )
+                observes = sorted(
+                    event.actor
+                    for event in collective_events
+                    if event.invocation_id == invocation
+                    and event.type == "BarrierObserve"
+                )
+                expected = sorted(resource.participants)
+                if arrivals != expected or observes != expected:
+                    raise PGIRError(
+                        "CLUSTER_BARRIER_PARTICIPATION_INCOMPLETE",
+                        "every cluster barrier participant must arrive and observe each invocation exactly once",
+                        {
+                            "resource": resource_id,
+                            "invocation": invocation,
+                            "expected": expected,
+                            "arrivals": arrivals,
+                            "observes": observes,
+                        },
+                    )
+        for actor, trace in module.events_by_actor.items():
+            observe_positions = [
+                index
+                for index, event in enumerate(trace)
+                if event.type == "BarrierObserve" and event.resource in cluster_resources
+            ]
+            for index, event in enumerate(trace):
+                if event.type not in {"MemRead", "MemWrite"}:
+                    continue
+                assert event.region is not None
+                if regions[event.region].address_space != "DSMEM":
+                    continue
+                if (
+                    not any(position < index for position in observe_positions)
+                    or not any(position > index for position in observe_positions)
+                ):
+                    raise PGIRError(
+                        "DSMEM_LIFETIME_UNGUARDED",
+                        "DSMEM access requires cluster synchronization before access and before CTA exit",
+                        {"event": event.id, "actor": actor},
+                    )
+
     synthetic_ids = {
         stable_completion_id(event.id, event.generation)
         for event in module.events if event.type == "TmaLoadIssue"
@@ -1024,7 +1229,12 @@ def _semantic_validate(module: Module) -> None:
 
 def module_from_dict(data: dict[str, Any]) -> Module:
     _schema_validate(data)
-    actors = tuple(Actor(item["id"], item["kind"], tuple(sorted(item["participants"]))) for item in data["actors"])
+    actors = tuple(Actor(
+        item["id"],
+        item["kind"],
+        tuple(sorted(item["participants"])),
+        cta_rank=item.get("cta_rank"),
+    ) for item in data["actors"])
     resources = tuple(Resource(
         item["id"],
         item["kind"],
@@ -1034,7 +1244,14 @@ def module_from_dict(data: dict[str, Any]) -> Module:
         scope=item.get("scope"),
         visibility_mask=VisibilityMask.from_mapping(item["visibility_mask"]) if "visibility_mask" in item else None,
     ) for item in data["resources"])
-    regions = tuple(Region(item["id"], item["allocation_id"], item["address_space"], item["offset"], item["extent"]) for item in data["regions"])
+    regions = tuple(Region(
+        item["id"],
+        item["allocation_id"],
+        item["address_space"],
+        item["offset"],
+        item["extent"],
+        owner_cta_rank=item.get("owner_cta_rank"),
+    ) for item in data["regions"])
     events = tuple(Event(
         id=item["id"], type=item["type"], actor=item["actor"], seq=item["seq"],
         depends_on=tuple(sorted(item.get("depends_on", []))), resource=item.get("resource"),

@@ -2361,3 +2361,169 @@ def test_engine_order_requires_resolved_acyclic_typed_endpoints():
     with pytest.raises(PGIRError) as cycle:
         module_from_dict(ambiguous)
     assert cycle.value.code == "AMBIGUOUS_ASYNC_ENGINE_COMPLETION"
+
+
+def cluster_dsmem_module(control_only: bool = False, cluster_ctas: int = 2):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["schema_version"] = "pgir-v2"
+    raw["target"] = {
+        "architecture": "sm90", "warp_size": 32, "cta_threads": 1,
+        "shared_memory_bytes": 65536, "grid_scope": "single_cluster",
+        "cluster_shape": {"x": cluster_ctas, "y": 1, "z": 1},
+    }
+    raw["assumptions"].update({
+        "no_cluster_effects": False,
+        "cluster_topology_resolved": True,
+        "remote_alias_precision": "EXACT",
+    })
+    raw["actors"] = [
+        {"id": f"a{rank}", "kind": "PARTITION", "participants": [0], "cta_rank": rank}
+        for rank in range(cluster_ctas)
+    ]
+    raw["resources"] = [{
+        "id": "cluster", "kind": "cluster_barrier",
+        "participants": [f"a{rank}" for rank in range(cluster_ctas)],
+        "capacity": cluster_ctas, "scope": "CLUSTER",
+        "visibility_mask": {
+            "shared": False, "dsmem": not control_only,
+            "global_read": False, "global_write": False,
+            "tensor_read": False, "tensor_write": False,
+            "control_only": control_only,
+        },
+    }]
+    raw["regions"] = [{
+        "id": "remote_tile", "allocation_id": "cluster-tile", "address_space": "DSMEM",
+        "owner_cta_rank": 0, "offset": 0, "extent": 16,
+    }]
+    actor_events = {}
+    for rank in range(cluster_ctas):
+        actor = f"a{rank}"
+        items = [
+            (f"arrive0_{actor}", "BarrierArrive", 0),
+            (f"observe0_{actor}", "BarrierObserve", 0),
+        ]
+        if rank == 0:
+            items.append(("write_a0", "MemWrite", None))
+        items.extend([
+            (f"arrive1_{actor}", "BarrierArrive", 1),
+            (f"observe1_{actor}", "BarrierObserve", 1),
+        ])
+        if rank == 1:
+            items.append(("read_a1", "MemRead", None))
+        items.extend([
+            (f"arrive2_{actor}", "BarrierArrive", 2),
+            (f"observe2_{actor}", "BarrierObserve", 2),
+        ])
+        actor_events[actor] = items
+    events = []
+    for actor, items in actor_events.items():
+        for seq, (identifier, kind, invocation) in enumerate(items):
+            event = {"id": identifier, "type": kind, "actor": actor, "seq": seq}
+            if kind in {"BarrierArrive", "BarrierObserve"}:
+                event.update({"resource": "cluster", "invocation_id": invocation})
+                if kind == "BarrierArrive":
+                    event["count"] = 1
+            else:
+                event["region"] = "remote_tile"
+            events.append(event)
+    raw["events"] = events
+    return raw
+
+
+@pytest.mark.parametrize("cluster_ctas", [2, 3, 4])
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_pgir_v2_cluster_barrier_publishes_dsmem(engine, cluster_ctas):
+    result = check_module(
+        module_from_dict(cluster_dsmem_module(cluster_ctas=cluster_ctas)),
+        engine=engine,
+    )
+    assert result["verdict"] == "SAFE"
+    assert "single_cluster" in result["manifest"]["scope"]
+    assert any(edge["kind"] == "BARRIER_RELEASE" for edge in result["artifacts"]["pdg"]["edges"])
+    if engine == "maximal":
+        assert result["statistics"]["barrier_release_streams"] == 1
+        assert sum(
+            item["anchor"].startswith("completion:barrier-release:")
+            for item in result["artifacts"]["boundaries"]
+        ) == 3
+        assert result["statistics"]["collective_notifications"] > 0
+        assert result["statistics"]["full_enabled_scans"] == 0
+        assert result["statistics"]["state_clones"] == 0
+
+
+def test_cluster_control_only_does_not_publish_dsmem():
+    result = check_module(module_from_dict(cluster_dsmem_module(control_only=True)), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+
+
+def test_dsmem_alias_identity_includes_owner_cta_rank():
+    raw = cluster_dsmem_module(control_only=True)
+    alternate = {**raw["regions"][0], "id": "other_tile", "owner_cta_rank": 1}
+    raw["regions"].append(alternate)
+    next(event for event in raw["events"] if event["id"] == "read_a1")["region"] = "other_tile"
+    assert check_module(module_from_dict(raw), engine="crosscheck")["verdict"] == "SAFE"
+
+
+def test_pgir_v2_cluster_topology_and_lifetime_fail_closed():
+    with pytest.raises(PGIRError) as size:
+        module_from_dict(cluster_dsmem_module(cluster_ctas=9))
+    assert size.value.code == "NONPORTABLE_CLUSTER_SIZE"
+
+    raw = cluster_dsmem_module()
+    raw["regions"][0]["owner_cta_rank"] = 2
+    with pytest.raises(PGIRError) as owner:
+        module_from_dict(raw)
+    assert owner.value.code == "DSMEM_OWNER_OUT_OF_RANGE"
+
+    raw = cluster_dsmem_module()
+    raw["resources"][0].update({"participants": ["a0"], "capacity": 1})
+    with pytest.raises(PGIRError) as participants:
+        module_from_dict(raw)
+    assert participants.value.code == "CLUSTER_PARTICIPANT_SET_INCOMPLETE"
+
+    raw = cluster_dsmem_module()
+    raw["events"] = [event for event in raw["events"] if event["id"] != "observe2_a0"]
+    for actor in ("a0", "a1"):
+        for seq, event in enumerate(item for item in raw["events"] if item["actor"] == actor):
+            event["seq"] = seq
+    with pytest.raises(PGIRError) as participation:
+        module_from_dict(raw)
+    assert participation.value.code == "CLUSTER_BARRIER_PARTICIPATION_INCOMPLETE"
+
+    raw = cluster_dsmem_module()
+    write = next(event for event in raw["events"] if event["id"] == "write_a0")
+    for event in raw["events"]:
+        if event["actor"] == "a0" and event is not write:
+            event["seq"] += 1
+    write["seq"] = 0
+    with pytest.raises(PGIRError) as lifetime:
+        module_from_dict(raw)
+    assert lifetime.value.code == "DSMEM_LIFETIME_UNGUARDED"
+
+
+def test_pgir_v1_cannot_silently_accept_cluster_fields():
+    raw = cluster_dsmem_module()
+    raw["schema_version"] = "pgir-v1"
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+    assert caught.value.code == "SCHEMA_INVALID"
+
+
+def test_pgir_v2_cluster_fixture_runs_through_cli():
+    process = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pipeguard",
+            "check",
+            str(FIXTURES / "cluster_dsmem_handoff.json"),
+            "--engine",
+            "crosscheck",
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    result = json.loads(process.stdout)
+    assert result["verdict"] == "SAFE"
+    assert "single_cluster" in result["manifest"]["scope"]

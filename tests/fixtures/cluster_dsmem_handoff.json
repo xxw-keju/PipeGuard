@@ -1,0 +1,208 @@
+{
+  "actors": [
+    {
+      "cta_rank": 0,
+      "id": "a0",
+      "kind": "PARTITION",
+      "participants": [
+        0
+      ]
+    },
+    {
+      "cta_rank": 1,
+      "id": "a1",
+      "kind": "PARTITION",
+      "participants": [
+        0
+      ]
+    }
+  ],
+  "assumptions": {
+    "alias_precision": "EXACT",
+    "cluster_topology_resolved": true,
+    "fair_async_completion": true,
+    "finite_control_flow": true,
+    "no_cluster_effects": false,
+    "parity_normalization_status": "RESOLVED",
+    "remote_alias_precision": "EXACT",
+    "statically_known_participants": true
+  },
+  "control_structure": {
+    "finite_event_graph": true
+  },
+  "events": [
+    {
+      "actor": "a0",
+      "count": 1,
+      "id": "arrive0_a0",
+      "invocation_id": 0,
+      "resource": "cluster",
+      "seq": 0,
+      "type": "BarrierArrive"
+    },
+    {
+      "actor": "a0",
+      "id": "observe0_a0",
+      "invocation_id": 0,
+      "resource": "cluster",
+      "seq": 1,
+      "type": "BarrierObserve"
+    },
+    {
+      "actor": "a0",
+      "id": "write_a0",
+      "region": "remote_tile",
+      "seq": 2,
+      "type": "MemWrite"
+    },
+    {
+      "actor": "a0",
+      "count": 1,
+      "id": "arrive1_a0",
+      "invocation_id": 1,
+      "resource": "cluster",
+      "seq": 3,
+      "type": "BarrierArrive"
+    },
+    {
+      "actor": "a0",
+      "id": "observe1_a0",
+      "invocation_id": 1,
+      "resource": "cluster",
+      "seq": 4,
+      "type": "BarrierObserve"
+    },
+    {
+      "actor": "a0",
+      "count": 1,
+      "id": "arrive2_a0",
+      "invocation_id": 2,
+      "resource": "cluster",
+      "seq": 5,
+      "type": "BarrierArrive"
+    },
+    {
+      "actor": "a0",
+      "id": "observe2_a0",
+      "invocation_id": 2,
+      "resource": "cluster",
+      "seq": 6,
+      "type": "BarrierObserve"
+    },
+    {
+      "actor": "a1",
+      "count": 1,
+      "id": "arrive0_a1",
+      "invocation_id": 0,
+      "resource": "cluster",
+      "seq": 0,
+      "type": "BarrierArrive"
+    },
+    {
+      "actor": "a1",
+      "id": "observe0_a1",
+      "invocation_id": 0,
+      "resource": "cluster",
+      "seq": 1,
+      "type": "BarrierObserve"
+    },
+    {
+      "actor": "a1",
+      "count": 1,
+      "id": "arrive1_a1",
+      "invocation_id": 1,
+      "resource": "cluster",
+      "seq": 2,
+      "type": "BarrierArrive"
+    },
+    {
+      "actor": "a1",
+      "id": "observe1_a1",
+      "invocation_id": 1,
+      "resource": "cluster",
+      "seq": 3,
+      "type": "BarrierObserve"
+    },
+    {
+      "actor": "a1",
+      "id": "read_a1",
+      "region": "remote_tile",
+      "seq": 4,
+      "type": "MemRead"
+    },
+    {
+      "actor": "a1",
+      "count": 1,
+      "id": "arrive2_a1",
+      "invocation_id": 2,
+      "resource": "cluster",
+      "seq": 5,
+      "type": "BarrierArrive"
+    },
+    {
+      "actor": "a1",
+      "id": "observe2_a1",
+      "invocation_id": 2,
+      "resource": "cluster",
+      "seq": 6,
+      "type": "BarrierObserve"
+    }
+  ],
+  "frontend_provenance": {
+    "extraction_complete": true,
+    "source": "safe_handoff.json"
+  },
+  "producer": {
+    "adapter_version": "pgir-v1-test",
+    "backend_commit": "fixture",
+    "command": "pytest-fixture",
+    "dsl": "TILELANG",
+    "dsl_commit": "fixture",
+    "dsl_version": "test"
+  },
+  "regions": [
+    {
+      "address_space": "DSMEM",
+      "allocation_id": "cluster-tile",
+      "extent": 16,
+      "id": "remote_tile",
+      "offset": 0,
+      "owner_cta_rank": 0
+    }
+  ],
+  "resources": [
+    {
+      "capacity": 2,
+      "id": "cluster",
+      "kind": "cluster_barrier",
+      "participants": [
+        "a0",
+        "a1"
+      ],
+      "scope": "CLUSTER",
+      "visibility_mask": {
+        "control_only": false,
+        "dsmem": true,
+        "global_read": false,
+        "global_write": false,
+        "shared": false,
+        "tensor_read": false,
+        "tensor_write": false
+      }
+    }
+  ],
+  "schema_version": "pgir-v2",
+  "target": {
+    "architecture": "sm90",
+    "cluster_shape": {
+      "x": 2,
+      "y": 1,
+      "z": 1
+    },
+    "cta_threads": 1,
+    "grid_scope": "single_cluster",
+    "shared_memory_bytes": 65536,
+    "warp_size": 32
+  },
+  "unsupported_constructs": []
+}

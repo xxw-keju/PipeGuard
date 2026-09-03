@@ -392,7 +392,13 @@ def _effects(module: Module) -> list[Effect]:
 def _may_alias(module: Module, left: str, right: str) -> bool:
     a = module.region_map[left]
     b = module.region_map[right]
-    return a.address_space == b.address_space and a.allocation_id == b.allocation_id and a.offset < b.offset + b.extent and b.offset < a.offset + a.extent
+    return (
+        a.address_space == b.address_space
+        and a.owner_cta_rank == b.owner_cta_rank
+        and a.allocation_id == b.allocation_id
+        and a.offset < b.offset + b.extent
+        and b.offset < a.offset + a.extent
+    )
 
 
 def _arrivals(module: Module, resource: str, lifecycle_epoch: int, generation: int) -> list[Event]:
@@ -421,18 +427,22 @@ def _mbarrier_visibility(module: Module, graph: PDG, source: Effect, target: Eff
 
 def _collective_visibility(module: Module, graph: PDG, source: Effect, target: Effect) -> bool:
     region = module.region_map[source.region]
-    if region.address_space not in {"SHARED", "GLOBAL"}:
+    if region.address_space not in {"SHARED", "DSMEM", "GLOBAL"}:
         return False
     source_event = module.event_map[source.end]
     target_event = module.event_map[target.begin]
     for resource in module.resources:
-        if resource.kind not in {"cta_barrier", "named_barrier"}:
+        if resource.kind not in {"cta_barrier", "named_barrier", "cluster_barrier"}:
             continue
         mask = resource.visibility_mask
         assert mask is not None
         if mask.control_only:
             continue
         if region.address_space == "SHARED" and not mask.shared:
+            continue
+        if region.address_space == "DSMEM" and (
+            resource.kind != "cluster_barrier" or not mask.dsmem
+        ):
             continue
         if region.address_space == "GLOBAL" and not (
             mask.global_write and (target.mode != "READ" or mask.global_read)
@@ -528,6 +538,7 @@ def _region_covers(module: Module, covering: str, covered: str) -> bool:
     inner = module.region_map[covered]
     return (
         outer.address_space == inner.address_space
+        and outer.owner_cta_rank == inner.owner_cta_rank
         and outer.allocation_id == inner.allocation_id
         and outer.offset <= inner.offset
         and outer.offset + outer.extent >= inner.offset + inner.extent
@@ -912,7 +923,11 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
         "verdict": "SAFE", "checker_version": "0.2.0", "summary": "all supported protocol and data checks passed",
         "diagnostics": [], "statistics": statistics,
         "manifest": {
-            "scope": "finite statically-resolved sm90 single_cta mbarrier/TMA-load/TMA-store/collective-barrier/cp.async/WGMMA/channel/proxy-visibility/explicit-engine-order core",
+            "scope": (
+                "finite statically-resolved sm90 single_cluster PGIR-v2 cluster-barrier/DSMEM core"
+                if module.raw["schema_version"] == "pgir-v2"
+                else "finite statically-resolved sm90 single_cta mbarrier/TMA-load/TMA-store/collective-barrier/cp.async/WGMMA/channel/proxy-visibility/explicit-engine-order core"
+            ),
             "assumptions": dict(sorted(module.raw["assumptions"].items())), "producer": module.raw["producer"],
             "frontend_provenance": module.raw["frontend_provenance"], "counts": counts,
         },
