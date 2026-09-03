@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pipeguard"
+version = "0.2.0"
+description = "DSL-neutral SM90 single-CTA static checker core"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = ["jsonschema>=4.21"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+pipeguard = "pipeguard.cli:main"
+
+[tool.setuptools.package-data]
+pipeguard = ["specs/*.json"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]

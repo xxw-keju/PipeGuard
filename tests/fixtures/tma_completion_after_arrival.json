@@ -1,0 +1,120 @@
+{
+  "actors": [
+    {
+      "id": "a",
+      "kind": "PARTITION",
+      "participants": [
+        0
+      ]
+    }
+  ],
+  "assumptions": {
+    "alias_precision": "EXACT",
+    "fair_async_completion": true,
+    "finite_control_flow": true,
+    "no_cluster_effects": true,
+    "parity_normalization_status": "RESOLVED",
+    "statically_known_participants": true
+  },
+  "control_structure": {
+    "finite_event_graph": true
+  },
+  "events": [
+    {
+      "actor": "a",
+      "count": 1,
+      "id": "init",
+      "resource": "bar",
+      "seq": 0,
+      "type": "MBarrierInit"
+    },
+    {
+      "actor": "a",
+      "bytes": 4,
+      "generation": 0,
+      "id": "expect",
+      "resource": "bar",
+      "seq": 1,
+      "type": "MBarrierExpectTx"
+    },
+    {
+      "actor": "a",
+      "count": 1,
+      "generation": 0,
+      "id": "arrive",
+      "resource": "bar",
+      "seq": 2,
+      "type": "MBarrierArrive"
+    },
+    {
+      "actor": "a",
+      "bytes": 4,
+      "destination_region": "tile",
+      "generation": 0,
+      "id": "issue",
+      "resource": "bar",
+      "seq": 3,
+      "source_region": "source",
+      "type": "TmaLoadIssue"
+    },
+    {
+      "actor": "a",
+      "generation": 0,
+      "id": "wait",
+      "parity_evidence": {
+        "detail": "fixture resolves generation 0",
+        "kind": "BARRIER_HISTORY"
+      },
+      "raw_parity": 0,
+      "resource": "bar",
+      "seq": 4,
+      "type": "MBarrierWaitParity"
+    }
+  ],
+  "frontend_provenance": {
+    "extraction_complete": true,
+    "source": "tma_completion_after_arrival.json"
+  },
+  "producer": {
+    "adapter_version": "pgir-v1-test",
+    "backend_commit": "fixture",
+    "command": "pytest-fixture",
+    "dsl": "TILELANG",
+    "dsl_commit": "fixture",
+    "dsl_version": "test"
+  },
+  "regions": [
+    {
+      "address_space": "SHARED",
+      "allocation_id": "smem",
+      "extent": 16,
+      "id": "tile",
+      "offset": 0
+    },
+    {
+      "address_space": "GLOBAL",
+      "allocation_id": "global-input",
+      "extent": 16,
+      "id": "source",
+      "offset": 0
+    }
+  ],
+  "resources": [
+    {
+      "id": "bar",
+      "kind": "mbarrier",
+      "participants": [
+        "a"
+      ]
+    }
+  ],
+  "schema_version": "pgir-v1",
+  "target": {
+    "architecture": "sm90",
+    "cta_threads": 1,
+    "grid_scope": "single_cta",
+    "shared_memory_bytes": 65536,
+    "warp_size": 32
+  },
+  "unsupported_constructs": []
+}

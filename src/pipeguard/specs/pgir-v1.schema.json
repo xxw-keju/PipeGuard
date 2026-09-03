@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pipeguard.dev/schema/pgir-v1.json",
+  "title": "PipeGuard IR v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "producer", "target", "assumptions", "control_structure", "actors", "resources", "regions", "events", "frontend_provenance", "unsupported_constructs"],
+  "properties": {
+    "schema_version": {"const": "pgir-v1"},
+    "producer": {
+      "type": "object", "additionalProperties": false,
+      "required": ["dsl", "dsl_version", "dsl_commit", "backend_commit", "adapter_version", "command"],
+      "properties": {
+        "dsl": {"enum": ["TILELANG", "TRITON"]}, "dsl_version": {"type": "string", "minLength": 1},
+        "dsl_commit": {"type": "string", "minLength": 1}, "backend_commit": {"type": "string", "minLength": 1},
+        "adapter_version": {"type": "string", "minLength": 1}, "command": {"type": "string", "minLength": 1}
+      }
+    },
+    "target": {
+      "type": "object", "additionalProperties": false,
+      "required": ["architecture", "warp_size", "cta_threads", "shared_memory_bytes", "grid_scope"],
+      "properties": {
+        "architecture": {"const": "sm90"}, "warp_size": {"const": 32},
+        "cta_threads": {"type": "integer", "minimum": 1}, "shared_memory_bytes": {"type": "integer", "minimum": 0},
+        "grid_scope": {"const": "single_cta"}
+      }
+    },
+    "assumptions": {
+      "type": "object", "additionalProperties": false,
+      "required": ["finite_control_flow", "statically_known_participants", "parity_normalization_status", "alias_precision", "fair_async_completion", "no_cluster_effects"],
+      "properties": {
+        "finite_control_flow": {"const": true}, "statically_known_participants": {"const": true},
+        "parity_normalization_status": {"enum": ["RESOLVED", "UNRESOLVED"]},
+        "alias_precision": {"enum": ["EXACT", "UNKNOWN"]},
+        "fair_async_completion": {"const": true}, "no_cluster_effects": {"const": true}
+      }
+    },
+    "control_structure": {
+      "type": "object", "additionalProperties": false, "required": ["finite_event_graph"],
+      "properties": {"finite_event_graph": {"const": true}}
+    },
+    "frontend_provenance": {
+      "type": "object", "additionalProperties": false, "required": ["extraction_complete", "source"],
+      "properties": {"extraction_complete": {"const": true}, "source": {"type": "string", "minLength": 1}}
+    },
+    "actors": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/actor"}},
+    "resources": {"type": "array", "items": {"$ref": "#/$defs/resource"}},
+    "regions": {"type": "array", "items": {"$ref": "#/$defs/region"}},
+    "events": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/event"}},
+    "unsupported_constructs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  },
+  "$defs": {
+    "actor": {
+      "type": "object", "additionalProperties": false, "required": ["id", "kind", "participants"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["LANE", "WARP", "WARPGROUP", "PARTITION", "ASYNC_ENGINE"]},
+        "participants": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "integer", "minimum": 0}}
+      }
+    },
+    "resource": {
+      "type": "object", "additionalProperties": false, "required": ["id", "kind", "participants"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1}, "kind": {"const": "mbarrier"},
+        "participants": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "region": {
+      "type": "object", "additionalProperties": false, "required": ["id", "allocation_id", "address_space", "offset", "extent"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1}, "allocation_id": {"type": "string", "minLength": 1},
+        "address_space": {"enum": ["SHARED", "GLOBAL"]}, "offset": {"type": "integer", "minimum": 0},
+        "extent": {"type": "integer", "minimum": 1}
+      }
+    },
+    "parity_evidence": {
+      "type": "object", "additionalProperties": false, "required": ["kind", "detail"],
+      "properties": {
+        "kind": {"enum": ["STATIC_ITERATION", "PHASE_SSA", "BARRIER_HISTORY", "PARITY_EXPRESSION"]},
+        "detail": {"type": "string", "minLength": 1}
+      }
+    },
+    "event": {
+      "type": "object", "additionalProperties": false, "required": ["id", "type", "actor", "seq"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1}, "type": {"type": "string", "minLength": 1},
+        "actor": {"type": "string", "minLength": 1}, "seq": {"type": "integer", "minimum": 0},
+        "depends_on": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "resource": {"type": "string", "minLength": 1}, "region": {"type": "string", "minLength": 1},
+        "source_region": {"type": "string", "minLength": 1}, "destination_region": {"type": "string", "minLength": 1},
+        "count": {"type": "integer", "minimum": 1}, "bytes": {"type": "integer", "minimum": 1},
+        "generation": {"type": "integer", "minimum": 0}, "raw_parity": {"type": "integer", "minimum": 0, "maximum": 1},
+        "parity_evidence": {"$ref": "#/$defs/parity_evidence"}, "predicate": {"type": "boolean"}
+      }
+    }
+  }
+}

@@ -1,0 +1,30 @@
+# PipeGuard checker core
+
+A small reference checker for finite, statically resolved, single-CTA SM90 PGIR programs. It is DSL-neutral and intentionally fail-closed.
+
+## Install and run
+
+```bash
+python3.12 -m pip install -e '.[test]'
+python3.12 -m pipeguard validate tests/fixtures/safe_handoff.json
+python3.12 -m pipeguard normalize tests/fixtures/safe_handoff.json
+python3.12 -m pipeguard check tests/fixtures/safe_handoff.json
+python3.12 -m pipeguard check tests/fixtures/safe_handoff.json --engine exhaustive --pretty
+python3.12 -m pipeguard check tests/fixtures/safe_handoff.json --engine crosscheck
+python3.12 -m pipeguard explain tests/fixtures/safe_handoff.json
+pytest
+```
+
+Every command writes deterministic compact JSON by default; pass `--pretty` for indented output. `check` and `explain` return one of `SAFE`, `SYNC_HAZARD`, `DATA_HAZARD`, `UNSUPPORTED`, `INCONCLUSIVE`, or `INTERNAL_ERROR`, and include top-level execution `statistics`.
+
+## Reference semantics
+
+Each actor advances in sequence order. Explicit `depends_on` references and protocol waits may additionally block a program event. Synthetic transitions are separate from program events: a `TmaLoadIssue` opens a global-source read window and a shared-destination write window, then enables one stable transaction-completion transition; only that transition credits bytes. A phase-completion transition is separately enabled when arrival count is zero and completed bytes equal expected bytes. It publishes the logical generation and advances the barrier; only then may events for the new current generation mutate barrier state. Future-generation arrivals or transaction operations are never buffered in a lookahead slot. Raw parity is valid only when it equals `logical_generation % 2`.
+
+The deterministic scheduler always chooses the lowest stable synthetic completion ID before the lowest `(actor_id, sequence_number, event_id)` program event. The default `maximal` engine uses this scheduler for the global run and every held-anchor run; each held transition is probed at its terminal boundary before an edge is accepted. `exhaustive` retains memoized all-state exploration as a small-model oracle, while `crosscheck` compares its core verdict and full boundaries with `maximal` and returns structured `INCONCLUSIVE` diagnostics on a mismatch.
+
+The data checker constructs a full-boundary PDG with program-order, explicit dependency, arrival/release, issue/completion, and completion/wait edges. Shared visibility requires a matching actor/resource/generation arrival→phase→wait handoff; arbitrary waits do not make a path visible. It checks point read/write conflicts and both TMA-load source and destination windows. Because proxy fences are unsupported, generic writes feeding a TMA source cannot be proven safe. Unknown aliases, unresolved participant/parity facts, unknown fields/events, and unsupported protocol kinds never produce `SAFE`.
+
+## Deliberate unsupported scope
+
+Known PGIR events outside this first vertical core (CTA/named barriers, cp.async groups, TMA stores, WGMMA, channels, fork/join, atomics, and proxy fences) are recognized and reported as `UNSUPPORTED`; they are not ignored. Cluster/multi-CTA operations, dynamic participants, unresolved parity, symbolic/unknown aliasing, and non-finite control flow are also fail-closed.
