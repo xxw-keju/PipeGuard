@@ -14,6 +14,7 @@ from pipeguard.model import PGIRError, normalize_module
 FIXTURES = Path(__file__).parent / "fixtures"
 SNAPSHOT = FIXTURES / "triton_safe_handoff.snapshot.json"
 CAPTURED_SNAPSHOT = FIXTURES / "triton_captured_mbarrier.snapshot.json"
+CAPTURED_ASYNC_SNAPSHOT = FIXTURES / "triton_captured_cp_async.snapshot.json"
 
 
 def _snapshot() -> dict:
@@ -64,6 +65,23 @@ def test_live_triton_ttgir_capture_fixture_is_safe():
     assert result["artifacts"]["normalized_sha256"] == (
         "eb604645de9b36b7968d9845904b9b880b85bdd37ca0f0de3bf119c4c809932d"
     )
+
+
+def test_live_triton_cp_async_capture_fixture_is_safe():
+    snapshot = json.loads(CAPTURED_ASYNC_SNAPSHOT.read_text())
+    assert [operation["op"] for operation in snapshot["operations"]] == [
+        "triton.cp_async.issue",
+        "triton.cp_async.commit_group",
+        "triton.cp_async.wait_group",
+        "triton.mem.read",
+    ]
+    result = check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")
+    assert result["verdict"] == "SAFE"
+    assert result["artifacts"]["normalized_sha256"] == (
+        "fd4230eb8f554185780d2748b16b4920dc9b8582f71b49c72a084dd44efa0014"
+    )
+    assert result["statistics"]["n_ext"] == 5
+    assert result["statistics"]["t_eff"] == 2
 
 
 @pytest.mark.parametrize("command", ["validate", "normalize", "check", "explain"])

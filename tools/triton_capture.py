@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -39,12 +40,22 @@ def _git_revision(path: Path) -> str:
 
 
 class TritonCapture:
-    _DECLARATIONS = {"arith.constant"}
+    _DECLARATIONS = {
+        "arith.constant",
+        "tt.make_range",
+        "tt.splat",
+        "tt.addptr",
+        "ttg.local_alloc",
+    }
     _CONTAINERS = {"builtin.module", "tt.func", "tt.return"}
     _SUPPORTED = {
         "ttng.init_barrier",
         "ttng.arrive_barrier",
         "ttng.wait_barrier",
+        "ttg.async_copy_global_to_local",
+        "ttg.async_commit_group",
+        "ttg.async_wait",
+        "ttg.local_load",
     }
 
     def __init__(self, triton: Any, module: Any, source: str, command: str):
@@ -88,10 +99,20 @@ class TritonCapture:
         self.result_definitions: dict[int, tuple[int, int, Any]] = {}
         self.constants: dict[int, Any] = {}
         self.resources: dict[str, dict[str, Any]] = {}
+        self.regions: dict[str, dict[str, Any]] = {}
         self.output_operations: list[dict[str, Any]] = []
         self.arrival_rank: dict[str, int] = {}
         self.wait_rank: dict[str, int] = {}
         self.sequence = 0
+        self.ranges: dict[int, tuple[int, int]] = {}
+        self.pointer_bases: dict[int, tuple[str, int]] = {}
+        self.pointer_regions: dict[int, str] = {}
+        self.memdesc_regions: dict[int, str] = {}
+        self.external_allocations: dict[int, str] = {}
+        self.staged_tokens: set[int] = set()
+        self.group_tokens: dict[int, int] = {}
+        self.wait_tokens: set[int] = set()
+        self.cp_group_seq = 0
 
     def _integer_module_attr(self, name: str) -> int:
         value = self.module.get_int_attr(name)
@@ -103,6 +124,65 @@ class TritonCapture:
             )
         return int(value)
 
+    def _value_extent(self, value: Any) -> tuple[int, int]:
+        type_text = str(value.get_type())
+        try:
+            raw_shape = value.get_shape()
+        except RuntimeError:
+            raw_shape = None
+        shape = [int(item) for item in raw_shape] if raw_shape else []
+        if not shape:
+            shape_match = re.search(r"<((?:\d+x)+)", type_text)
+            if shape_match is not None:
+                shape = [int(item) for item in shape_match.group(1).split("x") if item]
+        match = re.search(r"(?:^|[<!x])(?:i|ui|f|bf)(\d+)", type_text)
+        if not shape or match is None:
+            raise CaptureError(
+                "TRITON_REGION_UNRESOLVED",
+                "SSA value element type or shape is unresolved",
+                {"type": str(value.get_type())},
+            )
+        bits = int(match.group(1))
+        if bits <= 0 or bits % 8:
+            raise CaptureError(
+                "TRITON_REGION_UNRESOLVED",
+                "SSA value element type is not byte-aligned",
+                {"type": str(value.get_type())},
+            )
+        elements = 1
+        for dimension in shape:
+            if dimension <= 0:
+                raise CaptureError(
+                    "TRITON_REGION_UNRESOLVED",
+                    "SSA value has a nonpositive static dimension",
+                    {"shape": shape},
+                )
+            elements *= dimension
+        return elements, bits // 8
+
+    def _region(self, allocation: str, address_space: str, offset: int, extent: int) -> str:
+        identifier = f"region:{address_space.lower()}:{allocation}:{offset}:{extent}"
+        self.regions.setdefault(identifier, {
+            "id": identifier,
+            "allocation_id": allocation,
+            "address_space": address_space,
+            "offset": offset,
+            "extent": extent,
+        })
+        return identifier
+
+    def _async_resource(self) -> str:
+        identifier = f"cp_async:{self.actor}"
+        self.resources.setdefault(identifier, {
+            "id": identifier,
+            "kind": "async_group",
+            "participants": [self.actor],
+            "capacity": 8,
+            "protocol": "CP_ASYNC",
+            "scope": "CTA",
+        })
+        return identifier
+
     def _record_definitions(self) -> None:
         for index, operation in enumerate(self.operations):
             for result_index in range(operation.get_num_results()):
@@ -113,6 +193,73 @@ class TritonCapture:
                     self.constants[operation.get_result(0).id()] = operation.get_constant_value()
                 except RuntimeError:
                     pass
+
+        for index, operation in enumerate(self.operations):
+            name = operation.get_name()
+            if name == "tt.make_range":
+                start = operation.get_int_attr("start")
+                end = operation.get_int_attr("end")
+                if operation.get_num_results() != 1 or start is None or end is None or int(end) <= int(start):
+                    raise CaptureError(
+                        "TRITON_POINTER_PROVENANCE_UNRESOLVED",
+                        "tt.make_range must have static increasing bounds",
+                        {"operation_index": index},
+                    )
+                elements, _width = self._value_extent(operation.get_result(0))
+                if int(end) - int(start) != elements:
+                    raise CaptureError(
+                        "TRITON_POINTER_PROVENANCE_UNRESOLVED",
+                        "tt.make_range bounds do not match its static result shape",
+                        {"operation_index": index, "elements": elements},
+                    )
+                self.ranges[operation.get_result(0).id()] = (int(start), int(end))
+            elif name == "tt.splat":
+                if operation.get_num_operands() != 1 or operation.get_num_results() != 1:
+                    raise CaptureError(
+                        "TRITON_POINTER_PROVENANCE_UNRESOLVED",
+                        "tt.splat pointer provenance is malformed",
+                        {"operation_index": index},
+                    )
+                operand = operation.get_operand(0)
+                if "!tt.ptr<" not in str(operand.get_type()):
+                    continue
+                allocation = self.external_allocations.setdefault(
+                    operand.id(), f"global-arg:{len(self.external_allocations)}"
+                )
+                _elements, width = self._value_extent(operation.get_result(0))
+                self.pointer_bases[operation.get_result(0).id()] = (allocation, width)
+            elif name == "tt.addptr":
+                if operation.get_num_operands() != 2 or operation.get_num_results() != 1:
+                    raise CaptureError(
+                        "TRITON_POINTER_PROVENANCE_UNRESOLVED",
+                        "tt.addptr provenance is malformed",
+                        {"operation_index": index},
+                    )
+                base = self.pointer_bases.get(operation.get_operand(0).id())
+                interval = self.ranges.get(operation.get_operand(1).id())
+                if base is None or interval is None:
+                    raise CaptureError(
+                        "TRITON_POINTER_PROVENANCE_UNRESOLVED",
+                        "async source must derive from scalar pointer splat plus static make_range",
+                        {"operation_index": index},
+                    )
+                allocation, width = base
+                start, end = interval
+                region = self._region(allocation, "GLOBAL", start * width, (end - start) * width)
+                self.pointer_regions[operation.get_result(0).id()] = region
+            elif name == "ttg.local_alloc" and operation.get_num_operands() == 0:
+                if operation.get_num_results() != 1:
+                    raise CaptureError(
+                        "TRITON_REGION_UNRESOLVED",
+                        "ttg.local_alloc must have one memdesc result",
+                        {"operation_index": index},
+                    )
+                result = operation.get_result(0)
+                elements, width = self._value_extent(result)
+                allocation = f"shared:ssa:{index}:0"
+                self.memdesc_regions[result.id()] = self._region(
+                    allocation, "SHARED", 0, elements * width
+                )
 
     def _constant(self, value: Any, role: str) -> Any:
         if value.id() not in self.constants:
@@ -162,8 +309,119 @@ class TritonCapture:
         })
         self.sequence += 1
 
+    def _capture_async(self, operation: Any, index: int) -> None:
+        name = operation.get_name()
+        resource = self._async_resource()
+        if name == "ttg.async_copy_global_to_local":
+            if operation.get_num_operands() != 2 or operation.get_num_results() != 1:
+                raise CaptureError(
+                    "TRITON_CP_ASYNC_UNRESOLVED",
+                    "async copy requires source, destination, and one token result",
+                    {"operation_index": index},
+                )
+            source = self.pointer_regions.get(operation.get_operand(0).id())
+            destination = self.memdesc_regions.get(operation.get_operand(1).id())
+            if source is None or destination is None:
+                raise CaptureError(
+                    "TRITON_CP_ASYNC_UNRESOLVED",
+                    "async copy source provenance or destination memdesc is unresolved",
+                    {"operation_index": index},
+                )
+            source_extent = self.regions[source]["extent"]
+            destination_extent = self.regions[destination]["extent"]
+            if source_extent != destination_extent:
+                raise CaptureError(
+                    "TRITON_CP_ASYNC_UNRESOLVED",
+                    "async copy source and destination byte intervals differ",
+                    {
+                        "source_extent": source_extent,
+                        "destination_extent": destination_extent,
+                    },
+                )
+            self._emit(
+                "triton.cp_async.issue",
+                index,
+                resource=resource,
+                source_region=source,
+                destination_region=destination,
+                bytes=source_extent,
+                group_owner=self.actor,
+                predicate=True,
+            )
+            self.staged_tokens.add(operation.get_result(0).id())
+            return
+        if name == "ttg.async_commit_group":
+            tokens = {
+                operation.get_operand(operand).id()
+                for operand in range(operation.get_num_operands())
+            }
+            if not tokens or not tokens.issubset(self.staged_tokens) or operation.get_num_results() != 1:
+                raise CaptureError(
+                    "TRITON_CP_ASYNC_COMMIT_UNRESOLVED",
+                    "async commit token operands do not match staged async copies",
+                    {"operation_index": index},
+                )
+            self._emit(
+                "triton.cp_async.commit_group",
+                index,
+                resource=resource,
+                group_owner=self.actor,
+                group_seq=self.cp_group_seq,
+            )
+            self.group_tokens[operation.get_result(0).id()] = self.cp_group_seq
+            self.cp_group_seq += 1
+            self.staged_tokens.difference_update(tokens)
+            return
+        if name == "ttg.async_wait":
+            tokens = [
+                operation.get_operand(operand).id()
+                for operand in range(operation.get_num_operands())
+            ]
+            wait_count = operation.get_int_attr("num")
+            if (
+                not tokens
+                or any(token not in self.group_tokens for token in tokens)
+                or wait_count is None
+                or not 0 <= int(wait_count) <= 7
+                or operation.get_num_results() != 1
+            ):
+                raise CaptureError(
+                    "TRITON_CP_ASYNC_WAIT_UNRESOLVED",
+                    "async wait requires committed SSA tokens and static num in [0, 7]",
+                    {"operation_index": index, "wait_group_count": wait_count},
+                )
+            self._emit(
+                "triton.cp_async.wait_group",
+                index,
+                resource=resource,
+                group_owner=self.actor,
+                wait_group_count=int(wait_count),
+            )
+            self.wait_tokens.add(operation.get_result(0).id())
+            return
+        if operation.get_num_operands() != 2:
+            raise CaptureError(
+                "TRITON_LOCAL_LOAD_UNRESOLVED",
+                "ttg.local_load requires memdesc and observed wait token",
+                {"operation_index": index},
+            )
+        region = self.memdesc_regions.get(operation.get_operand(0).id())
+        if region is None or operation.get_operand(1).id() not in self.wait_tokens:
+            raise CaptureError(
+                "TRITON_LOCAL_LOAD_UNRESOLVED",
+                "local load memdesc or completion token is unresolved",
+                {"operation_index": index},
+            )
+        self._emit("triton.mem.read", index, region=region)
+
     def capture(self) -> dict[str, Any]:
         self._record_definitions()
+        if len(self.external_allocations) > 1:
+            raise CaptureError(
+                "TRITON_ALIAS_UNRESOLVED",
+                "multiple external pointer bases require explicit alias evidence",
+                {"external_bases": len(self.external_allocations)},
+            )
         semantic_blocks: set[int] = set()
         for index, operation in enumerate(self.operations):
             name = operation.get_name()
@@ -199,6 +457,14 @@ class TritonCapture:
                     "initial Triton capture supports one straight-line executable block",
                     {"blocks": len(semantic_blocks)},
                 )
+            if name in {
+                "ttg.async_copy_global_to_local",
+                "ttg.async_commit_group",
+                "ttg.async_wait",
+                "ttg.local_load",
+            }:
+                self._capture_async(operation, index)
+                continue
             if operation.get_num_operands() < 1:
                 raise CaptureError(
                     "TRITON_OPERATION_MALFORMED",
@@ -318,7 +584,7 @@ class TritonCapture:
                 "participants": list(range(self.cta_threads)),
             }],
             "resources": [self.resources[key] for key in sorted(self.resources)],
-            "regions": [],
+            "regions": [self.regions[key] for key in sorted(self.regions)],
             "operations": self.output_operations,
             "unsupported_constructs": [],
         }
