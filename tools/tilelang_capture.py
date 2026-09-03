@@ -206,8 +206,19 @@ class TileLangCapture:
         })
         return identifier
 
-    def memory_region(self, buffer: Any, indices: Any, evaluator: "LaneWalker") -> str:
-        scope = evaluator.buffer_scope(buffer)
+    def async_group(self, actor: str) -> str:
+        identifier = f"cp_async:{actor}"
+        self.resources.setdefault(identifier, {
+            "id": identifier,
+            "kind": "async_group",
+            "participants": [actor],
+            "capacity": 8,
+            "protocol": "CP_ASYNC",
+            "scope": "CTA",
+        })
+        return identifier
+
+    def region(self, allocation: str, scope: str, offset: int, extent: int) -> str:
         address_space = {
             "shared": "SHARED",
             "shared.dyn": "SHARED",
@@ -218,10 +229,14 @@ class TileLangCapture:
             raise CaptureError(
                 "TILELANG_ADDRESS_SPACE_UNSUPPORTED",
                 "buffer scope has no sound PGIR mapping",
-                {"buffer": buffer.name, "scope": scope},
+                {"allocation": allocation, "scope": scope},
             )
-        allocation = getattr(buffer.data, "name", None) or buffer.name
-        offset, extent = evaluator.byte_interval(buffer, indices)
+        if offset < 0 or extent <= 0:
+            raise CaptureError(
+                "TILELANG_REGION_UNRESOLVED",
+                "memory region requires a nonnegative offset and positive extent",
+                {"allocation": allocation, "offset": offset, "extent": extent},
+            )
         identifier = f"region:{address_space.lower()}:{allocation}:{offset}:{extent}"
         self.regions.setdefault(identifier, {
             "id": identifier,
@@ -231,6 +246,11 @@ class TileLangCapture:
             "extent": extent,
         })
         return identifier
+
+    def memory_region(self, buffer: Any, indices: Any, evaluator: "LaneWalker") -> str:
+        allocation = getattr(buffer.data, "name", None) or buffer.name
+        offset, extent = evaluator.byte_interval(buffer, indices)
+        return self.region(allocation, evaluator.buffer_scope(buffer), offset, extent)
 
 
 class LaneWalker:
@@ -244,6 +264,8 @@ class LaneWalker:
         self.sequence = 0
         self.arrival_rank: dict[str, int] = {}
         self.wait_rank: dict[str, int] = {}
+        self.cp_group_seq = 0
+        self.cp_staged = 0
 
     def emit(self, op: str, path: tuple[Any, ...], **fields: Any) -> None:
         identifier = f"tl:{self.actor}:e{self.sequence:05d}:{_stable_path((*path, op))}"
@@ -342,6 +364,56 @@ class LaneWalker:
             linear = linear * dimension + index
         width = self._dtype_bytes(buffer)
         return linear * width, width
+
+    def access_ptr_region(self, expression: Any, required_flag: int) -> tuple[str, int]:
+        if (
+            not isinstance(expression, self.tirx.Call)
+            or getattr(expression.op, "name", "") not in {"tirx.tvm_access_ptr", "tir.tvm_access_ptr"}
+            or len(expression.args) != 5
+        ):
+            raise CaptureError(
+                "TILELANG_ACCESS_PTR_UNRESOLVED",
+                "async memory operand must be a five-argument tvm_access_ptr",
+                {"expression": str(expression)},
+            )
+        offset = self.eval_int(expression.args[2])
+        extent = self.eval_int(expression.args[3])
+        flags = self.eval_int(expression.args[4])
+        allocation = getattr(expression.args[1], "name", None)
+        if offset is None or extent is None or flags is None or allocation is None:
+            raise CaptureError(
+                "TILELANG_ACCESS_PTR_UNRESOLVED",
+                "async access pointer has symbolic offset, extent, flags, or allocation",
+                {"expression": str(expression)},
+            )
+        if flags & required_flag != required_flag:
+            raise CaptureError(
+                "TILELANG_ACCESS_MODE_MISMATCH",
+                "async access pointer flags do not include the required mode",
+                {"flags": flags, "required_flag": required_flag},
+            )
+        import re
+
+        dtype_match = re.search(r"(?:u?int|float|bfloat)(\d+)", str(expression.args[0]))
+        scope_values = re.findall(r'"([^"]+)"', str(getattr(expression.args[1], "type_annotation", "")))
+        if dtype_match is None or not scope_values:
+            raise CaptureError(
+                "TILELANG_ACCESS_PTR_UNRESOLVED",
+                "async access pointer dtype or address space is unresolved",
+                {"expression": str(expression)},
+            )
+        bits = int(dtype_match.group(1))
+        if bits <= 0 or bits % 8:
+            raise CaptureError(
+                "TILELANG_DTYPE_UNSUPPORTED",
+                "async access pointer element width is not byte-aligned",
+                {"dtype": str(expression.args[0])},
+            )
+        width = bits // 8
+        byte_offset = offset * width
+        byte_extent = extent * width
+        region = self.capture.region(allocation, scope_values[-1], byte_offset, byte_extent)
+        return region, byte_extent
 
     def _buffer_loads(self, expression: Any) -> list[Any]:
         loads: list[Any] = []
@@ -545,6 +617,77 @@ class LaneWalker:
                 logical_stream_id=f"{self.actor}:{resource}",
                 stream_rank=generation,
                 polling_coalesced=True,
+            )
+            return
+        if name == "tl.ptx_cp_async":
+            if len(expression.args) != 3:
+                raise CaptureError(
+                    "TILELANG_CP_ASYNC_UNRESOLVED",
+                    "ptx_cp_async requires destination, source, and byte count operands",
+                )
+            destination, destination_bytes = self.access_ptr_region(expression.args[0], 2)
+            source, source_bytes = self.access_ptr_region(expression.args[1], 1)
+            byte_count = self.eval_int(expression.args[2])
+            if (
+                byte_count is None
+                or byte_count <= 0
+                or byte_count > destination_bytes
+                or byte_count > source_bytes
+            ):
+                raise CaptureError(
+                    "TILELANG_CP_ASYNC_UNRESOLVED",
+                    "ptx_cp_async byte count exceeds a resolved access interval",
+                    {
+                        "bytes": byte_count,
+                        "source_extent": source_bytes,
+                        "destination_extent": destination_bytes,
+                    },
+                )
+            resource = self.capture.async_group(self.actor)
+            self.emit(
+                "tilelang.cp_async.issue",
+                path,
+                resource=resource,
+                source_region=source,
+                destination_region=destination,
+                bytes=byte_count,
+                group_owner=self.actor,
+                predicate=True,
+            )
+            self.cp_staged += 1
+            return
+        if name in {"tirx.ptx_commit_group", "tir.ptx_commit_group"}:
+            if expression.args:
+                raise CaptureError(
+                    "TILELANG_CP_ASYNC_COMMIT_UNRESOLVED",
+                    "ptx_commit_group must not have operands",
+                )
+            resource = self.capture.async_group(self.actor)
+            self.emit(
+                "tilelang.cp_async.commit_group",
+                path,
+                resource=resource,
+                group_owner=self.actor,
+                group_seq=self.cp_group_seq,
+            )
+            self.cp_group_seq += 1
+            self.cp_staged = 0
+            return
+        if name in {"tirx.ptx_wait_group", "tir.ptx_wait_group"}:
+            wait_count = self.eval_int(expression.args[0]) if len(expression.args) == 1 else None
+            if wait_count is None or not 0 <= wait_count <= 7:
+                raise CaptureError(
+                    "TILELANG_CP_ASYNC_WAIT_UNRESOLVED",
+                    "ptx_wait_group count must be a static integer in [0, 7]",
+                    {"wait_group_count": wait_count},
+                )
+            resource = self.capture.async_group(self.actor)
+            self.emit(
+                "tilelang.cp_async.wait_group",
+                path,
+                resource=resource,
+                group_owner=self.actor,
+                wait_group_count=wait_count,
             )
             return
         raise CaptureError(

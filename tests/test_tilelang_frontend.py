@@ -14,6 +14,7 @@ from pipeguard.model import PGIRError, normalize_module
 FIXTURES = Path(__file__).parent / "fixtures"
 SNAPSHOT = FIXTURES / "tilelang_safe_handoff.snapshot.json"
 CAPTURED_SNAPSHOT = FIXTURES / "tilelang_captured_handoff.snapshot.json"
+CAPTURED_ASYNC_SNAPSHOT = FIXTURES / "tilelang_captured_cp_async.snapshot.json"
 
 
 def _snapshot() -> dict:
@@ -76,6 +77,23 @@ def test_live_tilelang_tirx_capture_fixture_is_safe():
     assert result["artifacts"]["normalized_sha256"] == (
         "247597b7fcb584d27ee51143d011b7598c2f6432eebe954840f72fdace893711"
     )
+
+
+def test_live_tilelang_cp_async_capture_fixture_is_safe():
+    snapshot = json.loads(CAPTURED_ASYNC_SNAPSHOT.read_text())
+    operations = [operation["op"] for operation in snapshot["operations"]]
+    assert operations[:3] == [
+        "tilelang.cp_async.issue",
+        "tilelang.cp_async.commit_group",
+        "tilelang.cp_async.wait_group",
+    ]
+    result = check_module(tilelang_snapshot_to_module(snapshot), engine="crosscheck")
+    assert result["verdict"] == "SAFE"
+    assert result["artifacts"]["normalized_sha256"] == (
+        "2493a69022f29f5c889b800bbb1443c31fa1117f92e540fc10b0518ccea83dc7"
+    )
+    assert result["statistics"]["n_ext"] == 9
+    assert result["statistics"]["t_eff"] == 3
 
 
 @pytest.mark.parametrize("command", ["validate", "normalize", "check", "explain"])
