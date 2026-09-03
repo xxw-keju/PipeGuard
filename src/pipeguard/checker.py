@@ -36,28 +36,62 @@ class PDG:
     def __init__(self) -> None:
         self.nodes: set[str] = set()
         self.edges: set[tuple[str, str, str]] = set()
+        self._adjacency: dict[str, set[str]] = {}
+        self._reachable_by_source: dict[str, frozenset[str]] = {}
+        self.edge_insertions = 0
+        self.reachability_queries = 0
+        self.reachability_source_scans = 0
+        self.reachability_edge_visits = 0
 
     def add_edge(self, source: str, target: str, kind: str) -> None:
+        edge = (source, target, kind)
+        if edge in self.edges:
+            return
         self.nodes.update((source, target))
-        self.edges.add((source, target, kind))
+        self.edges.add(edge)
+        self._adjacency.setdefault(source, set()).add(target)
+        self._reachable_by_source.clear()
+        self.edge_insertions += 1
+
+    def add_edges(self, edges: set[tuple[str, str, str]] | tuple[tuple[str, str, str], ...]) -> None:
+        for source, target, kind in edges:
+            self.add_edge(source, target, kind)
 
     def reachable(self, source: str, target: str) -> bool:
+        self.reachability_queries += 1
         if source == target:
             return True
-        adjacency: dict[str, list[str]] = {}
-        for left, right, _kind in sorted(self.edges):
-            adjacency.setdefault(left, []).append(right)
-        queue = deque([source])
-        seen = {source}
-        while queue:
-            node = queue.popleft()
-            for next_node in adjacency.get(node, []):
-                if next_node == target:
-                    return True
-                if next_node not in seen:
-                    seen.add(next_node)
-                    queue.append(next_node)
-        return False
+        reachable = self._reachable_by_source.get(source)
+        if reachable is None:
+            self.reachability_source_scans += 1
+            queue = deque([source])
+            seen = {source}
+            while queue:
+                node = queue.popleft()
+                successors = self._adjacency.get(node, set())
+                self.reachability_edge_visits += len(successors)
+                for next_node in successors:
+                    if next_node not in seen:
+                        seen.add(next_node)
+                        queue.append(next_node)
+            seen.discard(source)
+            reachable = frozenset(seen)
+            self._reachable_by_source[source] = reachable
+        return target in reachable
+
+    def statistics(self) -> dict[str, Any]:
+        kinds: dict[str, int] = {}
+        for _source, _target, kind in self.edges:
+            kinds[kind] = kinds.get(kind, 0) + 1
+        return {
+            "pdg_nodes": len(self.nodes),
+            "pdg_edges": len(self.edges),
+            "pdg_edge_insertions": self.edge_insertions,
+            "pdg_edges_by_kind": dict(sorted(kinds.items())),
+            "pdg_reachability_queries": self.reachability_queries,
+            "pdg_reachability_source_scans": self.reachability_source_scans,
+            "pdg_reachability_edge_visits": self.reachability_edge_visits,
+        }
 
     def artifact(self) -> dict[str, Any]:
         return {
@@ -711,6 +745,10 @@ def _finish_incremental_statistics(statistics: dict[str, Any], counters: Increme
     statistics["certificate"] = certificate
 
 
+def _finish_pdg_statistics(statistics: dict[str, Any], graph: PDG) -> None:
+    statistics.update(graph.statistics())
+
+
 def _protocol_report(
     error: ProtocolError,
     trace: list[dict[str, Any]],
@@ -719,6 +757,7 @@ def _protocol_report(
     digest: str,
     statistics: dict[str, Any],
 ) -> dict[str, Any]:
+    _finish_pdg_statistics(statistics, graph)
     diagnostic = error.diagnostic()
     return {
         "verdict": "SYNC_HAZARD", "checker_version": "0.2.0", "summary": diagnostic["message"],
@@ -742,6 +781,7 @@ def _inconclusive(
     statistics: dict[str, Any],
     details: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    _finish_pdg_statistics(statistics, graph)
     diagnostic: dict[str, Any] = {"code": code, "message": message}
     if details is not None:
         diagnostic["details"] = details
@@ -757,8 +797,7 @@ def _first_error(errors: list[tuple[ProtocolError, Any]]) -> tuple[ProtocolError
 
 
 def _add_dynamic_edges(graph: PDG, state: Any) -> None:
-    graph.edges.update(state.dynamic_edges)
-    graph.nodes.update(node for edge in state.dynamic_edges for node in edge[:2])
+    graph.add_edges(state.dynamic_edges)
 
 
 def _stuck_report(
@@ -798,8 +837,7 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
 
         outcomes = incremental.analyze_streams()
         boundaries = sorted(outcomes.boundaries, key=lambda item: item["anchor"])
-        graph.edges.update(outcomes.dynamic_edges)
-        graph.nodes.update(node for edge in outcomes.dynamic_edges for node in edge[:2])
+        graph.add_edges(outcomes.dynamic_edges)
         _finish_incremental_statistics(statistics, incremental.counters)
         if outcomes.error is not None:
             assert outcomes.error_state is not None
@@ -881,6 +919,7 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
 
     _add_dynamic_edges(graph, canonical.state)
     hazard = _data_hazard(module, graph)
+    _finish_pdg_statistics(statistics, graph)
     engine_streams = engine_completion_streams(module)
     artifacts = {
         "normalized_sha256": digest, "canonical_trace": canonical.state.trace,
