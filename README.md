@@ -35,4 +35,6 @@ The held-anchor theorem applies to the fresh, transaction-free core with its sta
 
 ## Deliberate unsupported scope
 
+PGIR v1 reserves typed resource/event fields and collision-safe synthetic identities for CTA/named barriers, commit groups, typed completion endpoints, channels, proxy visibility, and explicit async-engine ordering. This shared substrate does not by itself expand the supported execution semantics: non-mbarrier resources and the corresponding protocol events remain fail-closed until their FSM checkpoints land. Optional `engine_id`/`engine_seq` evidence on an existing TMA load is validated against a gap-free `ASYNC_ENGINE` stream, but completion ordering is not yet used to prove safety; such completions remain conservative singleton streams.
+
 Known PGIR events outside this first vertical core (CTA/named barriers, cp.async groups, TMA stores, WGMMA, channels, fork/join, atomics, and proxy fences) are recognized and reported as `UNSUPPORTED`; they are not ignored. Cluster/multi-CTA operations, dynamic participants, unresolved parity, symbolic/unknown aliasing, and non-finite control flow are also fail-closed.

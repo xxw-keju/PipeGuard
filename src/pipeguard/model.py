@@ -9,6 +9,10 @@ from typing import Any
 
 import jsonschema
 
+from .protocols import RESOURCE_KINDS, VisibilityMask
+
+IMPLEMENTED_RESOURCE_KINDS = frozenset({"mbarrier"})
+
 IMPLEMENTED_EVENTS = frozenset({
     "MemRead", "MemWrite", "MBarrierInit", "MBarrierInvalidate",
     "MBarrierArrive", "MBarrierExpectTx", "MBarrierArriveExpectTx",
@@ -49,6 +53,10 @@ class Resource:
     id: str
     kind: str
     participants: tuple[str, ...]
+    capacity: int | None = None
+    protocol: str | None = None
+    scope: str | None = None
+    visibility_mask: VisibilityMask | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -87,6 +95,21 @@ class Event:
     raw_parity: int | None = None
     parity_evidence: ParityEvidence | None = None
     predicate: bool = True
+    invocation_id: int | None = None
+    group_owner: str | None = None
+    group_seq: int | None = None
+    wait_group_count: int | None = None
+    completion_kind: str | None = None
+    wait_mode: str | None = None
+    engine_id: str | None = None
+    engine_seq: int | None = None
+    slot: int | None = None
+    logical_phase: int | None = None
+    from_domain: str | None = None
+    to_domain: str | None = None
+    scope: str | None = None
+    regions: tuple[str, ...] = ()
+    visibility_mask: VisibilityMask | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -137,6 +160,32 @@ def stable_phase_id(resource_id: str, lifecycle_epoch: int, generation: int) -> 
     return f"completion:mbarrier-phase:{resource_id}:l{lifecycle_epoch:08d}:g{generation:08d}"
 
 
+def _stable_component(value: str) -> str:
+    return f"{len(value.encode('utf-8')):08d}:{value}"
+
+
+def stable_collective_release_id(resource_id: str, invocation_id: int) -> str:
+    return f"completion:barrier-release:{_stable_component(resource_id)}:i{invocation_id:08d}"
+
+
+def stable_group_id(protocol: str, owner: str, group_seq: int) -> str:
+    return f"group:{protocol.lower()}:{_stable_component(owner)}:g{group_seq:08d}"
+
+
+def stable_group_completion_id(protocol: str, owner: str, group_seq: int, completion_kind: str) -> str:
+    return (
+        f"completion:group:{protocol.lower()}:{_stable_component(owner)}:"
+        f"g{group_seq:08d}:{completion_kind.lower()}"
+    )
+
+
+def stable_channel_handoff_id(resource_id: str, slot: int, logical_phase: int) -> str:
+    return (
+        f"completion:channel-handoff:{_stable_component(resource_id)}:"
+        f"s{slot:08d}:p{logical_phase:08d}"
+    )
+
+
 def stable_digest(data: dict[str, Any]) -> str:
     canonical = json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
     return hashlib.sha256(canonical.encode()).hexdigest()
@@ -158,12 +207,19 @@ def _strict_integers(data: Any) -> None:
     for index, actor in enumerate(data.get("actors", [])):
         for lane_index, lane in enumerate(actor.get("participants", [])):
             _strict_integer(lane, f"/actors/{index}/participants/{lane_index}")
+    for index, resource in enumerate(data.get("resources", [])):
+        if "capacity" in resource:
+            _strict_integer(resource["capacity"], f"/resources/{index}/capacity")
     for index, region in enumerate(data.get("regions", [])):
         for name in ("offset", "extent"):
             if name in region:
                 _strict_integer(region[name], f"/regions/{index}/{name}")
     for index, event in enumerate(data.get("events", [])):
-        for name in ("seq", "count", "bytes", "lifecycle_epoch", "generation", "raw_parity"):
+        for name in (
+            "seq", "count", "bytes", "lifecycle_epoch", "generation", "raw_parity",
+            "invocation_id", "group_seq", "wait_group_count", "engine_seq", "slot",
+            "logical_phase",
+        ):
             if name in event:
                 _strict_integer(event[name], f"/events/{index}/{name}")
         evidence = event.get("parity_evidence")
@@ -229,6 +285,20 @@ def _semantic_validate(module: Module) -> None:
         dangling = sorted(set(resource.participants) - actors.keys())
         if dangling:
             raise PGIRError("UNRESOLVED_PARTICIPANTS", "resource has unknown participants", {"resource": resource.id, "actors": dangling})
+        if resource.kind not in RESOURCE_KINDS:
+            raise PGIRError("UNKNOWN_RESOURCE_KIND", "resource kind is unknown", {"resource": resource.id, "kind": resource.kind})
+        if resource.kind not in IMPLEMENTED_RESOURCE_KINDS:
+            raise PGIRError("KNOWN_RESOURCE_UNSUPPORTED", "resource kind is not implemented yet", {"resource": resource.id, "kind": resource.kind})
+        unexpected_resource_fields = [
+            name for name in ("capacity", "protocol", "scope", "visibility_mask")
+            if getattr(resource, name) is not None
+        ]
+        if unexpected_resource_fields:
+            raise PGIRError(
+                "RESOURCE_FIELDS_UNEXPECTED",
+                "mbarrier resource carries fields for another protocol",
+                {"resource": resource.id, "fields": unexpected_resource_fields},
+            )
 
     required_fields = {
         "MemRead": ("region",), "MemWrite": ("region",),
@@ -247,12 +317,15 @@ def _semantic_validate(module: Module) -> None:
         "MBarrierExpectTx": {"lifecycle_epoch", "resource", "bytes", "generation"},
         "MBarrierArriveExpectTx": {"lifecycle_epoch", "resource", "count", "bytes", "generation", "predicate"},
         "MBarrierWaitParity": {"lifecycle_epoch", "resource", "generation", "raw_parity", "parity_evidence"},
-        "TmaLoadIssue": {"lifecycle_epoch", "resource", "source_region", "destination_region", "bytes", "generation"},
+        "TmaLoadIssue": {
+            "lifecycle_epoch", "resource", "source_region", "destination_region", "bytes",
+            "generation", "engine_id", "engine_seq",
+        },
     }
     raw_events = {item["id"]: item for item in module.raw["events"]}
     for event in module.events:
-        if event.id.startswith("completion:"):
-            raise PGIRError("RESERVED_ID_NAMESPACE", "real event ID uses the synthetic completion namespace", {"event": event.id})
+        if event.id.startswith(("completion:", "group:")):
+            raise PGIRError("RESERVED_ID_NAMESPACE", "real event ID uses a synthetic identity namespace", {"event": event.id})
         if event.actor not in actors:
             raise PGIRError("DANGLING_REFERENCE", "event references unknown actor", {"event": event.id, "actor": event.actor})
         if event.type not in IMPLEMENTED_EVENTS:
@@ -266,7 +339,10 @@ def _semantic_validate(module: Module) -> None:
             raise PGIRError("EVENT_FIELDS_UNEXPECTED", f"{event.type} has fields that are not meaningful", {"event": event.id, "fields": unexpected})
         if event.resource is not None and event.resource not in resources:
             raise PGIRError("DANGLING_REFERENCE", "event references unknown resource", {"event": event.id, "resource": event.resource})
-        referenced_regions = [value for value in (event.region, event.source_region, event.destination_region) if value is not None]
+        referenced_regions = [
+            value for value in (event.region, event.source_region, event.destination_region)
+            if value is not None
+        ] + list(event.regions)
         dangling_regions = sorted(value for value in referenced_regions if value not in regions)
         if dangling_regions:
             raise PGIRError("DANGLING_REFERENCE", "event references unknown region", {"event": event.id, "regions": dangling_regions})
@@ -277,11 +353,39 @@ def _semantic_validate(module: Module) -> None:
             raise PGIRError("SELF_DEPENDENCY", "event cannot depend on itself", {"event": event.id})
         if event.resource is not None and event.actor not in resources[event.resource].participants:
             raise PGIRError("UNRESOLVED_PARTICIPANTS", "event actor is outside resource participant set", {"event": event.id, "resource": event.resource})
+        if (event.engine_id is None) != (event.engine_seq is None):
+            raise PGIRError(
+                "ASYNC_ENGINE_EVIDENCE_INCOMPLETE",
+                "engine_id and engine_seq must be provided together",
+                {"event": event.id},
+            )
+        if event.engine_id is not None:
+            engine = actors.get(event.engine_id)
+            if engine is None or engine.kind != "ASYNC_ENGINE":
+                raise PGIRError(
+                    "INVALID_ASYNC_ENGINE",
+                    "explicit engine ordering must reference an ASYNC_ENGINE actor",
+                    {"event": event.id, "engine": event.engine_id},
+                )
         if event.type == "TmaLoadIssue" and (
             regions[event.source_region].address_space != "GLOBAL"
             or regions[event.destination_region].address_space != "SHARED"
         ):
             raise PGIRError("UNSUPPORTED_TMA_REGION", "TMA load requires an explicit global source and shared destination", {"event": event.id})
+
+    engine_streams: dict[str, list[Event]] = {}
+    for event in module.events:
+        if event.engine_id is not None:
+            engine_streams.setdefault(event.engine_id, []).append(event)
+    for engine_id, ordered_events in sorted(engine_streams.items()):
+        ordered_events.sort(key=lambda event: (event.engine_seq, event.id))
+        sequence = [event.engine_seq for event in ordered_events]
+        if sequence != list(range(len(sequence))):
+            raise PGIRError(
+                "ASYNC_ENGINE_SEQUENCE_GAP",
+                "explicit async-engine sequence must be unique, gap-free, and start at zero",
+                {"engine": engine_id, "sequence": sequence},
+            )
 
     wait_streams: dict[tuple[str, str, int, str], list[Event]] = {}
     canonical_stream_ids: dict[tuple[str, str, int], set[str]] = {}
@@ -375,7 +479,15 @@ def _semantic_validate(module: Module) -> None:
 def module_from_dict(data: dict[str, Any]) -> Module:
     _schema_validate(data)
     actors = tuple(Actor(item["id"], item["kind"], tuple(sorted(item["participants"]))) for item in data["actors"])
-    resources = tuple(Resource(item["id"], item["kind"], tuple(sorted(item["participants"]))) for item in data["resources"])
+    resources = tuple(Resource(
+        item["id"],
+        item["kind"],
+        tuple(sorted(item["participants"])),
+        capacity=item.get("capacity"),
+        protocol=item.get("protocol"),
+        scope=item.get("scope"),
+        visibility_mask=VisibilityMask.from_mapping(item["visibility_mask"]) if "visibility_mask" in item else None,
+    ) for item in data["resources"])
     regions = tuple(Region(item["id"], item["allocation_id"], item["address_space"], item["offset"], item["extent"]) for item in data["regions"])
     events = tuple(Event(
         id=item["id"], type=item["type"], actor=item["actor"], seq=item["seq"],
@@ -383,7 +495,14 @@ def module_from_dict(data: dict[str, Any]) -> Module:
         region=item.get("region"), source_region=item.get("source_region"), destination_region=item.get("destination_region"),
         count=item.get("count"), bytes=item.get("bytes"), lifecycle_epoch=item.get("lifecycle_epoch"), generation=item.get("generation"), raw_parity=item.get("raw_parity"),
         parity_evidence=ParityEvidence(**item["parity_evidence"]) if "parity_evidence" in item else None,
-        predicate=item.get("predicate", True),
+        predicate=item.get("predicate", True), invocation_id=item.get("invocation_id"),
+        group_owner=item.get("group_owner"), group_seq=item.get("group_seq"),
+        wait_group_count=item.get("wait_group_count"), completion_kind=item.get("completion_kind"),
+        wait_mode=item.get("wait_mode"), engine_id=item.get("engine_id"), engine_seq=item.get("engine_seq"),
+        slot=item.get("slot"), logical_phase=item.get("logical_phase"),
+        from_domain=item.get("from_domain"), to_domain=item.get("to_domain"), scope=item.get("scope"),
+        regions=tuple(sorted(item.get("regions", []))),
+        visibility_mask=VisibilityMask.from_mapping(item["visibility_mask"]) if "visibility_mask" in item else None,
     ) for item in data["events"])
     grouped = {actor.id: tuple(sorted((event for event in events if event.actor == actor.id), key=lambda event: (event.seq, event.id))) for actor in actors}
     module = Module(data, actors, resources, regions, events, grouped)
@@ -414,5 +533,7 @@ def normalize_module(module: Module) -> dict[str, Any]:
     for event in normalized["events"]:
         if "depends_on" in event:
             event["depends_on"] = sorted(event["depends_on"])
+        if "regions" in event:
+            event["regions"] = sorted(event["regions"])
     normalized["unsupported_constructs"] = sorted(normalized["unsupported_constructs"])
     return normalized

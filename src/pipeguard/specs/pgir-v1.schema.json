@@ -61,8 +61,13 @@
     "resource": {
       "type": "object", "additionalProperties": false, "required": ["id", "kind", "participants"],
       "properties": {
-        "id": {"type": "string", "minLength": 1}, "kind": {"const": "mbarrier"},
-        "participants": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+        "id": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["mbarrier", "cta_barrier", "named_barrier", "async_group", "channel"]},
+        "participants": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "capacity": {"type": "integer", "minimum": 1},
+        "protocol": {"enum": ["CP_ASYNC", "WGMMA", "TMA_STORE"]},
+        "scope": {"const": "CTA"},
+        "visibility_mask": {"$ref": "#/$defs/visibility_mask"}
       }
     },
     "region": {
@@ -81,6 +86,15 @@
         "stream_rank": {"type": "integer", "minimum": 0}, "polling_coalesced": {"const": true}
       }
     },
+    "visibility_mask": {
+      "type": "object", "additionalProperties": false,
+      "required": ["shared", "global_read", "global_write", "tensor_read", "tensor_write", "control_only"],
+      "properties": {
+        "shared": {"type": "boolean"}, "global_read": {"type": "boolean"},
+        "global_write": {"type": "boolean"}, "tensor_read": {"type": "boolean"},
+        "tensor_write": {"type": "boolean"}, "control_only": {"type": "boolean"}
+      }
+    },
     "event": {
       "type": "object", "additionalProperties": false, "required": ["id", "type", "actor", "seq"],
       "properties": {
@@ -89,10 +103,21 @@
         "depends_on": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
         "resource": {"type": "string", "minLength": 1}, "region": {"type": "string", "minLength": 1},
         "source_region": {"type": "string", "minLength": 1}, "destination_region": {"type": "string", "minLength": 1},
+        "regions": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
         "count": {"type": "integer", "minimum": 1}, "bytes": {"type": "integer", "minimum": 1},
         "lifecycle_epoch": {"type": "integer", "minimum": 0},
         "generation": {"type": "integer", "minimum": 0}, "raw_parity": {"type": "integer", "minimum": 0, "maximum": 1},
-        "parity_evidence": {"$ref": "#/$defs/parity_evidence"}, "predicate": {"type": "boolean"}
+        "parity_evidence": {"$ref": "#/$defs/parity_evidence"}, "predicate": {"type": "boolean"},
+        "invocation_id": {"type": "integer", "minimum": 0},
+        "group_owner": {"type": "string", "minLength": 1}, "group_seq": {"type": "integer", "minimum": 0},
+        "wait_group_count": {"type": "integer", "minimum": 0},
+        "completion_kind": {"enum": ["GROUP_COMPLETE", "OPERANDS_RELEASED", "RESULT_READY", "SOURCE_RELEASED", "GLOBAL_COMPLETE"]},
+        "wait_mode": {"enum": ["READ_ONLY", "GLOBAL"]},
+        "engine_id": {"type": "string", "minLength": 1}, "engine_seq": {"type": "integer", "minimum": 0},
+        "slot": {"type": "integer", "minimum": 0}, "logical_phase": {"type": "integer", "minimum": 0},
+        "from_domain": {"enum": ["GENERIC", "ASYNC_COPY", "TMA", "TENSOR_CORE"]},
+        "to_domain": {"enum": ["GENERIC", "ASYNC_COPY", "TMA", "TENSOR_CORE"]},
+        "scope": {"const": "CTA"}, "visibility_mask": {"$ref": "#/$defs/visibility_mask"}
       }
     }
   }

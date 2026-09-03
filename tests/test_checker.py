@@ -10,7 +10,16 @@ import pytest
 from pipeguard.checker import _anchor_ids, check_module
 from pipeguard.engine import ExecutionState, Executor, ProtocolError
 from pipeguard.incremental import END, IncrementalEngine, StableReadySet, build_anchor_streams
-from pipeguard.model import PGIRError, load_module, module_from_dict, stable_completion_id
+from pipeguard.model import (
+    PGIRError,
+    load_module,
+    module_from_dict,
+    stable_channel_handoff_id,
+    stable_collective_release_id,
+    stable_completion_id,
+    stable_group_completion_id,
+    stable_group_id,
+)
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -1028,3 +1037,102 @@ def test_crosscheck_retains_maximal_incremental_certificate():
     assert statistics["full_enabled_scans"] == 0
     assert statistics["state_clones"] == 0
     assert statistics["replayed_prefix_steps"] == 0
+
+
+# Shared SM90 protocol substrate. New protocol events remain fail-closed until
+# their FSM checkpoint moves them into IMPLEMENTED_EVENTS.
+def full_visibility_mask() -> dict:
+    return {
+        "shared": True,
+        "global_read": True,
+        "global_write": True,
+        "tensor_read": True,
+        "tensor_write": True,
+        "control_only": False,
+    }
+
+
+def test_future_protocol_fields_are_structured_but_still_unsupported():
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    fence = next(event for event in raw["events"] if event["id"] == "read")
+    fence.clear()
+    fence.update({
+        "id": "proxy",
+        "type": "ProxyFence",
+        "actor": "b_consumer",
+        "seq": 1,
+        "from_domain": "GENERIC",
+        "to_domain": "TMA",
+        "scope": "CTA",
+        "regions": ["tile"],
+        "visibility_mask": full_visibility_mask(),
+    })
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+    assert caught.value.code == "KNOWN_EVENT_UNSUPPORTED"
+
+    fence["visibility_mask"].pop("tensor_write")
+    with pytest.raises(PGIRError) as malformed:
+        module_from_dict(raw)
+    assert malformed.value.code == "SCHEMA_INVALID"
+
+
+def test_future_resource_kinds_cannot_expand_safe_scope_early():
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["resources"][0].update({
+        "kind": "channel",
+        "capacity": 2,
+        "scope": "CTA",
+    })
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+    assert caught.value.code == "KNOWN_RESOURCE_UNSUPPORTED"
+
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["resources"][0]["capacity"] = 2
+    with pytest.raises(PGIRError) as unexpected:
+        module_from_dict(raw)
+    assert unexpected.value.code == "RESOURCE_FIELDS_UNEXPECTED"
+
+
+def test_protocol_synthetic_ids_are_stable_and_component_safe():
+    identifiers = {
+        stable_collective_release_id("bar:a", 3),
+        stable_collective_release_id("bar", 3),
+        stable_group_id("CP_ASYNC", "owner:a", 2),
+        stable_group_id("CP_ASYNC", "owner", 2),
+        stable_group_completion_id("WGMMA", "wg:0", 4, "RESULT_READY"),
+        stable_channel_handoff_id("channel:0", 1, 5),
+    }
+    assert len(identifiers) == 6
+    assert stable_group_id("CP_ASYNC", "owner:a", 2) in identifiers
+    assert all(identifier.startswith(("completion:", "group:")) for identifier in identifiers)
+
+
+def test_tma_load_accepts_only_complete_gap_free_async_engine_evidence():
+    raw = json.loads((FIXTURES / "tma_completion_before_arrival.json").read_text())
+    raw["actors"].append({"id": "dma", "kind": "ASYNC_ENGINE", "participants": [0]})
+    issue = next(event for event in raw["events"] if event["id"] == "issue")
+    issue.update({"engine_id": "dma", "engine_seq": 0})
+    module = module_from_dict(raw)
+    parsed = module.event_map["issue"]
+    assert (parsed.engine_id, parsed.engine_seq) == ("dma", 0)
+    assert check_module(module)["verdict"] == "SAFE"
+
+    incomplete = json.loads(json.dumps(raw))
+    next(event for event in incomplete["events"] if event["id"] == "issue").pop("engine_seq")
+    with pytest.raises(PGIRError) as missing:
+        module_from_dict(incomplete)
+    assert missing.value.code == "ASYNC_ENGINE_EVIDENCE_INCOMPLETE"
+
+    gap = json.loads(json.dumps(raw))
+    next(event for event in gap["events"] if event["id"] == "issue")["engine_seq"] = 1
+    with pytest.raises(PGIRError) as nonzero:
+        module_from_dict(gap)
+    assert nonzero.value.code == "ASYNC_ENGINE_SEQUENCE_GAP"
+
+    wrong_kind = json.loads(json.dumps(raw))
+    next(event for event in wrong_kind["events"] if event["id"] == "issue")["engine_id"] = "a"
+    with pytest.raises(PGIRError) as invalid:
+        module_from_dict(wrong_kind)
+    assert invalid.value.code == "INVALID_ASYNC_ENGINE"
