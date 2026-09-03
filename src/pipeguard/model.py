@@ -62,8 +62,11 @@ class Region:
 
 @dataclass(frozen=True, slots=True)
 class ParityEvidence:
-    kind: str
-    detail: str
+    derivation_kind: str
+    logical_stream_id: str
+    lifecycle_epoch: int
+    stream_rank: int
+    polling_coalesced: bool
 
 
 @dataclass(frozen=True, slots=True)
@@ -79,6 +82,7 @@ class Event:
     destination_region: str | None = None
     count: int | None = None
     bytes: int | None = None
+    lifecycle_epoch: int | None = None
     generation: int | None = None
     raw_parity: int | None = None
     parity_evidence: ParityEvidence | None = None
@@ -110,6 +114,16 @@ class Module:
     def actor_map(self) -> dict[str, Actor]:
         return {actor.id: actor for actor in self.actors}
 
+    @property
+    def required_logical_waits(self) -> dict[tuple[str, int, int], frozenset[str]]:
+        required: dict[tuple[str, int, int], set[str]] = {}
+        for event in self.events:
+            if event.type != "MBarrierWaitParity":
+                continue
+            assert event.resource is not None and event.lifecycle_epoch is not None and event.generation is not None
+            required.setdefault((event.resource, event.lifecycle_epoch, event.generation), set()).add(event.id)
+        return {key: frozenset(event_ids) for key, event_ids in required.items()}
+
 
 def _schema() -> dict[str, Any]:
     return json.loads(files("pipeguard.specs").joinpath("pgir-v1.schema.json").read_text())
@@ -119,8 +133,8 @@ def stable_completion_id(issue_id: str, generation: int) -> str:
     return f"completion:tma-load:{issue_id}:g{generation:08d}"
 
 
-def stable_phase_id(resource_id: str, generation: int) -> str:
-    return f"completion:mbarrier-phase:{resource_id}:g{generation:08d}"
+def stable_phase_id(resource_id: str, lifecycle_epoch: int, generation: int) -> str:
+    return f"completion:mbarrier-phase:{resource_id}:l{lifecycle_epoch:08d}:g{generation:08d}"
 
 
 def stable_digest(data: dict[str, Any]) -> str:
@@ -149,9 +163,14 @@ def _strict_integers(data: Any) -> None:
             if name in region:
                 _strict_integer(region[name], f"/regions/{index}/{name}")
     for index, event in enumerate(data.get("events", [])):
-        for name in ("seq", "count", "bytes", "generation", "raw_parity"):
+        for name in ("seq", "count", "bytes", "lifecycle_epoch", "generation", "raw_parity"):
             if name in event:
                 _strict_integer(event[name], f"/events/{index}/{name}")
+        evidence = event.get("parity_evidence")
+        if isinstance(evidence, dict):
+            for name in ("lifecycle_epoch", "stream_rank"):
+                if name in evidence:
+                    _strict_integer(evidence[name], f"/events/{index}/parity_evidence/{name}")
 
 
 def _schema_validate(data: Any) -> None:
@@ -213,22 +232,22 @@ def _semantic_validate(module: Module) -> None:
 
     required_fields = {
         "MemRead": ("region",), "MemWrite": ("region",),
-        "MBarrierInit": ("resource", "count"), "MBarrierInvalidate": ("resource",),
-        "MBarrierArrive": ("resource", "count", "generation"),
-        "MBarrierExpectTx": ("resource", "bytes", "generation"),
-        "MBarrierArriveExpectTx": ("resource", "count", "bytes", "generation"),
-        "MBarrierWaitParity": ("resource", "generation", "raw_parity", "parity_evidence"),
-        "TmaLoadIssue": ("resource", "source_region", "destination_region", "bytes", "generation"),
+        "MBarrierInit": ("resource", "count", "lifecycle_epoch"), "MBarrierInvalidate": ("resource", "lifecycle_epoch"),
+        "MBarrierArrive": ("resource", "count", "lifecycle_epoch", "generation"),
+        "MBarrierExpectTx": ("resource", "bytes", "lifecycle_epoch", "generation"),
+        "MBarrierArriveExpectTx": ("resource", "count", "bytes", "lifecycle_epoch", "generation"),
+        "MBarrierWaitParity": ("resource", "lifecycle_epoch", "generation", "raw_parity", "parity_evidence"),
+        "TmaLoadIssue": ("resource", "source_region", "destination_region", "bytes", "lifecycle_epoch", "generation"),
     }
     common = {"id", "type", "actor", "seq", "depends_on"}
     specific = {
         "MemRead": {"region"}, "MemWrite": {"region"},
-        "MBarrierInit": {"resource", "count"}, "MBarrierInvalidate": {"resource"},
-        "MBarrierArrive": {"resource", "count", "generation", "predicate"},
-        "MBarrierExpectTx": {"resource", "bytes", "generation"},
-        "MBarrierArriveExpectTx": {"resource", "count", "bytes", "generation", "predicate"},
-        "MBarrierWaitParity": {"resource", "generation", "raw_parity", "parity_evidence"},
-        "TmaLoadIssue": {"resource", "source_region", "destination_region", "bytes", "generation"},
+        "MBarrierInit": {"resource", "count", "lifecycle_epoch"}, "MBarrierInvalidate": {"resource", "lifecycle_epoch"},
+        "MBarrierArrive": {"lifecycle_epoch", "resource", "count", "generation", "predicate"},
+        "MBarrierExpectTx": {"lifecycle_epoch", "resource", "bytes", "generation"},
+        "MBarrierArriveExpectTx": {"lifecycle_epoch", "resource", "count", "bytes", "generation", "predicate"},
+        "MBarrierWaitParity": {"lifecycle_epoch", "resource", "generation", "raw_parity", "parity_evidence"},
+        "TmaLoadIssue": {"lifecycle_epoch", "resource", "source_region", "destination_region", "bytes", "generation"},
     }
     raw_events = {item["id"]: item for item in module.raw["events"]}
     for event in module.events:
@@ -264,11 +283,83 @@ def _semantic_validate(module: Module) -> None:
         ):
             raise PGIRError("UNSUPPORTED_TMA_REGION", "TMA load requires an explicit global source and shared destination", {"event": event.id})
 
+    wait_streams: dict[tuple[str, str, int, str], list[Event]] = {}
+    canonical_stream_ids: dict[tuple[str, str, int], set[str]] = {}
+    for event in module.events:
+        if event.type != "MBarrierWaitParity":
+            continue
+        assert event.resource is not None and event.generation is not None and event.raw_parity is not None and event.parity_evidence is not None
+        evidence = event.parity_evidence
+        if event.lifecycle_epoch != evidence.lifecycle_epoch:
+            raise PGIRError("LOGICAL_WAIT_LIFECYCLE_MISMATCH", "wait event and evidence name different lifecycle epochs", {"event": event.id, "event_lifecycle": event.lifecycle_epoch, "evidence_lifecycle": evidence.lifecycle_epoch})
+        if not evidence.polling_coalesced:
+            raise PGIRError("POLLING_NOT_COALESCED", "logical wait/query identity requires a coalesced polling occurrence", {"event": event.id})
+        if event.raw_parity != event.generation % 2:
+            raise PGIRError("MALFORMED_STREAM_PARITY", "raw wait parity does not match its logical generation", {"event": event.id, "generation": event.generation, "raw_parity": event.raw_parity})
+        canonical_stream = (event.actor, event.resource, evidence.lifecycle_epoch)
+        canonical_stream_ids.setdefault(canonical_stream, set()).add(evidence.logical_stream_id)
+        wait_streams.setdefault((*canonical_stream, evidence.logical_stream_id), []).append(event)
+    for stream, identifiers in sorted(canonical_stream_ids.items()):
+        if len(identifiers) != 1:
+            raise PGIRError(
+                "LOGICAL_WAIT_STREAM_ID_MISMATCH",
+                "one canonical actor/barrier/lifecycle stream cannot be split across logical stream IDs",
+                {"stream": stream, "logical_stream_ids": sorted(identifiers)},
+            )
+    for stream, waits in sorted(wait_streams.items()):
+        generations = [event.generation for event in waits]
+        seen_generations: set[int] = set()
+        duplicate_generation = None
+        for generation in generations:
+            if generation in seen_generations:
+                duplicate_generation = generation
+                break
+            seen_generations.add(generation)
+        if duplicate_generation is not None:
+            raise PGIRError("DUPLICATE_LOGICAL_WAIT", "logical stream contains duplicate waits for one generation", {"stream": stream, "generation": duplicate_generation, "events": sorted(event.id for event in waits if event.generation == duplicate_generation)})
+        ranked = sorted(waits, key=lambda event: (event.parity_evidence.stream_rank, event.seq, event.id))
+        ranks = [event.parity_evidence.stream_rank for event in ranked]
+        if ranks != list(range(len(ranked))):
+            raise PGIRError("LOGICAL_WAIT_RANK_GAP", "logical wait ranks must be gap-free and start at zero", {"stream": stream, "ranks": ranks})
+        mismatch = next((event for event in ranked if event.generation != event.parity_evidence.stream_rank), None)
+        if mismatch is not None:
+            raise PGIRError("LOGICAL_WAIT_GENERATION_MISMATCH", "logical generation must equal stream rank in a fresh lifecycle", {"event": mismatch.id, "generation": mismatch.generation, "stream_rank": mismatch.parity_evidence.stream_rank})
+        program_order = sorted(waits, key=lambda event: (event.seq, event.id))
+        if [event.id for event in ranked] != [event.id for event in program_order]:
+            raise PGIRError("LOGICAL_WAIT_ORDER_MISMATCH", "logical stream rank disagrees with actor program order", {"stream": stream})
+
+    # The current static lift is complete only for fresh, gap-free lifecycles.
+    # A represented generation k can retire target k-1 only when every earlier
+    # generation has a statically complete arrival count. Such a covered
+    # boundary needs a nonempty LogicalWait group; absence is a support-domain
+    # failure, not a hardware synchronization hazard.
+    required = module.required_logical_waits
+    init_counts: dict[tuple[str, int], int] = {}
+    arrival_counts: dict[tuple[str, int, int], int] = {}
+    for event in module.events:
+        if event.type == "MBarrierInit":
+            assert event.resource is not None and event.lifecycle_epoch is not None and event.count is not None
+            init_counts.setdefault((event.resource, event.lifecycle_epoch), event.count)
+        elif event.type in {"MBarrierArrive", "MBarrierArriveExpectTx"} and event.predicate:
+            assert event.resource is not None and event.lifecycle_epoch is not None and event.generation is not None and event.count is not None
+            key = (event.resource, event.lifecycle_epoch, event.generation)
+            arrival_counts[key] = arrival_counts.get(key, 0) + event.count
+    for (resource, lifecycle_epoch), capacity in sorted(init_counts.items()):
+        generation = 0
+        while arrival_counts.get((resource, lifecycle_epoch, generation), 0) == capacity:
+            if generation > 0 and not required.get((resource, lifecycle_epoch, generation - 1)):
+                raise PGIRError(
+                    "UNSUPPORTED_MISSING_OBSERVE_GROUP",
+                    "covered phase completion lacks a required LogicalWait observe group",
+                    {"resource": resource, "lifecycle_epoch": lifecycle_epoch, "target_generation": generation - 1},
+                )
+            generation += 1
+
     synthetic_ids = {
         stable_completion_id(event.id, event.generation)
         for event in module.events if event.type == "TmaLoadIssue"
     } | {
-        stable_phase_id(event.resource, event.generation)
+        stable_phase_id(event.resource, event.lifecycle_epoch, event.generation)
         for event in module.events if event.resource is not None and event.generation is not None
     }
     collisions = sorted(synthetic_ids & events.keys())
@@ -290,7 +381,7 @@ def module_from_dict(data: dict[str, Any]) -> Module:
         id=item["id"], type=item["type"], actor=item["actor"], seq=item["seq"],
         depends_on=tuple(sorted(item.get("depends_on", []))), resource=item.get("resource"),
         region=item.get("region"), source_region=item.get("source_region"), destination_region=item.get("destination_region"),
-        count=item.get("count"), bytes=item.get("bytes"), generation=item.get("generation"), raw_parity=item.get("raw_parity"),
+        count=item.get("count"), bytes=item.get("bytes"), lifecycle_epoch=item.get("lifecycle_epoch"), generation=item.get("generation"), raw_parity=item.get("raw_parity"),
         parity_evidence=ParityEvidence(**item["parity_evidence"]) if "parity_evidence" in item else None,
         predicate=item.get("predicate", True),
     ) for item in data["events"])

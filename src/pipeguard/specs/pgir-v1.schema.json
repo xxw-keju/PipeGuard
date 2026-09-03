@@ -74,10 +74,11 @@
       }
     },
     "parity_evidence": {
-      "type": "object", "additionalProperties": false, "required": ["kind", "detail"],
+      "type": "object", "additionalProperties": false, "required": ["derivation_kind", "logical_stream_id", "lifecycle_epoch", "stream_rank", "polling_coalesced"],
       "properties": {
-        "kind": {"enum": ["STATIC_ITERATION", "PHASE_SSA", "BARRIER_HISTORY", "PARITY_EXPRESSION"]},
-        "detail": {"type": "string", "minLength": 1}
+        "derivation_kind": {"enum": ["STATIC_ITERATION", "PHASE_SSA", "BARRIER_HISTORY", "PARITY_EXPRESSION"]},
+        "logical_stream_id": {"type": "string", "minLength": 1}, "lifecycle_epoch": {"type": "integer", "minimum": 0},
+        "stream_rank": {"type": "integer", "minimum": 0}, "polling_coalesced": {"const": true}
       }
     },
     "event": {
@@ -89,6 +90,7 @@
         "resource": {"type": "string", "minLength": 1}, "region": {"type": "string", "minLength": 1},
         "source_region": {"type": "string", "minLength": 1}, "destination_region": {"type": "string", "minLength": 1},
         "count": {"type": "integer", "minimum": 1}, "bytes": {"type": "integer", "minimum": 1},
+        "lifecycle_epoch": {"type": "integer", "minimum": 0},
         "generation": {"type": "integer", "minimum": 0}, "raw_parity": {"type": "integer", "minimum": 0, "maximum": 1},
         "parity_evidence": {"$ref": "#/$defs/parity_evidence"}, "predicate": {"type": "boolean"}
       }

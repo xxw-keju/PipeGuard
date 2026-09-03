@@ -24,6 +24,7 @@
       "actor": "a",
       "count": 1,
       "id": "init",
+      "lifecycle_epoch": 0,
       "resource": "bar",
       "seq": 0,
       "type": "MBarrierInit"
@@ -32,9 +33,13 @@
       "actor": "a",
       "generation": 0,
       "id": "wait",
+      "lifecycle_epoch": 0,
       "parity_evidence": {
-        "detail": "fixture resolves generation 0",
-        "kind": "BARRIER_HISTORY"
+        "derivation_kind": "BARRIER_HISTORY",
+        "lifecycle_epoch": 0,
+        "logical_stream_id": "a:bar",
+        "polling_coalesced": true,
+        "stream_rank": 0
       },
       "raw_parity": 1,
       "resource": "bar",

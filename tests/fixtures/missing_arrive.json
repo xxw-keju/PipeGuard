@@ -31,6 +31,7 @@
       "actor": "a",
       "count": 2,
       "id": "init",
+      "lifecycle_epoch": 0,
       "resource": "bar",
       "seq": 0,
       "type": "MBarrierInit"
@@ -40,6 +41,7 @@
       "count": 1,
       "generation": 0,
       "id": "arrive",
+      "lifecycle_epoch": 0,
       "resource": "bar",
       "seq": 1,
       "type": "MBarrierArrive"
@@ -51,9 +53,13 @@
       ],
       "generation": 0,
       "id": "wait",
+      "lifecycle_epoch": 0,
       "parity_evidence": {
-        "detail": "fixture resolves generation 0",
-        "kind": "BARRIER_HISTORY"
+        "derivation_kind": "BARRIER_HISTORY",
+        "lifecycle_epoch": 0,
+        "logical_stream_id": "b:bar",
+        "polling_coalesced": true,
+        "stream_rank": 0
       },
       "raw_parity": 0,
       "resource": "bar",

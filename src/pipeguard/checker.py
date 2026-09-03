@@ -65,7 +65,7 @@ def _base_pdg(module: Module) -> PDG:
             graph.add_edge(dependency, event.id, "EXPLICIT_DEPENDENCY")
         if event.resource is None or event.generation is None:
             continue
-        phase = stable_phase_id(event.resource, event.generation)
+        phase = stable_phase_id(event.resource, event.lifecycle_epoch, event.generation)
         if event.type == "MBarrierArrive" and event.predicate:
             graph.add_edge(event.id, phase, "BARRIER_ARRIVE")
         elif event.type == "MBarrierArriveExpectTx" and event.predicate:
@@ -88,7 +88,7 @@ def _anchor_ids(module: Module) -> list[str]:
         if event.type == "TmaLoadIssue":
             identifiers.add(stable_completion_id(event.id, event.generation))
         if event.resource is not None and event.generation is not None:
-            identifiers.add(stable_phase_id(event.resource, event.generation))
+            identifiers.add(stable_phase_id(event.resource, event.lifecycle_epoch, event.generation))
     return sorted(identifiers)
 
 
@@ -112,12 +112,12 @@ def _may_alias(module: Module, left: str, right: str) -> bool:
     return a.address_space == b.address_space and a.allocation_id == b.allocation_id and a.offset < b.offset + b.extent and b.offset < a.offset + a.extent
 
 
-def _arrivals(module: Module, resource: str, generation: int) -> list[Event]:
-    return [event for event in module.events if event.resource == resource and event.generation == generation and event.predicate and event.type in {"MBarrierArrive", "MBarrierArriveExpectTx"}]
+def _arrivals(module: Module, resource: str, lifecycle_epoch: int, generation: int) -> list[Event]:
+    return [event for event in module.events if event.resource == resource and event.lifecycle_epoch == lifecycle_epoch and event.generation == generation and event.predicate and event.type in {"MBarrierArrive", "MBarrierArriveExpectTx"}]
 
 
-def _waits(module: Module, resource: str, generation: int) -> list[Event]:
-    return [event for event in module.events if event.resource == resource and event.generation == generation and event.type == "MBarrierWaitParity"]
+def _waits(module: Module, resource: str, lifecycle_epoch: int, generation: int) -> list[Event]:
+    return [event for event in module.events if event.resource == resource and event.lifecycle_epoch == lifecycle_epoch and event.generation == generation and event.type == "MBarrierWaitParity"]
 
 
 def _mbarrier_visibility(module: Module, graph: PDG, source: Effect, target: Effect) -> bool:
@@ -130,7 +130,7 @@ def _mbarrier_visibility(module: Module, graph: PDG, source: Effect, target: Eff
             continue
         if arrival.actor != source_event.actor or not graph.reachable(source.end, arrival.id):
             continue
-        for wait in _waits(module, arrival.resource, arrival.generation):
+        for wait in _waits(module, arrival.resource, arrival.lifecycle_epoch, arrival.generation):
             if wait.actor == target_event.actor and graph.reachable(wait.id, target.begin):
                 return True
     return False
@@ -139,7 +139,7 @@ def _mbarrier_visibility(module: Module, graph: PDG, source: Effect, target: Eff
 def _completion_observed(module: Module, graph: PDG, window: Effect, point: Effect) -> bool:
     issue = module.event_map[window.begin]
     point_event = module.event_map[point.begin]
-    return any(wait.actor == point_event.actor and graph.reachable(wait.id, point.begin) for wait in _waits(module, issue.resource, issue.generation))
+    return any(wait.actor == point_event.actor and graph.reachable(wait.id, point.begin) for wait in _waits(module, issue.resource, issue.lifecycle_epoch, issue.generation))
 
 
 def _data_hazard(module: Module, graph: PDG) -> dict[str, Any] | None:

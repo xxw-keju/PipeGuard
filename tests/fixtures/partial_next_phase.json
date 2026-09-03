@@ -25,37 +25,19 @@
       "actor": "a",
       "count": 2,
       "id": "init",
+      "lifecycle_epoch": 0,
       "resource": "bar",
       "seq": 0,
       "type": "MBarrierInit"
     },
     {
       "actor": "a",
-      "bytes": 4,
-      "generation": 0,
-      "id": "expect",
-      "resource": "bar",
-      "seq": 1,
-      "type": "MBarrierExpectTx"
-    },
-    {
-      "actor": "a",
-      "bytes": 4,
-      "destination_region": "tile",
-      "generation": 0,
-      "id": "issue",
-      "resource": "bar",
-      "seq": 2,
-      "source_region": "source",
-      "type": "TmaLoadIssue"
-    },
-    {
-      "actor": "a",
       "count": 2,
       "generation": 0,
       "id": "arrive0",
+      "lifecycle_epoch": 0,
       "resource": "bar",
-      "seq": 3,
+      "seq": 1,
       "type": "MBarrierArrive"
     },
     {
@@ -63,21 +45,26 @@
       "count": 1,
       "generation": 1,
       "id": "arrive1a",
+      "lifecycle_epoch": 0,
       "resource": "bar",
-      "seq": 4,
+      "seq": 2,
       "type": "MBarrierArrive"
     },
     {
       "actor": "a",
       "generation": 0,
       "id": "wait0",
+      "lifecycle_epoch": 0,
       "parity_evidence": {
-        "detail": "fixture resolves generation 0",
-        "kind": "BARRIER_HISTORY"
+        "derivation_kind": "BARRIER_HISTORY",
+        "lifecycle_epoch": 0,
+        "logical_stream_id": "a:bar",
+        "polling_coalesced": true,
+        "stream_rank": 0
       },
       "raw_parity": 0,
       "resource": "bar",
-      "seq": 5,
+      "seq": 3,
       "type": "MBarrierWaitParity"
     },
     {
@@ -85,21 +72,26 @@
       "count": 1,
       "generation": 1,
       "id": "arrive1b",
+      "lifecycle_epoch": 0,
       "resource": "bar",
-      "seq": 6,
+      "seq": 4,
       "type": "MBarrierArrive"
     },
     {
       "actor": "a",
       "generation": 1,
       "id": "wait1",
+      "lifecycle_epoch": 0,
       "parity_evidence": {
-        "detail": "fixture resolves generation 1",
-        "kind": "BARRIER_HISTORY"
+        "derivation_kind": "BARRIER_HISTORY",
+        "lifecycle_epoch": 0,
+        "logical_stream_id": "a:bar",
+        "polling_coalesced": true,
+        "stream_rank": 1
       },
       "raw_parity": 1,
       "resource": "bar",
-      "seq": 7,
+      "seq": 5,
       "type": "MBarrierWaitParity"
     }
   ],
@@ -115,22 +107,7 @@
     "dsl_commit": "fixture",
     "dsl_version": "test"
   },
-  "regions": [
-    {
-      "address_space": "SHARED",
-      "allocation_id": "smem",
-      "extent": 16,
-      "id": "tile",
-      "offset": 0
-    },
-    {
-      "address_space": "GLOBAL",
-      "allocation_id": "global-input",
-      "extent": 16,
-      "id": "source",
-      "offset": 0
-    }
-  ],
+  "regions": [],
   "resources": [
     {
       "id": "bar",

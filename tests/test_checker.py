@@ -27,15 +27,14 @@ def test_safe_handoff_has_visibility_path_and_manifest():
     assert result["verdict"] == "SAFE"
     assert result["manifest"]["counts"] == {"actors": 2, "events": 5, "regions": 1, "resources": 1}
     edges = result["artifacts"]["pdg"]["edges"]
-    assert {"from": "completion:mbarrier-phase:bar:g00000000", "to": "wait", "kind": "COMPLETION_TO_WAIT"} in edges
+    assert {"from": "completion:mbarrier-phase:bar:l00000000:g00000000", "to": "wait", "kind": "COMPLETION_TO_WAIT"} in edges
 
 
 @pytest.mark.parametrize(
     ("fixture", "code"),
     [
         ("missing_arrive.json", "MISSING_ARRIVAL"),
-        ("wrong_generation.json", "WRONG_PARITY"),
-        ("stale_generation.json", "STALE_GENERATION"),
+        ("stale_generation.json", "PROTOCOL_INVALID_PHASE_ADVANCE"),
         ("phase_lap.json", "PHASE_LAP"),
         ("use_before_init.json", "USE_BEFORE_INIT"),
         ("tma_bytes_mismatch.json", "TX_BYTES_MISMATCH"),
@@ -48,59 +47,51 @@ def test_sync_hazards(fixture: str, code: str):
     assert result["witness"]["reachable_execution_prefix"] is not None
 
 
-def test_next_phase_waits_at_held_phase_boundary_then_runs_as_current():
-    module = load("partial_next_phase.json")
-    result = check_module(module)
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_partial_next_phase_before_old_wait_is_safe(engine):
+    result = check_module(load("partial_next_phase.json"), engine=engine)
     assert result["verdict"] == "SAFE"
-    phase_anchor = next(item for item in result["artifacts"]["boundaries"] if item["anchor"].endswith("bar:g00000000"))
-    assert phase_anchor["boundary"] == ["arrive1a"]
+    if engine == "crosscheck":
+        comparison = result["artifacts"]["crosscheck"]
+        assert comparison["maximal"]["verdict"] == comparison["exhaustive"]["verdict"] == "SAFE"
+        assert comparison["maximal"]["boundaries"] == comparison["exhaustive"]["boundaries"]
 
 
-
-def test_future_generation_is_not_buffered_while_tx_is_outstanding():
+def test_initial_remaining_tracks_future_obligations_and_partial_arrival_is_allowed():
     executor = Executor(load("partial_next_phase.json"))
     state = executor.initial_state()
-    for identifier in ("init", "expect", "issue", "arrive0"):
-        transition = next(item for item in executor.enabled(state) if item.id == identifier)
-        executor.apply(state, transition)
+    assert state.remaining == {
+        ("bar", 0, 0): {"wait0"},
+        ("bar", 0, 1): {"wait1"},
+    }
+    assert state.observed == set()
+    initial_fingerprint = executor.fingerprint(state)
+    without_future = state.clone()
+    without_future.remaining.pop(("bar", 0, 1))
+    assert executor.fingerprint(without_future) != initial_fingerprint
 
-    barrier = state.barriers["bar"]
-    assert barrier.pending == 0
-    assert barrier.completed_tx < barrier.expected_tx
-    future = next(item for item in executor.enabled(state) if item.id == "arrive1a")
-    with pytest.raises(ProtocolError) as caught:
-        executor.apply(state, future)
-    assert caught.value.code == "EARLY_NEXT_GENERATION"
-    assert barrier.generation == 0
-    assert not any(name.startswith("next_") for name in barrier.__dataclass_fields__)
-
-
-@pytest.mark.parametrize("capacity", [2, 3])
-def test_partial_arrival_is_legal_after_phase_advances(capacity: int):
-    raw = json.loads((FIXTURES / "partial_next_phase.json").read_text())
-    raw["actors"][0]["participants"] = list(range(capacity))
-    raw["target"]["cta_threads"] = capacity
-    next(event for event in raw["events"] if event["id"] == "init")["count"] = capacity
-    next(event for event in raw["events"] if event["id"] == "arrive0")["count"] = capacity
-    executor = Executor(module_from_dict(raw))
-    state = executor.initial_state()
-    for identifier in ("init", "expect", "issue"):
-        transition = next(item for item in executor.enabled(state) if item.id == identifier)
-        executor.apply(state, transition)
-    completion = next(item for item in executor.enabled(state) if item.kind == "TMA_COMPLETION")
-    executor.apply(state, completion)
-    executor.apply(state, next(item for item in executor.enabled(state) if item.id == "arrive0"))
-    phase = next(item for item in executor.enabled(state) if item.kind == "PHASE_COMPLETION")
-    executor.apply(state, phase)
+    for identifier in ("init", "arrive0"):
+        executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
+    executor.apply(state, next(item for item in executor.enabled(state) if item.kind == "PHASE_COMPLETION"))
     executor.apply(state, next(item for item in executor.enabled(state) if item.id == "arrive1a"))
-    if capacity == 3:
-        executor.apply(state, next(item for item in executor.enabled(state) if item.id == "wait0"))
-        executor.apply(state, next(item for item in executor.enabled(state) if item.id == "arrive1b"))
+    assert state.barriers["bar"].generation == 1
+    assert state.barriers["bar"].pending == 1
+    assert state.remaining[("bar", 0, 0)] == {"wait0"}
 
-    barrier = state.barriers["bar"]
-    assert barrier.generation == 1
-    assert barrier.pending == 1
-    assert barrier.generation_started
+    wait = next(item for item in executor.enabled(state) if item.id == "wait0")
+    executor.apply(state, wait)
+    assert "wait0" in state.observed
+    assert ("bar", 0, 0) not in state.remaining
+    before_duplicate = executor.fingerprint(state)
+    with pytest.raises(ProtocolError) as caught:
+        executor.apply(state, wait)
+    assert caught.value.code == "DUPLICATE_LOGICAL_WAIT_CONSUMPTION"
+    assert executor.fingerprint(state) == before_duplicate
+
+    executor.apply(state, next(item for item in executor.enabled(state) if item.id == "arrive1b"))
+    executor.apply(state, next(item for item in executor.enabled(state) if item.kind == "PHASE_COMPLETION"))
+    assert state.barriers["bar"].generation == 2
+
 
 def test_tma_issue_does_not_credit_completion_bytes():
     module = load("tma_completion_before_arrival.json")
@@ -219,7 +210,7 @@ def lifecycle_module(*event_types: str):
     raw["resources"][0]["participants"] = ["a_producer"]
     events = []
     for seq, event_type in enumerate(event_types):
-        event = {"id": f"e{seq}", "type": event_type, "actor": "a_producer", "seq": seq, "resource": "bar"}
+        event = {"id": f"e{seq}", "type": event_type, "actor": "a_producer", "seq": seq, "resource": "bar", "lifecycle_epoch": 0}
         if event_type == "MBarrierInit":
             event["count"] = 1
         elif event_type == "MBarrierArrive":
@@ -228,7 +219,7 @@ def lifecycle_module(*event_types: str):
             event.update({
                 "generation": 0,
                 "raw_parity": 0,
-                "parity_evidence": {"kind": "BARRIER_HISTORY", "detail": "lifecycle fixture generation 0"},
+                "parity_evidence": {"derivation_kind": "BARRIER_HISTORY", "logical_stream_id": "lifecycle", "lifecycle_epoch": 0, "stream_rank": 0, "polling_coalesced": True},
             })
         events.append(event)
     raw["events"] = events
@@ -290,7 +281,7 @@ def test_predicated_false_arrival_does_not_publish_visibility():
     false_arrival["predicate"] = False
     raw["events"].append({
         "id": "real_arrive", "type": "MBarrierArrive", "actor": "c_arrival", "seq": 0,
-        "resource": "bar", "count": 1, "generation": 0, "depends_on": ["init"],
+        "resource": "bar", "lifecycle_epoch": 0, "count": 1, "generation": 0, "depends_on": ["init"],
     })
     result = check_module(module_from_dict(raw))
     assert result["verdict"] == "DATA_HAZARD"
@@ -368,12 +359,325 @@ def test_event_type_specific_fields_and_false_arrive_expect_tx():
     raw = json.loads((FIXTURES / "missing_arrive.json").read_text())
     raw["events"] = [
         raw["events"][0],
-        {"id": "false", "type": "MBarrierArriveExpectTx", "actor": "a", "seq": 1, "resource": "bar", "count": 1, "bytes": 8, "generation": 0, "predicate": False},
-        {"id": "real", "type": "MBarrierArrive", "actor": "a", "seq": 2, "resource": "bar", "count": 2, "generation": 0},
-        {"id": "wait", "type": "MBarrierWaitParity", "actor": "b", "seq": 0, "resource": "bar", "generation": 0, "raw_parity": 0, "parity_evidence": {"kind": "BARRIER_HISTORY", "detail": "generation zero"}, "depends_on": ["init"]},
+        {"id": "false", "type": "MBarrierArriveExpectTx", "actor": "a", "seq": 1, "resource": "bar", "lifecycle_epoch": 0, "count": 1, "bytes": 8, "generation": 0, "predicate": False},
+        {"id": "real", "type": "MBarrierArrive", "actor": "a", "seq": 2, "resource": "bar", "lifecycle_epoch": 0, "count": 2, "generation": 0},
+        {"id": "wait", "type": "MBarrierWaitParity", "actor": "b", "seq": 0, "resource": "bar", "lifecycle_epoch": 0, "generation": 0, "raw_parity": 0, "parity_evidence": {"derivation_kind": "BARRIER_HISTORY", "logical_stream_id": "false-arrive-test", "lifecycle_epoch": 0, "stream_rank": 0, "polling_coalesced": True}, "depends_on": ["init"]},
     ]
     assert check_module(module_from_dict(raw))["verdict"] == "SAFE"
 
+
+
+def structured_evidence(stream: str, rank: int, lifecycle: int = 0) -> dict:
+    return {
+        "derivation_kind": "BARRIER_HISTORY",
+        "logical_stream_id": stream,
+        "lifecycle_epoch": lifecycle,
+        "stream_rank": rank,
+        "polling_coalesced": True,
+    }
+
+
+def strict_multi_observer_module(require_both: bool):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    names = ("a_producer", "b_observer", "c_observer")
+    raw["actors"] = [
+        {"id": name, "kind": "PARTITION", "participants": [index]}
+        for index, name in enumerate(names)
+    ]
+    raw["target"]["cta_threads"] = 3
+    raw["resources"][0]["participants"] = list(names)
+    raw["regions"] = []
+    dependencies = ["wait_b", "wait_c"] if require_both else ["wait_b"]
+    raw["events"] = [
+        {"id": "init", "type": "MBarrierInit", "actor": "a_producer", "seq": 0, "resource": "bar", "lifecycle_epoch": 0, "count": 1},
+        {"id": "arrive0", "type": "MBarrierArrive", "actor": "a_producer", "seq": 1, "resource": "bar", "lifecycle_epoch": 0, "count": 1, "generation": 0},
+        {"id": "arrive1", "type": "MBarrierArrive", "actor": "a_producer", "seq": 2, "resource": "bar", "lifecycle_epoch": 0, "count": 1, "generation": 1, "depends_on": dependencies},
+        {"id": "wait_b", "type": "MBarrierWaitParity", "actor": "b_observer", "seq": 0, "resource": "bar", "lifecycle_epoch": 0, "generation": 0, "raw_parity": 0, "parity_evidence": structured_evidence("b", 0), "depends_on": ["init"]},
+        {"id": "wait_c", "type": "MBarrierWaitParity", "actor": "c_observer", "seq": 0, "resource": "bar", "lifecycle_epoch": 0, "generation": 0, "raw_parity": 0, "parity_evidence": structured_evidence("c", 0), "depends_on": ["init"]},
+    ]
+    return module_from_dict(raw)
+
+
+def test_required_and_multiple_observers():
+    module = strict_multi_observer_module(True)
+    assert module.required_logical_waits == {("bar", 0, 0): frozenset({"wait_b", "wait_c"})}
+    for engine in ("maximal", "exhaustive", "crosscheck"):
+        assert check_module(module, engine=engine)["verdict"] == "SAFE"
+
+
+def test_missing_observer_blocks_only_phase_completion_all_engines():
+    module = strict_multi_observer_module(False)
+    for engine in ("maximal", "exhaustive", "crosscheck"):
+        result = check_module(module, engine=engine)
+        assert result["verdict"] == "SYNC_HAZARD"
+        assert result["diagnostics"][0]["code"] == "PROTOCOL_INVALID_PHASE_ADVANCE"
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_invalidate_cannot_retire_unobserved_required_waits(engine):
+    raw = json.loads(json.dumps(strict_multi_observer_module(True).raw))
+    invalidate = next(event for event in raw["events"] if event["id"] == "arrive1")
+    invalidate.clear()
+    invalidate.update({
+        "id": "invalidate",
+        "type": "MBarrierInvalidate",
+        "actor": "a_producer",
+        "seq": 2,
+        "resource": "bar",
+        "lifecycle_epoch": 0,
+    })
+
+    result = check_module(module_from_dict(raw), engine=engine)
+    assert result["verdict"] == "SYNC_HAZARD"
+    assert result["diagnostics"][0]["code"] == "INVALIDATE_INCOMPLETE"
+    remaining = result["witness"]["protocol_state"].get("remaining_logical_waits")
+    if remaining is not None:
+        assert remaining and set(remaining).issubset({"wait_b", "wait_c"})
+
+
+def test_duplicate_rank_gap_wrong_generation_and_parity_fail_closed():
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["events"] = [event for event in raw["events"] if event["id"] != "read"]
+    wait = next(event for event in raw["events"] if event["id"] == "wait")
+    duplicate = dict(wait, id="dup", seq=1)
+    duplicate["parity_evidence"] = structured_evidence("b_consumer:bar", 1)
+    raw["events"].append(duplicate)
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+    assert caught.value.code == "DUPLICATE_LOGICAL_WAIT"
+
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    next(event for event in raw["events"] if event["id"] == "wait")["parity_evidence"]["stream_rank"] = 1
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+    assert caught.value.code == "LOGICAL_WAIT_RANK_GAP"
+
+    raw = json.loads((FIXTURES / "partial_next_phase.json").read_text())
+    wait = next(event for event in raw["events"] if event["id"] == "wait1")
+    wait.update(generation=2, raw_parity=0)
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+    assert caught.value.code == "LOGICAL_WAIT_GENERATION_MISMATCH"
+
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    next(event for event in raw["events"] if event["id"] == "wait")["raw_parity"] = 1
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+    assert caught.value.code == "MALFORMED_STREAM_PARITY"
+
+
+def test_canonical_wait_stream_cannot_be_split_by_external_stream_id():
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["events"] = [event for event in raw["events"] if event["id"] != "read"]
+    wait = next(event for event in raw["events"] if event["id"] == "wait")
+    duplicate = dict(wait, id="split", seq=1)
+    duplicate["parity_evidence"] = structured_evidence("forged-split", 0)
+    raw["events"].append(duplicate)
+
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+    assert caught.value.code == "LOGICAL_WAIT_STREAM_ID_MISMATCH"
+
+
+@pytest.mark.parametrize("field",["derivation_kind","logical_stream_id","lifecycle_epoch","stream_rank","polling_coalesced"])
+def test_structured_fields_required(field):
+    r=json.loads((FIXTURES/"safe_handoff.json").read_text()); next(e for e in r["events"] if e["id"]=="wait")["parity_evidence"].pop(field)
+    with pytest.raises(PGIRError) as e: module_from_dict(r)
+    assert e.value.code=="SCHEMA_INVALID"
+
+
+def test_unknown_derivation_fails_closed():
+    r=json.loads((FIXTURES/"safe_handoff.json").read_text()); next(e for e in r["events"] if e["id"]=="wait")["parity_evidence"]["derivation_kind"]="UNKNOWN"
+    with pytest.raises(PGIRError) as e: module_from_dict(r)
+    assert e.value.code=="SCHEMA_INVALID"
+
+
+@pytest.mark.parametrize("value",[False,None])
+def test_polling_evidence_fail_closed(value):
+    r=json.loads((FIXTURES/"safe_handoff.json").read_text()); evidence=next(e for e in r["events"] if e["id"]=="wait")["parity_evidence"]
+    evidence.pop("polling_coalesced") if value is None else evidence.update(polling_coalesced=False)
+    with pytest.raises(PGIRError) as e: module_from_dict(r)
+    assert e.value.code=="SCHEMA_INVALID"
+
+
+def test_phase_completion_guard_is_atomic_after_one_of_multiple_waits():
+    executor = Executor(strict_multi_observer_module(False))
+    state = executor.initial_state()
+    for identifier in ("init", "arrive0"):
+        executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
+    executor.apply(state, next(item for item in executor.enabled(state) if item.kind == "PHASE_COMPLETION"))
+    executor.apply(state, next(item for item in executor.enabled(state) if item.id == "wait_b"))
+    executor.apply(state, next(item for item in executor.enabled(state) if item.id == "arrive1"))
+    completion = next(item for item in executor.enabled(state) if item.kind == "PHASE_COMPLETION")
+    before = executor.fingerprint(state)
+    with pytest.raises(ProtocolError) as caught:
+        executor.apply(state, completion)
+    assert caught.value.code == "PROTOCOL_INVALID_PHASE_ADVANCE"
+    assert caught.value.event == completion.id
+    assert caught.value.state["remaining_logical_waits"] == ["wait_c"]
+    assert executor.fingerprint(state) == before
+
+
+def test_rejected_tma_completion_is_failure_atomic():
+    raw = json.loads((FIXTURES / "tma_completion_before_arrival.json").read_text())
+    next(event for event in raw["events"] if event["id"] == "issue")["bytes"] = 8
+    executor = Executor(module_from_dict(raw))
+    state = executor.initial_state()
+    for identifier in ("init", "expect", "issue"):
+        executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
+    completion = next(item for item in executor.enabled(state) if item.kind == "TMA_COMPLETION")
+    before = executor.fingerprint(state)
+
+    with pytest.raises(ProtocolError) as caught:
+        executor.apply(state, completion)
+    assert caught.value.code == "TX_BYTES_EXCEED_EXPECTED"
+    assert executor.fingerprint(state) == before
+
+
+def test_stale_phase_completion_transition_is_rejected_atomically():
+    executor = Executor(load("safe_handoff.json"))
+    state = executor.initial_state()
+    for identifier in ("init", "write", "arrive"):
+        executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
+    completion = next(item for item in executor.enabled(state) if item.kind == "PHASE_COMPLETION")
+    executor.apply(state, completion)
+    before = executor.fingerprint(state)
+
+    with pytest.raises(ProtocolError) as caught:
+        executor.apply(state, completion)
+    assert caught.value.code == "INVALID_PHASE_COMPLETION_TRANSITION"
+    assert executor.fingerprint(state) == before
+
+
+def test_missing_covered_observe_group_is_unsupported_not_sync_hazard():
+    raw = json.loads((FIXTURES / "stale_generation.json").read_text())
+    raw["events"] = [event for event in raw["events"] if event["type"] != "MBarrierWaitParity"]
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+    assert caught.value.code == "UNSUPPORTED_MISSING_OBSERVE_GROUP"
+    assert caught.value.details["target_generation"] == 0
+
+
+def tx_delayed_phase_module():
+    raw = json.loads((FIXTURES / "tma_completion_before_arrival.json").read_text())
+    raw["events"] = [
+        {"id": "init", "type": "MBarrierInit", "actor": "a", "seq": 0, "resource": "bar", "lifecycle_epoch": 0, "count": 1},
+        {"id": "arrive0", "type": "MBarrierArrive", "actor": "a", "seq": 1, "resource": "bar", "lifecycle_epoch": 0, "count": 1, "generation": 0},
+        {"id": "expect1", "type": "MBarrierExpectTx", "actor": "a", "seq": 2, "resource": "bar", "lifecycle_epoch": 0, "bytes": 4, "generation": 1},
+        {"id": "issue1", "type": "TmaLoadIssue", "actor": "a", "seq": 3, "resource": "bar", "lifecycle_epoch": 0, "bytes": 4, "generation": 1, "source_region": "source", "destination_region": "tile"},
+        {"id": "arrive1", "type": "MBarrierArrive", "actor": "a", "seq": 4, "resource": "bar", "lifecycle_epoch": 0, "count": 1, "generation": 1},
+        {"id": "wait0", "type": "MBarrierWaitParity", "actor": "a", "seq": 5, "resource": "bar", "lifecycle_epoch": 0, "generation": 0, "raw_parity": 0, "parity_evidence": structured_evidence("a:bar", 0)},
+    ]
+    return module_from_dict(raw)
+
+
+def test_tx_delay_allows_old_wait_after_final_arrive_before_phase_completion():
+    executor = Executor(tx_delayed_phase_module())
+    state = executor.initial_state()
+    for identifier in ("init", "arrive0"):
+        executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
+    executor.apply(state, next(item for item in executor.enabled(state) if item.kind == "PHASE_COMPLETION"))
+    for identifier in ("expect1", "issue1", "arrive1", "wait0"):
+        executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
+    barrier = state.barriers["bar"]
+    assert barrier.generation == 1 and barrier.pending == 0
+    assert barrier.completed_tx == 0 and barrier.expected_tx == 4
+    assert state.observed == {"wait0"}
+    executor.apply(state, next(item for item in executor.enabled(state) if item.kind == "TMA_COMPLETION"))
+    executor.apply(state, next(item for item in executor.enabled(state) if item.kind == "PHASE_COMPLETION"))
+    assert state.barriers["bar"].generation == 2
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_tx_delay_schedule_that_completes_before_old_wait_is_risky(engine):
+    result = check_module(tx_delayed_phase_module(), engine=engine)
+    assert result["verdict"] == "SYNC_HAZARD"
+    assert result["diagnostics"][0]["code"] == "PROTOCOL_INVALID_PHASE_ADVANCE"
+
+
+def tx_pending_early_next_arrival_module():
+    raw = json.loads((FIXTURES / "tma_completion_before_arrival.json").read_text())
+    raw["actors"] = [
+        {"id": "a", "kind": "PARTITION", "participants": [0]},
+        {"id": "b", "kind": "PARTITION", "participants": [1]},
+    ]
+    raw["target"]["cta_threads"] = 2
+    raw["resources"][0]["participants"] = ["a", "b"]
+    raw["events"] = [
+        {"id": "init", "type": "MBarrierInit", "actor": "a", "seq": 0, "resource": "bar", "lifecycle_epoch": 0, "count": 1},
+        {"id": "expect0", "type": "MBarrierExpectTx", "actor": "a", "seq": 1, "resource": "bar", "lifecycle_epoch": 0, "bytes": 4, "generation": 0},
+        {"id": "issue0", "type": "TmaLoadIssue", "actor": "a", "seq": 2, "resource": "bar", "lifecycle_epoch": 0, "bytes": 4, "generation": 0, "source_region": "source", "destination_region": "tile"},
+        {"id": "arrive0", "type": "MBarrierArrive", "actor": "a", "seq": 3, "resource": "bar", "lifecycle_epoch": 0, "count": 1, "generation": 0},
+        {"id": "wait0", "type": "MBarrierWaitParity", "actor": "a", "seq": 4, "resource": "bar", "lifecycle_epoch": 0, "generation": 0, "raw_parity": 0, "parity_evidence": structured_evidence("a:bar", 0)},
+        {"id": "arrive1", "type": "MBarrierArrive", "actor": "b", "seq": 0, "resource": "bar", "lifecycle_epoch": 0, "count": 1, "generation": 1, "depends_on": ["arrive0"]},
+    ]
+    return module_from_dict(raw)
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_held_tx_completion_does_not_hide_zero_pending_early_arrival(engine):
+    result = check_module(tx_pending_early_next_arrival_module(), engine=engine)
+    assert result["verdict"] == "SYNC_HAZARD"
+    assert result["diagnostics"][0]["code"] == "ARRIVE_WITH_ZERO_PENDING_COUNT"
+
+
+def test_phase_lap_precedes_zero_pending_diagnostic():
+    raw = json.loads(json.dumps(tx_pending_early_next_arrival_module().raw))
+    next(event for event in raw["events"] if event["id"] == "arrive1")["generation"] = 2
+    executor = Executor(module_from_dict(raw))
+    state = executor.initial_state()
+    for identifier in ("init", "expect0", "issue0", "arrive0"):
+        executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
+    arrive = next(item for item in executor.enabled(state) if item.id == "arrive1")
+
+    with pytest.raises(ProtocolError) as caught:
+        executor.apply(state, arrive)
+    assert caught.value.code == "PHASE_LAP"
+
+
+def test_truly_stale_wait_has_defensive_fallback():
+    executor = Executor(load("safe_handoff.json"))
+    state = executor.initial_state()
+    executor.apply(state, next(item for item in executor.enabled(state) if item.id == "init"))
+    state.barriers["bar"].generation = 2
+    state.barriers["bar"].publications = {1}
+    wait = next(item for item in executor.enabled(state) if item.id == "wait")
+    with pytest.raises(ProtocolError) as caught:
+        executor.apply(state, wait)
+    assert caught.value.code == "STALE_PHASE_WAIT"
+
+
+def test_reinit_phase_ids_and_visibility_are_lifecycle_scoped():
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    names = ("a_writer", "b_reader", "c_arrival")
+    raw["actors"] = [
+        {"id": name, "kind": "PARTITION", "participants": [index]}
+        for index, name in enumerate(names)
+    ]
+    raw["target"]["cta_threads"] = 3
+    raw["resources"][0]["participants"] = list(names)
+    raw["events"] = [
+        {"id": "init0", "type": "MBarrierInit", "actor": "a_writer", "seq": 0, "resource": "bar", "lifecycle_epoch": 0, "count": 1},
+        {"id": "write", "type": "MemWrite", "actor": "a_writer", "seq": 1, "region": "tile"},
+        {"id": "arrive0", "type": "MBarrierArrive", "actor": "a_writer", "seq": 2, "resource": "bar", "lifecycle_epoch": 0, "count": 1, "generation": 0},
+        {"id": "wait0", "type": "MBarrierWaitParity", "actor": "a_writer", "seq": 3, "resource": "bar", "lifecycle_epoch": 0, "generation": 0, "raw_parity": 0, "parity_evidence": structured_evidence("writer", 0, 0)},
+        {"id": "invalidate", "type": "MBarrierInvalidate", "actor": "a_writer", "seq": 4, "resource": "bar", "lifecycle_epoch": 0},
+        {"id": "init1", "type": "MBarrierInit", "actor": "a_writer", "seq": 5, "resource": "bar", "lifecycle_epoch": 1, "count": 1},
+        {"id": "arrive1", "type": "MBarrierArrive", "actor": "c_arrival", "seq": 0, "resource": "bar", "lifecycle_epoch": 1, "count": 1, "generation": 0, "depends_on": ["init1"]},
+        {"id": "wait1", "type": "MBarrierWaitParity", "actor": "b_reader", "seq": 0, "resource": "bar", "lifecycle_epoch": 1, "generation": 0, "raw_parity": 0, "parity_evidence": structured_evidence("reader", 0, 1), "depends_on": ["init1"]},
+        {"id": "read", "type": "MemRead", "actor": "b_reader", "seq": 1, "region": "tile"},
+    ]
+    result = check_module(module_from_dict(raw), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+    phases = [
+        step["transition"]
+        for step in result["artifacts"]["canonical_trace"]
+        if step["kind"] == "PHASE_COMPLETION"
+    ]
+    assert phases == [
+        "completion:mbarrier-phase:bar:l00000000:g00000000",
+        "completion:mbarrier-phase:bar:l00000001:g00000000",
+    ]
 
 
 def test_default_checker_engine_is_maximal(monkeypatch):
