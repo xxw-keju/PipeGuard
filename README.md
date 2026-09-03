@@ -53,6 +53,15 @@ Triton capture likewise runs outside the checker and uses Triton's MLIR bindings
 
 `triton-snapshot-v1` currently accepts one post-pipeline `cuda:90` TTGIR function with one CTA, static warp geometry, one straight-line executable block, direct `ttg.local_alloc` mbarrier SSA identity, scalar constant counts/predicates/phases, and `ttng.init_barrier`, `ttng.arrive_barrier`, and `ttng.wait_barrier`. Multiple blocks/regions, SSA barrier aliases, dynamic protocol operands, unknown operations, non-SM90 targets, and multi-CTA modules fail closed. The committed `triton_mbarrier.ttgir.mlir` fixture is parsed by Triton `61c02bcd`; its captured snapshot is then validated and crosschecked by the dependency-free core process.
 
+Equivalent frontend snapshots can be alpha-normalized and checked together:
+
+```bash
+/usr/bin/python3 -m pipeguard compare tilelang.json triton.json \
+  --left-frontend tilelang --right-frontend triton
+```
+
+The semantic signature renames actor, allocation, region, resource, and event identities structurally; removes producer/source labels and DSL-specific parity derivation names; and retains topology, alias intervals, protocol generations, dependencies, completion parameters, and visibility masks. `compare` succeeds only when both the semantic digest and checker verdict/primary diagnostic agree.
+
 ## Reference semantics
 
 Each actor advances in sequence order. Explicit `depends_on` references and protocol waits may additionally block a program event. Synthetic transitions are separate from program events: a `TmaLoadIssue` opens a global-source read window and a shared-destination write window, then enables one stable transaction-completion transition; only that transition credits bytes. A phase-completion transition is separately enabled when arrival count is zero and completed bytes equal expected bytes. It publishes the logical generation and advances the barrier; only then may events for the new current generation mutate barrier state. Future-generation arrivals or transaction operations are never buffered in a lookahead slot. Raw parity is valid only when it equals `logical_generation % 2`.

@@ -6,7 +6,12 @@ import sys
 from typing import Any
 
 from .checker import check_module
-from .frontends import FrontendError, load_tilelang_snapshot, load_triton_snapshot
+from .frontends import (
+    FrontendError,
+    load_tilelang_snapshot,
+    load_triton_snapshot,
+    semantic_digest,
+)
 from .model import PGIRError, load_module, normalize_module, stable_digest
 
 
@@ -72,12 +77,58 @@ def build_parser() -> argparse.ArgumentParser:
                 "--engine", choices=("maximal", "exhaustive", "crosscheck"), default="maximal",
                 help="execution engine (default: maximal)",
             )
+    compare = subparsers.add_parser("compare")
+    compare.add_argument("left", help="first PGIR or frontend snapshot")
+    compare.add_argument("right", help="second PGIR or frontend snapshot")
+    compare.add_argument("--left-frontend", choices=("pgir", "tilelang", "triton"), required=True)
+    compare.add_argument("--right-frontend", choices=("pgir", "tilelang", "triton"), required=True)
+    compare.add_argument(
+        "--engine", choices=("maximal", "exhaustive", "crosscheck"), default="crosscheck",
+        help="checker engine (default: crosscheck)",
+    )
+    compare.add_argument("--pretty", action="store_true", help="indent JSON output")
     return parser
+
+
+def _comparison_result(module, engine: str) -> dict[str, Any]:
+    result = check_module(module, engine=engine)
+    diagnostic = result.get("diagnostics", [{}])
+    return {
+        "semantic_sha256": semantic_digest(module),
+        "verdict": result["verdict"],
+        "primary_diagnostic": diagnostic[0].get("code") if diagnostic else None,
+        "n_ext": result["statistics"].get("n_ext"),
+        "t_eff": result["statistics"].get("t_eff"),
+        "scheduler_work_units": result["statistics"].get("scheduler_work_units"),
+        "pdg_edges": result["statistics"].get("pdg_edges"),
+    }
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
+        if args.command == "compare":
+            left = _load_input(args.left, args.left_frontend)
+            right = _load_input(args.right, args.right_frontend)
+            left_result = _comparison_result(left, args.engine)
+            right_result = _comparison_result(right, args.engine)
+            semantic_equivalent = left_result["semantic_sha256"] == right_result["semantic_sha256"]
+            checker_equivalent = (
+                left_result["verdict"],
+                left_result["primary_diagnostic"],
+            ) == (
+                right_result["verdict"],
+                right_result["primary_diagnostic"],
+            )
+            result = {
+                "equivalent": semantic_equivalent and checker_equivalent,
+                "semantic_equivalent": semantic_equivalent,
+                "checker_equivalent": checker_equivalent,
+                "left": left_result,
+                "right": right_result,
+            }
+            _dump(result, args.pretty)
+            return 0 if result["equivalent"] else 1
         module = _load_input(args.input, args.frontend)
         if args.command == "validate":
             result = {
