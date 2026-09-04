@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ast
+import math
 from typing import Any
 
 
@@ -75,9 +76,11 @@ def _literal_value(node: ast.AST, environment: dict[str, Any], seen: set[str]) -
                     raise ValueError("dictionary splat is not a dictionary")
                 result.update(nested)
             else:
-                result[_literal_value(key, environment, seen)] = _literal_value(
-                    value, environment, seen
-                )
+                literal_key = _literal_value(key, environment, seen)
+                try:
+                    result[literal_key] = _literal_value(value, environment, seen)
+                except TypeError as error:
+                    raise ValueError("literal dictionary key is not hashable") from error
         return result
     if (
         isinstance(node, ast.UnaryOp)
@@ -94,6 +97,26 @@ def literal_value(node: ast.AST, environment: dict[str, Any]) -> Any:
     """Evaluate only explicitly whitelisted literal AST forms and static names."""
 
     return _literal_value(node, environment, set())
+
+
+def _json_stable(value: Any) -> Any:
+    if isinstance(value, float) and not math.isfinite(value):
+        raise ValueError("non-finite float is not stable JSON")
+    if isinstance(value, _LITERAL_SCALARS):
+        return value
+    if isinstance(value, list):
+        return [_json_stable(item) for item in value]
+    if isinstance(value, dict):
+        if not all(isinstance(key, str) for key in value):
+            raise ValueError("JSON object keys must be strings")
+        return {key: _json_stable(item) for key, item in value.items()}
+    raise ValueError("value cannot round-trip through JSON without type loss")
+
+
+def json_literal_value(node: ast.AST, environment: dict[str, Any]) -> Any:
+    """Evaluate a literal only when JSON recipe serialization preserves its type."""
+
+    return _json_stable(literal_value(node, environment))
 
 
 def keyword_nodes(call: ast.Call, environment: dict[str, Any]) -> dict[str, ast.AST] | None:

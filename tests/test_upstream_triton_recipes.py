@@ -12,7 +12,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 from upstream_extract import AliasTable, CandidateVisitor, infer_triton_recipes  # noqa: E402
 from upstream_pytest_params import pytest_parameter_environments  # noqa: E402
-from upstream_static_eval import literal_value  # noqa: E402
+from upstream_static_eval import json_literal_value, literal_value  # noqa: E402
 
 
 def _discover(source: str):
@@ -66,7 +66,6 @@ def test_parametrize_rejects_indirect_dynamic_and_xfail():
         "@pytest.mark.parametrize('k', VALUES)\ndef test_case(k): pass\n",
         "@pytest.mark.xfail\n@pytest.mark.parametrize('k', [1])\ndef test_case(k): pass\n",
         "@pytest.mark.parametrize('k', [pytest.param(1, marks=pytest.mark.xfail)])\ndef test_case(k): pass\n",
-        "@pytest.mark.parametrize('k', [1])\ndef test_case(k, monkeypatch): pass\n",
     ]
     for body in cases:
         tree = ast.parse("import pytest\n" + body)
@@ -79,6 +78,116 @@ def test_static_literal_evaluator_rejects_executable_ast():
     for expression in ("factory()", "left + right", "module.value", "items[0]"):
         with pytest.raises(ValueError):
             literal_value(ast.parse(expression, mode="eval").body, {})
+
+
+def test_parametrize_allows_unused_fixture_but_does_not_bind_it():
+    tree = ast.parse(
+        "import pytest\n"
+        "@pytest.mark.parametrize('k', [1])\n"
+        "def test_case(k, monkeypatch): pass\n"
+    )
+    aliases = AliasTable(tree)
+    function = next(node for node in tree.body if isinstance(node, ast.FunctionDef))
+    assert pytest_parameter_environments(function, aliases) == [{"k": 1}]
+
+
+def test_literal_evaluator_rejects_unhashable_keys_and_json_type_loss():
+    with pytest.raises(ValueError):
+        literal_value(ast.parse("{[]: 1}", mode="eval").body, {})
+    for expression in ("(1, 2)", "{'shape': (1, 2)}", "{1: 'value'}", "1e1000"):
+        with pytest.raises(ValueError):
+            json_literal_value(ast.parse(expression, mode="eval").body, {})
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        "options['num_ctas'] = 2",
+        "options |= {'num_ctas': 2}",
+        "options, other = {'num_ctas': 2}, None",
+        "options.update({'num_ctas': 2})",
+        "mutate(options)",
+        "alias = options\nalias['num_ctas'] = 2",
+        "if unknown_flag:\n        options = {'num_ctas': 2}",
+    ],
+)
+def test_compile_recipe_rejects_stale_binding_after_mutation(mutation: str):
+    source = f"""\
+import triton
+import triton.language as tl
+from triton.backends.compiler import GPUTarget
+from triton.compiler import ASTSource
+
+@triton.jit
+def kernel(X: tl.constexpr):
+    pass
+
+src = ASTSource(fn=kernel, signature={{"X": "constexpr"}}, constexprs={{"X": 1}})
+options = {{"num_ctas": 1}}
+{mutation}
+triton.compile(src, target=GPUTarget("cuda", 90, 32), options=options)
+"""
+    tree, aliases, candidates = _discover(source)
+    assert infer_triton_recipes(candidates, tree, aliases, "case.py") == {}
+
+
+def test_compile_recipe_preserves_bindings_across_known_compile_calls():
+    source = """\
+import triton
+import triton.language as tl
+from triton.backends.compiler import GPUTarget
+from triton.compiler import ASTSource
+
+@triton.jit
+def kernel(X: tl.constexpr):
+    pass
+
+src = ASTSource(fn=kernel, signature={"X": "constexpr"}, constexprs={"X": 1})
+triton.compile(src, target=GPUTarget("cuda", 90, 32))
+triton.compile(src, target=GPUTarget("cuda", 90, 32))
+"""
+    tree, aliases, candidates = _discover(source)
+    recipes = infer_triton_recipes(candidates, tree, aliases, "case.py")
+    assert len(recipes[candidates[0].candidate_id]) == 2
+
+
+def test_compile_recipe_rejects_unparameterized_fixture_in_payload():
+    source = """\
+import pytest
+import triton
+import triton.language as tl
+from triton.backends.compiler import GPUTarget
+from triton.compiler import ASTSource
+
+@triton.jit
+def kernel(X: tl.constexpr):
+    pass
+
+@pytest.mark.parametrize("x", [1])
+def test_case(x, fixture):
+    src = ASTSource(fn=kernel, signature={"X": "constexpr"}, constexprs={"X": x})
+    triton.compile(src, target=GPUTarget("cuda", 90, 32), options={"unknown": fixture})
+"""
+    tree, aliases, candidates = _discover(source)
+    assert infer_triton_recipes(candidates, tree, aliases, "case.py") == {}
+
+
+def test_compile_recipe_rejects_tuple_payload_before_json_serialization():
+    source = """\
+import triton
+import triton.language as tl
+from triton.backends.compiler import GPUTarget
+from triton.compiler import ASTSource
+
+@triton.jit
+def kernel(X: tl.constexpr):
+    pass
+
+src = ASTSource(fn=kernel, signature={"X": "constexpr"}, constexprs={"X": (1, 2)})
+triton.compile(src, target=GPUTarget("cuda", 90, 32))
+"""
+    tree, aliases, candidates = _discover(source)
+    assert infer_triton_recipes(candidates, tree, aliases, "case.py") == {}
 
 
 def test_tracked_topk_recipe_ids_and_values():

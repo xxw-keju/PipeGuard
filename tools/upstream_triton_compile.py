@@ -4,7 +4,7 @@ import ast
 from dataclasses import dataclass
 from typing import Any, Protocol
 
-from upstream_static_eval import keyword_nodes, literal_value, resolve_expression
+from upstream_static_eval import json_literal_value, keyword_nodes, literal_value, resolve_expression
 
 
 class AliasResolver(Protocol):
@@ -53,9 +53,9 @@ def _ast_source_payload(
     if candidate is None:
         return None
     try:
-        signature = literal_value(keywords["signature"], environment)
-        constexprs = literal_value(keywords["constexprs"], environment) if "constexprs" in keywords else {}
-        attrs = literal_value(keywords["attrs"], environment) if "attrs" in keywords else {}
+        signature = json_literal_value(keywords["signature"], environment)
+        constexprs = json_literal_value(keywords["constexprs"], environment) if "constexprs" in keywords else {}
+        attrs = json_literal_value(keywords["attrs"], environment) if "attrs" in keywords else {}
     except ValueError:
         return None
     if not isinstance(signature, dict) or not all(
@@ -114,7 +114,7 @@ def triton_compile_evidence(
         return None
     candidate, payload = source
     try:
-        options = literal_value(keywords["options"], environment) if "options" in keywords else {}
+        options = json_literal_value(keywords["options"], environment) if "options" in keywords else {}
     except ValueError:
         return None
     if not isinstance(options, dict) or not all(isinstance(key, str) for key in options):

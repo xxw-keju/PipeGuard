@@ -14,24 +14,90 @@ class AliasResolver(Protocol):
     def qualified(self, node: ast.AST) -> str | None: ...
 
 
-def _bound_names(node: ast.AST) -> set[str]:
-    names: set[str] = set()
-    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-        names.add(node.name)
-    elif isinstance(node, (ast.Import, ast.ImportFrom)):
-        for alias in node.names:
-            names.add(alias.asname or alias.name.split(".")[0])
-    elif isinstance(node, (ast.Assign, ast.AnnAssign, ast.AugAssign)):
-        targets: list[ast.AST] = []
-        if isinstance(node, ast.Assign):
-            targets.extend(node.targets)
-        else:
-            targets.append(node.target)
-        for target in targets:
-            for child in ast.walk(target):
-                if isinstance(child, ast.Name) and isinstance(child.ctx, ast.Store):
-                    names.add(child.id)
-    return names
+def _mutation_root(node: ast.AST) -> str | None:
+    while isinstance(node, (ast.Attribute, ast.Subscript)):
+        node = node.value
+    return node.id if isinstance(node, ast.Name) else None
+
+
+class _MutationVisitor(ast.NodeVisitor):
+    def __init__(self, *, include_calls: bool) -> None:
+        self.names: set[str] = set()
+        self.include_calls = include_calls
+
+    def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+        self.names.add(node.name)
+
+    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+        self.names.add(node.name)
+
+    def visit_ClassDef(self, node: ast.ClassDef) -> None:
+        self.names.add(node.name)
+
+    def visit_Lambda(self, node: ast.Lambda) -> None:
+        return
+
+    def visit_Name(self, node: ast.Name) -> None:
+        if isinstance(node.ctx, (ast.Store, ast.Del)):
+            self.names.add(node.id)
+
+    def visit_Attribute(self, node: ast.Attribute) -> None:
+        if isinstance(node.ctx, (ast.Store, ast.Del)):
+            root = _mutation_root(node)
+            if root is not None:
+                self.names.add(root)
+        self.generic_visit(node)
+
+    def visit_Subscript(self, node: ast.Subscript) -> None:
+        if isinstance(node.ctx, (ast.Store, ast.Del)):
+            root = _mutation_root(node)
+            if root is not None:
+                self.names.add(root)
+        self.generic_visit(node)
+
+    def visit_Call(self, node: ast.Call) -> None:
+        if not self.include_calls:
+            return
+        if isinstance(node.func, ast.Attribute):
+            root = _mutation_root(node.func)
+            if root is not None:
+                self.names.add(root)
+        for value in (*node.args, *(keyword.value for keyword in node.keywords)):
+            self.names.update(
+                child.id
+                for child in ast.walk(value)
+                if isinstance(child, ast.Name) and isinstance(child.ctx, ast.Load)
+            )
+        self.generic_visit(node.func)
+
+
+def _bound_names(node: ast.AST, *, include_calls: bool = True) -> set[str]:
+    if isinstance(node, (ast.Import, ast.ImportFrom)):
+        return {alias.asname or alias.name.split(".")[0] for alias in node.names}
+    visitor = _MutationVisitor(include_calls=include_calls)
+    visitor.visit(node)
+    return visitor.names
+
+
+def _invalidate_bindings(environment: dict[str, Any], names: set[str]) -> None:
+    pending = list(names)
+    invalidated: set[str] = set()
+    while pending:
+        name = pending.pop()
+        if name in invalidated:
+            continue
+        invalidated.add(name)
+        value = environment.get(name)
+        if isinstance(value, ast.Name):
+            pending.append(value.id)
+        pending.extend(
+            bound_name
+            for bound_name, bound_value in environment.items()
+            if isinstance(bound_value, ast.Name) and bound_value.id == name
+        )
+    for name in invalidated:
+        if name in environment:
+            environment[name] = AMBIGUOUS
 
 
 def _make_recipe(evidence: Any, call: ast.Call, relative_path: str) -> dict[str, Any]:
@@ -118,6 +184,7 @@ def infer_triton_recipes(
             if is_pytest_raises_block(statement, aliases):
                 continue
             if isinstance(statement, (ast.With, ast.AsyncWith)):
+                _invalidate_bindings(environment, _bound_names(statement))
                 continue
             value: ast.AST | None = None
             target: ast.AST | None = None
@@ -125,11 +192,6 @@ def infer_triton_recipes(
                 target, value = statement.targets[0], statement.value
             elif isinstance(statement, ast.AnnAssign):
                 target, value = statement.target, statement.value
-            if isinstance(target, ast.Name) and value is not None:
-                bind_once(environment, target.id, value)
-            elif target is not None:
-                for name in _bound_names(statement):
-                    environment[name] = AMBIGUOUS
             call: ast.Call | None = None
             if isinstance(statement, ast.Expr) and isinstance(statement.value, ast.Call):
                 call = statement.value
@@ -137,6 +199,20 @@ def infer_triton_recipes(
                 call = value
             if call is not None:
                 inspect_call(call, environment)
+            if isinstance(target, ast.Name) and value is not None:
+                bind_once(environment, target.id, value)
+            else:
+                _invalidate_bindings(
+                    environment,
+                    _bound_names(statement, include_calls=call is None),
+                )
+            if call is not None and aliases.qualified(call.func) not in {
+                "triton.compile",
+                "triton.compiler.ASTSource",
+                "triton.compiler.compiler.ASTSource",
+                "triton.backends.compiler.GPUTarget",
+            }:
+                _invalidate_bindings(environment, _bound_names(call))
 
     scan_block(tree.body, {}, prebind_definitions=True)
     result: dict[str, list[dict[str, Any]]] = {}

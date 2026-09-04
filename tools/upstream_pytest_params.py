@@ -92,11 +92,15 @@ def pytest_parameter_environments(
         parameter_sets.append((names, rows))
     if not parameter_sets:
         return [{}]
-    if (
-        used_names != function_arguments
-        or function.args.vararg is not None
-        or function.args.kwarg is not None
-    ):
+    if function.args.vararg is not None or function.args.kwarg is not None:
+        return []
+    unparameterized = function_arguments - used_names
+    loaded_names = {
+        node.id
+        for node in ast.walk(function)
+        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load)
+    }
+    if unparameterized & loaded_names:
         return []
     environments: list[dict[str, Any]] = []
     for selected_rows in product(*(rows for _names, rows in parameter_sets)):
