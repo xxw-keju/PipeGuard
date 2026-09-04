@@ -27,6 +27,7 @@ from upstream_common import (
     sha256_text,
     stable_id,
 )
+from upstream_tilelang_recipes import classify_tilelang_recipe, tilelang_parent_map
 from upstream_triton_recipes import infer_triton_recipes
 
 
@@ -430,6 +431,7 @@ def extract_dsl(dsl: str, source_root: Path, output_root: Path, *, allow_commit_
             infer_triton_recipes(candidates, tree, aliases, relative)
             if dsl == "triton" else {}
         )
+        tilelang_parents = tilelang_parent_map(tree) if dsl == "tilelang" else {}
         source_lines = source.splitlines(keepends=True)
         blob_hash = git_blob_hash(source_root, Path(relative))
         totals["source_files"] += 1
@@ -454,15 +456,23 @@ def extract_dsl(dsl: str, source_root: Path, output_root: Path, *, allow_commit_
                 overlays_by_candidate.get(candidate.candidate_id, []),
                 key=lambda item: item["recipe_id"],
             )
-            excluded_parts = set(Path(relative).parts) & {"amd", "cpu"}
+            tilelang_classification = (
+                classify_tilelang_recipe(
+                    candidate,
+                    aliases,
+                    unresolved,
+                    tilelang_parents,
+                )
+                if dsl == "tilelang"
+                else None
+            )
             if dsl == "triton" and not unresolved:
                 curated_recipes.extend(inferred_triton_recipes.get(candidate.candidate_id, []))
                 curated_recipes.sort(key=lambda item: item["recipe_id"])
             if (
                 dsl == "tilelang"
-                and candidate.kind == "PRIMFUNC"
-                and not unresolved
-                and not excluded_parts
+                and tilelang_classification is not None
+                and tilelang_classification.kind == "POSITIVE"
                 and not curated_recipes
             ):
                 curated_recipes.append({
