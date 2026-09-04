@@ -1,0 +1,40 @@
+{
+  "candidate_id": "02a01b31d816ac75",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/tutorials/05-layer-norm.py/L132-L194__layer_norm_bwd_dx_fused__02a01b31d816ac75.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1159c341c30e57181df770558327726248d51cc31d48c15042ccde5c3bb8cb87",
+    "source_map": {
+      "end_line": 194,
+      "logical_path": "python/tutorials/05-layer-norm.py",
+      "start_line": 132
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/02a01b31d816ac75/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 194,
+    "git_blob": "de8afeb2ccddd41d4e17a5b19b7765e4161a30aa",
+    "qualname": "_layer_norm_bwd_dx_fused",
+    "relative_path": "python/tutorials/05-layer-norm.py",
+    "selected_source_sha256": "5dd7840773b07bd9e4a200e241945a67e76c7472aae875d08826f87eef57b7bc",
+    "source_sha256": "241f9f74e2f18567b26f3b4cf9b9873ae859150ccd10976d65d38fe24896d1d2",
+    "start_line": 132
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "candidate_id": "8932e202e2971994",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/tutorials/09-persistent-matmul.py/L585-L663__matmul_kernel_descriptor_persistent__8932e202e2971994.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1d8a47d4324153ab1e22e38255001c8c016166a82fdcf6298da9a60dc1aba198",
+    "source_map": {
+      "end_line": 663,
+      "logical_path": "python/tutorials/09-persistent-matmul.py",
+      "start_line": 585
+    }
+  },
+  "decorators": [
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_compute_pid",
+    "_matmul_launch_metadata",
+    "matmul_tma_persistent_get_configs",
+    "prune_invalid_configs",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "7a0f32e291cf178f"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/8932e202e2971994/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "BK",
+    "BM",
+    "BN",
+    "FLATTEN",
+    "GROUP_SIZE_M",
+    "K",
+    "M",
+    "N",
+    "SUBTILE",
+    "WS",
+    "args",
+    "bytes_per_elem",
+    "conf",
+    "configs",
+    "first_pid_m",
+    "group_id",
+    "group_size_m",
+    "kernel",
+    "kwargs",
+    "num_pid_in_group",
+    "num_pid_m",
+    "pid_m",
+    "pid_n",
+    "pre_hook",
+    "ret",
+    "s",
+    "tile_id",
+    "w",
+    "ws_str"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 663,
+    "git_blob": "09cb0f2f324a243fb94c792bb84abf3e06b45efe",
+    "qualname": "matmul_kernel_descriptor_persistent",
+    "relative_path": "python/tutorials/09-persistent-matmul.py",
+    "selected_source_sha256": "e509533aae68f4bb9f94eb66c81324d0fb1534389dde15a4f0f2b9d5b8dce35d",
+    "source_sha256": "43e51750a2271af05ed5fb7221c811b8d140b2a06665863eaff8799e474a7e03",
+    "start_line": 585
+  }
+}

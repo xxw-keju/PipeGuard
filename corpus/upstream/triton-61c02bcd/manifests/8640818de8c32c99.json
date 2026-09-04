@@ -1,0 +1,41 @@
+{
+  "candidate_id": "8640818de8c32c99",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/triton_kernels/tests/test_matmul_details/test_opt_flags_nvidia.py/L111-L113__hopper_rhs_packed_n_extent__8640818de8c32c99.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "81c6716eaae1af027696ebc15253da6622b16b263d3d0b16144103023aa0116c",
+    "source_map": {
+      "end_line": 113,
+      "logical_path": "python/triton_kernels/tests/test_matmul_details/test_opt_flags_nvidia.py",
+      "start_line": 111
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_compute_packed_n_w",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/8640818de8c32c99/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 113,
+    "git_blob": "c4eb735dcf4d6dc8797a7149b2930de036106ce3",
+    "qualname": "_hopper_rhs_packed_n_extent",
+    "relative_path": "python/triton_kernels/tests/test_matmul_details/test_opt_flags_nvidia.py",
+    "selected_source_sha256": "be42cc590c6f6fa53b13efd5cfe11d00606b14240eab76a97ed9ad87e4f93315",
+    "source_sha256": "1a30af82bfce9ca7177b2798f61ca9b7dd06e6ddabc2c8ecec27614e3719d6d1",
+    "start_line": 111
+  }
+}

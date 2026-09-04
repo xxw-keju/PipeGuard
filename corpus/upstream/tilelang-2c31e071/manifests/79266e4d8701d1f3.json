@@ -1,0 +1,66 @@
+{
+  "candidate_id": "79266e4d8701d1f3",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/benchmark/compile_speed/kernel_zoo.py/L62-L107__gqa_attention.main__79266e4d8701d1f3.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d28269409790229048328e8eff086487a9a90d7c620089e4559c95b7be4e97df",
+    "source_map": {
+      "end_line": 107,
+      "logical_path": "benchmark/compile_speed/kernel_zoo.py",
+      "start_line": 62
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum",
+    "batch",
+    "block_M",
+    "block_N",
+    "dim",
+    "dtype",
+    "group",
+    "heads",
+    "kv_shape",
+    "q_shape",
+    "scale",
+    "seq_len"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "gqa_attention"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/79266e4d8701d1f3/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum",
+    "batch",
+    "block_M",
+    "block_N",
+    "dim",
+    "dtype",
+    "group",
+    "heads",
+    "kv_shape",
+    "q_shape",
+    "scale",
+    "seq_len"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 107,
+    "git_blob": "d11684465e24990af799a39e5d9f9486aabb9515",
+    "qualname": "gqa_attention.main",
+    "relative_path": "benchmark/compile_speed/kernel_zoo.py",
+    "selected_source_sha256": "5f6836350c482fa71192546241dad5c01115969b30286577f4c9cbdb9bc4cdd8",
+    "source_sha256": "5fb7bd6c97d298f29c49e39e3feddcef1dbaf60a4fa11f7bc45bc9a7c0ecfbc4",
+    "start_line": 62
+  }
+}

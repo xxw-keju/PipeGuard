@@ -1,0 +1,48 @@
+{
+  "candidate_id": "4c3e3fc033a16452",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/flash_attention/example_mha_fwd_varlen.py/L20-L151__flashattn__4c3e3fc033a16452.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "0f7445fbb4b7704a5e76c99d0c71a9fdb96f9244b476f0ecc23fac3beda63057",
+    "source_map": {
+      "end_line": 151,
+      "logical_path": "examples/flash_attention/example_mha_fwd_varlen.py",
+      "start_line": 20
+    }
+  },
+  "decorators": [
+    "tilelang.autotuner.autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "autotune",
+    "get_configs",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "9337ed98af58b072"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/4c3e3fc033a16452/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "iter_params",
+    "values"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 151,
+    "git_blob": "0f3610b110373b04c8b9cbe43a8ffd243d847e0b",
+    "qualname": "flashattn",
+    "relative_path": "examples/flash_attention/example_mha_fwd_varlen.py",
+    "selected_source_sha256": "1cd1ce27ba05b8ba90f151c436dda64fee0e9042226b4458816b58eab214cd9d",
+    "source_sha256": "9be778ad40edf1abde002ec87e1052fae2d7c40adf3d9be84b510c52f85a9888",
+    "start_line": 20
+  }
+}

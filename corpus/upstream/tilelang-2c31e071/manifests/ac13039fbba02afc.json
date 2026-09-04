@@ -1,0 +1,75 @@
+{
+  "candidate_id": "ac13039fbba02afc",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/blocksparse_attention/example_tilelang_block_sparse_attn.py/L49-L122__blocksparse_flashattn.kernel_func.blocksparse_flashattn__ac13039fbba02afc.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "fcecb9a86f1b251bbedbafbc4df4ada19633707ba9e90f5e82387a176e3011b2",
+    "source_map": {
+      "end_line": 122,
+      "logical_path": "examples/blocksparse_attention/example_tilelang_block_sparse_attn.py",
+      "start_line": 49
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "block_mask_dtype",
+    "block_mask_shape",
+    "dim",
+    "downsample_len",
+    "dtype",
+    "heads",
+    "is_causal",
+    "num_stages",
+    "scale",
+    "seq_len",
+    "shape",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "blocksparse_flashattn",
+    "kernel_func"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/ac13039fbba02afc/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "block_mask_dtype",
+    "block_mask_shape",
+    "dim",
+    "downsample_len",
+    "dtype",
+    "heads",
+    "is_causal",
+    "num_stages",
+    "scale",
+    "seq_len",
+    "shape",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 122,
+    "git_blob": "9a394710f12f366b7f1cd506c4c3c30129c586ae",
+    "qualname": "blocksparse_flashattn.kernel_func.blocksparse_flashattn",
+    "relative_path": "examples/blocksparse_attention/example_tilelang_block_sparse_attn.py",
+    "selected_source_sha256": "0befbd731c16b52907350d1ea62efbbe1d72ecded856fa2b16c9a074e2715d4e",
+    "source_sha256": "36eff07008010643a9c09a039b4bad536c993cd0598b1b34b1ec37996d799d3d",
+    "start_line": 49
+  }
+}

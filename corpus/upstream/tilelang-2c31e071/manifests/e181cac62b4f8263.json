@@ -1,0 +1,70 @@
+{
+  "candidate_id": "e181cac62b4f8263",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/issue/test_tilelang_issue_tma_no_ws.py/L423-L485__test_pure_tma_consumer_local_init_does_not_leak_into_producer.sparse_flash_attn__e181cac62b4f8263.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "5f40af64b969c624e8fdd356320428e799219dc09e9a024431c08d98621e237b",
+    "source_map": {
+      "end_line": 485,
+      "logical_path": "testing/python/issue/test_tilelang_issue_tma_no_ws.py",
+      "start_line": 423
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_m",
+    "block_mask_shape",
+    "block_n",
+    "dim",
+    "downsample_len",
+    "dtype",
+    "heads",
+    "num_stages",
+    "scale",
+    "seq_len",
+    "shape",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_pure_tma_consumer_local_init_does_not_leak_into_producer"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/e181cac62b4f8263/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_m",
+    "block_mask_shape",
+    "block_n",
+    "dim",
+    "downsample_len",
+    "dtype",
+    "heads",
+    "num_stages",
+    "scale",
+    "seq_len",
+    "shape",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 485,
+    "git_blob": "4bcadbb05462c8bb7f6aea36c5cae9b53eba9a5d",
+    "qualname": "test_pure_tma_consumer_local_init_does_not_leak_into_producer.sparse_flash_attn",
+    "relative_path": "testing/python/issue/test_tilelang_issue_tma_no_ws.py",
+    "selected_source_sha256": "c1115ed8fba8126ff8a6f2f1ddabceb153f5ee688d3e259bd4ed6b4899b34326",
+    "source_sha256": "9d955f1f034caac775d0827a570fd55c6fafe2828824e87eba3c23da8210adf5",
+    "start_line": 423
+  }
+}

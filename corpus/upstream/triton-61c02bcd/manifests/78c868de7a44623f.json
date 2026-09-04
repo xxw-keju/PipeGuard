@@ -1,0 +1,42 @@
+{
+  "candidate_id": "78c868de7a44623f",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/instrumentation/test_gpuhello.py/L20-L23__kernel2__78c868de7a44623f.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "b81664d136cb981a3db0e321fb6af1b28c7f95b19135dbf6146255945e02d139",
+    "source_map": {
+      "end_line": 23,
+      "logical_path": "python/test/unit/instrumentation/test_gpuhello.py",
+      "start_line": 20
+    }
+  },
+  "decorators": [
+    "pytest.mark.parametrize",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pytest",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/78c868de7a44623f/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 23,
+    "git_blob": "e536f4e10d32f86e542f23722ec0521b9a536295",
+    "qualname": "kernel2",
+    "relative_path": "python/test/unit/instrumentation/test_gpuhello.py",
+    "selected_source_sha256": "3365d22d6b2b447527fc7713511300525f5670312072647bd187904e223af27f",
+    "source_sha256": "eeb7880d210b133d9ffefa0f030666de82e0fff309536c62903731abae53f889",
+    "start_line": 20
+  }
+}

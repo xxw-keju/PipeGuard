@@ -1,0 +1,51 @@
+{
+  "candidate_id": "a4d72a661fda704a",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/autotune/test_tilelang_autotune_cutedsl_cache.py/L77-L82__make_vec_add_autotuned.vec_add.kernel__a4d72a661fda704a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "9db0f1c92a16c64922182e3cedb3f7efe63a508ef840541fed300d9dc086cd81",
+    "source_map": {
+      "end_line": 82,
+      "logical_path": "testing/python/autotune/test_tilelang_autotune_cutedsl_cache.py",
+      "start_line": 77
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "dtype",
+    "n",
+    "num_blocks",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_vec_add_autotuned",
+    "vec_add"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/a4d72a661fda704a/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "dtype",
+    "n",
+    "num_blocks",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 82,
+    "git_blob": "3590bcfb288bbda22be3f48a796893f357792a9c",
+    "qualname": "_make_vec_add_autotuned.vec_add.kernel",
+    "relative_path": "testing/python/autotune/test_tilelang_autotune_cutedsl_cache.py",
+    "selected_source_sha256": "9fe1ea3768428258ec885dfc00f6ef8ae20810ad3380480fadc89bdc0662f1d5",
+    "source_sha256": "e073dd9a109fb95bf9ae42baea5936670ec061e1096c2cd4dd1171cb025e532f",
+    "start_line": 77
+  }
+}

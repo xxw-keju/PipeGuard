@@ -1,0 +1,40 @@
+{
+  "candidate_id": "50d8d56cd9356f8a",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/tutorials/05-layer-norm.py/L197-L221__layer_norm_bwd_dwdb__50d8d56cd9356f8a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "79102e758b9b8d2ba4bed780b1f1b9e4ce294eab1ac889ce57d3ebc26a6c23d2",
+    "source_map": {
+      "end_line": 221,
+      "logical_path": "python/tutorials/05-layer-norm.py",
+      "start_line": 197
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/50d8d56cd9356f8a/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 221,
+    "git_blob": "de8afeb2ccddd41d4e17a5b19b7765e4161a30aa",
+    "qualname": "_layer_norm_bwd_dwdb",
+    "relative_path": "python/tutorials/05-layer-norm.py",
+    "selected_source_sha256": "4c4322a847134a4befb6a1def65245e4d915af66e740a606c5b0e76228aafbb8",
+    "source_sha256": "241f9f74e2f18567b26f3b4cf9b9873ae859150ccd10976d65d38fe24896d1d2",
+    "start_line": 197
+  }
+}

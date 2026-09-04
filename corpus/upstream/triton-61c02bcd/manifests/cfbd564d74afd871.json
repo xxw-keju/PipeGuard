@@ -1,0 +1,45 @@
+{
+  "candidate_id": "cfbd564d74afd871",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/cuda/test_denorm_cuda.py/L22-L25__kernel__cfbd564d74afd871.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d4db1f9dc36bf70915a4df62565e2470f49c6e38db94e2df7290133d0129c3b5",
+    "source_map": {
+      "end_line": 25,
+      "logical_path": "python/test/unit/cuda/test_denorm_cuda.py",
+      "start_line": 22
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_sin_f32",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/cfbd564d74afd871/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_semantic",
+    "lib_path",
+    "x"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 25,
+    "git_blob": "3561fa3712c1a96e0527351c9d7e5fc4b4b9b537",
+    "qualname": "_kernel",
+    "relative_path": "python/test/unit/cuda/test_denorm_cuda.py",
+    "selected_source_sha256": "e8f854efd758bd8c9b4e05c4eb5d86aa639e03d5bbc0d3afd12fc9a9cbba9e75",
+    "source_sha256": "d0ae50deba335a7d65169cfdc3230ab87ec028f182028ea4bc669b0203a0a5c3",
+    "start_line": 22
+  }
+}

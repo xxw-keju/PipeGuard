@@ -1,0 +1,48 @@
+{
+  "candidate_id": "fd8925f5da962757",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/language/test_tilelang_language_get_warp_info.py/L63-L67__get_warp_group_idx_kernel.warp_group_idx_kernel__fd8925f5da962757.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "0baa9ca6ff696f7d311a1910f4bb8dc752f1625b87571b9b8d14331bd92029fe",
+    "source_map": {
+      "end_line": 67,
+      "logical_path": "testing/python/language/test_tilelang_language_get_warp_info.py",
+      "start_line": 63
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "num_threads",
+    "warp_size",
+    "warps_per_group"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_get_warp_group_idx_kernel"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/fd8925f5da962757/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "num_threads",
+    "warp_size",
+    "warps_per_group"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 67,
+    "git_blob": "206f32becc009f344d20ad4b46150c7c6882a174",
+    "qualname": "_get_warp_group_idx_kernel.warp_group_idx_kernel",
+    "relative_path": "testing/python/language/test_tilelang_language_get_warp_info.py",
+    "selected_source_sha256": "39ceefeaec651bd52fb88c478224e1d860c206b87446d249c70c1eb8419dd8e5",
+    "source_sha256": "1ca85e1519b1cec987e0f01d29253ca4202ac7ad53512e283a63f778aa1038a7",
+    "start_line": 63
+  }
+}

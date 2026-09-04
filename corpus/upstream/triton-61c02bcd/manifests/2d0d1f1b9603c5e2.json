@@ -1,0 +1,41 @@
+{
+  "candidate_id": "2d0d1f1b9603c5e2",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/tutorials/07-extern-functions.py/L31-L44__asin_kernel__2d0d1f1b9603c5e2.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "94d4fc21cbcb045aaf51e2872457763c9b3bc1050eaef529e297d6bde70af427",
+    "source_map": {
+      "end_line": 44,
+      "logical_path": "python/tutorials/07-extern-functions.py",
+      "start_line": 31
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libdevice",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/2d0d1f1b9603c5e2/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 44,
+    "git_blob": "800563701ff0d31975f33fe54b2dfcf2e514798f",
+    "qualname": "asin_kernel",
+    "relative_path": "python/tutorials/07-extern-functions.py",
+    "selected_source_sha256": "18025b4876874c87a2f19da98368f7e813467b5788c3f306d3db944b2c56f39b",
+    "source_sha256": "c9412656298e9bd737d944ac94c5dd6ec427cd30b7657c09d36fa5495ce0d4ba",
+    "start_line": 31
+  }
+}

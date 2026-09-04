@@ -1,0 +1,64 @@
+{
+  "candidate_id": "47924f1331f5e624",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/gdn/example_cumsum.py/L44-L69__tilelang_chunk_local_cumsum_scalar.kernel__47924f1331f5e624.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "89b88a51e8b1c2eaf2ad7c1c56a537fa25c8f3eb2cd7dc2ab30184b5e61b3f5f",
+    "source_map": {
+      "end_line": 69,
+      "logical_path": "examples/gdn/example_cumsum.py",
+      "start_line": 44
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "B",
+    "G_shape",
+    "H",
+    "S",
+    "T",
+    "block_S",
+    "head_first",
+    "input_dtype",
+    "output_dtype",
+    "reverse",
+    "threads",
+    "use_fragment"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "tilelang_chunk_local_cumsum_scalar"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/47924f1331f5e624/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "B",
+    "G_shape",
+    "H",
+    "S",
+    "block_S",
+    "head_first",
+    "input_dtype",
+    "output_dtype",
+    "reverse",
+    "threads",
+    "use_fragment"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 69,
+    "git_blob": "9d4ca0222ee8c04bb0dc04bb0c61649d9f7d0cc5",
+    "qualname": "tilelang_chunk_local_cumsum_scalar.kernel",
+    "relative_path": "examples/gdn/example_cumsum.py",
+    "selected_source_sha256": "8c16af05dca3de165ad81e82920afbcb464b2b63712c59384faf3cb1f34f358b",
+    "source_sha256": "f5513bf6fa6878abdc8436cf16d8e6a7b420fa745c4f20301648eb7f4309ecb3",
+    "start_line": 44
+  }
+}

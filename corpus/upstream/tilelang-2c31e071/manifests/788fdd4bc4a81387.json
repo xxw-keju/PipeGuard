@@ -1,0 +1,50 @@
+{
+  "candidate_id": "788fdd4bc4a81387",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/benchmark/compile_speed/kernel_zoo.py/L115-L129__rms_norm.main__788fdd4bc4a81387.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "7b82a165b114f9296a92996df7056160e817b95b6220fc93f83d21337189854d",
+    "source_map": {
+      "end_line": 129,
+      "logical_path": "benchmark/compile_speed/kernel_zoo.py",
+      "start_line": 115
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "T",
+    "block_M",
+    "dtype"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "rms_norm"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/788fdd4bc4a81387/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "block_M",
+    "dtype"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 129,
+    "git_blob": "d11684465e24990af799a39e5d9f9486aabb9515",
+    "qualname": "rms_norm.main",
+    "relative_path": "benchmark/compile_speed/kernel_zoo.py",
+    "selected_source_sha256": "5a7596c5cf06f930d788ee64b9f7ce7c9e8f654df07fc7bc75621411544de598",
+    "source_sha256": "5fb7bd6c97d298f29c49e39e3feddcef1dbaf60a4fa11f7bc45bc9a7c0ecfbc4",
+    "start_line": 115
+  }
+}

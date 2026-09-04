@@ -1,0 +1,93 @@
+{
+  "candidate_id": "0b2e51ad5d7057ef",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/dequantize_gemm/example_dequant_gemm_bf16_mxfp4_hopper.py/L317-L376__matmul.main__0b2e51ad5d7057ef.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c16501233d58f37d8a20c7a690196bcbdf1adbc657fefa23a3a9bac4909a3ad0",
+    "source_map": {
+      "end_line": 376,
+      "logical_path": "examples/dequantize_gemm/example_dequant_gemm_bf16_mxfp4_hopper.py",
+      "start_line": 317
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "A_shared_shape",
+    "B_dequantize_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "Bias_shape",
+    "Bias_shared_shape",
+    "K",
+    "M",
+    "N",
+    "Scale_shape",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "fast_dequant",
+    "get_fast_dequant_twiddling_func",
+    "get_simple_dequant_func",
+    "in_dtype",
+    "num_elems_per_byte",
+    "num_stages",
+    "out_dtype",
+    "storage_dtype",
+    "threads",
+    "tilelang",
+    "with_bias"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "matmul"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/0b2e51ad5d7057ef/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "A_shared_shape",
+    "B_dequantize_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "Bias_shape",
+    "Bias_shared_shape",
+    "K",
+    "M",
+    "N",
+    "Scale_shape",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "fast_dequant",
+    "get_fast_dequant_twiddling_func",
+    "get_simple_dequant_func",
+    "in_dtype",
+    "num_elems_per_byte",
+    "num_stages",
+    "out_dtype",
+    "storage_dtype",
+    "threads",
+    "with_bias"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 376,
+    "git_blob": "0e4c5f3aa47f3d71e930caea2c8a9716b3bfabf3",
+    "qualname": "matmul.main",
+    "relative_path": "examples/dequantize_gemm/example_dequant_gemm_bf16_mxfp4_hopper.py",
+    "selected_source_sha256": "a5a88862410f8652435e86fe996b168eb285cff9ac6c97d19bef7a236c9a1429",
+    "source_sha256": "50c46bd555080797342f889137013cb1cf054e0ba6d12aaa84e09c1d5ad4f254",
+    "start_line": 317
+  }
+}

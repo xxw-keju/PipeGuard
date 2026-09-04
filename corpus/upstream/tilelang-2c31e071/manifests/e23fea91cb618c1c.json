@@ -1,0 +1,88 @@
+{
+  "candidate_id": "e23fea91cb618c1c",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/blocksparse_attention/example_tilelang_sparse_gqa_decode_paged.py/L42-L164__flashattn.main__e23fea91cb618c1c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "cba055504a794595c8de3ec0e89d0de71a079fb5731af040d412b722abe21358",
+    "source_map": {
+      "end_line": 164,
+      "logical_path": "examples/blocksparse_attention/example_tilelang_sparse_gqa_decode_paged.py",
+      "start_line": 42
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_H",
+    "block_N",
+    "block_ratio",
+    "dim",
+    "dim_v",
+    "dtype",
+    "heads",
+    "kv_group_num",
+    "max_selected_blocks",
+    "num_split",
+    "num_stages",
+    "part_shape",
+    "scale",
+    "shape_block_table",
+    "shape_indices",
+    "shape_k",
+    "shape_o",
+    "shape_q",
+    "shape_v",
+    "threads",
+    "valid_block_H"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "flashattn"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/e23fea91cb618c1c/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_H",
+    "block_N",
+    "block_ratio",
+    "dim",
+    "dim_v",
+    "dtype",
+    "heads",
+    "kv_group_num",
+    "max_selected_blocks",
+    "num_split",
+    "num_stages",
+    "part_shape",
+    "scale",
+    "shape_block_table",
+    "shape_indices",
+    "shape_k",
+    "shape_o",
+    "shape_q",
+    "shape_v",
+    "threads",
+    "valid_block_H"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 164,
+    "git_blob": "a93e4de1357ec6e49e5cf0905417952b2876af73",
+    "qualname": "flashattn.main",
+    "relative_path": "examples/blocksparse_attention/example_tilelang_sparse_gqa_decode_paged.py",
+    "selected_source_sha256": "a37814cb76309d71e0327c83ca98e9055c08d13dec17615a2e108d7b6cebd508",
+    "source_sha256": "38bb56e94a87f339494e2ed66ab1e2e871199a2e4500b7b26acd31eb835f13e4",
+    "start_line": 42
+  }
+}

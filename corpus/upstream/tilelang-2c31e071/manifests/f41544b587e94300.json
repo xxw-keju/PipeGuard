@@ -1,0 +1,80 @@
+{
+  "candidate_id": "f41544b587e94300",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/amd/test_tilelang_test_amd.py/L30-L47__matmul.main__f41544b587e94300.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "85dea74c295d3fe5004b57b5833ee49301ac38ef1ccec1d35a5ea21e3a37241b",
+    "source_map": {
+      "end_line": 47,
+      "logical_path": "testing/python/amd/test_tilelang_test_amd.py",
+      "start_line": 30
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "M",
+    "N",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "in_dtype",
+    "k_pack",
+    "num_stages",
+    "out_dtype",
+    "threads",
+    "trans_A",
+    "trans_B",
+    "vec_size"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "matmul"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/f41544b587e94300/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "in_dtype",
+    "k_pack",
+    "num_stages",
+    "out_dtype",
+    "threads",
+    "trans_A",
+    "trans_B",
+    "vec_size"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 47,
+    "git_blob": "4debef4e3144e6a397995a8aa601e4255de3abf4",
+    "qualname": "matmul.main",
+    "relative_path": "testing/python/amd/test_tilelang_test_amd.py",
+    "selected_source_sha256": "00ce1e1b879878f198169960ce0263f4bb4e2b058b385a691156c00a9d96bee7",
+    "source_sha256": "6a7a7373bafdc2da6a3e88713e17277692eba924421d825a68a867b84f6404aa",
+    "start_line": 30
+  }
+}

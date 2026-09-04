@@ -1,0 +1,53 @@
+{
+  "candidate_id": "4753db4c06f24aa5",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/kda/chunk_delta_bwd.py/L76-L200__tilelang_chunk_gated_delta_rule_bwd_dhu__4753db4c06f24aa5.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d4697a0696a8e4cc735d91bcb85b9d29fc58639d3f4f6528b1164f7b8b95d955",
+    "source_map": {
+      "end_line": 200,
+      "logical_path": "examples/kda/chunk_delta_bwd.py",
+      "start_line": 76
+    }
+  },
+  "decorators": [
+    "tilelang.autotuner.autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "autotune",
+    "get_configs",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "26edc1d61cc13bd1"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/4753db4c06f24aa5/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_configs",
+    "block_DV",
+    "c",
+    "configs",
+    "itertools",
+    "num_stages",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 200,
+    "git_blob": "8c22488ca44327c7c46a59715eb98ef968ee0cf8",
+    "qualname": "tilelang_chunk_gated_delta_rule_bwd_dhu",
+    "relative_path": "examples/kda/chunk_delta_bwd.py",
+    "selected_source_sha256": "bf5c87847605616f5824845d1c5d1d2cc607d521aae5f88e38a8e3ccae29c2e4",
+    "source_sha256": "6be46b15a3a77bbbcb57d5fd8ddb04c71d2eb80a9db2c964d7a971615e21ffa8",
+    "start_line": 76
+  }
+}

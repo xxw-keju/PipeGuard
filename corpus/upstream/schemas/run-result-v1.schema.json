@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pipeguard.dev/schemas/upstream-run-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "fingerprint", "dsl", "candidate_id", "recipe_id", "status", "phase", "diagnostics", "artifacts", "timings"],
+  "properties": {
+    "schema_version": {"const": "pipeguard-upstream-run-v1"},
+    "fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "dsl": {"enum": ["tilelang", "triton"]},
+    "candidate_id": {"type": "string"},
+    "recipe_id": {"type": "string"},
+    "status": {"enum": ["CAPTURED", "UNSUPPORTED", "PROFILE_SKIPPED", "IMPORT_ERROR", "LOWERING_ERROR", "TIMEOUT", "INFRA_ERROR"]},
+    "phase": {"type": "string"},
+    "diagnostics": {"type": "array", "items": {"type": "object"}},
+    "artifacts": {"type": "object"},
+    "timings": {"type": "object", "additionalProperties": {"type": "number", "minimum": 0}},
+    "checker_loaded": {"type": "boolean"}
+  }
+}

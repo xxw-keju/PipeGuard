@@ -1,0 +1,44 @@
+{
+  "candidate_id": "bf2b731c5c694d92",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/plugins/override_helper.py/L23-L38__add_kernel__bf2b731c5c694d92.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d751a4cc40d96c9f060e36f53122ef0e86558a09450b685da97e5d188d19ad3c",
+    "source_map": {
+      "end_line": 38,
+      "logical_path": "python/test/unit/plugins/override_helper.py",
+      "start_line": 23
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "metadata_fn",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/bf2b731c5c694d92/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "BLOCK_SIZE",
+    "args"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 38,
+    "git_blob": "a0ffb7b04be0b5f0c071cd94d560b9fc648ca906",
+    "qualname": "add_kernel",
+    "relative_path": "python/test/unit/plugins/override_helper.py",
+    "selected_source_sha256": "2664c41c28401bc5637f0eb5378bcf59e0630410715070f98ee46dbf5999f049",
+    "source_sha256": "cb2c362c79c2c14d6399a917c0fb66e9f667e57b0f1719e839ded048e9f7742e",
+    "start_line": 23
+  }
+}

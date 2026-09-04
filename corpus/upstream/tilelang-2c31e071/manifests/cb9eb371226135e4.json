@@ -1,0 +1,80 @@
+{
+  "candidate_id": "cb9eb371226135e4",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/amd/test_tilelang_gfx950_copy_async.py/L44-L65__matmul_kernel.main__cb9eb371226135e4.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "2fd48cfcfc65c66547d421e2d2190e1a0df60f92cd109f285b86f344dff3c080",
+    "source_map": {
+      "end_line": 65,
+      "logical_path": "testing/python/amd/test_tilelang_gfx950_copy_async.py",
+      "start_line": 44
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "M",
+    "N",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "coalesced_width",
+    "in_dtype",
+    "k_pack",
+    "num_stages",
+    "out_dtype",
+    "threads",
+    "trans_A",
+    "trans_B"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_matmul_kernel"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/cb9eb371226135e4/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "coalesced_width",
+    "in_dtype",
+    "k_pack",
+    "num_stages",
+    "out_dtype",
+    "threads",
+    "trans_A",
+    "trans_B"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 65,
+    "git_blob": "53368fcae04a86de2d02f290a8d9ffdb185f012b",
+    "qualname": "_matmul_kernel.main",
+    "relative_path": "testing/python/amd/test_tilelang_gfx950_copy_async.py",
+    "selected_source_sha256": "569ce16596454afb23f7677f2cd99140050b5c4ed04fbc747e0593f10394aedd",
+    "source_sha256": "2ca6e8ff98c07da383fdb25bc9c2506251639e8b694035c2cb2e4bab737563ff",
+    "start_line": 44
+  }
+}

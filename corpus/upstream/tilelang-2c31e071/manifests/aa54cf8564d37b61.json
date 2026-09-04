@@ -1,0 +1,81 @@
+{
+  "candidate_id": "aa54cf8564d37b61",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/gdn/example_wy_fast.py/L75-L129__tilelang_recompute_w_u_fwd.kernel__aa54cf8564d37b61.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "b6be927d74829bf85d525056ebc36dc1d031840e676371dc2b5114fb18b5c5bf",
+    "source_map": {
+      "end_line": 129,
+      "logical_path": "examples/gdn/example_wy_fast.py",
+      "start_line": 75
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "B",
+    "Beta_shape",
+    "DK",
+    "DV",
+    "G_shape",
+    "H",
+    "K_shape",
+    "S",
+    "T",
+    "V_shape",
+    "accum_dtype",
+    "block_DK",
+    "block_DV",
+    "block_S",
+    "gate_dtype",
+    "input_dtype",
+    "num_stages",
+    "output_dtype",
+    "threads",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "tilelang_recompute_w_u_fwd"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/aa54cf8564d37b61/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "B",
+    "Beta_shape",
+    "DK",
+    "DV",
+    "G_shape",
+    "H",
+    "K_shape",
+    "S",
+    "V_shape",
+    "accum_dtype",
+    "block_DK",
+    "block_DV",
+    "block_S",
+    "gate_dtype",
+    "input_dtype",
+    "num_stages",
+    "output_dtype",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 129,
+    "git_blob": "d36dcf9b7250e73201feee25e57b18845ba5fea5",
+    "qualname": "tilelang_recompute_w_u_fwd.kernel",
+    "relative_path": "examples/gdn/example_wy_fast.py",
+    "selected_source_sha256": "2f1aea017cf9cb58324f242598d83d84b14d661c37b9262563f492ac2ceea0cd",
+    "source_sha256": "e66a0ea4ed6979abe6c5b16b9d6495387e1bcea5ce07727141df43b11b91b342",
+    "start_line": 75
+  }
+}

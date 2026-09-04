@@ -1,0 +1,42 @@
+{
+  "candidate_id": "f0f61ca3e2f347dc",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/tutorials/08-grouped-gemm.py/L52-L169__grouped_matmul_kernel__f0f61ca3e2f347dc.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "4d3acaa23ae1f5e77091b8fa076a8f1df8fe2ee1e4b2a1431dbef74b5f9e59df",
+    "source_map": {
+      "end_line": 169,
+      "logical_path": "python/tutorials/08-grouped-gemm.py",
+      "start_line": 52
+    }
+  },
+  "decorators": [
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "num_sms",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/f0f61ca3e2f347dc/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 169,
+    "git_blob": "496f9af239d1c432b090b2cc6dd19e1acc91ef1c",
+    "qualname": "grouped_matmul_kernel",
+    "relative_path": "python/tutorials/08-grouped-gemm.py",
+    "selected_source_sha256": "73293017ea2b2f2371ed277d8ce8800f4aea5ad28b5f4c974aa18ff79f3181bc",
+    "source_sha256": "0b474fc69d34dfde591454ca735d10abdc72bcc03d6b42530390aceaa2844c3b",
+    "start_line": 52
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "candidate_id": "f202b27007972092",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/attention_sink/example_mha_sink_bwd_bhsd.py/L318-L335__flashattn_bwd_dsink.flash_bwd_dsink__f202b27007972092.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f1b519a9d4b405cb1064cf5b3168c282110f185444735f504b34dd8c1b5f22dd",
+    "source_map": {
+      "end_line": 335,
+      "logical_path": "examples/attention_sink/example_mha_sink_bwd_bhsd.py",
+      "start_line": 318
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block",
+    "dtype",
+    "heads",
+    "seq_len",
+    "shape"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "flashattn_bwd_dsink"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/f202b27007972092/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block",
+    "dtype",
+    "heads",
+    "seq_len",
+    "shape"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 335,
+    "git_blob": "fa045a1d78a7dc155cc798d987a1f59a2c7b4dfd",
+    "qualname": "flashattn_bwd_dsink.flash_bwd_dsink",
+    "relative_path": "examples/attention_sink/example_mha_sink_bwd_bhsd.py",
+    "selected_source_sha256": "12e0e91d8e462909cda7ddefa282f8cf3570b231aaf0ccb641a66c8c219205d2",
+    "source_sha256": "358c7485a05018e7ab91e02aafa6d25badd344c45bf8f34155fe7845d731caf3",
+    "start_line": 318
+  }
+}

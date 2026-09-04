@@ -1,0 +1,40 @@
+{
+  "candidate_id": "c97889e7abfa4e7e",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_matmul.py/L80-L97__matmul_i4_m_minor_kernel__c97889e7abfa4e7e.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "82fbb934ee758b3f5ef32eb92f54b7cd3241a7ff1b82448e0aeeca7e56cc87e5",
+    "source_map": {
+      "end_line": 97,
+      "logical_path": "python/test/unit/language/test_matmul.py",
+      "start_line": 80
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/c97889e7abfa4e7e/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 97,
+    "git_blob": "ea8137093594daced9db17074ef9fb44da5dd7cd",
+    "qualname": "matmul_i4_m_minor_kernel",
+    "relative_path": "python/test/unit/language/test_matmul.py",
+    "selected_source_sha256": "a63f9eb4b8f8489ce77776a4d7fa26bf8d49f53ac174449d38c6426a6fcdfbee",
+    "source_sha256": "19e92611321fe5ccd1ce7ff519d6d31fde0dfda54e32c698ab295abe457ab9c1",
+    "start_line": 80
+  }
+}

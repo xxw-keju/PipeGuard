@@ -1,0 +1,66 @@
+{
+  "candidate_id": "d6f8bc57ff927884",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_warp_specialization.py/L390-L435__matmul_tma_persistent_ws_kernel__d6f8bc57ff927884.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c4f67df65c9ba77734b6582a53bcd84237f216a73138539cb8548ab92a4b7a3e",
+    "source_map": {
+      "end_line": 435,
+      "logical_path": "python/test/unit/language/test_warp_specialization.py",
+      "start_line": 390
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_compute_pid",
+    "_maybe_tma_load",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "313ade2bb4238fa0",
+    "f39cadbf0f7e932e"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/d6f8bc57ff927884/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "GROUP_SIZE_M",
+    "USE_TMA",
+    "desc",
+    "first_pid_m",
+    "group_id",
+    "group_size_m",
+    "mask",
+    "mask0",
+    "mask1",
+    "num_pid_in_group",
+    "num_pid_m",
+    "num_pid_n",
+    "off0",
+    "off1",
+    "offs0",
+    "offs1",
+    "pid_m",
+    "pid_n",
+    "ptr",
+    "tile_id"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 435,
+    "git_blob": "d30aab215ba3f94f6b91bbd249807807f7a81712",
+    "qualname": "matmul_tma_persistent_ws_kernel",
+    "relative_path": "python/test/unit/language/test_warp_specialization.py",
+    "selected_source_sha256": "0a5481189de5e203fd12c1ee09db460fa156f5219db94052fac84749eb0600b5",
+    "source_sha256": "bbb982eeb928245a489e2cf9f9c676606a20be389c5918483a072e7282feb60b",
+    "start_line": 390
+  }
+}

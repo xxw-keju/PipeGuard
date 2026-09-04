@@ -1,0 +1,41 @@
+{
+  "candidate_id": "83ffe8586e166935",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/tools/test_triton_to_gluon.py/L557-L566__split_kernel__83ffe8586e166935.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "67243a8253b5d152e5d97d2b14adb74485eaa57ffe5cd0a14ea68d6abf4cff88",
+    "source_map": {
+      "end_line": 566,
+      "logical_path": "python/test/unit/tools/test_triton_to_gluon.py",
+      "start_line": 557
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "BLOCK_SPLIT",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/83ffe8586e166935/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 566,
+    "git_blob": "0d2c6bc696949cca63a52c5f37c4edc591e9a671",
+    "qualname": "split_kernel",
+    "relative_path": "python/test/unit/tools/test_triton_to_gluon.py",
+    "selected_source_sha256": "7438f4fd55aed924e3a9e3e9d66d09cc87c3ab22fc7d7104a0112d64eb6fe9af",
+    "source_sha256": "eafa4d5bfbf33e45738a906ba18d06cd24ac8468a99b25422a51213f19962567",
+    "start_line": 557
+  }
+}

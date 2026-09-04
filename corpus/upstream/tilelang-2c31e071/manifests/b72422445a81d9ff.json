@@ -1,0 +1,71 @@
+{
+  "candidate_id": "b72422445a81d9ff",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/flash_decoding/example_mha_inference.py/L20-L153__flashattn.flashattn_mha_inference__b72422445a81d9ff.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "5180f5d9077020e19c7ddc0c49e1efcf9341b30ad47f8d1f91990572c121d9b2",
+    "source_map": {
+      "end_line": 153,
+      "logical_path": "examples/flash_decoding/example_mha_inference.py",
+      "start_line": 20
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "dim",
+    "dtype",
+    "heads",
+    "is_causal",
+    "num_split",
+    "part_shape",
+    "scale",
+    "seqlen_kv",
+    "seqlen_q",
+    "shape_kv",
+    "shape_q"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "flashattn"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/b72422445a81d9ff/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "dim",
+    "dtype",
+    "heads",
+    "is_causal",
+    "part_shape",
+    "scale",
+    "seqlen_kv",
+    "seqlen_q",
+    "shape_kv",
+    "shape_q"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 153,
+    "git_blob": "91a2c709c05b1dd973cc531dd6cf461f4a79865a",
+    "qualname": "flashattn.flashattn_mha_inference",
+    "relative_path": "examples/flash_decoding/example_mha_inference.py",
+    "selected_source_sha256": "8ba250e7905b4f7ebb4e03c6f754bcf6bb1697afb43c5bc8e8f217c8cecb967a",
+    "source_sha256": "9a3a01fddd63df14bb6b560bedec4764ecbd1ccdacb8592f9a3bb1e60329a69d",
+    "start_line": 20
+  }
+}

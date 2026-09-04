@@ -1,0 +1,57 @@
+{
+  "candidate_id": "d506996573520b49",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/transform/test_tilelang_transform_layout_inference.py/L30-L52__test_loop_tail_split.before.main__d506996573520b49.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "255dd8f2c9d1166c1b44e33ae418c004b1bfb0b0d7e7839bc7ccd0e840dd798b",
+    "source_map": {
+      "end_line": 52,
+      "logical_path": "testing/python/transform/test_tilelang_transform_layout_inference.py",
+      "start_line": 30
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "K",
+    "N",
+    "T",
+    "block_K",
+    "block_N",
+    "dtype",
+    "threads",
+    "vec_load_b"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_loop_tail_split",
+    "before"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/d506996573520b49/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "N",
+    "block_K",
+    "block_N",
+    "dtype",
+    "threads",
+    "vec_load_b"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 52,
+    "git_blob": "76a8dc25a7d4acbc6e7b105cefbe88c6586035a7",
+    "qualname": "test_loop_tail_split.before.main",
+    "relative_path": "testing/python/transform/test_tilelang_transform_layout_inference.py",
+    "selected_source_sha256": "10166160011cf3ddd6bf05b101d7f5b3353cda37a2095acc375c24d48dda1c2d",
+    "source_sha256": "e5a68b807f7ab250029fdb84a8bb0fc8e18b3364e555feca4364992219d54334",
+    "start_line": 30
+  }
+}

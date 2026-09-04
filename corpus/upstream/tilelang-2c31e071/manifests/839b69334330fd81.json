@@ -1,0 +1,70 @@
+{
+  "candidate_id": "839b69334330fd81",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/linear_attention/example_retention_fwd.py/L30-L76__chunk_retention_fwd_kernel.chunk_retention_fwd__839b69334330fd81.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6f35d396571276b8baafa3e2078cd779fad6472d15adfdfd84478c0c077e9236",
+    "source_map": {
+      "end_line": 76,
+      "logical_path": "examples/linear_attention/example_retention_fwd.py",
+      "start_line": 30
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "B",
+    "BK",
+    "BV",
+    "DK",
+    "DV",
+    "H",
+    "NK",
+    "NT",
+    "NV",
+    "S",
+    "T",
+    "accum_dtype",
+    "chunk_size",
+    "dtype",
+    "scale"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "chunk_retention_fwd_kernel"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/839b69334330fd81/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "B",
+    "BK",
+    "BV",
+    "DK",
+    "DV",
+    "H",
+    "NK",
+    "NT",
+    "NV",
+    "S",
+    "accum_dtype",
+    "chunk_size",
+    "dtype",
+    "scale"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 76,
+    "git_blob": "9b1e1cd8b15936edf42b5b92b3946088d3d27b13",
+    "qualname": "chunk_retention_fwd_kernel.chunk_retention_fwd",
+    "relative_path": "examples/linear_attention/example_retention_fwd.py",
+    "selected_source_sha256": "2f72677e63c1d39c970ed97d4be81f914921f2625090ead2a250457f32e0640e",
+    "source_sha256": "6b370e70214028dd50ad68f93917ff3784b9dcbeae19ef73a4bec288e3ed9b2b",
+    "start_line": 30
+  }
+}

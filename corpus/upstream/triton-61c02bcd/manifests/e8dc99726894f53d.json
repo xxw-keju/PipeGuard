@@ -1,0 +1,57 @@
+{
+  "candidate_id": "e8dc99726894f53d",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_tuple.py/L176-L186__namedtuple_kernel__e8dc99726894f53d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "33502ad3109a37aee9c14bb9e8cb785e58160112dc45a5d5ff2a6885879e442d",
+    "source_map": {
+      "end_line": 186,
+      "logical_path": "python/test/unit/language/test_tuple.py",
+      "start_line": 176
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_namedtuple_create_func0",
+    "_namedtuple_create_func1",
+    "_namedtuple_mask_func",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "382c7b8e17863299",
+    "da2dc5bf65e6661d",
+    "f3d37418dea181d6"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/e8dc99726894f53d/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "BLOCK_M",
+    "BLOCK_N",
+    "mask",
+    "offs_m",
+    "offs_n",
+    "ptr",
+    "shape",
+    "stride",
+    "tensor"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 186,
+    "git_blob": "4fac2e19124bf309dc39a9949aa3a72dcfb2e275",
+    "qualname": "_namedtuple_kernel",
+    "relative_path": "python/test/unit/language/test_tuple.py",
+    "selected_source_sha256": "ce9d2ff81f47840f6c59751f97ca7cef6d7a91b8d72d5792fb650fe66869ad64",
+    "source_sha256": "874cc28864532befb48306c6bace021a2b52962f0928563bad16169e58478b55",
+    "start_line": 176
+  }
+}

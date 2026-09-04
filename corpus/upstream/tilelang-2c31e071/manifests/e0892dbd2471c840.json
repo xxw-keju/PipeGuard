@@ -1,0 +1,53 @@
+{
+  "candidate_id": "e0892dbd2471c840",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/transform/test_tilelang_transform_smem_swizzle_alignment.py/L26-L51__make_swizzled_tma_copy_kernel.kernel__e0892dbd2471c840.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "b9cc32cc18824ab50105654b31064bdeecb647d1d12d6bd5630ab10ae2ad1cc2",
+    "source_map": {
+      "end_line": 51,
+      "logical_path": "testing/python/transform/test_tilelang_transform_smem_swizzle_alignment.py",
+      "start_line": 26
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "THREADS",
+    "TILE_M",
+    "columns",
+    "dtype",
+    "elems_per_thread",
+    "make_swizzled_layout",
+    "pad_elems"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_swizzled_tma_copy_kernel"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/e0892dbd2471c840/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "columns",
+    "dtype",
+    "elems_per_thread",
+    "pad_elems"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 51,
+    "git_blob": "da4e5f39fe5de0afda709418b5fb806fa27885c8",
+    "qualname": "_make_swizzled_tma_copy_kernel.kernel",
+    "relative_path": "testing/python/transform/test_tilelang_transform_smem_swizzle_alignment.py",
+    "selected_source_sha256": "075ea965d9922024952d33facd40d1cc4f164d14a747f272f10e5ea6c80b5e40",
+    "source_sha256": "1665128951834bca0f270f293972abf4e55cf444d478954958826bc0fab9177b",
+    "start_line": 26
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "candidate_id": "86e9e9da0eea5751",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/benchmark/matmul/benchmark_matmul_sp.py/L124-L227__matmul_sp.kernel__86e9e9da0eea5751.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6870bdc1e3176f2a84ee60d0e849330b3d454b60b2404e22c4b124d0d473a9fd",
+    "source_map": {
+      "end_line": 227,
+      "logical_path": "benchmark/matmul/benchmark_matmul_sp.py",
+      "start_line": 124
+    }
+  },
+  "decorators": [
+    "tilelang.autotuner.autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "K",
+    "M",
+    "N",
+    "T",
+    "accum_dtype",
+    "autotune",
+    "e_dtype",
+    "get_configs",
+    "get_e_factor",
+    "in_dtype",
+    "jit"
+  ],
+  "kernel_dependencies": [
+    "ca609a238c9c9c41"
+  ],
+  "lexical_parents": [
+    "matmul_sp"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/86e9e9da0eea5751/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "M",
+    "N",
+    "_configs",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "c",
+    "configs",
+    "e_dtype",
+    "enable_rasterization",
+    "in_dtype",
+    "num_stages",
+    "policy",
+    "thread_num"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 227,
+    "git_blob": "b7f0c004430d5fb43f6b1934d6d89a63094771cc",
+    "qualname": "matmul_sp.kernel",
+    "relative_path": "benchmark/matmul/benchmark_matmul_sp.py",
+    "selected_source_sha256": "61b962bc0eed965abcabdb5e204719bca545fa589cd7499b4be09eafbb7cc04a",
+    "source_sha256": "0d454447297077abe7dfe68fed86065697ed2a1950f64901fe2547813a4791b4",
+    "start_line": 124
+  }
+}

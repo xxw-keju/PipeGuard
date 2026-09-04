@@ -1,0 +1,52 @@
+{
+  "candidate_id": "70c2757128622eaa",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/metal/test_metal_bf16_codegen.py/L20-L35__repro_gemm.main__70c2757128622eaa.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ea6c366ef58df9bed04e8a8d476630fe0ece88833468ab138b2fafd2a0dddfc5",
+    "source_map": {
+      "end_line": 35,
+      "logical_path": "testing/python/metal/test_metal_bf16_codegen.py",
+      "start_line": 20
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "K",
+    "M",
+    "N",
+    "T",
+    "dtype",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "repro_gemm"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/70c2757128622eaa/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "M",
+    "N",
+    "dtype",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 35,
+    "git_blob": "2ebf3a6acd3999aa3511dddea8e60599cffb66b8",
+    "qualname": "repro_gemm.main",
+    "relative_path": "testing/python/metal/test_metal_bf16_codegen.py",
+    "selected_source_sha256": "d7e0bd1e58975c333fa6aec20c3df12df3082a7b43738d8e4bfd346331c7baa5",
+    "source_sha256": "9d5de11acb738c555123f4e2ae7f0a23f7c02d2e3d79da1ead013f2df0d2eec8",
+    "start_line": 20
+  }
+}

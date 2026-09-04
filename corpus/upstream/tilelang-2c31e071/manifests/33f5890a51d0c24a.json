@@ -1,0 +1,47 @@
+{
+  "candidate_id": "33f5890a51d0c24a",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/autotune/test_tilelang_autotune_eager_mode.py/L37-L90__matmul__33f5890a51d0c24a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "993ae13727c45804ec1d4e8e9e0d18021c687da10123a95b531a1cd062fbf78d",
+    "source_map": {
+      "end_line": 90,
+      "logical_path": "testing/python/autotune/test_tilelang_autotune_eager_mode.py",
+      "start_line": 37
+    }
+  },
+  "decorators": [
+    "tilelang.autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "get_configs",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/33f5890a51d0c24a/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "iter_params",
+    "k",
+    "v",
+    "values"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 90,
+    "git_blob": "41fc406c57276c86cddfd1c1e3fad042952d3a1f",
+    "qualname": "matmul",
+    "relative_path": "testing/python/autotune/test_tilelang_autotune_eager_mode.py",
+    "selected_source_sha256": "7f2e45d955d3a4d77d9c32396c9904a53a857a34bdea9926ff1167793e812cab",
+    "source_sha256": "f617aa128cec11dc8ebcbaed05e22f9e1ae78f6a0027f5e9b7aec524510e6ea0",
+    "start_line": 37
+  }
+}

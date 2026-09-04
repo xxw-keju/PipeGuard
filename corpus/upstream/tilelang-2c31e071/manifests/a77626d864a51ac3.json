@@ -1,0 +1,81 @@
+{
+  "candidate_id": "a77626d864a51ac3",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/transform/test_tilelang_transform_config_index_bitwidth.py/L99-L142__blocksparse_flashattn.kernel_func.main__a77626d864a51ac3.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "b400ff26bbb056b41274247d8c47c67e7f69351eb6cdd886d1a84f004b0491d0",
+    "source_map": {
+      "end_line": 142,
+      "logical_path": "testing/python/transform/test_tilelang_transform_config_index_bitwidth.py",
+      "start_line": 99
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "MMA0",
+    "MMA1",
+    "Rescale",
+    "Softmax",
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "block_mask_dtype",
+    "block_mask_shape",
+    "dim",
+    "downsample_len",
+    "dtype",
+    "heads",
+    "is_causal",
+    "num_stages",
+    "seq_len",
+    "shape",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "blocksparse_flashattn",
+    "kernel_func"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/a77626d864a51ac3/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "MMA0",
+    "MMA1",
+    "Rescale",
+    "Softmax",
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "block_mask_dtype",
+    "block_mask_shape",
+    "dim",
+    "downsample_len",
+    "dtype",
+    "heads",
+    "is_causal",
+    "num_stages",
+    "seq_len",
+    "shape",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 142,
+    "git_blob": "559b2ffb4392fe4449ed3e03357ead2293f30a16",
+    "qualname": "blocksparse_flashattn.kernel_func.main",
+    "relative_path": "testing/python/transform/test_tilelang_transform_config_index_bitwidth.py",
+    "selected_source_sha256": "5f826e9756eab74d83fc9d1e3b1a13b7b1f9997a5901fc6c63f1d8d44d918db9",
+    "source_sha256": "8030f4dcf6a8343800ed8cce87a0082385de9ce5e4aa6bb679b13d715dd0d268",
+    "start_line": 99
+  }
+}

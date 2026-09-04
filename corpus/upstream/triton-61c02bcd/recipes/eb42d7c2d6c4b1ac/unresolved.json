@@ -1,0 +1,26 @@
+{
+  "bindings": {},
+  "candidate_id": "eb42d7c2d6c4b1ac",
+  "dsl": "triton",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "eb42d7c2d6c4b1ac-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "GROUP_SIZE_M",
+    "concrete_specialization",
+    "first_pid_m",
+    "group_id",
+    "group_size_m",
+    "num_pid_in_group",
+    "num_pid_m",
+    "pid_m",
+    "pid_n",
+    "tile_id"
+  ]
+}

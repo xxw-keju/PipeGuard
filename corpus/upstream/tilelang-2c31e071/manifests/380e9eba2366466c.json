@@ -1,0 +1,44 @@
+{
+  "candidate_id": "380e9eba2366466c",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/flash_attention_sm100/mha_fwd_bshd.py/L22-L169__flashattn__380e9eba2366466c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "4ec9176a0bd6dda270e77c55c87873a38bd44135ec346ef40a2cf83d4b4232c9",
+    "source_map": {
+      "end_line": 169,
+      "logical_path": "examples/flash_attention_sm100/mha_fwd_bshd.py",
+      "start_line": 22
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "PASS_CFG",
+    "T",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "7d932c152f49aef6",
+    "e661259b2ba7c0c5"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/380e9eba2366466c/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 169,
+    "git_blob": "ea9040ce7624264c3ab8704d9e78c64828880319",
+    "qualname": "flashattn",
+    "relative_path": "examples/flash_attention_sm100/mha_fwd_bshd.py",
+    "selected_source_sha256": "5851eb9ec1e58d4fa0ed9e6d94a3694cafc6b98c4255cec8919aef4cb6edb402",
+    "source_sha256": "3acbf6b34be35ba9b7deb5122111df5f79f11ea86493e542b96a8642ec08ae32",
+    "start_line": 22
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "candidate_id": "cb508d8e9a32c2e1",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_matmul.py/L460-L528__block_scale_mxfp_matmul__cb508d8e9a32c2e1.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e206ca8ebf27ff966cf56c5ad50634884ba3d9c1721b5af840a9559485dbce7f",
+    "source_map": {
+      "end_line": 528,
+      "logical_path": "python/test/unit/language/test_matmul.py",
+      "start_line": 460
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/cb508d8e9a32c2e1/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 528,
+    "git_blob": "ea8137093594daced9db17074ef9fb44da5dd7cd",
+    "qualname": "block_scale_mxfp_matmul",
+    "relative_path": "python/test/unit/language/test_matmul.py",
+    "selected_source_sha256": "012a1e21604e9b71e28ec043f9f35f8557949fe65eadb42836198072c559f744",
+    "source_sha256": "19e92611321fe5ccd1ce7ff519d6d31fde0dfda54e32c698ab295abe457ab9c1",
+    "start_line": 460
+  }
+}

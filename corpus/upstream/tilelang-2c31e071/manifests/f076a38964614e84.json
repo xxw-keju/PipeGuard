@@ -1,0 +1,76 @@
+{
+  "candidate_id": "f076a38964614e84",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/amd/example_amd_flash_attn_fwd.py/L107-L257__fast_flashattn__f076a38964614e84.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "7d054eebe51b38af99b74f321cc46bd2fde8712d7d31abef977070acd8abcbb5",
+    "source_map": {
+      "end_line": 257,
+      "logical_path": "examples/amd/example_amd_flash_attn_fwd.py",
+      "start_line": 107
+    }
+  },
+  "decorators": [
+    "tilelang.autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "GemmWarpPolicy",
+    "IsRDNA",
+    "T",
+    "get_configs",
+    "supply_tensors_gpu",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "c6ba0a4b61558f10"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/f076a38964614e84/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "block_M",
+    "block_N",
+    "enable_rasterization",
+    "gpu_name",
+    "k",
+    "k_pack",
+    "m",
+    "n",
+    "num_split_q",
+    "num_stages",
+    "p",
+    "panel_size",
+    "param",
+    "params",
+    "qk_coalesced_width",
+    "qkw",
+    "r",
+    "s",
+    "shape",
+    "stages",
+    "t",
+    "tensor",
+    "tensors",
+    "threads",
+    "torch_dtype",
+    "v_coalesced_width",
+    "valid_configs",
+    "vw"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 257,
+    "git_blob": "cb7d1225d23d2535100895a65665429966a10585",
+    "qualname": "fast_flashattn",
+    "relative_path": "examples/amd/example_amd_flash_attn_fwd.py",
+    "selected_source_sha256": "905b2ceaaa1b019c65e93a260476c92a2d2cfdd4a8ee91e146571b2ab86f133c",
+    "source_sha256": "ed3eab17b822893e099fb3038dbf40ff9d6afe3eba19ada0ea4bf9e2187f7717",
+    "start_line": 107
+  }
+}

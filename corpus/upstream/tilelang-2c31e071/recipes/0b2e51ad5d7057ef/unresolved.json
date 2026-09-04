@@ -1,0 +1,42 @@
+{
+  "bindings": {},
+  "candidate_id": "0b2e51ad5d7057ef",
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "0b2e51ad5d7057ef-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "A_shape",
+    "A_shared_shape",
+    "B_dequantize_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "Bias_shape",
+    "Bias_shared_shape",
+    "K",
+    "M",
+    "N",
+    "Scale_shape",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "concrete_specialization",
+    "fast_dequant",
+    "get_fast_dequant_twiddling_func",
+    "get_simple_dequant_func",
+    "in_dtype",
+    "num_elems_per_byte",
+    "num_stages",
+    "out_dtype",
+    "storage_dtype",
+    "threads",
+    "with_bias"
+  ]
+}

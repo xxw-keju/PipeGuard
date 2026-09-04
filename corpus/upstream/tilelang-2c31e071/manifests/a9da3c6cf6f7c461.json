@@ -1,0 +1,58 @@
+{
+  "candidate_id": "a9da3c6cf6f7c461",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/deepseek_v32/inference/kernel.py/L200-L241__fp8_index_kernel.fp8_index_kernel__a9da3c6cf6f7c461.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "22ebca24ed1ac38f765d322510109f8c0e65b30af0b03d67d7e87643096d8d32",
+    "source_map": {
+      "end_line": 241,
+      "logical_path": "examples/deepseek_v32/inference/kernel.py",
+      "start_line": 200
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "FP32",
+    "FP8",
+    "T",
+    "b",
+    "blk_n1",
+    "blk_n2",
+    "d",
+    "h",
+    "m",
+    "n"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "fp8_index_kernel"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/a9da3c6cf6f7c461/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "b",
+    "blk_n1",
+    "blk_n2",
+    "d",
+    "h",
+    "m",
+    "n"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 241,
+    "git_blob": "623da37c76bbeda949c673db825c59f2bab719ce",
+    "qualname": "fp8_index_kernel.fp8_index_kernel_",
+    "relative_path": "examples/deepseek_v32/inference/kernel.py",
+    "selected_source_sha256": "98a475fe06c6817bb3bf5a6aca85ca18cb265b6209b9121b0850adb6f1fd2851",
+    "source_sha256": "99b0dc3662b9da89918c1539e4f43f6ae6ddd8ebffdb46831a63cacacac7a009",
+    "start_line": 200
+  }
+}

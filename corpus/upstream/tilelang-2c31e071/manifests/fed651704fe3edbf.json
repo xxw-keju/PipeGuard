@@ -1,0 +1,88 @@
+{
+  "candidate_id": "fed651704fe3edbf",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/kernel/test_tilelang_kernel_gemm_simt.py/L76-L126__tl_matmul_simt.main__fed651704fe3edbf.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6f4252914f5abcf448527cf7486c23bd894dfbae3c7260b8473f64ead3f1f052",
+    "source_map": {
+      "end_line": 126,
+      "logical_path": "testing/python/kernel/test_tilelang_kernel_gemm_simt.py",
+      "start_line": 76
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "C_shape",
+    "K",
+    "M",
+    "N",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "dp4a_size",
+    "in_dtype",
+    "local_size_a",
+    "local_size_b",
+    "local_size_c",
+    "micro_size_k",
+    "out_dtype",
+    "shared_scope",
+    "thread_row_tiles",
+    "threads",
+    "use_dp4a"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "tl_matmul_simt"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/fed651704fe3edbf/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "C_shape",
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "dp4a_size",
+    "in_dtype",
+    "local_size_a",
+    "local_size_b",
+    "local_size_c",
+    "micro_size_k",
+    "out_dtype",
+    "shared_scope",
+    "thread_row_tiles",
+    "threads",
+    "use_dp4a"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 126,
+    "git_blob": "648c7c5f857b56c9b75e490d29fc2e7279c97e5e",
+    "qualname": "tl_matmul_simt.main",
+    "relative_path": "testing/python/kernel/test_tilelang_kernel_gemm_simt.py",
+    "selected_source_sha256": "d763a6a67de71a938e9e1e3fe8bc27651e79a5cbf94b186aa6b53a72d208d800",
+    "source_sha256": "0f8d8bb31af1550d2f28fa00775273b6f4b2b720930dd68a6c103292fefab91f",
+    "start_line": 76
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "candidate_id": "d12e56a09d8d290b",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/gemm_fp8/example_tilelang_gemm_amd_fp8_preshuffle.py/L102-L145__tl_matmul.main__d12e56a09d8d290b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "002f67634f9dd9bce28194c7b74d8f148773f8879200da2db05463d3b2b4d529",
+    "source_map": {
+      "end_line": 145,
+      "logical_path": "examples/gemm_fp8/example_tilelang_gemm_amd_fp8_preshuffle.py",
+      "start_line": 102
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "K",
+    "M",
+    "N",
+    "T",
+    "a_transposed",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "in_dtype",
+    "k_pack",
+    "local_size_a",
+    "local_size_b",
+    "make_swizzled_layout",
+    "mfma_emitter",
+    "micro_size_k",
+    "num_stages",
+    "num_threads",
+    "out_dtype",
+    "shared_scope",
+    "warp_cols",
+    "warp_rows"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "tl_matmul"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/d12e56a09d8d290b/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "K",
+    "M",
+    "N",
+    "a_transposed",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "in_dtype",
+    "k_pack",
+    "local_size_a",
+    "local_size_b",
+    "mfma_emitter",
+    "micro_size_k",
+    "num_stages",
+    "num_threads",
+    "out_dtype",
+    "shared_scope",
+    "warp_cols",
+    "warp_rows"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 145,
+    "git_blob": "ed63acd2b9f0df0a9509edad11b24fa8a76ce729",
+    "qualname": "tl_matmul.main",
+    "relative_path": "examples/gemm_fp8/example_tilelang_gemm_amd_fp8_preshuffle.py",
+    "selected_source_sha256": "6816652846ec9a227f606f0709f67f632085f9d295312a9ecb30aab1eca4f2a9",
+    "source_sha256": "8d54dd998ca8ae518a49a57e95d883c60c6deacd4796c717faea7350c91c3a24",
+    "start_line": 102
+  }
+}

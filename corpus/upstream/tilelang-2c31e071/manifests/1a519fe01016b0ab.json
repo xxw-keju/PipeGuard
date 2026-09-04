@@ -1,0 +1,51 @@
+{
+  "candidate_id": "1a519fe01016b0ab",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/gemm/example_gemm_intrinsics.py/L25-L153__tl_matmul__1a519fe01016b0ab.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "52b89c333180618aa71def865aa440623282ec5769e2712a6731383fb81e8f9c",
+    "source_map": {
+      "end_line": 153,
+      "logical_path": "examples/gemm/example_gemm_intrinsics.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "TensorCoreIntrinEmitter",
+    "make_swizzle_layout",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/1a519fe01016b0ab/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "args",
+    "can_swizzle",
+    "dtype",
+    "i",
+    "j",
+    "shape",
+    "shared_buf",
+    "transform_func"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 153,
+    "git_blob": "0ddfc5095d4520e77681029b419f55193206af08",
+    "qualname": "tl_matmul",
+    "relative_path": "examples/gemm/example_gemm_intrinsics.py",
+    "selected_source_sha256": "b4043f123f8647fe332f2286b1611779b8dfbfd359d525f9ab4c98b059c6c059",
+    "source_sha256": "5ac1068cc32bb9462d8d9860069116662921deac8fd7f6843e972fd638c010b6",
+    "start_line": 25
+  }
+}

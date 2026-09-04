@@ -1,0 +1,48 @@
+{
+  "candidate_id": "ba43439ef0723318",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/deepseek_v4/act_quant.py/L107-L163__fp4_quant_kernel__ba43439ef0723318.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e2a5396f7e1f4d09107a428e2598fbad01e4cad21d6e1598de3a18fe53b7e4a0",
+    "source_map": {
+      "end_line": 163,
+      "logical_path": "examples/deepseek_v4/act_quant.py",
+      "start_line": 107
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "fast_round_scale",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/ba43439ef0723318/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "amax",
+    "bits_x",
+    "exp_x",
+    "fp8_max_inv",
+    "man_bits",
+    "x"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 163,
+    "git_blob": "3d1f2d7bcf9fa865dc1a4c3172b0a5e480df5eb5",
+    "qualname": "fp4_quant_kernel",
+    "relative_path": "examples/deepseek_v4/act_quant.py",
+    "selected_source_sha256": "0bf0e44612507fe6d1c842130c55d2f651c15295bceb3a433228a4cc4435a77a",
+    "source_sha256": "29c93420669634494e34279eb8ce25545d236f8b06abecf856efaa87dc3f04f3",
+    "start_line": 107
+  }
+}

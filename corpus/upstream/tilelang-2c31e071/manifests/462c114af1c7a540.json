@@ -1,0 +1,58 @@
+{
+  "candidate_id": "462c114af1c7a540",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/block_causal_attention/block_causal_attention.py/L155-L173__bwd_preprocess_template.prep__462c114af1c7a540.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "666a2ab3b5f39b796a9ecc883d942867ba647b3708d7b6f04a0852ea0206c2de",
+    "source_map": {
+      "end_line": 173,
+      "logical_path": "examples/block_causal_attention/block_causal_attention.py",
+      "start_line": 155
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_size",
+    "dim",
+    "dtype",
+    "heads",
+    "seq_len",
+    "shape"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_bwd_preprocess_template"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/462c114af1c7a540/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_size",
+    "dim",
+    "dtype",
+    "heads",
+    "seq_len",
+    "shape"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 173,
+    "git_blob": "73eb50b801200072284fb04e11ca70150d4ccc3b",
+    "qualname": "_bwd_preprocess_template.prep",
+    "relative_path": "examples/block_causal_attention/block_causal_attention.py",
+    "selected_source_sha256": "faf1ad48d87baca2ba52a21d76b9963ec06a35f74784d0453ecd899ac886d297",
+    "source_sha256": "e139b9ef6bdc582db6c977d3189031849720ddaf8ae761a2b17ee71659809084",
+    "start_line": 155
+  }
+}

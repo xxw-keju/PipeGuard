@@ -1,0 +1,40 @@
+{
+  "candidate_id": "2362d3fca1f2d1c6",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/tutorials/10-block-scaled-matmul.py/L523-L601__block_scaled_matmul_kernel_cdna4__2362d3fca1f2d1c6.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c1e643056e5554f11fd753ec605fe794d5be47703c1eb53e7833d1241ec9ab91",
+    "source_map": {
+      "end_line": 601,
+      "logical_path": "python/tutorials/10-block-scaled-matmul.py",
+      "start_line": 523
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/2362d3fca1f2d1c6/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 601,
+    "git_blob": "464ee565a24e95090788f29b22a2ecca698c7889",
+    "qualname": "block_scaled_matmul_kernel_cdna4",
+    "relative_path": "python/tutorials/10-block-scaled-matmul.py",
+    "selected_source_sha256": "ad5306d1691d00a72067e0575e2d1c8a028d80c278b2da960f964be02fe545f6",
+    "source_sha256": "2e6ac55f932a4a3c44ed805b14171c909bd5284efe66ad778693774518209ad2",
+    "start_line": 523
+  }
+}

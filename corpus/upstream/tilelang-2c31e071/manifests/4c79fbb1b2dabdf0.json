@@ -1,0 +1,81 @@
+{
+  "candidate_id": "4c79fbb1b2dabdf0",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/block_causal_attention/block_causal_attention.py/L66-L142__fwd_template.fwd__4c79fbb1b2dabdf0.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "9619531eac366b4d3324e09bfc3b552f09628bc9c2e31d491b8668bd8403a1d1",
+    "source_map": {
+      "end_line": 142,
+      "logical_path": "examples/block_causal_attention/block_causal_attention.py",
+      "start_line": 66
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_fwd_tile_allowed",
+    "accum_dtype",
+    "batch",
+    "block_size",
+    "dim",
+    "dllm_block",
+    "dtype",
+    "half_len",
+    "heads",
+    "neg_inf",
+    "num_stages",
+    "region_tiles",
+    "scale_log2e",
+    "seq_len",
+    "shape",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_fwd_template"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/4c79fbb1b2dabdf0/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_size",
+    "clean_boundary",
+    "dim",
+    "dllm_block",
+    "dtype",
+    "half_len",
+    "heads",
+    "i",
+    "is_noisy_diag",
+    "j",
+    "k_blk",
+    "neg_inf",
+    "noisy_allowed",
+    "num_stages",
+    "q_blk",
+    "q_is_noisy",
+    "region_tiles",
+    "scale_log2e",
+    "seq_len",
+    "shape",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 142,
+    "git_blob": "73eb50b801200072284fb04e11ca70150d4ccc3b",
+    "qualname": "_fwd_template.fwd",
+    "relative_path": "examples/block_causal_attention/block_causal_attention.py",
+    "selected_source_sha256": "16f81176602e59bfab2db6fdf8889c9432b7b79e5fb486f00f50223fa823a63a",
+    "source_sha256": "e139b9ef6bdc582db6c977d3189031849720ddaf8ae761a2b17ee71659809084",
+    "start_line": 66
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "candidate_id": "70fe02fa2b1b9413",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/regression/test_cast_matmul.py/L35-L77__matmul_kernel__70fe02fa2b1b9413.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "cefb1322acb586eb4c7d021d3a9233be79adadb22314f06c5c69b312be1c0437",
+    "source_map": {
+      "end_line": 77,
+      "logical_path": "python/test/regression/test_cast_matmul.py",
+      "start_line": 35
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/70fe02fa2b1b9413/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 77,
+    "git_blob": "2298d4cbc4e0131ad9324c3f4e9ab85b27968ed5",
+    "qualname": "matmul_kernel",
+    "relative_path": "python/test/regression/test_cast_matmul.py",
+    "selected_source_sha256": "c3bd95080e2b42008535098e59cc6309cd7b609dc1d2721a098a85ba4f4ebc96",
+    "source_sha256": "5f227171782cd3ade9532342c30b92c76961fd3b37edfd165e9b2b818746648f",
+    "start_line": 35
+  }
+}

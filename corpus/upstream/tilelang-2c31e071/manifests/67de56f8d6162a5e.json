@@ -1,0 +1,52 @@
+{
+  "candidate_id": "67de56f8d6162a5e",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/benchmark/compile_speed/kernel_zoo.py/L137-L151__silu_gate.main__67de56f8d6162a5e.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "868bec2f6f41d1c45d1c3184518c7cb3c5dc7353cd872256b8ca067317c306a0",
+    "source_map": {
+      "end_line": 151,
+      "logical_path": "benchmark/compile_speed/kernel_zoo.py",
+      "start_line": 137
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "T",
+    "block_M",
+    "block_N",
+    "dtype"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "silu_gate"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/67de56f8d6162a5e/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "block_M",
+    "block_N",
+    "dtype"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 151,
+    "git_blob": "d11684465e24990af799a39e5d9f9486aabb9515",
+    "qualname": "silu_gate.main",
+    "relative_path": "benchmark/compile_speed/kernel_zoo.py",
+    "selected_source_sha256": "3e5e1228955f4782de77720c7f7c6e47d11fe224c5dc2716bd7139d5dfb7d4b8",
+    "source_sha256": "5fb7bd6c97d298f29c49e39e3feddcef1dbaf60a4fa11f7bc45bc9a7c0ecfbc4",
+    "start_line": 137
+  }
+}

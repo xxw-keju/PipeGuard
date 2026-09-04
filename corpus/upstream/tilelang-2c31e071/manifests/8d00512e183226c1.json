@@ -1,0 +1,88 @@
+{
+  "candidate_id": "8d00512e183226c1",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/flash_attention/example_gqa_bwd_tma_reduce.py/L270-L343__flashattn_bwd_split_novarlen.flash_bwd__8d00512e183226c1.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "7ec0b2cd9c2891042767a4b38018d7a38f070e6ee1ddeafa6a9f02988ffa4eba",
+    "source_map": {
+      "end_line": 343,
+      "logical_path": "examples/flash_attention/example_gqa_bwd_tma_reduce.py",
+      "start_line": 270
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "dim_qk",
+    "dim_v",
+    "dk_shape",
+    "dtype",
+    "dv_shape",
+    "groups",
+    "heads",
+    "is_causal",
+    "k_shape",
+    "make_dq_layout",
+    "num_stages",
+    "q_shape",
+    "scale",
+    "seq_len",
+    "sm_scale",
+    "threads",
+    "v_shape"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "flashattn_bwd_split_novarlen"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/8d00512e183226c1/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "b",
+    "batch",
+    "block_M",
+    "block_N",
+    "d",
+    "dQ",
+    "dim_qk",
+    "dim_v",
+    "dk_shape",
+    "dtype",
+    "dv_shape",
+    "groups",
+    "h",
+    "heads",
+    "is_causal",
+    "k_shape",
+    "l",
+    "num_stages",
+    "q_shape",
+    "scale",
+    "seq_len",
+    "sm_scale",
+    "threads",
+    "v_shape"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 343,
+    "git_blob": "4920d8cf065c1da5f5a46c863a19d98d0dc13353",
+    "qualname": "flashattn_bwd_split_novarlen.flash_bwd",
+    "relative_path": "examples/flash_attention/example_gqa_bwd_tma_reduce.py",
+    "selected_source_sha256": "4b1232f2f5cb5b6222f2b1b10d673755479f592b4cb03187bff0399eae26f226",
+    "source_sha256": "25bff143325bd7ccd8b880b089bebc1b2eb46cef70e1aed60be148ca1cbce9e3",
+    "start_line": 270
+  }
+}

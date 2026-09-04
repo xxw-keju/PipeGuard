@@ -1,0 +1,84 @@
+{
+  "candidate_id": "9417e4eca4a8423d",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/flash_attention/example_gqa_bwd.py/L166-L238__flashattn_bwd_atomic_add.flash_bwd__9417e4eca4a8423d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "10e18f105b44d310a32c52bf8742e9b4ed1af42fe5c84762aee3d0df8288f29b",
+    "source_map": {
+      "end_line": 238,
+      "logical_path": "examples/flash_attention/example_gqa_bwd.py",
+      "start_line": 166
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "dim_qk",
+    "dim_v",
+    "dtype",
+    "groups",
+    "heads",
+    "is_causal",
+    "k_shape",
+    "make_dq_layout",
+    "num_stages",
+    "q_shape",
+    "scale",
+    "seq_len",
+    "sm_scale",
+    "threads",
+    "v_shape"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "flashattn_bwd_atomic_add"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/9417e4eca4a8423d/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "b",
+    "batch",
+    "block_M",
+    "block_N",
+    "d",
+    "dQ",
+    "dim_qk",
+    "dim_v",
+    "dtype",
+    "groups",
+    "h",
+    "heads",
+    "is_causal",
+    "k_shape",
+    "l",
+    "num_stages",
+    "q_shape",
+    "scale",
+    "seq_len",
+    "sm_scale",
+    "threads",
+    "v_shape"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 238,
+    "git_blob": "801927faf4965373484b6c8cd79a1b14bcb9c540",
+    "qualname": "flashattn_bwd_atomic_add.flash_bwd",
+    "relative_path": "examples/flash_attention/example_gqa_bwd.py",
+    "selected_source_sha256": "58092acce9bee17257527ae50b1fcf022cf5d3e3ebfd92e4f45f31a2ede46ee6",
+    "source_sha256": "6e24ac1fda79f81331312a7b3c723ddc4c5768aa4423876bd196c3e14baceb20",
+    "start_line": 166
+  }
+}

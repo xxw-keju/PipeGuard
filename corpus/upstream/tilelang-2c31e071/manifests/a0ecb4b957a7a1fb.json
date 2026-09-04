@@ -1,0 +1,47 @@
+{
+  "candidate_id": "a0ecb4b957a7a1fb",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/deepseek_v32/topk_selector.py/L27-L185__tl_topk_impl__a0ecb4b957a7a1fb.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "a9cd623e2510a29772201bd8407f2818ca427d868777ce62a3e8e9048b997954",
+    "source_map": {
+      "end_line": 185,
+      "logical_path": "examples/deepseek_v32/topk_selector.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "convert_to_uint16",
+    "convert_to_uint32",
+    "pass_configs",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/a0ecb4b957a7a1fb/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "bits_uint",
+    "hval",
+    "x"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 185,
+    "git_blob": "3c020f8641b3e4ddbd7d6c1a065c5bf01e0c6d04",
+    "qualname": "tl_topk_impl",
+    "relative_path": "examples/deepseek_v32/topk_selector.py",
+    "selected_source_sha256": "5273799cb68088d419c901f2a287dc35592e2c81d2b5797c326a94a4a2f6241a",
+    "source_sha256": "19c9ce123e16f76478fc1ec09795c654b56719b93ae3e2a0a5d4f507b4773678",
+    "start_line": 27
+  }
+}

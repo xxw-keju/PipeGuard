@@ -1,0 +1,53 @@
+{
+  "candidate_id": "eb42d7c2d6c4b1ac",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_tensor_descriptor.py/L1033-L1089__matmul_kernel_rank_reducing__eb42d7c2d6c4b1ac.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "bf058715642aa79fbcfa95d22f5d1d5e76dfd71f2d00981a3442b1a6a79bf558",
+    "source_map": {
+      "end_line": 1089,
+      "logical_path": "python/test/unit/language/test_tensor_descriptor.py",
+      "start_line": 1033
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_compute_pid",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "808f61bafb48d168"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/eb42d7c2d6c4b1ac/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "GROUP_SIZE_M",
+    "first_pid_m",
+    "group_id",
+    "group_size_m",
+    "num_pid_in_group",
+    "num_pid_m",
+    "pid_m",
+    "pid_n",
+    "tile_id"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 1089,
+    "git_blob": "b78ce5331d0fae80d64f1f7c91a0e49ff5b04ad2",
+    "qualname": "matmul_kernel_rank_reducing",
+    "relative_path": "python/test/unit/language/test_tensor_descriptor.py",
+    "selected_source_sha256": "f0b639b7b0d6be50dcb9bca54bcb19698c39b4eca2086eb13dc987d6cd2eb053",
+    "source_sha256": "98491f0f8bbfe515dc31f2f70cf19db01ea15612d199e272fc2e6560bbf206ba",
+    "start_line": 1033
+  }
+}

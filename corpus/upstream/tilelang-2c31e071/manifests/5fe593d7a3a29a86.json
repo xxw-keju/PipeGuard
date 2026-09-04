@@ -1,0 +1,76 @@
+{
+  "candidate_id": "5fe593d7a3a29a86",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/analysis/test_tilelang_nested_loop_checker.py/L112-L134__matmul_nested_pipelines.main__5fe593d7a3a29a86.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "fadefd65e70766fb8a40a0662291d9a6f6aa7e165dec3ac8dd453ad85d51d08b",
+    "source_map": {
+      "end_line": 134,
+      "logical_path": "testing/python/analysis/test_tilelang_nested_loop_checker.py",
+      "start_line": 112
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "M",
+    "N",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "extra_pipeline_repeats",
+    "in_dtype",
+    "out_dtype",
+    "threads",
+    "trans_A",
+    "trans_B"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "matmul_nested_pipelines"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/5fe593d7a3a29a86/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "extra_pipeline_repeats",
+    "in_dtype",
+    "out_dtype",
+    "threads",
+    "trans_A",
+    "trans_B"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 134,
+    "git_blob": "0038f79f92af846557e65d214dc0a703d336352b",
+    "qualname": "matmul_nested_pipelines.main",
+    "relative_path": "testing/python/analysis/test_tilelang_nested_loop_checker.py",
+    "selected_source_sha256": "a51a38127374c05c1bae78b71db2a9c79798c29f03a60dad97a2c0f44bb87c41",
+    "source_sha256": "f3aac24bae39c4f81045caf708c1e9a9765c1e959c4c86c382b7e1b4f0e84001",
+    "start_line": 112
+  }
+}

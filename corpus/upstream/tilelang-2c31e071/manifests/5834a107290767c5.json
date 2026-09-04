@@ -1,0 +1,52 @@
+{
+  "candidate_id": "5834a107290767c5",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/autotune/test_pass_configs_tuning.py/L202-L223__test_autotune_decorator_pass_configs_override_jit_global.matmul_kernel__5834a107290767c5.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "39aaa8d69d18079998c2fed21e7fd9047abde772c25f3efb98a9b9f84bb8144b",
+    "source_map": {
+      "end_line": 223,
+      "logical_path": "testing/python/autotune/test_pass_configs_tuning.py",
+      "start_line": 202
+    }
+  },
+  "decorators": [
+    "tilelang.autotuner.autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "PassConfigKey",
+    "T",
+    "autotune",
+    "configs",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "4559e3c8d0bd8d6a",
+    "f0e9b550bb0f903d",
+    "f5c23d616da7b6cb"
+  ],
+  "lexical_parents": [
+    "test_autotune_decorator_pass_configs_override_jit_global"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/5834a107290767c5/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "configs"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 223,
+    "git_blob": "d49d849ca26b5ea03ef14b977b3288d19b666ad3",
+    "qualname": "test_autotune_decorator_pass_configs_override_jit_global.matmul_kernel",
+    "relative_path": "testing/python/autotune/test_pass_configs_tuning.py",
+    "selected_source_sha256": "0b9def58d89934dfeef16a277f66a9cb5236e17513b65be7fe441c14119e5898",
+    "source_sha256": "d993f6cfbffaea8ee8bcea081ead623e7348c27d001438a30878a54b4244c191",
+    "start_line": 202
+  }
+}

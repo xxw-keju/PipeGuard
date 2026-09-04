@@ -1,0 +1,57 @@
+{
+  "candidate_id": "0ce570b13676a106",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/regression/test_functional_regressions.py/L262-L273__test_inductor_cummax_bool.triton__0ce570b13676a106.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "862d1db3edb208da26e93de93f467be1b03deed495cb7eb1263ab8523acc961c",
+    "source_map": {
+      "end_line": 273,
+      "logical_path": "python/test/regression/test_functional_regressions.py",
+      "start_line": 262
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_triton_cummax_helper_fn",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "60317c9b9ae2fc54"
+  ],
+  "lexical_parents": [
+    "test_inductor_cummax_bool"
+  ],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/0ce570b13676a106/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "arg0_0",
+    "arg0_1",
+    "arg1_0",
+    "arg1_1",
+    "tmp0",
+    "tmp1",
+    "tmp2",
+    "tmp3",
+    "tmp4",
+    "tmp5",
+    "tmp6"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 273,
+    "git_blob": "d71f5bfd999445f278256e3db93dd078d745af73",
+    "qualname": "test_inductor_cummax_bool.triton_",
+    "relative_path": "python/test/regression/test_functional_regressions.py",
+    "selected_source_sha256": "1b1f798fd3eafd12b169ce2772b07f0bb4cfa1040879b7f546173f7da203e232",
+    "source_sha256": "40e9d7d172ab86a7f3495c6cc43b0b953501dcf60ae8390f9f28afa494096069",
+    "start_line": 262
+  }
+}

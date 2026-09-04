@@ -1,0 +1,90 @@
+{
+  "candidate_id": "6cbb29d31967c671",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/dequantize_gemm/example_dequant_gemm_w4a8.py/L111-L147__matmul_int8xint4.main__6cbb29d31967c671.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "99254b9cd54a8e0502c6b30d6725765d05d3fb677c90201f8eacb2a732179414",
+    "source_map": {
+      "end_line": 147,
+      "logical_path": "examples/dequantize_gemm/example_dequant_gemm_w4a8.py",
+      "start_line": 111
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "A_shared_shape",
+    "B_dequantize_local_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "M",
+    "N",
+    "T",
+    "_tir_u8_to_i4_to_i8",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "in_dtype",
+    "num_bits",
+    "num_elems_per_byte",
+    "num_stages",
+    "out_dtype",
+    "storage_dtype",
+    "threads",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "matmul_int8xint4"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/6cbb29d31967c671/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "A_shared_shape",
+    "B_dequantize_local_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "dtype",
+    "i4",
+    "i8",
+    "i8_shifted",
+    "in_dtype",
+    "mask",
+    "nbit",
+    "num_bits",
+    "num_elems_per_byte",
+    "num_stages",
+    "out_dtype",
+    "pos",
+    "storage_dtype",
+    "threads",
+    "val"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 147,
+    "git_blob": "2b7ea68570916b7b980c438556c889f54cb5da7f",
+    "qualname": "matmul_int8xint4.main",
+    "relative_path": "examples/dequantize_gemm/example_dequant_gemm_w4a8.py",
+    "selected_source_sha256": "ca8464cba7c30ac8df6be7b03ae57bc3a96dab7563efb3e0a59afb5475d4f237",
+    "source_sha256": "7d599aff5a84cdab34b4254140fda2eaa1303db123016ad8397e69e16b79c6ba",
+    "start_line": 111
+  }
+}

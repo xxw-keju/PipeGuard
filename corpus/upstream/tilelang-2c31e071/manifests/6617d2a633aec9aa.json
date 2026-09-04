@@ -1,0 +1,76 @@
+{
+  "candidate_id": "6617d2a633aec9aa",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/kernel/test_tilelang_kernel_gemv_simt.py/L50-L110__gemv_simt.main__6617d2a633aec9aa.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "9306d516edecdbef6a83d8d62ae5f48ff805ca92f7822779b0a776a909fc4014",
+    "source_map": {
+      "end_line": 110,
+      "logical_path": "testing/python/kernel/test_tilelang_kernel_gemv_simt.py",
+      "start_line": 50
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "B_shape",
+    "Bias_shape",
+    "C_shape",
+    "K",
+    "M",
+    "N",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "dp4a_size",
+    "in_dtype",
+    "micro_size_k",
+    "n_partition",
+    "out_dtype",
+    "reduce_thread",
+    "use_dp4a",
+    "with_bias"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "gemv_simt"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/6617d2a633aec9aa/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "B_shape",
+    "Bias_shape",
+    "C_shape",
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "dp4a_size",
+    "in_dtype",
+    "micro_size_k",
+    "n_partition",
+    "out_dtype",
+    "reduce_thread",
+    "use_dp4a",
+    "with_bias"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 110,
+    "git_blob": "4669cee51ffe6277d0ccfbc6b6139f8f3b649d17",
+    "qualname": "gemv_simt.main",
+    "relative_path": "testing/python/kernel/test_tilelang_kernel_gemv_simt.py",
+    "selected_source_sha256": "62e85ae2dc5c7b64dea8678c6dcac32859464aa2bae5331fc14eba6c060ef003",
+    "source_sha256": "753d5652d2d913a19db372afba1c72f5c1cedd74a0370968b36dbd69dd63c81f",
+    "start_line": 50
+  }
+}

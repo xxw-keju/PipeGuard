@@ -1,0 +1,40 @@
+{
+  "candidate_id": "ade22875e18f8a7c",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/tutorials/03-matrix-multiplication.py/L324-L326__leaky_relu__ade22875e18f8a7c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "26515f591b4f8923611636cf14b5029de6366b21b724a84960554bf093dacf6d",
+    "source_map": {
+      "end_line": 326,
+      "logical_path": "python/tutorials/03-matrix-multiplication.py",
+      "start_line": 324
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/ade22875e18f8a7c/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 326,
+    "git_blob": "526934c1d7c60ccbb8119b1bca0e807f6fc602e8",
+    "qualname": "leaky_relu",
+    "relative_path": "python/tutorials/03-matrix-multiplication.py",
+    "selected_source_sha256": "482574fbc9c844c104266c00d09ec1e2d5994fd124f94dc6b092205d3a36a1d3",
+    "source_sha256": "f88a9506694c58d483ad3cdb4aa672c23df0300803bcfaca13b9396184825008",
+    "start_line": 324
+  }
+}

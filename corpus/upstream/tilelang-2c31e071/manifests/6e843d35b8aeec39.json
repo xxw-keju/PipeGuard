@@ -1,0 +1,43 @@
+{
+  "candidate_id": "6e843d35b8aeec39",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/deepseek_nsa/example_tilelang_nsa_bwd.py/L512-L548__tilelang_kernel_block_mask__6e843d35b8aeec39.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ebcee6a40e3599d2338aa8f6838990fad6bfea8a551c7e0f4a9028d85710bfb3",
+    "source_map": {
+      "end_line": 548,
+      "logical_path": "examples/deepseek_nsa/example_tilelang_nsa_bwd.py",
+      "start_line": 512
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "block_counts",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/6e843d35b8aeec39/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "block_counts"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 548,
+    "git_blob": "df1153257cdec1dc0af6174d185aaa207c93c8db",
+    "qualname": "tilelang_kernel_block_mask",
+    "relative_path": "examples/deepseek_nsa/example_tilelang_nsa_bwd.py",
+    "selected_source_sha256": "176d1b11baf2c314d2007442770bda7181fab9ad84ca5b1f7830d17546591a9d",
+    "source_sha256": "cb26650e531bc2240f80d3a6ac0aa784a26278cc7d7ff234edb1aaf2e7389195",
+    "start_line": 512
+  }
+}

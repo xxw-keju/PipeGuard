@@ -1,0 +1,42 @@
+{
+  "candidate_id": "686cb0420b7ea06d",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_standard.py/L164-L174__test_softmax.softmax_kernel__686cb0420b7ea06d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "8e57585c8e35d7f390274d0c1c11f0ea2bdadca6b6c306da49c36f4049799f08",
+    "source_map": {
+      "end_line": 174,
+      "logical_path": "python/test/unit/language/test_standard.py",
+      "start_line": 164
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_softmax"
+  ],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/686cb0420b7ea06d/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 174,
+    "git_blob": "e79b71c0834cad245683d3b9719e517299ba7409",
+    "qualname": "test_softmax.softmax_kernel",
+    "relative_path": "python/test/unit/language/test_standard.py",
+    "selected_source_sha256": "a2c301e08ef9016b8ea0f01f6363850d718e84b8ec93cae9466a19d60dc9db84",
+    "source_sha256": "8aedfd39de8eacbd387141925c3c74132fd0838c837b1388120cd6ffdc2ea55c",
+    "start_line": 164
+  }
+}

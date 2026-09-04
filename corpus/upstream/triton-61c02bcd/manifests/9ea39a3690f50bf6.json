@@ -1,0 +1,40 @@
+{
+  "candidate_id": "9ea39a3690f50bf6",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/gluon/test_fpsan.py/L611-L622__clamp_kernel__9ea39a3690f50bf6.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "37acd6941ed9daf2d5889b2328a98c559a0805ad5a66301240a46a4dd6fb027a",
+    "source_map": {
+      "end_line": 622,
+      "logical_path": "python/test/gluon/test_fpsan.py",
+      "start_line": 611
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/9ea39a3690f50bf6/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 622,
+    "git_blob": "5172f487b2eb270764352d1eeb8f26885c12937d",
+    "qualname": "_clamp_kernel",
+    "relative_path": "python/test/gluon/test_fpsan.py",
+    "selected_source_sha256": "262bfd8d748e90dff9da08c637b01467252b168b5d0cb2bb495de6ac077a87c2",
+    "source_sha256": "59be2109209cb533e029c275cc65fd4164398b43de3928ca80057afe3932d93c",
+    "start_line": 611
+  }
+}

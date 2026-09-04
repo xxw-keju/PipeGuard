@@ -1,0 +1,43 @@
+{
+  "candidate_id": "451a8217ef6167e6",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/gemm_sp/example_gemm_sp.py/L12-L42__matmul_sp_fp16__451a8217ef6167e6.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "33347be3eb28103107c3756ee231ec0220d49ff3e758f30cee75d0c93f682205",
+    "source_map": {
+      "end_line": 42,
+      "logical_path": "examples/gemm_sp/example_gemm_sp.py",
+      "start_line": 12
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "get_e_factor",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "9d8e6e90c39b89ab"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/451a8217ef6167e6/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 42,
+    "git_blob": "404414b59e4b89af14328c661576dbe0a85e4b04",
+    "qualname": "matmul_sp_fp16",
+    "relative_path": "examples/gemm_sp/example_gemm_sp.py",
+    "selected_source_sha256": "448c149c2251dad0e6a8776bd893cff8f0cc6f0afc497e6b7dbe14213aa5f934",
+    "source_sha256": "1f3d75f6b53d03505a58dd27ef210a8c05c3f6d2ba26028b762e7674d8a9b72d",
+    "start_line": 12
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "candidate_id": "c1c7cc3573c448fa",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/convolution/example_convolution_autotune.py/L75-L113__convolution__c1c7cc3573c448fa.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "70a63909ee962a401f962182381ade400d024f6ce969f920d4edf8458c82b7c6",
+    "source_map": {
+      "end_line": 113,
+      "logical_path": "examples/convolution/example_convolution_autotune.py",
+      "start_line": 75
+    }
+  },
+  "decorators": [
+    "tilelang.autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "check_hopper",
+    "get_configs",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/c1c7cc3573c448fa/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_configs",
+    "block_K",
+    "block_M",
+    "block_N",
+    "c",
+    "compute_capability",
+    "configs",
+    "enable_rasterization",
+    "num_stages",
+    "props",
+    "thread_num"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 113,
+    "git_blob": "7ca329b87898f567f0f887949bf634eee163c639",
+    "qualname": "convolution",
+    "relative_path": "examples/convolution/example_convolution_autotune.py",
+    "selected_source_sha256": "e28cdac81af72a9467a6a38bdc917b7cf35bcca7674cd75b00cd224700b4c7af",
+    "source_sha256": "bfb86d69bf8e78daad6006d900bd20214f56ee4349202fa4427009cea29849d9",
+    "start_line": 75
+  }
+}

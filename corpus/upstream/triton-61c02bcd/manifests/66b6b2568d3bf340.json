@@ -1,0 +1,59 @@
+{
+  "candidate_id": "66b6b2568d3bf340",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_core.py/L3575-L3590__test_generic_reduction.var_mean_kernel__66b6b2568d3bf340.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "33663b115e827fe7ead147d9e6d1bec21d09136cfd4ae6f2fbe83e21dbe0658a",
+    "source_map": {
+      "end_line": 3590,
+      "logical_path": "python/test/unit/language/test_core.py",
+      "start_line": 3575
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_sum_combine",
+    "_welford_combine",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "2eef2d673795ae52",
+    "63a2ab8decf01778"
+  ],
+  "lexical_parents": [
+    "test_generic_reduction"
+  ],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/66b6b2568d3bf340/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "a",
+    "b",
+    "delta",
+    "m2_1",
+    "m2_2",
+    "mean_1",
+    "mean_2",
+    "new_weight",
+    "w2_over_w",
+    "weight_1",
+    "weight_2"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 3590,
+    "git_blob": "37dbe1797a78cbd9838ebd53423b28fdb4b2bd8d",
+    "qualname": "test_generic_reduction.var_mean_kernel",
+    "relative_path": "python/test/unit/language/test_core.py",
+    "selected_source_sha256": "36d2725335ee91715a92918465f5d4ce023c3205de5a3b006d7eaccefcc33119",
+    "source_sha256": "760bdbf74c105f9568cee2fd4e61c02daa14aa94dc32b4de4d708c68052f0292",
+    "start_line": 3575
+  }
+}

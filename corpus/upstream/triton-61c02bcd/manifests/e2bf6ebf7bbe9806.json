@@ -1,0 +1,41 @@
+{
+  "candidate_id": "e2bf6ebf7bbe9806",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/tutorials/01-vector-add.py/L29-L54__add_kernel__e2bf6ebf7bbe9806.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "351b50cf5a71e4f77f3eb8f11ac24040e1a61d17927fb6fa1fc1ba61b09964c7",
+    "source_map": {
+      "end_line": 54,
+      "logical_path": "python/tutorials/01-vector-add.py",
+      "start_line": 29
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/e2bf6ebf7bbe9806/unresolved.json",
+    "triton-61c02bcd/recipes/e2bf6ebf7bbe9806/e2bf6ebf7bbe9806-sm90-block128.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 54,
+    "git_blob": "e527e5fc7ac37d24783fe25e0b3c2a06bbcfa24d",
+    "qualname": "add_kernel",
+    "relative_path": "python/tutorials/01-vector-add.py",
+    "selected_source_sha256": "78744f84962d4ed0c425671e7ad235c5385cead6a239295a6295fbbeda9d5649",
+    "source_sha256": "842430949e0ccde4fbce07606cce3ac4bac36bf21b2b12619a31b795ca4029b3",
+    "start_line": 29
+  }
+}

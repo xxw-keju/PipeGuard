@@ -1,0 +1,61 @@
+{
+  "candidate_id": "01535d24430d867f",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/gemm_sp/sparse_utils.py/L39-L105__compress_fn.compress_8bit_16bit_ordered_metadata__01535d24430d867f.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "93083f653e2e1f28b3e28f0c8fcdfbaff32b2ee0fc54e4f032400489304ac81a",
+    "source_map": {
+      "end_line": 105,
+      "logical_path": "examples/gemm_sp/sparse_utils.py",
+      "start_line": 39
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "D",
+    "S",
+    "T",
+    "block_K",
+    "block_M",
+    "dtype",
+    "e_factor",
+    "elem",
+    "elem_per_thread",
+    "group",
+    "meta_dtype"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_compress_fn"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/01535d24430d867f/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "D",
+    "S",
+    "block_K",
+    "block_M",
+    "e_factor",
+    "elem",
+    "elem_per_thread",
+    "group",
+    "meta_dtype"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 105,
+    "git_blob": "f3a4a537e8cc56ea349fea1c831aae12ce03f553",
+    "qualname": "_compress_fn.compress_8bit_16bit_ordered_metadata",
+    "relative_path": "examples/gemm_sp/sparse_utils.py",
+    "selected_source_sha256": "83318e0a1917a23dbf6f13031b5ae9c82bddd1a6ba74634075a00b1005439a66",
+    "source_sha256": "dddb897d1c2f59df134da71d85e2f9a2991528bea070413aeea45884caf6c748",
+    "start_line": 39
+  }
+}

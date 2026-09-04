@@ -1,0 +1,46 @@
+{
+  "candidate_id": "4ab919c5df555cb6",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/gemm_streamk/example_tilelang_gemm_streamk.py/L57-L143__tl_matmul_streamk__4ab919c5df555cb6.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "5789d33396fd56f87fb42a08b8a7156bfaeaed0444d439efe817af48537ffc64",
+    "source_map": {
+      "end_line": 143,
+      "logical_path": "examples/gemm_streamk/example_tilelang_gemm_streamk.py",
+      "start_line": 57
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "iters_per_tile",
+    "sm_patition_factor",
+    "streamk_full_tiles",
+    "streamk_partial_tiles",
+    "streamk_programs",
+    "tilelang",
+    "total_sm"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/4ab919c5df555cb6/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 143,
+    "git_blob": "11822fda3b4a2fd850f656ffc08983f46a561921",
+    "qualname": "tl_matmul_streamk",
+    "relative_path": "examples/gemm_streamk/example_tilelang_gemm_streamk.py",
+    "selected_source_sha256": "6f6aaf2f45dee1ebbdc72b3831c6a0611a555df299a50b85d708b4f9db99bc14",
+    "source_sha256": "194c35f8a9f5ef71867dc8ffd68fb3203a332aa16591cff58ff9a0b7811bb782",
+    "start_line": 57
+  }
+}

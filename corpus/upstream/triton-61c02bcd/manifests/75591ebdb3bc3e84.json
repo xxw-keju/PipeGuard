@@ -1,0 +1,55 @@
+{
+  "candidate_id": "75591ebdb3bc3e84",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/tools/test_triton_to_gluon.py/L95-L97__matmul_tile_kernel__75591ebdb3bc3e84.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ce3c08baf99337eb82d5757d9ca0e0f2c68e1ca82255068cd007579b6c6164d3",
+    "source_map": {
+      "end_line": 97,
+      "logical_path": "python/test/unit/tools/test_triton_to_gluon.py",
+      "start_line": 95
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "impl_matmul_tile_kernel",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "483b3b901279100e"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/75591ebdb3bc3e84/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "M",
+    "N",
+    "a",
+    "a_ptr",
+    "acc",
+    "b",
+    "b_ptr",
+    "c_ptr",
+    "offs_m",
+    "offs_n"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 97,
+    "git_blob": "0d2c6bc696949cca63a52c5f37c4edc591e9a671",
+    "qualname": "matmul_tile_kernel",
+    "relative_path": "python/test/unit/tools/test_triton_to_gluon.py",
+    "selected_source_sha256": "7007d63dfb250b4dc0a552a000cd335afc807ed4a6bee1db409594e298204de5",
+    "source_sha256": "eafa4d5bfbf33e45738a906ba18d06cd24ac8468a99b25422a51213f19962567",
+    "start_line": 95
+  }
+}

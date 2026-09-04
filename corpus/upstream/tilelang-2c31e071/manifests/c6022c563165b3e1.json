@@ -1,0 +1,87 @@
+{
+  "candidate_id": "c6022c563165b3e1",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/amd/example_amd_flash_attn_bwd.py/L119-L240__fast_flashattn.main__c6022c563165b3e1.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ed5a57f074e9cda20199a5902bb8a0d3416dbef41dfc33394d5757c79893adb1",
+    "source_map": {
+      "end_line": 240,
+      "logical_path": "examples/amd/example_amd_flash_attn_bwd.py",
+      "start_line": 119
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "GemmWarpPolicy",
+    "IsRDNA",
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "dim",
+    "dtype",
+    "enable_rasterization",
+    "groups",
+    "heads",
+    "is_causal",
+    "k_pack",
+    "kv_shape",
+    "num_split_q",
+    "num_stages",
+    "panel_size",
+    "q_shape",
+    "scale",
+    "seq_len",
+    "threads",
+    "v_vec_size",
+    "vec_size"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "fast_flashattn"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/c6022c563165b3e1/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "dim",
+    "dtype",
+    "enable_rasterization",
+    "gpu_name",
+    "groups",
+    "heads",
+    "is_causal",
+    "k_pack",
+    "kv_shape",
+    "num_split_q",
+    "num_stages",
+    "panel_size",
+    "q_shape",
+    "scale",
+    "seq_len",
+    "threads",
+    "v_vec_size",
+    "vec_size"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 240,
+    "git_blob": "0a9b7d26cb0722abb9ed8aec75b2cbbce2393218",
+    "qualname": "fast_flashattn.main",
+    "relative_path": "examples/amd/example_amd_flash_attn_bwd.py",
+    "selected_source_sha256": "5784c19fd271e3a4e0146e8c13d9dee08e55e7feec77274880257053b03a11a2",
+    "source_sha256": "752baca77dc50f3d37b21ea65a2e4b40469b10550c7a6babdd7ce03b73d4a0db",
+    "start_line": 119
+  }
+}

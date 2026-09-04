@@ -1,0 +1,54 @@
+{
+  "candidate_id": "e97fc00b24508862",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py/L39-L346__matmul__e97fc00b24508862.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c7409a469fadb4667bc8924b64bfd8807ddc5e0960df2da5f75702ec957fa815",
+    "source_map": {
+      "end_line": 346,
+      "logical_path": "examples/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py",
+      "start_line": 39
+    }
+  },
+  "decorators": [
+    "tilelang.autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "DataType",
+    "T",
+    "get_configs",
+    "get_mxfp_intrin_group",
+    "tilelang",
+    "tirx"
+  ],
+  "kernel_dependencies": [
+    "afbda894bafba227"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/e97fc00b24508862/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "get_mxfp_intrin_group",
+    "iter_params",
+    "itertools",
+    "k",
+    "v",
+    "values"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 346,
+    "git_blob": "5264b648aa69e29dfdb7f20fecf1e3615f162769",
+    "qualname": "matmul",
+    "relative_path": "examples/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py",
+    "selected_source_sha256": "32b3b74570871f16f35be76249bd467d1ca6097d3a9fac30b0c700525da49612",
+    "source_sha256": "3cdbb001b07f00f800383fc7eca37494c65c6a610add72e3baaafab18c1e2f1d",
+    "start_line": 39
+  }
+}

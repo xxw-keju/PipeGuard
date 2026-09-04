@@ -1,0 +1,52 @@
+{
+  "candidate_id": "c5399c33f60a39a4",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/runtime/test_autotuner.py/L575-L593__test_exceed_tmem.dot_kernel__c5399c33f60a39a4.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "29ce51acde2981906e63de3865fcc972252b9fb47f300cd70fee293a31299fbb",
+    "source_map": {
+      "end_line": 593,
+      "logical_path": "python/test/unit/runtime/test_autotuner.py",
+      "start_line": 575
+    }
+  },
+  "decorators": [
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_post_hook",
+    "configs",
+    "do_bench",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_exceed_tmem"
+  ],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/c5399c33f60a39a4/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_post_hook",
+    "configs",
+    "kernel_call",
+    "quantiles",
+    "use_cuda_graph"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 593,
+    "git_blob": "d91dd8d3e8af46810b410ff32464a9df46f35550",
+    "qualname": "test_exceed_tmem.dot_kernel",
+    "relative_path": "python/test/unit/runtime/test_autotuner.py",
+    "selected_source_sha256": "cc9a6dcc36177cc2ca31e24cc76aaabde04d0760848ad99dd9f3b8685a2b51f8",
+    "source_sha256": "ba76ba741786c3b5bd0ac766f49f14b427dbfb4cebd02b7fe84734d018304f43",
+    "start_line": 575
+  }
+}

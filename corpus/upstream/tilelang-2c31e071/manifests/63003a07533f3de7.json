@@ -1,0 +1,83 @@
+{
+  "candidate_id": "63003a07533f3de7",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/flash_decoding/example_gqa_decode_varlen_logits.py/L53-L128__flashattn.flashattn_gqa_decode_no_split__63003a07533f3de7.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "af01597185f69599bd4a187b2aff6e558c1e62e68f380790f6757ef6a5993b66",
+    "source_map": {
+      "end_line": 128,
+      "logical_path": "examples/flash_decoding/example_gqa_decode_varlen_logits.py",
+      "start_line": 53
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_H",
+    "block_N",
+    "dim",
+    "dtype",
+    "has_sink",
+    "heads",
+    "kv_group_num",
+    "math",
+    "max_seqlen_kv",
+    "num_split",
+    "num_stages",
+    "scale",
+    "shape_k",
+    "shape_o",
+    "shape_q",
+    "shape_s",
+    "shape_v",
+    "threads",
+    "valid_block_H"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "flashattn"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/63003a07533f3de7/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_H",
+    "block_N",
+    "dim",
+    "dtype",
+    "has_sink",
+    "heads",
+    "kv_group_num",
+    "max_seqlen_kv",
+    "num_split",
+    "num_stages",
+    "scale",
+    "shape_k",
+    "shape_o",
+    "shape_q",
+    "shape_s",
+    "shape_v",
+    "threads",
+    "valid_block_H"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 128,
+    "git_blob": "468be22302a7e3b65dd48e99b6b8b299b1629909",
+    "qualname": "flashattn.flashattn_gqa_decode_no_split",
+    "relative_path": "examples/flash_decoding/example_gqa_decode_varlen_logits.py",
+    "selected_source_sha256": "df7baa5df0918d8fbaa6cb5a3976456950b62dcbeda0ce90718514d122d90aa7",
+    "source_sha256": "8ace7aada281393b30d8b63a0f73c6484cbd8458f9b70b18ca27f9eb62f64f04",
+    "start_line": 53
+  }
+}

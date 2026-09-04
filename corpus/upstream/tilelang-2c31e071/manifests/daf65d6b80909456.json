@@ -1,0 +1,52 @@
+{
+  "candidate_id": "daf65d6b80909456",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/gemm/example_gemm_autotune_early_stop.py/L100-L142__matmul_early_stop__daf65d6b80909456.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "996f71edf5d036fcd7ac63f55d6a04c530428a6663edff89050579fa30a7c213",
+    "source_map": {
+      "end_line": 142,
+      "logical_path": "examples/gemm/example_gemm_autotune_early_stop.py",
+      "start_line": 100
+    }
+  },
+  "decorators": [
+    "tilelang.autotuner.autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "autotune",
+    "get_configs",
+    "tl"
+  ],
+  "kernel_dependencies": [
+    "35ca190ab14abaaa",
+    "3e2d271a3ddf581a"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/daf65d6b80909456/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "bm",
+    "bn",
+    "configs",
+    "ns",
+    "tile_sizes"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 142,
+    "git_blob": "a0f9501df879f28dd378e8eb1ed1bb8befe86bf5",
+    "qualname": "matmul_early_stop",
+    "relative_path": "examples/gemm/example_gemm_autotune_early_stop.py",
+    "selected_source_sha256": "39abbb2c65ee4e3c6dc3d48a6e07cee4b5d254b60afba950f904cbe93f17fccb",
+    "source_sha256": "9017ef20c94a72ce9106d9ce505ab6e0e1b92ce92c578f6eb34f36b64df1ba7c",
+    "start_line": 100
+  }
+}

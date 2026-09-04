@@ -1,0 +1,75 @@
+{
+  "candidate_id": "6effc13b77a6d406",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/dequantize_gemm/example_dequant_gemm_w4a8.py/L43-L63__convert_test.main__6effc13b77a6d406.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d90e91fd7b9293d0c814ea147dcacfa5da86e372850a215addb1f1059e799eb1",
+    "source_map": {
+      "end_line": 63,
+      "logical_path": "examples/dequantize_gemm/example_dequant_gemm_w4a8.py",
+      "start_line": 43
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "B_dequantize_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "N",
+    "T",
+    "_tir_u8_to_i4_to_i8",
+    "block_K",
+    "block_N",
+    "in_dtype",
+    "num_bits",
+    "num_elems_per_byte",
+    "storage_dtype",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_convert_test"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/6effc13b77a6d406/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "B_dequantize_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "N",
+    "block_K",
+    "block_N",
+    "dtype",
+    "i4",
+    "i8",
+    "i8_shifted",
+    "in_dtype",
+    "mask",
+    "nbit",
+    "num_bits",
+    "num_elems_per_byte",
+    "pos",
+    "storage_dtype",
+    "threads",
+    "val"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 63,
+    "git_blob": "2b7ea68570916b7b980c438556c889f54cb5da7f",
+    "qualname": "_convert_test.main",
+    "relative_path": "examples/dequantize_gemm/example_dequant_gemm_w4a8.py",
+    "selected_source_sha256": "de6cd64c1514ab26928778d1a195c4de5c27d648eb8a9d5dd7dd31a6d5c2eac8",
+    "source_sha256": "7d599aff5a84cdab34b4254140fda2eaa1303db123016ad8397e69e16b79c6ba",
+    "start_line": 43
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pipeguard.dev/schemas/upstream-sources-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "target_profile", "tilelang", "triton"],
+  "properties": {
+    "schema_version": {"const": "pipeguard-upstream-sources-v1"},
+    "target_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["architecture", "backend", "warp_size"],
+      "properties": {
+        "architecture": {"const": "sm90"},
+        "backend": {"const": "cuda"},
+        "warp_size": {"const": 32}
+      }
+    },
+    "tilelang": {"$ref": "#/$defs/source"},
+    "triton": {"$ref": "#/$defs/source"}
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit", "environment", "include_prefixes", "snapshot_version"],
+      "properties": {
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "backend_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "environment": {"type": "string"},
+        "include_prefixes": {"type": "array", "items": {"type": "string"}},
+        "snapshot_version": {"type": "string"}
+      }
+    }
+  }
+}

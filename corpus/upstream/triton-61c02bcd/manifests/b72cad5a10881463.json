@@ -1,0 +1,48 @@
+{
+  "candidate_id": "b72cad5a10881463",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_tuple.py/L75-L82__test_assign_return.with_fn__b72cad5a10881463.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "3f50b6032e5ad90b6695d410b328b783de17e199ec253a241a33c4f68e142112",
+    "source_map": {
+      "end_line": 82,
+      "logical_path": "python/test/unit/language/test_tuple.py",
+      "start_line": 75
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_tuple_ret",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "59f61b1e00bc69a1"
+  ],
+  "lexical_parents": [
+    "test_assign_return"
+  ],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/b72cad5a10881463/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "a",
+    "b"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 82,
+    "git_blob": "4fac2e19124bf309dc39a9949aa3a72dcfb2e275",
+    "qualname": "test_assign_return.with_fn",
+    "relative_path": "python/test/unit/language/test_tuple.py",
+    "selected_source_sha256": "d566cd300469abcffab2cb87153fa09569fac8c41f7f15187c503064588874f3",
+    "source_sha256": "874cc28864532befb48306c6bace021a2b52962f0928563bad16169e58478b55",
+    "start_line": 75
+  }
+}

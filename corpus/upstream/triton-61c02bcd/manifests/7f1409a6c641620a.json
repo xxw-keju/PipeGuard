@@ -1,0 +1,40 @@
+{
+  "candidate_id": "7f1409a6c641620a",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_pipeliner.py/L122-L189__mxfp_to_bf16_kernel__7f1409a6c641620a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "a71bbd177a9252787391da8f77d4b4d3d8b5f573cfbf93ec14677b85bf31f81d",
+    "source_map": {
+      "end_line": 189,
+      "logical_path": "python/test/unit/language/test_pipeliner.py",
+      "start_line": 122
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/7f1409a6c641620a/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 189,
+    "git_blob": "a28528a8f2e79e8e761bea6315ccc1e5f99b4e2a",
+    "qualname": "mxfp_to_bf16_kernel",
+    "relative_path": "python/test/unit/language/test_pipeliner.py",
+    "selected_source_sha256": "b28c3528aaa7679a4da71f077993e7345ade227bf858f211add9e775ef08be20",
+    "source_sha256": "5cffd3760791d6ecbc59e42bdae5295844660fe384ff3b981d72fe1e523de7aa",
+    "start_line": 122
+  }
+}

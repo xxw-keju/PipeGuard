@@ -1,0 +1,53 @@
+{
+  "candidate_id": "5ac25c138aaac711",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/kda/chunk_intra_token_parallel.py/L58-L173__tilelang_chunk_kda_fwd_intra_token_parallel__5ac25c138aaac711.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c7da6c50c32be1ea0d5fc061a0c54b71a42ec990473b8dbe8dcca11c99412841",
+    "source_map": {
+      "end_line": 173,
+      "logical_path": "examples/kda/chunk_intra_token_parallel.py",
+      "start_line": 58
+    }
+  },
+  "decorators": [
+    "tilelang.autotuner.autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "autotune",
+    "get_configs",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "831458a11eff90fa"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/5ac25c138aaac711/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_configs",
+    "block_H",
+    "c",
+    "configs",
+    "itertools",
+    "num_stages",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 173,
+    "git_blob": "cc024e7a987f21316f235226262a7de2740aa163",
+    "qualname": "tilelang_chunk_kda_fwd_intra_token_parallel",
+    "relative_path": "examples/kda/chunk_intra_token_parallel.py",
+    "selected_source_sha256": "1374fad61791ed8dba92782d06b88271db4b47e430d00d3fd47918e25ba3db1b",
+    "source_sha256": "9af3731bb3e5b3a053bfe772c0cf7800604e569e80a8604e94938cdb984fdb4a",
+    "start_line": 58
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "candidate_id": "d6b9bd050c867db0",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/benchmark/matmul_fp8/benchmark_matmul.py/L111-L218__matmul__d6b9bd050c867db0.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "3be013c869afcf0059a260f17533855d90bc40ba5f2d2ee7ffb426b31cb0b5fd",
+    "source_map": {
+      "end_line": 218,
+      "logical_path": "benchmark/matmul_fp8/benchmark_matmul.py",
+      "start_line": 111
+    }
+  },
+  "decorators": [
+    "tilelang.autotuner.autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "autotune",
+    "get_configs",
+    "jit",
+    "torch"
+  ],
+  "kernel_dependencies": [
+    "993c82325b3ec568"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/d6b9bd050c867db0/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "CDNA",
+    "CUDA",
+    "K",
+    "M",
+    "MatmulTemplate",
+    "N",
+    "NoRasterization",
+    "arch",
+    "args",
+    "block_cols",
+    "block_m",
+    "block_n",
+    "block_rows",
+    "carve_template",
+    "config",
+    "configs",
+    "func",
+    "hint",
+    "iter_params",
+    "k",
+    "roller_hints",
+    "topk",
+    "v",
+    "values",
+    "warp_m",
+    "warp_n",
+    "with_roller"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 218,
+    "git_blob": "64714b64938c579a1b2690e3369313875e090b7d",
+    "qualname": "matmul",
+    "relative_path": "benchmark/matmul_fp8/benchmark_matmul.py",
+    "selected_source_sha256": "182c33dfd085eb5465f479a9243b28bdf1268bdb43e9ab78b0e930bbc096cb36",
+    "source_sha256": "e263cb7b7a9b2ce40e7ca2f723cf3d92ca53b6a858f24a37d1aa1f277d5e562d",
+    "start_line": 111
+  }
+}

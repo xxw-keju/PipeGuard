@@ -1,0 +1,69 @@
+{
+  "candidate_id": "18ab3368b8801355",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/amd/example_amd_flash_attn_bwd.py/L89-L242__fast_flashattn__18ab3368b8801355.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d2eff2e02528bd9040d5f46c3f89a76666ede994522ea56ea7ac381d852ea551",
+    "source_map": {
+      "end_line": 242,
+      "logical_path": "examples/amd/example_amd_flash_attn_bwd.py",
+      "start_line": 89
+    }
+  },
+  "decorators": [
+    "tilelang.autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "GemmWarpPolicy",
+    "IsRDNA",
+    "T",
+    "get_fwd_configs",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "c6022c563165b3e1"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/18ab3368b8801355/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "block_M",
+    "block_N",
+    "enable_rasterization",
+    "gpu_name",
+    "k",
+    "k_pack",
+    "m",
+    "n",
+    "num_split_q",
+    "num_stages",
+    "p",
+    "panel_size",
+    "qk_coalesced_width",
+    "qkw",
+    "r",
+    "s",
+    "stages",
+    "t",
+    "threads",
+    "v_coalesced_width",
+    "valid_configs",
+    "vw"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 242,
+    "git_blob": "0a9b7d26cb0722abb9ed8aec75b2cbbce2393218",
+    "qualname": "fast_flashattn",
+    "relative_path": "examples/amd/example_amd_flash_attn_bwd.py",
+    "selected_source_sha256": "cdbf885042fc13fdaa9757c4204895dea41cb0f203c0035bcea9cdd8efdb1f50",
+    "source_sha256": "752baca77dc50f3d37b21ea65a2e4b40469b10550c7a6babdd7ce03b73d4a0db",
+    "start_line": 89
+  }
+}

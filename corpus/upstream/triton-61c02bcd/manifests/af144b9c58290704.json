@@ -1,0 +1,40 @@
+{
+  "candidate_id": "af144b9c58290704",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/gsan/test_gsan.py/L705-L707__atomic_add_kernel__af144b9c58290704.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "422a7c86b44ead2d5b8f9de381d9bef20d4e46675aecb85e2b08f5abde3c72a3",
+    "source_map": {
+      "end_line": 707,
+      "logical_path": "python/test/gsan/test_gsan.py",
+      "start_line": 705
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/af144b9c58290704/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 707,
+    "git_blob": "164f012f84c28ddccfe1270af85ac9cd4f2c3361",
+    "qualname": "atomic_add_kernel",
+    "relative_path": "python/test/gsan/test_gsan.py",
+    "selected_source_sha256": "7dafc11172d8b7c8c8d5e34477a55a7622916cc8f8b36bc46b6d3a14626f169b",
+    "source_sha256": "5d823c2d9794a0e56ec4577b9617194a94e4fa08cf736036f0ca44416ed70811",
+    "start_line": 705
+  }
+}

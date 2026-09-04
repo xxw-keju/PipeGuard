@@ -1,0 +1,65 @@
+{
+  "candidate_id": "9db566997ff6350f",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/gemm/example_gemm_advanced_autotune.py/L183-L206__build_autotuner.kernel.main__9db566997ff6350f.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "551690b09d050f3ccdd91c6e45081c5a46a5095be8f66146d90a462ced410bd9",
+    "source_map": {
+      "end_line": 206,
+      "logical_path": "examples/gemm/example_gemm_advanced_autotune.py",
+      "start_line": 183
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "K",
+    "M",
+    "N",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "dtype",
+    "enable_rasteration",
+    "num_stages",
+    "thread_num"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_build_autotuner",
+    "kernel"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/9db566997ff6350f/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "dtype",
+    "enable_rasteration",
+    "num_stages",
+    "thread_num"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 206,
+    "git_blob": "2540514f2d22d1eb8db74696d3f6340dacccc0af",
+    "qualname": "_build_autotuner.kernel.main",
+    "relative_path": "examples/gemm/example_gemm_advanced_autotune.py",
+    "selected_source_sha256": "277f5944bd1a66d55114d4447a076049f688622d86745f3689011014a8fe1ddc",
+    "source_sha256": "d0389e90bd04b6154efc9e8161ca3d8e1d0f9143e1bd516b42758a42900bf4fe",
+    "start_line": 183
+  }
+}

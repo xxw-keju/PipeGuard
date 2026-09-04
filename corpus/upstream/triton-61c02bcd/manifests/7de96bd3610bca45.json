@@ -1,0 +1,40 @@
+{
+  "candidate_id": "7de96bd3610bca45",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/tutorials/06-fused-attention.py/L47-L110__attn_fwd_inner__7de96bd3610bca45.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "364193caaffd06ffb349f0f14e616b8408e00192e0896b9c03a4adccb977ec31",
+    "source_map": {
+      "end_line": 110,
+      "logical_path": "python/tutorials/06-fused-attention.py",
+      "start_line": 47
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/7de96bd3610bca45/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 110,
+    "git_blob": "18dd805ec789cdbd4630a88a715327b4625bddfa",
+    "qualname": "_attn_fwd_inner",
+    "relative_path": "python/tutorials/06-fused-attention.py",
+    "selected_source_sha256": "6c19e503f6485dc416cfea489f5828f41590e1915db35403b804a6fb6a2856b7",
+    "source_sha256": "b3e39b472b1ed0c2fe51b99f92eff1e44557ca7daded20bddb5c69d2e2c1c172",
+    "start_line": 47
+  }
+}

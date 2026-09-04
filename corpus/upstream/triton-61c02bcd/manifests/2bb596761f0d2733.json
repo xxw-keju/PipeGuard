@@ -1,0 +1,47 @@
+{
+  "candidate_id": "2bb596761f0d2733",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_core.py/L1236-L1243__test_precise_math.kernel__2bb596761f0d2733.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "074e584d2d4e90fab74a4e6530dd54d216456fa678e8a2a3dc904f313d56997b",
+    "source_map": {
+      "end_line": 1243,
+      "logical_path": "python/test/unit/language/test_core.py",
+      "start_line": 1236
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "PREC_CALC",
+    "REF_CALC",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_precise_math"
+  ],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/2bb596761f0d2733/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "PREC_CALC",
+    "REF_CALC"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 1243,
+    "git_blob": "37dbe1797a78cbd9838ebd53423b28fdb4b2bd8d",
+    "qualname": "test_precise_math.kernel",
+    "relative_path": "python/test/unit/language/test_core.py",
+    "selected_source_sha256": "08bf7e31fcd4da84c15768193382151fbf385c749736e19af952acac52c6bd7e",
+    "source_sha256": "760bdbf74c105f9568cee2fd4e61c02daa14aa94dc32b4de4d708c68052f0292",
+    "start_line": 1236
+  }
+}

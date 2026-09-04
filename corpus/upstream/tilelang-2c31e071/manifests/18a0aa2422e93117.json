@@ -1,0 +1,66 @@
+{
+  "candidate_id": "18a0aa2422e93117",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/benchmark/matmul/benchmark_matmul.py/L177-L228__matmul.main__18a0aa2422e93117.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "be741c0598a7ded702caf5f92863d90975fc176827b1609ff3ec2bd9e152afc6",
+    "source_map": {
+      "end_line": 228,
+      "logical_path": "benchmark/matmul/benchmark_matmul.py",
+      "start_line": 177
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "K",
+    "M",
+    "N",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "dtype",
+    "enable_rasteration",
+    "num_stages",
+    "policy",
+    "thread_num"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "matmul"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/18a0aa2422e93117/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "dtype",
+    "enable_rasteration",
+    "num_stages",
+    "policy",
+    "thread_num"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 228,
+    "git_blob": "8cc0fc2988023adc440217eb9866de1a0067d0d7",
+    "qualname": "matmul.main",
+    "relative_path": "benchmark/matmul/benchmark_matmul.py",
+    "selected_source_sha256": "f06cfe9ddebe70c46cebcc8dc1f3717c34e6cf6e6da69af76cc50fd7c726460f",
+    "source_sha256": "980bdf51db6d333cae3241ecb12dec24152b289702563eaf079eaf2da72f2531",
+    "start_line": 177
+  }
+}

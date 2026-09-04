@@ -1,0 +1,48 @@
+{
+  "candidate_id": "098cd041e4d15ac8",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/autotune/test_tilelang_autotune_scalar_inputs.py/L12-L19__add_scalar.kernel__098cd041e4d15ac8.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "943b88f7c1bbd892f0533840976bc7b770b21afc9644cfe67a20db548a2ccc96",
+    "source_map": {
+      "end_line": 19,
+      "logical_path": "testing/python/autotune/test_tilelang_autotune_scalar_inputs.py",
+      "start_line": 12
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "BLOCK_N",
+    "N",
+    "T",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "add_scalar"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/098cd041e4d15ac8/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "BLOCK_N",
+    "N",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 19,
+    "git_blob": "d266535c3ef871c07139107ad8f47ac8624658d3",
+    "qualname": "add_scalar.kernel",
+    "relative_path": "testing/python/autotune/test_tilelang_autotune_scalar_inputs.py",
+    "selected_source_sha256": "dc3c1948242a0d7fde9b262583120279cb0420409f4dff05a6af83206513b20a",
+    "source_sha256": "2d4017afb4441f5a80e7fc7c61f61252ef91b2adc6239936bb0a9fb6e29436f2",
+    "start_line": 12
+  }
+}

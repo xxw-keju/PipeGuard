@@ -1,0 +1,40 @@
+{
+  "candidate_id": "beb71f414dc65c23",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/tutorials/06-fused-attention.py/L168-L173__maybe_make_tensor_desc__beb71f414dc65c23.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "5f72ee4306f02c74f60f4ab434883849aa8937914e2cf2bd83431f41b3a83cc6",
+    "source_map": {
+      "end_line": 173,
+      "logical_path": "python/tutorials/06-fused-attention.py",
+      "start_line": 168
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/beb71f414dc65c23/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 173,
+    "git_blob": "18dd805ec789cdbd4630a88a715327b4625bddfa",
+    "qualname": "_maybe_make_tensor_desc",
+    "relative_path": "python/tutorials/06-fused-attention.py",
+    "selected_source_sha256": "cfc360f37b70c4e1cf4c3bba5a1475c3605df2481da256dbb9775f080fa71598",
+    "source_sha256": "b3e39b472b1ed0c2fe51b99f92eff1e44557ca7daded20bddb5c69d2e2c1c172",
+    "start_line": 168
+  }
+}

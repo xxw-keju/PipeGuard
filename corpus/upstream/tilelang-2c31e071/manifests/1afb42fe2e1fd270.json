@@ -1,0 +1,50 @@
+{
+  "candidate_id": "1afb42fe2e1fd270",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/dequantize_gemm/example_dequant_gemv_fp16xint4.py/L11-L155__dequantize_gemv__1afb42fe2e1fd270.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1caad4270ce32abc141429763a79f15c216761c8b9da6ab326d9b4a0ebaa11f1",
+    "source_map": {
+      "end_line": 155,
+      "logical_path": "examples/dequantize_gemm/example_dequant_gemv_fp16xint4.py",
+      "start_line": 11
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "Any",
+    "Callable",
+    "DataType",
+    "Optional",
+    "T",
+    "_tir_packed_int_to_int_convert",
+    "get_lop3_intrin_group",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "c34ee719ce21890c"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/1afb42fe2e1fd270/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "get_lop3_intrin_group"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 155,
+    "git_blob": "71c1b722c3b2f2418b5372f338be8bb528e2a115",
+    "qualname": "dequantize_gemv",
+    "relative_path": "examples/dequantize_gemm/example_dequant_gemv_fp16xint4.py",
+    "selected_source_sha256": "feed2b0f65cec6410a81a26bc92ec9b5d33e8a63427b7cf6543f4bee9fa02fcf",
+    "source_sha256": "14a57e7e53bce171e7ef1f736255d0608913e14f958922d60c904a299bd0e25e",
+    "start_line": 11
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "candidate_id": "6ae8d5c817a63922",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/deepseek_v32/inference/kernel.py/L33-L78__act_quant_kernel__6ae8d5c817a63922.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "926a93cb6c8885f4f261b91fcb8c161a015c96bf6cfe0aa9fb02eea1bb8b92c9",
+    "source_map": {
+      "end_line": 78,
+      "logical_path": "examples/deepseek_v32/inference/kernel.py",
+      "start_line": 33
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "BF16",
+    "FP32",
+    "FP8",
+    "T",
+    "fast_round_scale",
+    "pass_configs",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "976d9cee288c815f"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/6ae8d5c817a63922/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "amax",
+    "bits_x",
+    "exp_x",
+    "fp8_max_inv",
+    "man_bits",
+    "x"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 78,
+    "git_blob": "623da37c76bbeda949c673db825c59f2bab719ce",
+    "qualname": "act_quant_kernel",
+    "relative_path": "examples/deepseek_v32/inference/kernel.py",
+    "selected_source_sha256": "039a5aacc30be0afacdccf7b00a49322a041b81022c005cf0b86c8f2af08d5f4",
+    "source_sha256": "99b0dc3662b9da89918c1539e4f43f6ae6ddd8ebffdb46831a63cacacac7a009",
+    "start_line": 33
+  }
+}

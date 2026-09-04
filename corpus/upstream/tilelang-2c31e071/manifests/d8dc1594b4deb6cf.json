@@ -1,0 +1,76 @@
+{
+  "candidate_id": "d8dc1594b4deb6cf",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/jit/test_tilelang_jit_gemm_cython.py/L449-L473__matmul_float_variable.main__d8dc1594b4deb6cf.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "2f6cd1e58daff7e0dcba6a9c94150560f3d7c806e9eca51f96c4d76033095f58",
+    "source_map": {
+      "end_line": 473,
+      "logical_path": "testing/python/jit/test_tilelang_jit_gemm_cython.py",
+      "start_line": 449
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "M",
+    "N",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "in_dtype",
+    "num_stages",
+    "out_dtype",
+    "threads",
+    "trans_A",
+    "trans_B"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "matmul_float_variable"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/d8dc1594b4deb6cf/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "in_dtype",
+    "num_stages",
+    "out_dtype",
+    "threads",
+    "trans_A",
+    "trans_B"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 473,
+    "git_blob": "eb9d9c66cbd2de86779366ce5712de679f2f6f4f",
+    "qualname": "matmul_float_variable.main",
+    "relative_path": "testing/python/jit/test_tilelang_jit_gemm_cython.py",
+    "selected_source_sha256": "d11b0ff9134a427b58bf5102310c6cd83a228976a6eaf2c6035de14cdd7c4c77",
+    "source_sha256": "c6567eabe0b115492114dd74ba00cec099c63edd645363763478034be1f98159",
+    "start_line": 449
+  }
+}

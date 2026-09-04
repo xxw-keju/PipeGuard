@@ -1,0 +1,44 @@
+{
+  "bindings": {},
+  "candidate_id": "e2bf6ebf7bbe9806",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "BLOCK_SIZE": 128
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "BLOCK_SIZE": "constexpr",
+      "n_elements": "i32",
+      "output_ptr": "*fp32",
+      "x_ptr": "*fp32",
+      "y_ptr": "*fp32"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "python/tutorials/01-vector-add.py:29-75",
+  "recipe_id": "e2bf6ebf7bbe9806-sm90-block128",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

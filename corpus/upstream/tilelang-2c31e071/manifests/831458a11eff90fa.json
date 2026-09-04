@@ -1,0 +1,80 @@
+{
+  "candidate_id": "831458a11eff90fa",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/kda/chunk_intra_token_parallel.py/L84-L171__tilelang_chunk_kda_fwd_intra_token_parallel.kernel__831458a11eff90fa.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "a01fcb35331eec341c3b683225e15f462b9ff5e6dc25cf009d9e5e2786288773",
+    "source_map": {
+      "end_line": 171,
+      "logical_path": "examples/kda/chunk_intra_token_parallel.py",
+      "start_line": 84
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "Akk_shape",
+    "Aqk_shape",
+    "B",
+    "Beta_shape",
+    "CS",
+    "DK",
+    "GK_shape",
+    "H",
+    "K_shape",
+    "Q_shape",
+    "S",
+    "SCS",
+    "T",
+    "accum_dtype",
+    "block_H",
+    "gate_dtype",
+    "input_dtype",
+    "num_stages",
+    "output_dtype",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "tilelang_chunk_kda_fwd_intra_token_parallel"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/831458a11eff90fa/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "Akk_shape",
+    "Aqk_shape",
+    "B",
+    "Beta_shape",
+    "CS",
+    "DK",
+    "GK_shape",
+    "H",
+    "K_shape",
+    "Q_shape",
+    "S",
+    "SCS",
+    "accum_dtype",
+    "block_H",
+    "gate_dtype",
+    "input_dtype",
+    "num_stages",
+    "output_dtype",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 171,
+    "git_blob": "cc024e7a987f21316f235226262a7de2740aa163",
+    "qualname": "tilelang_chunk_kda_fwd_intra_token_parallel.kernel",
+    "relative_path": "examples/kda/chunk_intra_token_parallel.py",
+    "selected_source_sha256": "cffb752cd923f22d242c7b4c0e9358737a8f2975e37437b72b6f6d571d824d35",
+    "source_sha256": "9af3731bb3e5b3a053bfe772c0cf7800604e569e80a8604e94938cdb984fdb4a",
+    "start_line": 84
+  }
+}

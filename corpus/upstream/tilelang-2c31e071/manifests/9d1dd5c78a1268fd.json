@@ -1,0 +1,59 @@
+{
+  "candidate_id": "9d1dd5c78a1268fd",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/cpu/test_tilelang_cpu_gemm.py/L64-L94__test_matmul_compile.matmul_jit_test.matmul__9d1dd5c78a1268fd.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "716eea3d4b6b1f04df3c5f6272b97e06380d01cd943674f388b65bd69b40f8f5",
+    "source_map": {
+      "end_line": 94,
+      "logical_path": "testing/python/cpu/test_tilelang_cpu_gemm.py",
+      "start_line": 64
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "K",
+    "M",
+    "N",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "dtype"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_matmul_compile",
+    "matmul_jit_test"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/9d1dd5c78a1268fd/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "dtype"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 94,
+    "git_blob": "61e1c7430004b0eb785dee56515da8a21b37b92b",
+    "qualname": "test_matmul_compile.matmul_jit_test.matmul",
+    "relative_path": "testing/python/cpu/test_tilelang_cpu_gemm.py",
+    "selected_source_sha256": "22dfaac89e34f869496f3afeea84aae8b6d1523f46a9e77ae03e707c806912a4",
+    "source_sha256": "5b0e7d16f956086c6d7584e983c63d1e13dfb4783217cc4ca33702cd8aacd3c0",
+    "start_line": 64
+  }
+}

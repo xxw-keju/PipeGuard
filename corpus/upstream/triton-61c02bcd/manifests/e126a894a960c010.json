@@ -1,0 +1,40 @@
+{
+  "candidate_id": "e126a894a960c010",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_tensor_descriptor.py/L863-L919__batched_gemm_3d_tma_kernel__e126a894a960c010.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1090a3409e35d690af6385a741bce5e912bf098adbb924dd47cc624774acc772",
+    "source_map": {
+      "end_line": 919,
+      "logical_path": "python/test/unit/language/test_tensor_descriptor.py",
+      "start_line": 863
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/e126a894a960c010/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 919,
+    "git_blob": "b78ce5331d0fae80d64f1f7c91a0e49ff5b04ad2",
+    "qualname": "batched_gemm_3d_tma_kernel",
+    "relative_path": "python/test/unit/language/test_tensor_descriptor.py",
+    "selected_source_sha256": "a2ac11fdf14e36867881887d02df3ca02cc7d179e82fc2dbc52d63a02ea7b48d",
+    "source_sha256": "98491f0f8bbfe515dc31f2f70cf19db01ea15612d199e272fc2e6560bbf206ba",
+    "start_line": 863
+  }
+}

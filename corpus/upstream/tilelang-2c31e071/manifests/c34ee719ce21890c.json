@@ -1,0 +1,91 @@
+{
+  "candidate_id": "c34ee719ce21890c",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/dequantize_gemm/example_dequant_gemv_fp16xint4.py/L77-L153__dequantize_gemv.main__c34ee719ce21890c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "239cbf731e4b871995bc3fd71ec3ed102e184ed4b6c124ae835ae50f69e3071a",
+    "source_map": {
+      "end_line": 153,
+      "logical_path": "examples/dequantize_gemm/example_dequant_gemv_fp16xint4.py",
+      "start_line": 77
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "B_shape",
+    "C_shape",
+    "K",
+    "M",
+    "N",
+    "T",
+    "_tir_packed_int_to_int_convert",
+    "accum_dtype",
+    "block_K",
+    "dp4a_size",
+    "fast_decoding",
+    "func_name",
+    "import_source",
+    "in_dtype",
+    "micro_size_k",
+    "micro_size_k_compressed",
+    "n_partition",
+    "num_bits",
+    "num_elems_per_byte",
+    "out_dtype",
+    "reduce_thread",
+    "storage_dtype",
+    "storage_nbit",
+    "storage_type",
+    "use_dp4a"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "dequantize_gemv"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/c34ee719ce21890c/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "B_shape",
+    "C_shape",
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "dp4a_size",
+    "fast_decoding",
+    "func_name",
+    "import_source",
+    "in_dtype",
+    "micro_size_k",
+    "micro_size_k_compressed",
+    "n_partition",
+    "num_bits",
+    "num_elems_per_byte",
+    "out_dtype",
+    "reduce_thread",
+    "storage_dtype",
+    "storage_nbit",
+    "storage_type",
+    "use_dp4a"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 153,
+    "git_blob": "71c1b722c3b2f2418b5372f338be8bb528e2a115",
+    "qualname": "dequantize_gemv.main",
+    "relative_path": "examples/dequantize_gemm/example_dequant_gemv_fp16xint4.py",
+    "selected_source_sha256": "5018fef6ba61f9a210a54c1e0139b6e0e531efc3ade32eb41e689d9de1a97d48",
+    "source_sha256": "14a57e7e53bce171e7ef1f736255d0608913e14f958922d60c904a299bd0e25e",
+    "start_line": 77
+  }
+}

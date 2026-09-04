@@ -1,0 +1,56 @@
+{
+  "candidate_id": "ccd210c32fa741af",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/transform/test_tilelang_transform_decouple_type_cast.py/L622-L650__test_codegen_pipelined_int64_index_cp_async_operands.kernel_fn__ccd210c32fa741af.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "dacb3073899dcae61f6d0ceeb902d40e9f58e621586c3d8a27447e416e2f7a07",
+    "source_map": {
+      "end_line": 650,
+      "logical_path": "testing/python/transform/test_tilelang_transform_decouple_type_cast.py",
+      "start_line": 622
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "block_size",
+    "head_dim",
+    "num_stages",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "52a1dddb924efbb2",
+    "54dc1c37e67670a3",
+    "8b3b264049baaaa8",
+    "96d3b0428f031e4f",
+    "ae5a02be7366213e",
+    "eb376e0523577e5c"
+  ],
+  "lexical_parents": [
+    "test_codegen_pipelined_int64_index_cp_async_operands"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/ccd210c32fa741af/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "block_size",
+    "head_dim",
+    "num_stages"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 650,
+    "git_blob": "9dd7359d93d588e83d135ad7051a7925b1b5918f",
+    "qualname": "test_codegen_pipelined_int64_index_cp_async_operands.kernel_fn",
+    "relative_path": "testing/python/transform/test_tilelang_transform_decouple_type_cast.py",
+    "selected_source_sha256": "f547d1504a17166c46d0ab17f7e927b28f26fa223bcbf8b982513567c18a0385",
+    "source_sha256": "4bb5c12ef9a6b94a825f4c143642e1e8c295220bd50e5bb624931ab8dacd66ee",
+    "start_line": 622
+  }
+}

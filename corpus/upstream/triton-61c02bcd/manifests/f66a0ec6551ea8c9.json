@@ -1,0 +1,40 @@
+{
+  "candidate_id": "f66a0ec6551ea8c9",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_matmul.py/L531-L657__gemm_kernel_preshuffled_scales_cdna4__f66a0ec6551ea8c9.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "546e49a6175caeeaf83c8540330d28b15547c0d0d10d509f02f2bf10af13e0eb",
+    "source_map": {
+      "end_line": 657,
+      "logical_path": "python/test/unit/language/test_matmul.py",
+      "start_line": 531
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/f66a0ec6551ea8c9/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 657,
+    "git_blob": "ea8137093594daced9db17074ef9fb44da5dd7cd",
+    "qualname": "_gemm_kernel_preshuffled_scales_cdna4",
+    "relative_path": "python/test/unit/language/test_matmul.py",
+    "selected_source_sha256": "02252e58457411970cc22f1f216b5a072bc5b8e55bec12e2be12bdcf1b0ba112",
+    "source_sha256": "19e92611321fe5ccd1ce7ff519d6d31fde0dfda54e32c698ab295abe457ab9c1",
+    "start_line": 531
+  }
+}

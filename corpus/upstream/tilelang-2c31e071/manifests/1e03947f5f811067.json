@@ -1,0 +1,62 @@
+{
+  "candidate_id": "1e03947f5f811067",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/deepseek_v32/inference/kernel.py/L117-L160__fp8_gemm_kernel.fp8_gemm_kernel__1e03947f5f811067.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "667bd6f108fc00adbcd763b89deae8a2e550817e91e90c3b5cfa1c7dbe204804",
+    "source_map": {
+      "end_line": 160,
+      "logical_path": "examples/deepseek_v32/inference/kernel.py",
+      "start_line": 117
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "FP32",
+    "FP8",
+    "K",
+    "M",
+    "N",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "group_size",
+    "out_dtype"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "fp8_gemm_kernel"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/1e03947f5f811067/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "group_size",
+    "out_dtype"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 160,
+    "git_blob": "623da37c76bbeda949c673db825c59f2bab719ce",
+    "qualname": "fp8_gemm_kernel.fp8_gemm_kernel_",
+    "relative_path": "examples/deepseek_v32/inference/kernel.py",
+    "selected_source_sha256": "dfc76ef7564113c5d0dd59f6718b0d445e0b3f6ba20471c4d47bf9771bee6472",
+    "source_sha256": "99b0dc3662b9da89918c1539e4f43f6ae6ddd8ebffdb46831a63cacacac7a009",
+    "start_line": 117
+  }
+}

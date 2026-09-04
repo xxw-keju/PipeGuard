@@ -1,0 +1,54 @@
+{
+  "candidate_id": "c2de9ae07c3928d0",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/norm/layernorm.py/L66-L128__layernorm_bwd.main__c2de9ae07c3928d0.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "a80b82ebd8b0f0ee2a3a95ac16f196a7c96bfa2fbb788cb27ef15fbca17e1a02",
+    "source_map": {
+      "end_line": 128,
+      "logical_path": "examples/norm/layernorm.py",
+      "start_line": 66
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "D",
+    "N",
+    "T",
+    "accum_dtype",
+    "blk_m",
+    "in_dtype",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_layernorm_bwd"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/c2de9ae07c3928d0/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "D",
+    "N",
+    "accum_dtype",
+    "blk_m",
+    "in_dtype",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 128,
+    "git_blob": "76763733bbdcb38ae341a6ac64c750a4d2b6b4c0",
+    "qualname": "_layernorm_bwd.main",
+    "relative_path": "examples/norm/layernorm.py",
+    "selected_source_sha256": "2d9f78f5d2f40086721c78d932ceb8c83d604818945e5eb11b7e5092b4f28fe1",
+    "source_sha256": "ef304cb4910312ef99f9878138239580404537ca2bfdec45be20e7f542c49a38",
+    "start_line": 66
+  }
+}

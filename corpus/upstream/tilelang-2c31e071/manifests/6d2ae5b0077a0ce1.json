@@ -1,0 +1,79 @@
+{
+  "candidate_id": "6d2ae5b0077a0ce1",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/dequantize_gemm/example_dequant_gemm_fp4_hopper.py/L52-L72__test_convert.main__6d2ae5b0077a0ce1.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e0eff373e98f603df9df4f1cc89b76d5db1948474409ec582be6f5d919120ced",
+    "source_map": {
+      "end_line": 72,
+      "logical_path": "examples/dequantize_gemm/example_dequant_gemm_fp4_hopper.py",
+      "start_line": 52
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "B_dequantize_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "N",
+    "T",
+    "_tir_u8_to_f4_to_f16",
+    "block_K",
+    "block_N",
+    "in_dtype",
+    "num_bits",
+    "num_elems_per_byte",
+    "storage_dtype",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_convert"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/6d2ae5b0077a0ce1/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "B_dequantize_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "N",
+    "block_K",
+    "block_N",
+    "dtype",
+    "e_f16",
+    "e_f4",
+    "f4",
+    "in_dtype",
+    "m_f16",
+    "m_f4",
+    "mask",
+    "nbit",
+    "num_bits",
+    "num_elems_per_byte",
+    "pos",
+    "s",
+    "storage_dtype",
+    "threads",
+    "val",
+    "val_f16"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 72,
+    "git_blob": "a175b889c9a832eddc2adb6cc5bcd38ec6b8bd48",
+    "qualname": "test_convert.main",
+    "relative_path": "examples/dequantize_gemm/example_dequant_gemm_fp4_hopper.py",
+    "selected_source_sha256": "87a31a0a6e560c66ca9a5d654efb5fb7c1a6ca6dff4f089a1d3864a0edfe2321",
+    "source_sha256": "f84adf8935ecf7838495cb9c39d1e881726c34309482960868330c51f9d4d1f7",
+    "start_line": 52
+  }
+}

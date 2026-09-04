@@ -1,0 +1,83 @@
+{
+  "candidate_id": "706abd7df08398f4",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/attention_sink/example_gqa_sink_bwd_varlen.py/L329-L458__flashattn_bwd.flash_bwd__706abd7df08398f4.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "87ff4cd03b407088a6f402401ab882c9ce31c747f4dd461fc9e22a0709327fef",
+    "source_map": {
+      "end_line": 458,
+      "logical_path": "examples/attention_sink/example_gqa_sink_bwd_varlen.py",
+      "start_line": 329
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "N_CTX",
+    "T",
+    "accum_dtype",
+    "batch_size",
+    "block_M",
+    "block_N",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "is_causal",
+    "kv_shape",
+    "make_dq_layout",
+    "max_seq_len",
+    "num_stages",
+    "q_shape",
+    "scale",
+    "sm_scale",
+    "threads",
+    "window_size"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "flashattn_bwd"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/706abd7df08398f4/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "N_CTX",
+    "accum_dtype",
+    "batch_size",
+    "block_M",
+    "block_N",
+    "d",
+    "dQ",
+    "dim",
+    "dtype",
+    "groups",
+    "h",
+    "heads",
+    "is_causal",
+    "kv_shape",
+    "l",
+    "max_seq_len",
+    "num_stages",
+    "q_shape",
+    "scale",
+    "sm_scale",
+    "threads",
+    "window_size"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 458,
+    "git_blob": "64a5a39a86fce1bfe1842670f546ca7bbafa98d1",
+    "qualname": "flashattn_bwd.flash_bwd",
+    "relative_path": "examples/attention_sink/example_gqa_sink_bwd_varlen.py",
+    "selected_source_sha256": "400625bc41d57abb828aa13355f52c3e6e1a00541e5e06b8a4c866d47944747f",
+    "source_sha256": "c53c79511302edc790fc0d4d9d633baa32ef67e6f51296cc2c7dd15853c337e7",
+    "start_line": 329
+  }
+}

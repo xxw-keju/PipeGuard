@@ -1,0 +1,49 @@
+{
+  "candidate_id": "6e44733bd06b5d9e",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/benchmark/mamba2/benchmark_mamba_chunk_scan.py/L183-L340__chunk_scan_fwd__6e44733bd06b5d9e.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "64af72e54496f1e47b4de3ba60430aa613327d02459f6a7b75158cb11d7ac05e",
+    "source_map": {
+      "end_line": 340,
+      "logical_path": "benchmark/mamba2/benchmark_mamba_chunk_scan.py",
+      "start_line": 183
+    }
+  },
+  "decorators": [
+    "autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "autotune",
+    "get_configs",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "b7c24009564a85ca"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/6e44733bd06b5d9e/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "autotune",
+    "iter_params",
+    "values"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 340,
+    "git_blob": "55f802b4f6a7e34fb17f3e3be3860fc88ca2ce65",
+    "qualname": "chunk_scan_fwd",
+    "relative_path": "benchmark/mamba2/benchmark_mamba_chunk_scan.py",
+    "selected_source_sha256": "3d9f1fea700125733476a0b156300cd7a2d8e52e4f19ae1e0765cf68e2451ae6",
+    "source_sha256": "d8afc52ee311e9f93060af22eb01916ed1d8bc91b2779cf6f544bf276667e0cf",
+    "start_line": 183
+  }
+}

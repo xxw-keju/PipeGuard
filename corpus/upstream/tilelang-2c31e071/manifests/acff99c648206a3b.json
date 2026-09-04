@@ -1,0 +1,82 @@
+{
+  "candidate_id": "acff99c648206a3b",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/jit/test_tilelang_jit_nvrtc.py/L350-L372__convolution_im2col.main__acff99c648206a3b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "53f7d20c1e5de52ac0b00909ce1ebcbf08e56d6eccecab8ba9337427bb361a2b",
+    "source_map": {
+      "end_line": 372,
+      "logical_path": "testing/python/jit/test_tilelang_jit_nvrtc.py",
+      "start_line": 350
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "C",
+    "D",
+    "F",
+    "H",
+    "KH",
+    "KW",
+    "N",
+    "OH",
+    "OW",
+    "P",
+    "S",
+    "T",
+    "W",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "dtype",
+    "num_stages",
+    "threads"
+  ],
+  "kernel_dependencies": [
+    "d03512c8e4ffd071"
+  ],
+  "lexical_parents": [
+    "convolution_im2col"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/acff99c648206a3b/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "C",
+    "D",
+    "F",
+    "H",
+    "KH",
+    "KW",
+    "N",
+    "OH",
+    "OW",
+    "P",
+    "S",
+    "W",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "dtype",
+    "num_stages",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 372,
+    "git_blob": "d7b4c4fd547e385bb0fd5e87942687798c9d5142",
+    "qualname": "convolution_im2col.main",
+    "relative_path": "testing/python/jit/test_tilelang_jit_nvrtc.py",
+    "selected_source_sha256": "dfab16dfa0bf40be8404da1c9c117f09ab8c7b167fe69e88c9306a88a9edf96f",
+    "source_sha256": "ef098f7ce3dd6282f702fc6d9e454edd6d7adde4b4ec6a193deeb2bd5b71ee1b",
+    "start_line": 350
+  }
+}

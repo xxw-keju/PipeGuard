@@ -1,0 +1,31 @@
+{
+  "schema_version": "pipeguard-upstream-sources-v1",
+  "target_profile": {
+    "architecture": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "tilelang": {
+    "backend_commit": "907a88c8791ccf33b9874821bc875e7abf624367",
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "environment": "tl-pg",
+    "include_prefixes": [
+      "examples/",
+      "testing/",
+      "benchmark/",
+      "docs/tutorials/"
+    ],
+    "snapshot_version": "tilelang-snapshot-v2"
+  },
+  "triton": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "environment": "triton-pg",
+    "include_prefixes": [
+      "python/examples/",
+      "python/test/",
+      "python/tutorials/",
+      "python/triton_kernels/tests/"
+    ],
+    "snapshot_version": "triton-snapshot-v2"
+  }
+}

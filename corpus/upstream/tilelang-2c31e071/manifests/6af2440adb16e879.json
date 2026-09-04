@@ -1,0 +1,94 @@
+{
+  "candidate_id": "6af2440adb16e879",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/gdn/example_wy_fast_bwd_split.py/L135-L245__tilelang_wy_fast_bwd.kernel__6af2440adb16e879.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f8b42d299d0793800d3722683da4f1aa2dba9e4fd2733c3c87473e9b6ccff500",
+    "source_map": {
+      "end_line": 245,
+      "logical_path": "examples/gdn/example_wy_fast_bwd_split.py",
+      "start_line": 135
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "B",
+    "Beta_shape",
+    "DK",
+    "DV",
+    "G_shape",
+    "H",
+    "K_shape",
+    "S",
+    "T",
+    "V_shape",
+    "accum_dtype",
+    "block_DK",
+    "block_DV",
+    "block_S",
+    "dA_shape",
+    "dbeta_shape",
+    "dg_shape",
+    "dk_shape",
+    "du_shape",
+    "dv_shape",
+    "dw_shape",
+    "gate_dtype",
+    "input_dtype",
+    "num_stages",
+    "output_dtype",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "tilelang_wy_fast_bwd"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/6af2440adb16e879/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "B",
+    "Beta_shape",
+    "DK",
+    "DV",
+    "G_shape",
+    "H",
+    "K_shape",
+    "S",
+    "V_shape",
+    "accum_dtype",
+    "block_DK",
+    "block_DV",
+    "block_S",
+    "dA_shape",
+    "dbeta_shape",
+    "dg_shape",
+    "dk_shape",
+    "du_shape",
+    "dv_shape",
+    "dw_shape",
+    "gate_dtype",
+    "input_dtype",
+    "num_stages",
+    "output_dtype",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 245,
+    "git_blob": "57110100254903379cb723642c4900aec3960377",
+    "qualname": "tilelang_wy_fast_bwd.kernel",
+    "relative_path": "examples/gdn/example_wy_fast_bwd_split.py",
+    "selected_source_sha256": "c478c496718c97ded51af2b9f953f879877be983241dc074618a1bb26c3b1e59",
+    "source_sha256": "c0184e8891e3b15dd33a06e9048d003f0512745abb5494f9ef1ae6339141003b",
+    "start_line": 135
+  }
+}

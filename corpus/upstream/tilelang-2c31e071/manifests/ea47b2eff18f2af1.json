@@ -1,0 +1,102 @@
+{
+  "candidate_id": "ea47b2eff18f2af1",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/dequantize_gemm/example_dequant_gemm_fine_grained.py/L238-L352__tl_matmul_with_ladder_weight_only_transform_block_reduce_int4.main__ea47b2eff18f2af1.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "20ba90f37c5c1ac04f05a3f9799283686b1282e8ad344942297c85ecfce9d8eb",
+    "source_map": {
+      "end_line": 352,
+      "logical_path": "examples/dequantize_gemm/example_dequant_gemm_fine_grained.py",
+      "start_line": 238
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "C_shared_shape",
+    "K",
+    "M",
+    "N",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "decode_i4_to_f16",
+    "in_dtype",
+    "local_size",
+    "make_swizzle_layout",
+    "micro_size_k",
+    "micro_size_x",
+    "micro_size_y",
+    "mma_emitter",
+    "num_elems_per_byte",
+    "out_dtype",
+    "reduce_k",
+    "shared_scope",
+    "stage",
+    "storage_dtype",
+    "threads",
+    "vec_load_qb",
+    "warp_cols",
+    "warp_rows"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "tl_matmul_with_ladder_weight_only_transform_block_reduce_int4"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/ea47b2eff18f2af1/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "C_shared_shape",
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "decode_i4_to_f16",
+    "in_dtype",
+    "local_size",
+    "make_swizzle_layout",
+    "micro_size_k",
+    "micro_size_x",
+    "micro_size_y",
+    "mma_emitter",
+    "num_elems_per_byte",
+    "out_dtype",
+    "reduce_k",
+    "shared_scope",
+    "stage",
+    "storage_dtype",
+    "threads",
+    "vec_load_qb",
+    "warp_cols",
+    "warp_rows"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 352,
+    "git_blob": "b635a30e14c5b37ab0f32c4be48f4a8530d4888b",
+    "qualname": "tl_matmul_with_ladder_weight_only_transform_block_reduce_int4.main",
+    "relative_path": "examples/dequantize_gemm/example_dequant_gemm_fine_grained.py",
+    "selected_source_sha256": "8712286bf1493b7728fbd3dbeb01ee8edb973f988a6679d0e264ada5c406d58e",
+    "source_sha256": "89e702e91a339f5af7e5518c4eef257b48011633c5d25d5f40c5293e68b29b21",
+    "start_line": 238
+  }
+}

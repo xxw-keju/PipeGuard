@@ -1,0 +1,42 @@
+{
+  "candidate_id": "d19f111e433137b9",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/gluon/test_fpsan.py/L3212-L3217__test_reduction_matches_loop.loop_sum_kernel__d19f111e433137b9.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "8e600eda6eb427ce461e522239ba59db5ae0a46d622386d5ca977272ed96152e",
+    "source_map": {
+      "end_line": 3217,
+      "logical_path": "python/test/gluon/test_fpsan.py",
+      "start_line": 3212
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_reduction_matches_loop"
+  ],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/d19f111e433137b9/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 3217,
+    "git_blob": "5172f487b2eb270764352d1eeb8f26885c12937d",
+    "qualname": "test_reduction_matches_loop.loop_sum_kernel",
+    "relative_path": "python/test/gluon/test_fpsan.py",
+    "selected_source_sha256": "245688f535100fa5f0d84e010d298a9d49791d167651b53e92603e224477664a",
+    "source_sha256": "59be2109209cb533e029c275cc65fd4164398b43de3928ca80057afe3932d93c",
+    "start_line": 3212
+  }
+}

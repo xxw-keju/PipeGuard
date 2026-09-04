@@ -1,0 +1,68 @@
+{
+  "candidate_id": "9d8e6e90c39b89ab",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/gemm_sp/example_gemm_sp.py/L16-L40__matmul_sp_fp16.gemm_sp_fp16__9d8e6e90c39b89ab.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f27b0af9284c8f8d18ed943f33f172237e32f7403209192c56c9917ab24dd221",
+    "source_map": {
+      "end_line": 40,
+      "logical_path": "examples/gemm_sp/example_gemm_sp.py",
+      "start_line": 16
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "K",
+    "M",
+    "N",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "e_dtype",
+    "e_factor",
+    "enable_rasterization",
+    "num_stages",
+    "policy",
+    "thread_num"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "matmul_sp_fp16"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/9d8e6e90c39b89ab/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "e_dtype",
+    "e_factor",
+    "enable_rasterization",
+    "num_stages",
+    "policy",
+    "thread_num"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 40,
+    "git_blob": "404414b59e4b89af14328c661576dbe0a85e4b04",
+    "qualname": "matmul_sp_fp16.gemm_sp_fp16",
+    "relative_path": "examples/gemm_sp/example_gemm_sp.py",
+    "selected_source_sha256": "b608bb2d3d89538db0f33f7c247b512cd53e222172ba740e60c6a2c471a491e9",
+    "source_sha256": "1f3d75f6b53d03505a58dd27ef210a8c05c3f6d2ba26028b762e7674d8a9b72d",
+    "start_line": 16
+  }
+}

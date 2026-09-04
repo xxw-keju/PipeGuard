@@ -1,0 +1,45 @@
+{
+  "candidate_id": "e07009054a4d1840",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/runtime/test_cache_determinism.py/L25-L28__identity_parent__e07009054a4d1840.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "8a225f51cd15678e5b873417929bd37f20f2ef8c08daae341db87dd6418faf53",
+    "source_map": {
+      "end_line": 28,
+      "logical_path": "python/test/unit/runtime/test_cache_determinism.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "identity_child_a",
+    "identity_child_b",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/e07009054a4d1840/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "child",
+    "shared",
+    "value"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 28,
+    "git_blob": "608da60627a1091edc7a8406877cdcd75498cc02",
+    "qualname": "identity_parent",
+    "relative_path": "python/test/unit/runtime/test_cache_determinism.py",
+    "selected_source_sha256": "ccf7c8617c4d8bcc2dd094b0be8739949103a7636754243cba38ee4250ed7159",
+    "source_sha256": "565feeddd93da96a10907f38bc1d8b310f9d99e3e31f3f4b748708b74384597e",
+    "start_line": 25
+  }
+}

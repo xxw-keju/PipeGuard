@@ -1,0 +1,53 @@
+{
+  "candidate_id": "d03512c8e4ffd071",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/jit/test_tilelang_jit_nvrtc.py/L429-L445__test_nvrtc_l2_persistent_map.elementwise_add_with_l2_cache.kernel__d03512c8e4ffd071.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1d4709a81facf2ed89eda8768ee8fbe15e1444758c86d639afbe08fb6d0261f4",
+    "source_map": {
+      "end_line": 445,
+      "logical_path": "testing/python/jit/test_tilelang_jit_nvrtc.py",
+      "start_line": 429
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "T",
+    "annotate_l2_hit_ratio",
+    "block_size",
+    "dtype"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_nvrtc_l2_persistent_map",
+    "elementwise_add_with_l2_cache"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/d03512c8e4ffd071/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "annotate_l2_hit_ratio",
+    "block_size",
+    "dtype"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 445,
+    "git_blob": "d7b4c4fd547e385bb0fd5e87942687798c9d5142",
+    "qualname": "test_nvrtc_l2_persistent_map.elementwise_add_with_l2_cache.kernel",
+    "relative_path": "testing/python/jit/test_tilelang_jit_nvrtc.py",
+    "selected_source_sha256": "3180ebae50e3871e23b869fb04186b790d63c89d4bcbe403f8aa4885becbaee7",
+    "source_sha256": "ef098f7ce3dd6282f702fc6d9e454edd6d7adde4b4ec6a193deeb2bd5b71ee1b",
+    "start_line": 429
+  }
+}

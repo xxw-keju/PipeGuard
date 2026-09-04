@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pipeguard.dev/schemas/upstream-source-index-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "tool_version", "dsl", "upstream", "include_prefixes", "counts", "candidates"],
+  "properties": {
+    "schema_version": {"const": "pipeguard-upstream-source-index-v1"},
+    "tool_version": {"const": "pipeguard-upstream-tools-v1"},
+    "dsl": {"enum": ["tilelang", "triton"]},
+    "upstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expected_commit", "actual_commit", "backend_commit"],
+      "properties": {
+        "expected_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "actual_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "backend_commit": {"type": ["string", "null"], "pattern": "^[0-9a-f]{40}$"}
+      }
+    },
+    "include_prefixes": {"type": "array", "items": {"type": "string"}},
+    "counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["candidate_id", "relative_path", "qualname", "start_line", "end_line", "kind", "role", "capsule_path", "manifest_path", "recipe_paths", "lowerable_recipes"],
+        "properties": {
+          "candidate_id": {"type": "string", "pattern": "^[0-9a-f]{16}$"},
+          "relative_path": {"type": "string"},
+          "qualname": {"type": "string"},
+          "start_line": {"type": "integer", "minimum": 1},
+          "end_line": {"type": "integer", "minimum": 1},
+          "kind": {"type": "string"},
+          "role": {"enum": ["ROOT", "HELPER", "ROOT_HELPER", "UNCLASSIFIED"]},
+          "capsule_path": {"type": "string"},
+          "manifest_path": {"type": "string"},
+          "recipe_paths": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "lowerable_recipes": {"type": "integer", "minimum": 0}
+        }
+      }
+    }
+  }
+}

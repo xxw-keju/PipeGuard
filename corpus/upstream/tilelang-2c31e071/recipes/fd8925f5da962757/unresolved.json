@@ -1,0 +1,20 @@
+{
+  "bindings": {},
+  "candidate_id": "fd8925f5da962757",
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "fd8925f5da962757-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "concrete_specialization",
+    "num_threads",
+    "warp_size",
+    "warps_per_group"
+  ]
+}

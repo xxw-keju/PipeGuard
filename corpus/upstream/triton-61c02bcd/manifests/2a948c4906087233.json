@@ -1,0 +1,41 @@
+{
+  "candidate_id": "2a948c4906087233",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/cuda/test_libdevice_cuda.py/L18-L37__tanh_kernel__2a948c4906087233.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "df0ab49b33b0c47deed6474771bec06a591ff38f6f3f8c08b76d2fce1d42b703",
+    "source_map": {
+      "end_line": 37,
+      "logical_path": "python/test/unit/cuda/test_libdevice_cuda.py",
+      "start_line": 18
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libdevice",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/2a948c4906087233/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 37,
+    "git_blob": "eb7a5d12a4fa8556de142fc114702ce01bc3c7f7",
+    "qualname": "tanh_kernel",
+    "relative_path": "python/test/unit/cuda/test_libdevice_cuda.py",
+    "selected_source_sha256": "baafd582d9297009de28f056bc7cdaa725e3b3421e2dcfc688685af048844fc2",
+    "source_sha256": "cdcea2665dc812ea8e4cbc311f2e96b6f936372c810c9f5c45a32fd29ed7be72",
+    "start_line": 18
+  }
+}

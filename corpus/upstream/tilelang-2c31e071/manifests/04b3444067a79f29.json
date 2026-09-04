@@ -1,0 +1,81 @@
+{
+  "candidate_id": "04b3444067a79f29",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/block_causal_attention/block_causal_attention.py/L204-L263__bwd_dq_template.dq_kernel__04b3444067a79f29.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "9f82385f833395a7c2dcf17975e1139c3441dc33013c50d7b7bb35cb0a918b95",
+    "source_map": {
+      "end_line": 263,
+      "logical_path": "examples/block_causal_attention/block_causal_attention.py",
+      "start_line": 204
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_fwd_tile_allowed",
+    "accum_dtype",
+    "batch",
+    "block_size",
+    "dim",
+    "dllm_block",
+    "dtype",
+    "half_len",
+    "heads",
+    "num_stages",
+    "region_tiles",
+    "scale_log2e",
+    "seq_len",
+    "shape",
+    "sm_scale",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_bwd_dq_template"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/04b3444067a79f29/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_size",
+    "clean_boundary",
+    "dim",
+    "dllm_block",
+    "dtype",
+    "half_len",
+    "heads",
+    "i",
+    "is_noisy_diag",
+    "j",
+    "k_blk",
+    "noisy_allowed",
+    "num_stages",
+    "q_blk",
+    "q_is_noisy",
+    "region_tiles",
+    "scale_log2e",
+    "seq_len",
+    "shape",
+    "sm_scale",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 263,
+    "git_blob": "73eb50b801200072284fb04e11ca70150d4ccc3b",
+    "qualname": "_bwd_dq_template.dq_kernel",
+    "relative_path": "examples/block_causal_attention/block_causal_attention.py",
+    "selected_source_sha256": "8fc88ef0a087570c15f5b27fd2af733374ace6ca12124dde9e214c6d809bfd05",
+    "source_sha256": "e139b9ef6bdc582db6c977d3189031849720ddaf8ae761a2b17ee71659809084",
+    "start_line": 204
+  }
+}

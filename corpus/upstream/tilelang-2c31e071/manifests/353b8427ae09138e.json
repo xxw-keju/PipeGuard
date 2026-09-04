@@ -1,0 +1,51 @@
+{
+  "candidate_id": "353b8427ae09138e",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/blocksparse_gemm/example_blocksparse_gemm.py/L57-L90__blocksparse_matmul__353b8427ae09138e.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "28479da4379993d4d58528d7d754c29c590388a6cd7ae05a51894991bb441065",
+    "source_map": {
+      "end_line": 90,
+      "logical_path": "examples/blocksparse_gemm/example_blocksparse_gemm.py",
+      "start_line": 57
+    }
+  },
+  "decorators": [
+    "tilelang.autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "get_configs",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/353b8427ae09138e/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_configs",
+    "block_K",
+    "block_M",
+    "block_N",
+    "c",
+    "enable_rasterization",
+    "num_stages",
+    "thread_num"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 90,
+    "git_blob": "b4edd6b70c891c8123294a7db2a2fe653eb44d4d",
+    "qualname": "blocksparse_matmul",
+    "relative_path": "examples/blocksparse_gemm/example_blocksparse_gemm.py",
+    "selected_source_sha256": "3309b447a62cc196888e85bbc7d8904bc4571044e5bcc0d62ba33651bedb92d6",
+    "source_sha256": "96cc9d33c359490e0966a7a21f9ba7a27368dd678535daa86479a0e26ef07a5e",
+    "start_line": 57
+  }
+}

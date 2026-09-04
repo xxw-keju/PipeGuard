@@ -1,0 +1,40 @@
+{
+  "candidate_id": "11b15d1ec8b0414b",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/examples/gluon/02-conv-wgrad.py/L796-L822__reduce_split_k_partials_kernel__11b15d1ec8b0414b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "301e7e5759e31f78b907ce180a037aac9b53e25932ad1f14de24048272bd9552",
+    "source_map": {
+      "end_line": 822,
+      "logical_path": "python/examples/gluon/02-conv-wgrad.py",
+      "start_line": 796
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/11b15d1ec8b0414b/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 822,
+    "git_blob": "db821624c73aca4b0586e2dc31ea25090e4712b2",
+    "qualname": "reduce_split_k_partials_kernel",
+    "relative_path": "python/examples/gluon/02-conv-wgrad.py",
+    "selected_source_sha256": "b4ec8ecdd55abf420744e4cee86a8bd655c32a102ad6410605e4233d6e430522",
+    "source_sha256": "9191e3bfcffdef0fd2e6e6700d82a296a7da8d1ab74a1fd66212580d621c805e",
+    "start_line": 796
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "candidate_id": "9c34047000e3ccde",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/dsa_sparse_finetune/indexer_topk_reducesum.py/L73-L186__tl_indexer_topk_reducesum_impl.tl_indexer_topk_reducesum_kernel__9c34047000e3ccde.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "a186100b50028f65aed03e1b07535573395475a31e92ac25a17b58ddda3ae877",
+    "source_map": {
+      "end_line": 186,
+      "logical_path": "examples/dsa_sparse_finetune/indexer_topk_reducesum.py",
+      "start_line": 73
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "FP32",
+    "INT32",
+    "N",
+    "T",
+    "bitonic_sort",
+    "block_K",
+    "dim",
+    "dtype",
+    "heads",
+    "index_k_shape",
+    "index_q_shape",
+    "num_stages",
+    "num_threads",
+    "offsets_shape",
+    "seq_len",
+    "sm_scale",
+    "token_indices_shape",
+    "topk",
+    "topk_indices_shape",
+    "weights_shape"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "tl_indexer_topk_reducesum_impl"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/9c34047000e3ccde/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "N",
+    "bitonic_sort",
+    "block_K",
+    "dim",
+    "dtype",
+    "heads",
+    "index_k_shape",
+    "index_q_shape",
+    "num_stages",
+    "num_threads",
+    "offsets_shape",
+    "seq_len",
+    "sm_scale",
+    "token_indices_shape",
+    "topk",
+    "topk_indices_shape",
+    "weights_shape"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 186,
+    "git_blob": "1066199cd0f4aa09f8dc9afb8856c560dc70583d",
+    "qualname": "tl_indexer_topk_reducesum_impl.tl_indexer_topk_reducesum_kernel",
+    "relative_path": "examples/dsa_sparse_finetune/indexer_topk_reducesum.py",
+    "selected_source_sha256": "dbc411ecd5fca40d66b7a8ece7a1385387784c9996da86d03275bc9ebd6ba998",
+    "source_sha256": "3dc85203876180cb61e6547c5ad16b4055beeed12664fb341b5bf8618eddc4ad",
+    "start_line": 73
+  }
+}

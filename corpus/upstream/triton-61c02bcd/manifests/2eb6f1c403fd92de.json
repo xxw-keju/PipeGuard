@@ -1,0 +1,50 @@
+{
+  "candidate_id": "2eb6f1c403fd92de",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/runtime/test_autotuner.py/L350-L355__test_pruned_single_config_skips_benchmark._kernel__2eb6f1c403fd92de.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d5501e103caae01f9673860f5c3029f47c89703fd60f578de62e298b843c700b",
+    "source_map": {
+      "end_line": 355,
+      "logical_path": "python/test/unit/runtime/test_autotuner.py",
+      "start_line": 350
+    }
+  },
+  "decorators": [
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "configs",
+    "do_not_bench",
+    "prune_configs_by",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_pruned_single_config_skips_benchmark"
+  ],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/2eb6f1c403fd92de/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "configs",
+    "do_not_bench",
+    "prune_configs_by"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 355,
+    "git_blob": "d91dd8d3e8af46810b410ff32464a9df46f35550",
+    "qualname": "test_pruned_single_config_skips_benchmark._kernel",
+    "relative_path": "python/test/unit/runtime/test_autotuner.py",
+    "selected_source_sha256": "15d66a5109442cecb960dccd14e7eb7d58724a39fc9bab93502294023db129c8",
+    "source_sha256": "ba76ba741786c3b5bd0ac766f49f14b427dbfb4cebd02b7fe84734d018304f43",
+    "start_line": 350
+  }
+}

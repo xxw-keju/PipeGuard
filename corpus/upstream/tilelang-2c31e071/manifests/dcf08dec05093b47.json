@@ -1,0 +1,78 @@
+{
+  "candidate_id": "dcf08dec05093b47",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/amd/example_amd_flash_attn_bwd.py/L330-L424__flashattn_bwd.flash_bwd_kernel__dcf08dec05093b47.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d50f800615c64e2888645bd143ca6da95876de25c0a3be8f1ce994ee8b7ff8ad",
+    "source_map": {
+      "end_line": 424,
+      "logical_path": "examples/amd/example_amd_flash_attn_bwd.py",
+      "start_line": 330
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "IsRDNA",
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "dim",
+    "dtype",
+    "enable_rasterization",
+    "groups",
+    "heads",
+    "is_causal",
+    "kv_shape",
+    "num_stages",
+    "panel_size",
+    "q_shape",
+    "seq_len",
+    "sm_scale",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "flashattn_bwd"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/dcf08dec05093b47/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "dim",
+    "dtype",
+    "enable_rasterization",
+    "gpu_name",
+    "groups",
+    "heads",
+    "is_causal",
+    "kv_shape",
+    "num_stages",
+    "panel_size",
+    "q_shape",
+    "seq_len",
+    "sm_scale",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 424,
+    "git_blob": "0a9b7d26cb0722abb9ed8aec75b2cbbce2393218",
+    "qualname": "flashattn_bwd.flash_bwd_kernel",
+    "relative_path": "examples/amd/example_amd_flash_attn_bwd.py",
+    "selected_source_sha256": "0bfb405a2dda4cd460a20664f381f515161bcf76cb033efc1f4cdaabce1c55c0",
+    "source_sha256": "752baca77dc50f3d37b21ea65a2e4b40469b10550c7a6babdd7ce03b73d4a0db",
+    "start_line": 330
+  }
+}

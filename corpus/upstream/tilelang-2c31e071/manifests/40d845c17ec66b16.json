@@ -1,0 +1,90 @@
+{
+  "candidate_id": "40d845c17ec66b16",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/dequantize_gemm/example_dequant_gemm_fine_grained.py/L46-L88__matmul.main__40d845c17ec66b16.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "fd4ee7f3af70704c5bbb66983746ec0dc2ded05bb98eafe43fe6d8de0b428d84",
+    "source_map": {
+      "end_line": 88,
+      "logical_path": "examples/dequantize_gemm/example_dequant_gemm_fine_grained.py",
+      "start_line": 46
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "A_shared_shape",
+    "B_dequantize_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "M",
+    "N",
+    "T",
+    "_tir_packed_to_unsigned_convert",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "in_dtype",
+    "local_size",
+    "local_size_compressed",
+    "num_bits",
+    "num_elems_per_byte",
+    "num_stages",
+    "out_dtype",
+    "storage_dtype",
+    "storage_nbit",
+    "storage_type",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "matmul"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/40d845c17ec66b16/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "A_shared_shape",
+    "B_dequantize_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "M",
+    "N",
+    "_tir_packed_to_unsigned_convert",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "in_dtype",
+    "local_size",
+    "local_size_compressed",
+    "num_bits",
+    "num_elems_per_byte",
+    "num_stages",
+    "out_dtype",
+    "storage_dtype",
+    "storage_nbit",
+    "storage_type",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 88,
+    "git_blob": "b635a30e14c5b37ab0f32c4be48f4a8530d4888b",
+    "qualname": "matmul.main",
+    "relative_path": "examples/dequantize_gemm/example_dequant_gemm_fine_grained.py",
+    "selected_source_sha256": "770a554770af2e61342af6d243f8eb5c2c3bf8d127826d38c6d0bc35dc3d571c",
+    "source_sha256": "89e702e91a339f5af7e5518c4eef257b48011633c5d25d5f40c5293e68b29b21",
+    "start_line": 46
+  }
+}

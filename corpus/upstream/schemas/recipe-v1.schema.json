@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pipeguard.dev/schemas/upstream-recipe-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "recipe_id", "candidate_id", "dsl", "origin", "lowerable", "unresolved", "bindings", "target"],
+  "properties": {
+    "schema_version": {"const": "pipeguard-upstream-recipe-v1"},
+    "recipe_id": {"type": "string"},
+    "candidate_id": {"type": "string", "pattern": "^[0-9a-f]{16}$"},
+    "dsl": {"enum": ["tilelang", "triton"]},
+    "origin": {"type": "string"},
+    "lowerable": {"type": "boolean"},
+    "unresolved": {"type": "array", "items": {"type": "string"}},
+    "bindings": {"type": "object"},
+    "materialization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "resolver_kwargs", "args", "kwargs"],
+      "properties": {
+        "mode": {"enum": ["auto", "direct", "jit_get_tir"]},
+        "resolver_kwargs": {"type": "object"},
+        "args": {"type": "array"},
+        "kwargs": {"type": "object"}
+      }
+    },
+    "compiler": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target_host": {"type": ["string", "null"]},
+        "pass_configs": {"type": "object"},
+        "signature": {"type": "object", "additionalProperties": {"type": "string"}},
+        "constexprs": {"type": "object"},
+        "attrs": {"type": "object"},
+        "options": {"type": "object"},
+        "grid_ctas": {"type": "integer", "minimum": 1},
+        "descriptor_evidence": {"type": ["object", "null"]},
+        "binding_evidence": {"type": ["object", "null"]}
+      }
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {
+        "mode": {"enum": ["direct_original", "reference_replay", "not_run"]}
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["backend", "arch", "warp_size"],
+      "properties": {
+        "backend": {"const": "cuda"},
+        "arch": {"enum": ["sm_90a", "sm90"]},
+        "warp_size": {"const": 32}
+      }
+    }
+  }
+}

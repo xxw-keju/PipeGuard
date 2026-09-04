@@ -1,0 +1,53 @@
+{
+  "candidate_id": "be250bb042acbe5c",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/issue/test_tilelang_issue_2522.py/L87-L98__test_wgmma_two_warpgroups_col_warps_multi_atom.main__be250bb042acbe5c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "983de683d864f04a079f3bac91a1ca1b294907dd4be2597a3b42403fc5c0fa10",
+    "source_map": {
+      "end_line": 98,
+      "logical_path": "testing/python/issue/test_tilelang_issue_2522.py",
+      "start_line": 87
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "GemmWarpPolicy",
+    "K",
+    "M",
+    "N",
+    "T",
+    "block_K",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_wgmma_two_warpgroups_col_warps_multi_atom"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/be250bb042acbe5c/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "M",
+    "N",
+    "block_K",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 98,
+    "git_blob": "c5ddac989df3dac2aa71cf4c64a33ca928685fdb",
+    "qualname": "test_wgmma_two_warpgroups_col_warps_multi_atom.main",
+    "relative_path": "testing/python/issue/test_tilelang_issue_2522.py",
+    "selected_source_sha256": "4cf243cb9c1662d77b5303f80f1c5698ddb1b1ef4131a036ef71e397f8e7c579",
+    "source_sha256": "730fddb6744c86c272119241a70760b6601ed186d5d58b68424c9c33289ccdd6",
+    "start_line": 87
+  }
+}

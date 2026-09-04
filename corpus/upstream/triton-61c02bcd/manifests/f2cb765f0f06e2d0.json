@@ -1,0 +1,92 @@
+{
+  "candidate_id": "f2cb765f0f06e2d0",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/tutorials/06-fused-attention.py/L176-L247__attn_fwd__f2cb765f0f06e2d0.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "94c434664480cd83ecb61c0007141315bc5275c493232baf28a631a6d43b7c50",
+    "source_map": {
+      "end_line": 247,
+      "logical_path": "python/tutorials/06-fused-attention.py",
+      "start_line": 176
+    }
+  },
+  "decorators": [
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_attn_fwd_inner",
+    "_maybe_make_tensor_desc",
+    "configs",
+    "keep",
+    "prune_invalid_configs",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "7de96bd3610bca45",
+    "beb71f414dc65c23"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/f2cb765f0f06e2d0/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "BLOCK_M",
+    "BLOCK_N",
+    "BM",
+    "BN",
+    "HEAD_DIM",
+    "IS_HOPPER",
+    "N_CTX",
+    "STAGE",
+    "acc",
+    "acc0",
+    "acc1",
+    "alpha",
+    "block_shape",
+    "conf",
+    "desc_k",
+    "desc_or_ptr",
+    "desc_v",
+    "dtype",
+    "hi",
+    "k",
+    "kwargs",
+    "l_i",
+    "l_ij",
+    "lo",
+    "m_i",
+    "m_ij",
+    "mask",
+    "offs_m",
+    "offs_n",
+    "offset_y",
+    "offsetk_y",
+    "offsetv_y",
+    "p",
+    "q",
+    "qk",
+    "qk_scale",
+    "shape",
+    "start_m",
+    "start_n",
+    "strides",
+    "v",
+    "warp_specialize"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 247,
+    "git_blob": "18dd805ec789cdbd4630a88a715327b4625bddfa",
+    "qualname": "_attn_fwd",
+    "relative_path": "python/tutorials/06-fused-attention.py",
+    "selected_source_sha256": "c3b1c3b4606df8ea1a8ee487a1ff261e1b4b2ccc7b15a355ab239e77af6788c2",
+    "source_sha256": "b3e39b472b1ed0c2fe51b99f92eff1e44557ca7daded20bddb5c69d2e2c1c172",
+    "start_line": 176
+  }
+}

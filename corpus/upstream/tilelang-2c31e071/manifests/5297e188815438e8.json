@@ -1,0 +1,64 @@
+{
+  "candidate_id": "5297e188815438e8",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/language/test_tilelang_language_reduce.py/L473-L486__test_reduce.kernel.main__5297e188815438e8.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "7e9f86cf7d4e3c3d0b13478e614af516bcc6e55d612b908c737e08c177c6c90c",
+    "source_map": {
+      "end_line": 486,
+      "logical_path": "testing/python/language/test_tilelang_language_reduce.py",
+      "start_line": 473
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "T",
+    "_reduce_op",
+    "batch",
+    "dst_scope",
+    "dtype",
+    "op",
+    "src_scope",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_reduce",
+    "kernel"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/5297e188815438e8/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "batch",
+    "dim",
+    "dst",
+    "dst_scope",
+    "dtype",
+    "kwargs",
+    "op",
+    "src",
+    "src_scope",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 486,
+    "git_blob": "3ef7ddef9bbebf830c3e830bc98072d060c3ccb8",
+    "qualname": "test_reduce.kernel.main",
+    "relative_path": "testing/python/language/test_tilelang_language_reduce.py",
+    "selected_source_sha256": "cc041ad081879ea45b82699113027c3e7dcae9fbf93eb63e99f4752dad5e2b23",
+    "source_sha256": "0c4cae5fc4c5346827ac4a53e880f6b55168e940440299b16a0dd96dc0fe68fc",
+    "start_line": 473
+  }
+}

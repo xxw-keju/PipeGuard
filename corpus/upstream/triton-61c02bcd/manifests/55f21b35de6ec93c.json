@@ -1,0 +1,42 @@
+{
+  "candidate_id": "55f21b35de6ec93c",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/runtime/test_launch.py/L44-L52__test_memory_leak.kernel__55f21b35de6ec93c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "784e5b8606545011f3fd6e7303b2003b271c708a1ef80e5773f8db8c7cd71a3a",
+    "source_map": {
+      "end_line": 52,
+      "logical_path": "python/test/unit/runtime/test_launch.py",
+      "start_line": 44
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_memory_leak"
+  ],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/55f21b35de6ec93c/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 52,
+    "git_blob": "d929d9f5b9bfe4a9825fc1fef84203e97e5a4b05",
+    "qualname": "test_memory_leak.kernel",
+    "relative_path": "python/test/unit/runtime/test_launch.py",
+    "selected_source_sha256": "cdd2d86648caa356aa9dbad4473fd5e64db1d1a57e6b94548dea23990fabb46c",
+    "source_sha256": "5577a6cb32f52fbb78d0f3f683e381d3b67b3f9a64a60b6bd6435a4c8deb6663",
+    "start_line": 44
+  }
+}

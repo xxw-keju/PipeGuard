@@ -1,0 +1,86 @@
+{
+  "candidate_id": "3ff48c70df25692e",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/language/test_tilelang_language_nvf4_mma_block_scale.py/L197-L243__make_nvf4_matmul_codegen_kernel.main__3ff48c70df25692e.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "944fc25b6c871b76c8922f3079962d4d3e91a1fadf9afc1cdc2ef6c33fbe2b10",
+    "source_map": {
+      "end_line": 243,
+      "logical_path": "testing/python/language/test_tilelang_language_nvf4_mma_block_scale.py",
+      "start_line": 197
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "M",
+    "N",
+    "SFA_shape",
+    "SFA_shared_shape",
+    "SFB_shape",
+    "SFB_shared_shape",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "in_dtype",
+    "micro_size_k",
+    "num_stages",
+    "out_dtype",
+    "sf_layout",
+    "shared_scope",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_nvf4_matmul_codegen_kernel"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/3ff48c70df25692e/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "M",
+    "N",
+    "SFA_shape",
+    "SFA_shared_shape",
+    "SFB_shape",
+    "SFB_shared_shape",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "in_dtype",
+    "micro_size_k",
+    "num_stages",
+    "out_dtype",
+    "sf_layout",
+    "shared_scope",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 243,
+    "git_blob": "8ac3d0061524058adc655c89804450966f89b3e7",
+    "qualname": "_make_nvf4_matmul_codegen_kernel.main",
+    "relative_path": "testing/python/language/test_tilelang_language_nvf4_mma_block_scale.py",
+    "selected_source_sha256": "169c9395cfddb6111943c88d90967981b99eded2f3c9a8e480e5b50cf8b02300",
+    "source_sha256": "c2cd98cb9c3c29034b2737a4fe04f8bfd1cde7fc65f9834f702463fcf567d3a2",
+    "start_line": 197
+  }
+}

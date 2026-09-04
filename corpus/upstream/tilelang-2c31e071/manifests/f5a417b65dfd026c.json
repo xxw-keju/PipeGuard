@@ -1,0 +1,60 @@
+{
+  "candidate_id": "f5a417b65dfd026c",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/jit/test_tilelang_jit_nullptr.py/L10-L35__tensor_null_test.main__f5a417b65dfd026c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d4d32a8321edbd883a690332e4fd6723a3b7b84e2e460059724a96306fd6ffeb",
+    "source_map": {
+      "end_line": 35,
+      "logical_path": "testing/python/jit/test_tilelang_jit_nullptr.py",
+      "start_line": 10
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "K",
+    "M",
+    "N",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "dtype",
+    "with_bias"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "tensor_null_test"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/f5a417b65dfd026c/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "dtype",
+    "with_bias"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 35,
+    "git_blob": "33820608da9e2d0157fa6c4abfe6decfa2e7ff98",
+    "qualname": "tensor_null_test.main",
+    "relative_path": "testing/python/jit/test_tilelang_jit_nullptr.py",
+    "selected_source_sha256": "c45de22340bdcb9c85f189650a524acede4a8ef03720fad2f670a7c092bd4058",
+    "source_sha256": "59a6297482bf7a6a64bc6748a788027586747315e8df03ccd0d08891bd212bfb",
+    "start_line": 10
+  }
+}

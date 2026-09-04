@@ -1,0 +1,48 @@
+{
+  "candidate_id": "4f9746f7a6c07199",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/deepseek_nsa/benchmark/benchmark_nsa_fwd.py/L460-L564__tilelang_sparse_attention__4f9746f7a6c07199.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "cdb7177202b7e15deec962bb95657154cee5ea652cddb70fccefae0e2adf3a86",
+    "source_map": {
+      "end_line": 564,
+      "logical_path": "examples/deepseek_nsa/benchmark/benchmark_nsa_fwd.py",
+      "start_line": 460
+    }
+  },
+  "decorators": [
+    "tilelang.autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "get_configs",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/4f9746f7a6c07199/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "iter_params",
+    "itertools",
+    "k",
+    "v",
+    "values"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 564,
+    "git_blob": "b9edd8c0773e3555756a99cda2186467bbe4ac5b",
+    "qualname": "tilelang_sparse_attention",
+    "relative_path": "examples/deepseek_nsa/benchmark/benchmark_nsa_fwd.py",
+    "selected_source_sha256": "39761f25bec83f196a8b180a5be56bee75bfc40b1374f12ffdec1aaf5bfacb3e",
+    "source_sha256": "dd5cf20db6dc7d0af5b3c4a0c576a33c151100e94e3b483df59f669085c1b964",
+    "start_line": 460
+  }
+}

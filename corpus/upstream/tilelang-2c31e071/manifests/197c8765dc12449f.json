@@ -1,0 +1,79 @@
+{
+  "candidate_id": "197c8765dc12449f",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/seer_attention/block_sparse_attn_tilelang.py/L50-L125__blocksparse_flashattn.kernel_func.main__197c8765dc12449f.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "283e5992ac7601996b4f2c30c7e3e02db0f55a69ce22182a488894c0676fc626",
+    "source_map": {
+      "end_line": 125,
+      "logical_path": "examples/seer_attention/block_sparse_attn_tilelang.py",
+      "start_line": 50
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "block_mask_dtype",
+    "block_mask_shape",
+    "dim",
+    "downsample_len",
+    "dtype",
+    "heads",
+    "is_causal",
+    "kv_shape",
+    "num_stages",
+    "q_shape",
+    "scale",
+    "seq_kv",
+    "seq_q",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "blocksparse_flashattn",
+    "kernel_func"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/197c8765dc12449f/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "block_mask_dtype",
+    "block_mask_shape",
+    "dim",
+    "downsample_len",
+    "dtype",
+    "heads",
+    "is_causal",
+    "kv_shape",
+    "num_stages",
+    "q_shape",
+    "scale",
+    "seq_kv",
+    "seq_q",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 125,
+    "git_blob": "6ea8710b72dea6410b2984e6c65b3c3b7ffb6fce",
+    "qualname": "blocksparse_flashattn.kernel_func.main",
+    "relative_path": "examples/seer_attention/block_sparse_attn_tilelang.py",
+    "selected_source_sha256": "f13874c63a46a84e90a117e7b0c54201b49af1bdb7615855612a2b0428bfbd45",
+    "source_sha256": "62cd191a3e34b7c58c200f0d4f9f64c53a517a953a255e9a0d25f0780e346188",
+    "start_line": 50
+  }
+}

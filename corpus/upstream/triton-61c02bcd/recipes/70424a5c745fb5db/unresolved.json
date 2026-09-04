@@ -1,0 +1,20 @@
+{
+  "bindings": {},
+  "candidate_id": "70424a5c745fb5db",
+  "dsl": "triton",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "70424a5c745fb5db-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "SQRT",
+    "concrete_specialization",
+    "x",
+    "x_ptr"
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "candidate_id": "1fda956bfd0bca8b",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/dequantize_gemm/example_dequant_gemm_fine_grained.py/L16-L90__matmul__1fda956bfd0bca8b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "81a069129f00285e2423caeac03850268da8818a19704c21e2fd00bac182aa89",
+    "source_map": {
+      "end_line": 90,
+      "logical_path": "examples/dequantize_gemm/example_dequant_gemm_fine_grained.py",
+      "start_line": 16
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "DataType",
+    "T",
+    "_tir_packed_to_unsigned_convert",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "40d845c17ec66b16",
+    "ea47b2eff18f2af1"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/1fda956bfd0bca8b/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_tir_packed_to_unsigned_convert"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 90,
+    "git_blob": "b635a30e14c5b37ab0f32c4be48f4a8530d4888b",
+    "qualname": "matmul",
+    "relative_path": "examples/dequantize_gemm/example_dequant_gemm_fine_grained.py",
+    "selected_source_sha256": "9425d8616b1b4792f6bb2a8da6a6c9e1a919d1d4177d637180352bc7a8b08622",
+    "source_sha256": "89e702e91a339f5af7e5518c4eef257b48011633c5d25d5f40c5293e68b29b21",
+    "start_line": 16
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "candidate_id": "0f7d2561b9dac2db",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_standard.py/L207-L216__test_softmax_keep_dims_deprecated.kernel__0f7d2561b9dac2db.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "3916c126b8f36951361a5353bf2608a39566c62d7a08db3e10e7b3c33b22cb14",
+    "source_map": {
+      "end_line": 216,
+      "logical_path": "python/test/unit/language/test_standard.py",
+      "start_line": 207
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_softmax_keep_dims_deprecated"
+  ],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/0f7d2561b9dac2db/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 216,
+    "git_blob": "e79b71c0834cad245683d3b9719e517299ba7409",
+    "qualname": "test_softmax_keep_dims_deprecated.kernel",
+    "relative_path": "python/test/unit/language/test_standard.py",
+    "selected_source_sha256": "0b8e97779dbeba28e8cce25d31f6eae2be4f48043c06cd16a93bf500369814f4",
+    "source_sha256": "8aedfd39de8eacbd387141925c3c74132fd0838c837b1388120cd6ffdc2ea55c",
+    "start_line": 207
+  }
+}

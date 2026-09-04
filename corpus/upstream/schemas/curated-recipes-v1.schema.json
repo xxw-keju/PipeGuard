@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pipeguard.dev/schemas/upstream-curated-recipes-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "recipes"],
+  "properties": {
+    "schema_version": {"const": "pipeguard-upstream-curated-recipes-v1"},
+    "recipes": {
+      "type": "array",
+      "items": {"$ref": "recipe-v1.schema.json"}
+    }
+  }
+}

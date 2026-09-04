@@ -1,0 +1,66 @@
+{
+  "candidate_id": "f7e08a1bcf7b18a6",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/flash_attention/example_gqa_fwd_bshd.py/L61-L141__flashattn__f7e08a1bcf7b18a6.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f65ebcd54b61794877f6b418678335b3e2e4b5c8a61ca413df1c6e8b78f656be",
+    "source_map": {
+      "end_line": 141,
+      "logical_path": "examples/flash_attention/example_gqa_fwd_bshd.py",
+      "start_line": 61
+    }
+  },
+  "decorators": [
+    "autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "autotune",
+    "get_configs",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "3f8bf38dcc5bd89c"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/f7e08a1bcf7b18a6/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "autotune",
+    "block_M",
+    "block_N",
+    "block_sizes",
+    "config",
+    "dim",
+    "dtype_bytes",
+    "max_shared_mem",
+    "num_stages",
+    "num_stages_range",
+    "self",
+    "shared_mem",
+    "thread_options",
+    "threads",
+    "user_config",
+    "valid_configs",
+    "warp_M",
+    "warp_N",
+    "warp_alignment",
+    "warp_count"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 141,
+    "git_blob": "e884a8158867820ecf95f4e5ec34f42e100aa775",
+    "qualname": "flashattn",
+    "relative_path": "examples/flash_attention/example_gqa_fwd_bshd.py",
+    "selected_source_sha256": "d9be2c1d89ccc9e34e6f555f13b5ae435f800dcd4c96ca398ee8b13e78688126",
+    "source_sha256": "2977dc63f84eb8853c2d613e936278a0d583261e180d924f8c89e852135cf044",
+    "start_line": 61
+  }
+}

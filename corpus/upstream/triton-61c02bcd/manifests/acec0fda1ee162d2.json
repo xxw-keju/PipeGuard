@@ -1,0 +1,41 @@
+{
+  "candidate_id": "acec0fda1ee162d2",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/gsan/test_gsan_failures.py/L152-L173__transitive_atomic_sync_kernel__acec0fda1ee162d2.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d9221f75840d184a54f6a22b0cbfdb5cd65f5a3e7e287b88362bdc30da9b0414",
+    "source_map": {
+      "end_line": 173,
+      "logical_path": "python/test/gsan/test_gsan_failures.py",
+      "start_line": 152
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "atomic_poll",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/acec0fda1ee162d2/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 173,
+    "git_blob": "77e61e85b97daa6bb7fc9f1bba219f92fac1b173",
+    "qualname": "_transitive_atomic_sync_kernel",
+    "relative_path": "python/test/gsan/test_gsan_failures.py",
+    "selected_source_sha256": "39ffe07fb2c024d583311077f2ae78f736c1727684ad1b1916cb494579bd8f4e",
+    "source_sha256": "65fd28b337e9f4e091645d034b221a536c4b8cc4c50886500e5c6cfbec46ee24",
+    "start_line": 152
+  }
+}

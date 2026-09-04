@@ -1,0 +1,42 @@
+{
+  "candidate_id": "faa8a75c7538346c",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_tensor_descriptor.py/L406-L416__test_tensor_descriptor_padding.host_tma_load__faa8a75c7538346c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e75c3cfc7490e114ba14e7dd4315c36499806a31287a553b02785d30ee833312",
+    "source_map": {
+      "end_line": 416,
+      "logical_path": "python/test/unit/language/test_tensor_descriptor.py",
+      "start_line": 406
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_tensor_descriptor_padding"
+  ],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/faa8a75c7538346c/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 416,
+    "git_blob": "b78ce5331d0fae80d64f1f7c91a0e49ff5b04ad2",
+    "qualname": "test_tensor_descriptor_padding.host_tma_load",
+    "relative_path": "python/test/unit/language/test_tensor_descriptor.py",
+    "selected_source_sha256": "54b2160fb24ad50692799b96f5b2659ae4062d7554eba1c5513302950626ca50",
+    "source_sha256": "98491f0f8bbfe515dc31f2f70cf19db01ea15612d199e272fc2e6560bbf206ba",
+    "start_line": 406
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "candidate_id": "9113efe906fbdaab",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_core.py/L7102-L7108__test_side_effectful_reduction_2d.sanitize_sum_2d_kernel__9113efe906fbdaab.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f2b0d7498208ef8ac0bcbf41349bcb2416f34227aaf763e7890eaf5597a8d58e",
+    "source_map": {
+      "end_line": 7108,
+      "logical_path": "python/test/unit/language/test_core.py",
+      "start_line": 7102
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "sanitize_add",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "aa65a487a6fc3217"
+  ],
+  "lexical_parents": [
+    "test_side_effectful_reduction_2d"
+  ],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/9113efe906fbdaab/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "a",
+    "a64",
+    "b",
+    "b64",
+    "r64"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 7108,
+    "git_blob": "37dbe1797a78cbd9838ebd53423b28fdb4b2bd8d",
+    "qualname": "test_side_effectful_reduction_2d.sanitize_sum_2d_kernel",
+    "relative_path": "python/test/unit/language/test_core.py",
+    "selected_source_sha256": "56d8491739457a47037ccefbe88db9e5e946537d6c42becf8bd67d7e5d895e58",
+    "source_sha256": "760bdbf74c105f9568cee2fd4e61c02daa14aa94dc32b4de4d708c68052f0292",
+    "start_line": 7102
+  }
+}

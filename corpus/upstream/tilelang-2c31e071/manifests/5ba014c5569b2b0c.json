@@ -1,0 +1,56 @@
+{
+  "candidate_id": "5ba014c5569b2b0c",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/block_causal_attention/block_causal_attention.py/L178-L265__bwd_dq_template__5ba014c5569b2b0c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "8749fcff57b4974f995c1b086e1a56c32c3d29e22c07b69d9b303ec85f97addb",
+    "source_map": {
+      "end_line": 265,
+      "logical_path": "examples/block_causal_attention/block_causal_attention.py",
+      "start_line": 178
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "LOG2_E",
+    "T",
+    "_check_dllm_block",
+    "_fwd_tile_allowed",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "04b3444067a79f29"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/5ba014c5569b2b0c/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "block_size",
+    "clean_boundary",
+    "dllm_block",
+    "i",
+    "is_noisy_diag",
+    "j",
+    "k_blk",
+    "noisy_allowed",
+    "q_blk",
+    "q_is_noisy"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 265,
+    "git_blob": "73eb50b801200072284fb04e11ca70150d4ccc3b",
+    "qualname": "_bwd_dq_template",
+    "relative_path": "examples/block_causal_attention/block_causal_attention.py",
+    "selected_source_sha256": "48c09e04a7a2d81f116c3b47c724f95f80f751b6613ff74fe648f50a2718e80c",
+    "source_sha256": "e139b9ef6bdc582db6c977d3189031849720ddaf8ae761a2b17ee71659809084",
+    "start_line": 178
+  }
+}

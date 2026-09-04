@@ -1,0 +1,84 @@
+{
+  "candidate_id": "14015a336d6ac160",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/utils/test_compress_utils.py/L36-L61__matmul.main__14015a336d6ac160.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "82dbb979e1f9902ddc6c47a5ee49264f8270895725dc3ea0eb940ebfae49dc06",
+    "source_map": {
+      "end_line": 61,
+      "logical_path": "testing/python/utils/test_compress_utils.py",
+      "start_line": 36
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shared_shape",
+    "A_sparse_shape",
+    "B_shape",
+    "B_shared_shape",
+    "E_factor",
+    "E_shape",
+    "E_shared_shape",
+    "K",
+    "M",
+    "N",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "in_dtype",
+    "metadata_dtype",
+    "num_stages",
+    "out_dtype",
+    "threads",
+    "trans_A",
+    "trans_B"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "matmul"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/14015a336d6ac160/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shared_shape",
+    "A_sparse_shape",
+    "B_shape",
+    "B_shared_shape",
+    "E_factor",
+    "E_shape",
+    "E_shared_shape",
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "in_dtype",
+    "metadata_dtype",
+    "num_stages",
+    "out_dtype",
+    "threads",
+    "trans_A",
+    "trans_B"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 61,
+    "git_blob": "f823788587de1e4ee0b6c4530b5fbc531d86669e",
+    "qualname": "matmul.main",
+    "relative_path": "testing/python/utils/test_compress_utils.py",
+    "selected_source_sha256": "1377bb2b69ab16fd4a328d5d807ab3b217beb711d79bdba707c99517b2aacb4d",
+    "source_sha256": "4b850b50a017d6aebbdec72908a5fcbddc6a5c074cfb0c8787b747d317ef0c34",
+    "start_line": 36
+  }
+}

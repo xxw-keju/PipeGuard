@@ -1,0 +1,84 @@
+{
+  "candidate_id": "afbda894bafba227",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py/L294-L344__matmul.main__afbda894bafba227.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "8ec2d306fd96f110ac510c73f6f099f6036efd286e466d04075e0559599c69a0",
+    "source_map": {
+      "end_line": 344,
+      "logical_path": "examples/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py",
+      "start_line": 294
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "A_shared_shape",
+    "B_dequantize_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "M",
+    "N",
+    "T",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "fast_dequant",
+    "get_fast_dequant_twiddling_func",
+    "get_simple_dequant_func",
+    "in_dtype",
+    "num_elems_per_byte",
+    "num_stages",
+    "out_dtype",
+    "storage_dtype",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "matmul"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/afbda894bafba227/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "A_shared_shape",
+    "B_dequantize_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "K",
+    "M",
+    "N",
+    "accum_dtype",
+    "block_K",
+    "block_M",
+    "block_N",
+    "fast_dequant",
+    "get_fast_dequant_twiddling_func",
+    "get_simple_dequant_func",
+    "in_dtype",
+    "num_elems_per_byte",
+    "num_stages",
+    "out_dtype",
+    "storage_dtype",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 344,
+    "git_blob": "5264b648aa69e29dfdb7f20fecf1e3615f162769",
+    "qualname": "matmul.main",
+    "relative_path": "examples/dequantize_gemm/example_dequant_gemm_bf16_fp4_hopper.py",
+    "selected_source_sha256": "04bc7df4d940eb24e2866d3f80d407ad3ee497cc67f8e72472f3c82fdae77964",
+    "source_sha256": "3cdbb001b07f00f800383fc7eca37494c65c6a610add72e3baaafab18c1e2f1d",
+    "start_line": 294
+  }
+}

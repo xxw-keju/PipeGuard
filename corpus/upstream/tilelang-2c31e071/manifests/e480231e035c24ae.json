@@ -1,0 +1,78 @@
+{
+  "candidate_id": "e480231e035c24ae",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/flash_attention/example_gqa_bwd_tma_reduce.py/L181-L248__flashattn_bwd_atomic_add.flash_bwd__e480231e035c24ae.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ba1c1318cafd1a2a29577baa90ea358882df066c4ac9637ba200e7a71aba6f9e",
+    "source_map": {
+      "end_line": 248,
+      "logical_path": "examples/flash_attention/example_gqa_bwd_tma_reduce.py",
+      "start_line": 181
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "dim_qk",
+    "dim_v",
+    "dtype",
+    "groups",
+    "heads",
+    "is_causal",
+    "k_shape",
+    "num_stages",
+    "q_shape",
+    "scale",
+    "seq_len",
+    "sm_scale",
+    "threads",
+    "v_shape"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "flashattn_bwd_atomic_add"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/e480231e035c24ae/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "dim_qk",
+    "dim_v",
+    "dtype",
+    "groups",
+    "heads",
+    "is_causal",
+    "k_shape",
+    "num_stages",
+    "q_shape",
+    "scale",
+    "seq_len",
+    "sm_scale",
+    "threads",
+    "v_shape"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 248,
+    "git_blob": "4920d8cf065c1da5f5a46c863a19d98d0dc13353",
+    "qualname": "flashattn_bwd_atomic_add.flash_bwd",
+    "relative_path": "examples/flash_attention/example_gqa_bwd_tma_reduce.py",
+    "selected_source_sha256": "4d383bd84fa14baf7a12fa892160885a9157be0c48fa03f2e5aaefa7ce8ab60b",
+    "source_sha256": "25bff143325bd7ccd8b880b089bebc1b2eb46cef70e1aed60be148ca1cbce9e3",
+    "start_line": 181
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "candidate_id": "e3d7f055af80f610",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_core.py/L1562-L1567__test_noinline_returns_tensor.kernel__e3d7f055af80f610.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ee470b823646f7be953e770ac0526fe4bb1e11732abd964479eb2728f8b813ee",
+    "source_map": {
+      "end_line": 1567,
+      "logical_path": "python/test/unit/language/test_core.py",
+      "start_line": 1562
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "noinline_load_block_fn",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "ddf60c9f73442af7"
+  ],
+  "lexical_parents": [
+    "test_noinline_returns_tensor"
+  ],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/e3d7f055af80f610/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "BLOCK_SIZE",
+    "offsets",
+    "ptr"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 1567,
+    "git_blob": "37dbe1797a78cbd9838ebd53423b28fdb4b2bd8d",
+    "qualname": "test_noinline_returns_tensor.kernel",
+    "relative_path": "python/test/unit/language/test_core.py",
+    "selected_source_sha256": "b967c202050db1615e4d6ce881d2dccd8257e81170d2b03d21c8f18e45382a76",
+    "source_sha256": "760bdbf74c105f9568cee2fd4e61c02daa14aa94dc32b4de4d708c68052f0292",
+    "start_line": 1562
+  }
+}

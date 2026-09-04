@@ -1,0 +1,55 @@
+{
+  "candidate_id": "f5db0b5806f2cae3",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/transform/test_tilelang_transform_producer_consumer_ws.py/L657-L675__test_tiled_ws_swizzled_layout_allows_ws.gemm_swizzled__f5db0b5806f2cae3.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d4a173f350f88bcbcc68f195bea8516c7325d17d334b793734892927dfbb54ee",
+    "source_map": {
+      "end_line": 675,
+      "logical_path": "testing/python/transform/test_tilelang_transform_producer_consumer_ws.py",
+      "start_line": 657
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "K",
+    "M",
+    "N",
+    "T",
+    "block_K",
+    "block_M",
+    "block_N",
+    "make_swizzled_layout"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_tiled_ws_swizzled_layout_allows_ws"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/f5db0b5806f2cae3/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "M",
+    "N",
+    "block_K",
+    "block_M",
+    "block_N"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 675,
+    "git_blob": "474b91b918cfd3650d5d2de86f49f300411a3f62",
+    "qualname": "test_tiled_ws_swizzled_layout_allows_ws.gemm_swizzled",
+    "relative_path": "testing/python/transform/test_tilelang_transform_producer_consumer_ws.py",
+    "selected_source_sha256": "65a39a4c0774f648c44df40d184e0b3e8293e29c41f816a541e4168e02dcd48b",
+    "source_sha256": "4a8775acad6d257f1dacdb63c31eaab9339afcd932ad29c0c73d63b4aa76a5dc",
+    "start_line": 657
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "candidate_id": "f0e9b550bb0f903d",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/autotune/test_pass_configs_tuning.py/L206-L221__test_autotune_decorator_pass_configs_override_jit_global.matmul_kernel.main__f0e9b550bb0f903d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1aed85883ff01e114c3cf4679cf54e2f1a8a45c74a89b158d26fc6637887e4ac",
+    "source_map": {
+      "end_line": 221,
+      "logical_path": "testing/python/autotune/test_pass_configs_tuning.py",
+      "start_line": 206
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "K",
+    "M",
+    "N",
+    "T",
+    "block_K",
+    "block_M",
+    "block_N"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_autotune_decorator_pass_configs_override_jit_global",
+    "matmul_kernel"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/f0e9b550bb0f903d/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "M",
+    "N",
+    "block_K",
+    "block_M",
+    "block_N"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 221,
+    "git_blob": "d49d849ca26b5ea03ef14b977b3288d19b666ad3",
+    "qualname": "test_autotune_decorator_pass_configs_override_jit_global.matmul_kernel.main",
+    "relative_path": "testing/python/autotune/test_pass_configs_tuning.py",
+    "selected_source_sha256": "715c99e590c33f5bfed152441355f0ed9dbd839d73c16273b0f9b0205b9808b9",
+    "source_sha256": "d993f6cfbffaea8ee8bcea081ead623e7348c27d001438a30878a54b4244c191",
+    "start_line": 206
+  }
+}

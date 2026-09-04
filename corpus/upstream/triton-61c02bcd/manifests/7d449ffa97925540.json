@@ -1,0 +1,55 @@
+{
+  "candidate_id": "7d449ffa97925540",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_conversions.py/L146-L155__downcast_emulated__7d449ffa97925540.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "9ba0eb7046a79a58f71ab630a7e5f1f8c86a2d53b42648b764de1309d1388b62",
+    "source_map": {
+      "end_line": 155,
+      "logical_path": "python/test/unit/language/test_conversions.py",
+      "start_line": 146
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "arbitrary_fp32_downcast",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "2e8db63ae4b50bac"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/7d449ffa97925540/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "adjustment",
+    "exponent",
+    "exponent_bias",
+    "exponent_bits",
+    "mantissa",
+    "mantissa_bits",
+    "numbits_dst",
+    "rounding",
+    "sign",
+    "x",
+    "y"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 155,
+    "git_blob": "7a634e24014e95265523176c93e2bf5ba358454b",
+    "qualname": "downcast_emulated",
+    "relative_path": "python/test/unit/language/test_conversions.py",
+    "selected_source_sha256": "0de23d232351b6ef727bf75a372596143d458d517bed9e326d32c3b1a83b6612",
+    "source_sha256": "d3fe191253aaa9fca7739542e652323c4d9fabbd1c1f26721ea7c019fcb3016a",
+    "start_line": 146
+  }
+}

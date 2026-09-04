@@ -1,0 +1,40 @@
+{
+  "candidate_id": "120ac90e486cf5b0",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_warp_specialization.py/L736-L786__attention_persistent_inner_loop_kernel__120ac90e486cf5b0.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "3a281268ae5601ed0eee35fa93c224bfc6eed6af3884ba35d4403026a12326b5",
+    "source_map": {
+      "end_line": 786,
+      "logical_path": "python/test/unit/language/test_warp_specialization.py",
+      "start_line": 736
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/120ac90e486cf5b0/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 786,
+    "git_blob": "d30aab215ba3f94f6b91bbd249807807f7a81712",
+    "qualname": "attention_persistent_inner_loop_kernel",
+    "relative_path": "python/test/unit/language/test_warp_specialization.py",
+    "selected_source_sha256": "fe1639bc5e10c0f1d2cd1c122c6b66bc62feba859becb2f42fc7105f56039349",
+    "source_sha256": "bbb982eeb928245a489e2cf9f9c676606a20be389c5918483a072e7282feb60b",
+    "start_line": 736
+  }
+}

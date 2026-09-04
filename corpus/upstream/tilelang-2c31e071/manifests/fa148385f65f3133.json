@@ -1,0 +1,101 @@
+{
+  "candidate_id": "fa148385f65f3133",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/amd/test_tilelang_gemm_mfma_intrinsic.py/L83-L161__tl_matmul.main__fa148385f65f3133.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "46033e7063cc8a64fd12e51e256c9d9f38a7bd9e72b47b7e06ceaaac2c0fcde1",
+    "source_map": {
+      "end_line": 161,
+      "logical_path": "testing/python/amd/test_tilelang_gemm_mfma_intrinsic.py",
+      "start_line": 83
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "C_shared_shape",
+    "K",
+    "M",
+    "N",
+    "T",
+    "a_transposed",
+    "accum_dtype",
+    "b_transposed",
+    "block_K",
+    "block_M",
+    "block_N",
+    "cache_write_shared",
+    "in_dtype",
+    "k_pack",
+    "local_size_a",
+    "local_size_b",
+    "local_size_c",
+    "make_swizzle_layout",
+    "mfma_emitter",
+    "micro_size_k",
+    "micro_size_x",
+    "micro_size_y",
+    "out_dtype",
+    "shared_scope",
+    "threads",
+    "warp_cols",
+    "warp_rows"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "tl_matmul"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/fa148385f65f3133/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "C_shared_shape",
+    "K",
+    "M",
+    "N",
+    "a_transposed",
+    "accum_dtype",
+    "b_transposed",
+    "block_K",
+    "block_M",
+    "block_N",
+    "cache_write_shared",
+    "in_dtype",
+    "k_pack",
+    "local_size_a",
+    "local_size_b",
+    "local_size_c",
+    "mfma_emitter",
+    "micro_size_k",
+    "micro_size_x",
+    "micro_size_y",
+    "out_dtype",
+    "shared_scope",
+    "threads",
+    "warp_cols",
+    "warp_rows"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 161,
+    "git_blob": "b3cabe03ed079ae498d1cc03e62c3408eb9ab48f",
+    "qualname": "tl_matmul.main",
+    "relative_path": "testing/python/amd/test_tilelang_gemm_mfma_intrinsic.py",
+    "selected_source_sha256": "4eaaf5e08bbdbb6bdab1e26fdbcecc3e1cbdc69fb11d742992ac301962299c39",
+    "source_sha256": "5deab2578e453c3b682fa98a26d91fc4d70036ff481d300abf17b19167845852",
+    "start_line": 83
+  }
+}

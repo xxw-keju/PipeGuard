@@ -1,0 +1,27 @@
+{
+  "bindings": {},
+  "candidate_id": "1dfd30cfe3a34acd",
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "1dfd30cfe3a34acd-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "block",
+    "block_size_inference",
+    "block_size_kvstore",
+    "cache_layer_stride",
+    "cache_token_stride",
+    "concrete_specialization",
+    "enable_pdl_sync",
+    "feature_dim",
+    "num_layers",
+    "tensor_layer_stride",
+    "tensor_token_stride"
+  ]
+}

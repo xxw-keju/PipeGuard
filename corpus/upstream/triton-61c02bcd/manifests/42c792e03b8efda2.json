@@ -1,0 +1,46 @@
+{
+  "candidate_id": "42c792e03b8efda2",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_tuple.py/L394-L396__test_tuple_constexpr_function.kernel__42c792e03b8efda2.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "a21556b2a1bee6841bbec1384916692cf15e0ba6db89a9cb5669903926d27793",
+    "source_map": {
+      "end_line": 396,
+      "logical_path": "python/test/unit/language/test_tuple.py",
+      "start_line": 394
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "TrivialTuple",
+    "passthrough_constexpr",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_tuple_constexpr_function"
+  ],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/42c792e03b8efda2/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "x"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 396,
+    "git_blob": "4fac2e19124bf309dc39a9949aa3a72dcfb2e275",
+    "qualname": "test_tuple_constexpr_function.kernel",
+    "relative_path": "python/test/unit/language/test_tuple.py",
+    "selected_source_sha256": "a9803f8c360b7c93dfe6f5b43ed85f185deb197500e3b5625ebf3030e441bcd0",
+    "source_sha256": "874cc28864532befb48306c6bace021a2b52962f0928563bad16169e58478b55",
+    "start_line": 394
+  }
+}

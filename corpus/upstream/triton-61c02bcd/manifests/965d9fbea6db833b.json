@@ -1,0 +1,49 @@
+{
+  "candidate_id": "965d9fbea6db833b",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/tutorials/03-matrix-multiplication.py/L228-L320__matmul_kernel__965d9fbea6db833b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f3ffde9405921e8a4cb43d08e2235c79b269ff0a4ad5184a59a9864e47c6f106",
+    "source_map": {
+      "end_line": 320,
+      "logical_path": "python/tutorials/03-matrix-multiplication.py",
+      "start_line": 228
+    }
+  },
+  "decorators": [
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "get_autotune_config",
+    "leaky_relu",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "ade22875e18f8a7c"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/965d9fbea6db833b/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "s",
+    "sizes",
+    "x"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 320,
+    "git_blob": "526934c1d7c60ccbb8119b1bca0e807f6fc602e8",
+    "qualname": "matmul_kernel",
+    "relative_path": "python/tutorials/03-matrix-multiplication.py",
+    "selected_source_sha256": "c28882d1caefdc9e8703dda00d4e5b54b407478eba29d5f84c26bbbc38309c5e",
+    "source_sha256": "f88a9506694c58d483ad3cdb4aa672c23df0300803bcfaca13b9396184825008",
+    "start_line": 228
+  }
+}

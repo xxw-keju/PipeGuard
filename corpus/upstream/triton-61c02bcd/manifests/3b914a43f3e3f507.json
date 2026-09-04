@@ -1,0 +1,40 @@
+{
+  "candidate_id": "3b914a43f3e3f507",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_pipeliner.py/L100-L111__vecadd_kernel__3b914a43f3e3f507.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "dec5e680861505441714a3e8bce2972b1ebd75de2ffe62e0d9b16218467357bb",
+    "source_map": {
+      "end_line": 111,
+      "logical_path": "python/test/unit/language/test_pipeliner.py",
+      "start_line": 100
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/3b914a43f3e3f507/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 111,
+    "git_blob": "a28528a8f2e79e8e761bea6315ccc1e5f99b4e2a",
+    "qualname": "vecadd_kernel",
+    "relative_path": "python/test/unit/language/test_pipeliner.py",
+    "selected_source_sha256": "c4ae327e87aedc50f3c41105b3026b00381d4be3f9837493639465bbc3dc2dce",
+    "source_sha256": "5cffd3760791d6ecbc59e42bdae5295844660fe384ff3b981d72fe1e523de7aa",
+    "start_line": 100
+  }
+}

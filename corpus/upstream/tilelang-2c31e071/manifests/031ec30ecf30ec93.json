@@ -1,0 +1,46 @@
+{
+  "candidate_id": "031ec30ecf30ec93",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/deepseek_v32/inference/kernel.py/L107-L162__fp8_gemm_kernel__031ec30ecf30ec93.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f8622e223bfc6e46d87b67ed856c596fd2a769eac9a6bc85a6467de2edbf6373",
+    "source_map": {
+      "end_line": 162,
+      "logical_path": "examples/deepseek_v32/inference/kernel.py",
+      "start_line": 107
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "BF16",
+    "FP32",
+    "FP8",
+    "T",
+    "pass_configs",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "1e03947f5f811067"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/031ec30ecf30ec93/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 162,
+    "git_blob": "623da37c76bbeda949c673db825c59f2bab719ce",
+    "qualname": "fp8_gemm_kernel",
+    "relative_path": "examples/deepseek_v32/inference/kernel.py",
+    "selected_source_sha256": "0e67d7b94db0217ac412094f814998a9df03fca63140cf522ea78cfc6da486ca",
+    "source_sha256": "99b0dc3662b9da89918c1539e4f43f6ae6ddd8ebffdb46831a63cacacac7a009",
+    "start_line": 107
+  }
+}

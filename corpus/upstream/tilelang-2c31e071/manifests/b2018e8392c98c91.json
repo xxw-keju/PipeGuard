@@ -1,0 +1,44 @@
+{
+  "candidate_id": "b2018e8392c98c91",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/issue/test_tilelang_bf16x2_pack_special_values.py/L16-L24__test_f32x2_to_bf16x2_preserves_nan_and_inf.main__b2018e8392c98c91.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "646a0061f632e6e3cb4693478792b5e3ae5aab2a518526fd2e1c92708cfb1ad3",
+    "source_map": {
+      "end_line": 24,
+      "logical_path": "testing/python/issue/test_tilelang_bf16x2_pack_special_values.py",
+      "start_line": 16
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_tir_f32x2_to_bf16x2_to_u32",
+    "_tir_u32_to_bf16x2_to_f32x2"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_f32x2_to_bf16x2_preserves_nan_and_inf"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/b2018e8392c98c91/unresolved.json",
+    "tilelang-2c31e071/recipes/b2018e8392c98c91/b2018e8392c98c91-sm90a-static-primfunc.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 24,
+    "git_blob": "83e0515be2f8f0b1cfe7a0df33cdb9cd263e0d48",
+    "qualname": "test_f32x2_to_bf16x2_preserves_nan_and_inf.main",
+    "relative_path": "testing/python/issue/test_tilelang_bf16x2_pack_special_values.py",
+    "selected_source_sha256": "cf0a576822c1e59d326f3d1690cc24b1be41e30bf36692ea0cea76db8e0348df",
+    "source_sha256": "ab4ac447549775443af3811bea2706f04ba775fbc91fbb61a81d2260ce862704",
+    "start_line": 16
+  }
+}

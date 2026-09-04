@@ -1,0 +1,71 @@
+{
+  "candidate_id": "c6dff162c11b2e33",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/dequantize_gemm/example_dequant_gemm_fp4_hopper.py/L108-L220__matmul__c6dff162c11b2e33.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6e1d31c8bc8e12dbabac8298f309756ed5784c8375dd11c2e6208bd7035af85b",
+    "source_map": {
+      "end_line": 220,
+      "logical_path": "examples/dequantize_gemm/example_dequant_gemm_fp4_hopper.py",
+      "start_line": 108
+    }
+  },
+  "decorators": [
+    "autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_tir_u8_to_f4_to_f16",
+    "autotune",
+    "get_configs",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "6d2ae5b0077a0ce1",
+    "c80ac49c23fc4a54",
+    "cd9d6587ed6a1f28"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/c6dff162c11b2e33/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_configs",
+    "autotune",
+    "block_K",
+    "block_M",
+    "block_N",
+    "c",
+    "configs",
+    "dtype",
+    "e_f16",
+    "e_f4",
+    "f4",
+    "m_f16",
+    "m_f4",
+    "mask",
+    "nbit",
+    "num_stages",
+    "pos",
+    "s",
+    "splits",
+    "threads",
+    "val",
+    "val_f16"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 220,
+    "git_blob": "a175b889c9a832eddc2adb6cc5bcd38ec6b8bd48",
+    "qualname": "matmul",
+    "relative_path": "examples/dequantize_gemm/example_dequant_gemm_fp4_hopper.py",
+    "selected_source_sha256": "af77d7414d279ce9aa10dcc3746f8050f016f5927be78442af094c8d663ca90e",
+    "source_sha256": "f84adf8935ecf7838495cb9c39d1e881726c34309482960868330c51f9d4d1f7",
+    "start_line": 108
+  }
+}

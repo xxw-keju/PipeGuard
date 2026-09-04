@@ -1,0 +1,52 @@
+{
+  "candidate_id": "dd3ba34012120a63",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/testing/python/language/test_tilelang_language_wgmma_gemm.py/L131-L153__make_sliced_wgmma_kernel.main__dd3ba34012120a63.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "8ac7572bb43b5f2a0d2771b575c069f4565b897ee04cd2cab69bea806567fbf1",
+    "source_map": {
+      "end_line": 153,
+      "logical_path": "testing/python/language/test_tilelang_language_wgmma_gemm.py",
+      "start_line": 131
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "K",
+    "M",
+    "N",
+    "T",
+    "k_tile",
+    "num_k_tiles"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_sliced_wgmma_kernel"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/dd3ba34012120a63/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "M",
+    "N",
+    "k_tile",
+    "num_k_tiles"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 153,
+    "git_blob": "c16eac8dc6fa3dd63b1a44870a7992f02439cc1e",
+    "qualname": "_make_sliced_wgmma_kernel.main",
+    "relative_path": "testing/python/language/test_tilelang_language_wgmma_gemm.py",
+    "selected_source_sha256": "4e6554ba371dac8effb25a716d460bb1ea3cdb0070446e378c3edd6cb1cab908",
+    "source_sha256": "7e7b765f9f11e98374b448d6a929d1ee433d5db1db77ad533de330964e06b513",
+    "start_line": 131
+  }
+}

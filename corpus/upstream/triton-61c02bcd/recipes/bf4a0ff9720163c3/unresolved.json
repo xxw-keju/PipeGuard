@@ -1,0 +1,37 @@
+{
+  "bindings": {},
+  "candidate_id": "bf4a0ff9720163c3",
+  "dsl": "triton",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "bf4a0ff9720163c3-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "BK",
+    "BLOCK_K",
+    "BLOCK_M",
+    "BLOCK_N",
+    "BM",
+    "BN",
+    "EPILOGUE_SUBTILE",
+    "K",
+    "M",
+    "N",
+    "WS",
+    "args",
+    "bytes_per_elem",
+    "concrete_specialization",
+    "kernel",
+    "nargs",
+    "pre_hook",
+    "ret",
+    "s",
+    "w",
+    "ws_str"
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "candidate_id": "730f7e8b7b525ebe",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/deepseek_mhc/example_mhc_bwd.py/L74-L181__sinkhorn_bwd_implicit_cg__730f7e8b7b525ebe.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "da90c030ba34723dad547c02938f4507537fe9a6da414eaf2efb7e1771b1b35f",
+    "source_map": {
+      "end_line": 181,
+      "logical_path": "examples/deepseek_mhc/example_mhc_bwd.py",
+      "start_line": 74
+    }
+  },
+  "decorators": [
+    "tilelang.autotune",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "EPS",
+    "T",
+    "dot",
+    "matvec_A",
+    "repeat",
+    "sinkhorn_bwd_configs",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/730f7e8b7b525ebe/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "R",
+    "buf",
+    "configs",
+    "i",
+    "i_tile",
+    "j",
+    "out",
+    "thread_counts",
+    "threads",
+    "tilesize",
+    "tilesizes",
+    "x1",
+    "x2",
+    "y1",
+    "y2"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 181,
+    "git_blob": "998f94502bca81864f629f1be64dbef7b260dfb0",
+    "qualname": "sinkhorn_bwd_implicit_cg",
+    "relative_path": "examples/deepseek_mhc/example_mhc_bwd.py",
+    "selected_source_sha256": "40d1360d6b307153098b198b8b9377ca2e23ce6eeb90e1dcf146ce3cbef2a251",
+    "source_sha256": "699cb20227458a6557205a5563ee68e04a18f3ee486c36e4ae394c24cfb81bb4",
+    "start_line": 74
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "candidate_id": "b06026b5f35bcdb9",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/regression/test_functional_regressions.py/L19-L52__test_chained_matmul.chained_matmul_kernel__b06026b5f35bcdb9.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "10140e86d0d89e4ad98cb9487997a614080196275a88d894fbd0d10043873358",
+    "source_map": {
+      "end_line": 52,
+      "logical_path": "python/test/regression/test_functional_regressions.py",
+      "start_line": 19
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "test_chained_matmul"
+  ],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/b06026b5f35bcdb9/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 52,
+    "git_blob": "d71f5bfd999445f278256e3db93dd078d745af73",
+    "qualname": "test_chained_matmul.chained_matmul_kernel",
+    "relative_path": "python/test/regression/test_functional_regressions.py",
+    "selected_source_sha256": "bde841abdee3fdaa42446d02f314a614594dbcc54a5804f5fd6832f362ad39c8",
+    "source_sha256": "40e9d7d172ab86a7f3495c6cc43b0b953501dcf60ae8390f9f28afa494096069",
+    "start_line": 19
+  }
+}

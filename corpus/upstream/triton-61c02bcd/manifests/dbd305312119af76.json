@@ -1,0 +1,46 @@
+{
+  "candidate_id": "dbd305312119af76",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/test/unit/language/test_compile_errors.py/L121-L124__test_err_in_nested_call.kernel__dbd305312119af76.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "61a8efb949b5ceb1e92e9ab286126f176b03aa6906d0765ce50afe225579c58c",
+    "source_map": {
+      "end_line": 124,
+      "logical_path": "python/test/unit/language/test_compile_errors.py",
+      "start_line": 121
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "nested_call",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "24caa284627e14ed"
+  ],
+  "lexical_parents": [
+    "test_err_in_nested_call"
+  ],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/dbd305312119af76/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "xyz"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 124,
+    "git_blob": "7868d622dc31235c13c902d4ee99869bfe546845",
+    "qualname": "test_err_in_nested_call.kernel",
+    "relative_path": "python/test/unit/language/test_compile_errors.py",
+    "selected_source_sha256": "060157c68e8542ee10fc2db6d91ce4f972c8ab2789ad1228863ff979154fe0a9",
+    "source_sha256": "13a7e620d9a027bf6692610c603a1aa729ad6367efe346d78e9e238c3f9c301b",
+    "start_line": 121
+  }
+}

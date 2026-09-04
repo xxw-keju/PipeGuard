@@ -1,0 +1,85 @@
+{
+  "candidate_id": "776f9b179362daf5",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilelang-2c31e071/capsules/examples/minference/example_vertical_slash_sparse_attn.py/L149-L300__tl_vs_sparse_flashattn.kernel_func.vs_sparse_flashattn_ws__776f9b179362daf5.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "587ea334c8b1519ae3d200a1cf26d3d456fd8a1c6c5d3ae08d70ad00a284cc3b",
+    "source_map": {
+      "end_line": 300,
+      "logical_path": "examples/minference/example_vertical_slash_sparse_attn.py",
+      "start_line": 149
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "Compute",
+    "Prefetch",
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "count_shape",
+    "dim",
+    "dtype",
+    "heads",
+    "index_shape",
+    "int_dtype",
+    "num_stages",
+    "offset_shape",
+    "scale",
+    "seq_len",
+    "shape",
+    "slash_size",
+    "slash_size_round",
+    "vertical_size",
+    "vertical_size_round"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_tl_vs_sparse_flashattn",
+    "kernel_func"
+  ],
+  "recipe_paths": [
+    "tilelang-2c31e071/recipes/776f9b179362daf5/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "Compute",
+    "Prefetch",
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "count_shape",
+    "dim",
+    "dtype",
+    "heads",
+    "index_shape",
+    "int_dtype",
+    "num_stages",
+    "offset_shape",
+    "scale",
+    "seq_len",
+    "shape",
+    "slash_size",
+    "slash_size_round",
+    "vertical_size",
+    "vertical_size_round"
+  ],
+  "upstream": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "end_line": 300,
+    "git_blob": "fc5bc91aa77fb0c7374761807d2fc1fb19716cb9",
+    "qualname": "_tl_vs_sparse_flashattn.kernel_func.vs_sparse_flashattn_ws",
+    "relative_path": "examples/minference/example_vertical_slash_sparse_attn.py",
+    "selected_source_sha256": "7e5d5f2181271ea4c454d4e91916796fb82e553d2f68de6d7b32fadae0eb157a",
+    "source_sha256": "c04371e66de39c72485b3d2c7f0929d967965b3cf5ac0819dab7399aad600d41",
+    "start_line": 149
+  }
+}

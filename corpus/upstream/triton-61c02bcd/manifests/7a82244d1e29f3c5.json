@@ -1,0 +1,96 @@
+{
+  "candidate_id": "7a82244d1e29f3c5",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "triton-61c02bcd/capsules/python/tutorials/06-fused-attention.py/L368-L502__attn_bwd__7a82244d1e29f3c5.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "afb4ad95853ded37b998a83b2578daa92b4371e8b370fa828648139cde4f9adf",
+    "source_map": {
+      "end_line": 502,
+      "logical_path": "python/tutorials/06-fused-attention.py",
+      "start_line": 368
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_attn_bwd_dkdv",
+    "_attn_bwd_dq",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "417bb6aabfc82b0e",
+    "fb8f99f67b25a32d"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "triton-61c02bcd/recipes/7a82244d1e29f3c5/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "BLOCK_M1",
+    "BLOCK_M2",
+    "BLOCK_N1",
+    "BLOCK_N2",
+    "D",
+    "DO",
+    "Di",
+    "HEAD_DIM",
+    "K",
+    "M",
+    "MASK",
+    "Q",
+    "V",
+    "curr_m",
+    "curr_n",
+    "dk",
+    "do",
+    "do_ptrs",
+    "dp",
+    "dpT",
+    "dq",
+    "ds",
+    "dsT",
+    "dv",
+    "k",
+    "kT",
+    "kT_ptrs",
+    "m",
+    "mask",
+    "num_steps",
+    "offs_k",
+    "offs_m",
+    "offs_n",
+    "p",
+    "pT",
+    "ppT",
+    "q",
+    "qT",
+    "qT_ptrs",
+    "qk",
+    "qkT",
+    "start_m",
+    "start_n",
+    "step_m",
+    "step_n",
+    "stride_d",
+    "stride_tok",
+    "v",
+    "vT",
+    "vT_ptrs"
+  ],
+  "upstream": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "end_line": 502,
+    "git_blob": "18dd805ec789cdbd4630a88a715327b4625bddfa",
+    "qualname": "_attn_bwd",
+    "relative_path": "python/tutorials/06-fused-attention.py",
+    "selected_source_sha256": "15eb5440983aa39d19070ab87b3cdbcfa99449de9f86fb1a6069f5b09465881d",
+    "source_sha256": "b3e39b472b1ed0c2fe51b99f92eff1e44557ca7daded20bddb5c69d2e2c1c172",
+    "start_line": 368
+  }
+}
