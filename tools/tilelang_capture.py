@@ -4,11 +4,22 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from itertools import product
 import subprocess
 import sys
 from pathlib import Path
 from typing import Any
+
+from tilelang_static import (
+    cp_async_transfer_bytes,
+    dtype_bit_width,
+    dtype_byte_width,
+    is_pure_payload_call,
+    peel_static_byte_offsets,
+    valid_set_max_nreg,
+    vector_values,
+)
 
 SNAPSHOT_VERSION = "tilelang-snapshot-v2"
 ADAPTER_VERSION = "tilelang-pgir-v2"
@@ -793,43 +804,21 @@ class LaneWalker:
         return str(raw)
 
     def _dtype_bytes(self, buffer: Any) -> int:
-        dtype = buffer.dtype
-        bits = int(getattr(dtype, "bits", 0))
-        lanes = int(getattr(dtype, "lanes", 1))
-        if bits <= 0 or bits % 8:
+        width = dtype_byte_width(buffer.dtype)
+        if width is None:
             raise CaptureError(
                 "TILELANG_DTYPE_UNSUPPORTED",
                 "buffer dtype has no static byte width",
-                {"buffer": buffer.name, "dtype": str(dtype)},
+                {"buffer": buffer.name, "dtype": str(buffer.dtype)},
             )
-        return bits // 8 * lanes
+        return width
 
     def byte_intervals(self, buffer: Any, indices: Any) -> list[tuple[int, int]]:
         shape = [self.eval_int(item) for item in buffer.shape]
         elem_offset = self.eval_int(buffer.elem_offset)
         raw_strides = list(buffer.strides)
         strides = [self.eval_int(item) for item in raw_strides]
-        index_vectors: list[tuple[int, ...] | None] = []
-        for index in indices:
-            index_name = type(index).__name__
-            if index_name == "Ramp":
-                base = self.eval_int(index.base)
-                stride = self.eval_int(index.stride)
-                lanes = int(index.lanes) if isinstance(index.lanes, int) else self.eval_int(index.lanes)
-                if base is None or stride is None or lanes is None or lanes <= 0:
-                    index_vectors.append(None)
-                else:
-                    index_vectors.append(tuple(base + lane * stride for lane in range(lanes)))
-            elif index_name == "Broadcast":
-                value = self.eval_int(index.value)
-                lanes = int(index.lanes) if isinstance(index.lanes, int) else self.eval_int(index.lanes)
-                if value is None or lanes is None or lanes <= 0:
-                    index_vectors.append(None)
-                else:
-                    index_vectors.append((value,) * lanes)
-            else:
-                value = self.eval_int(index)
-                index_vectors.append(None if value is None else (value,))
+        index_vectors = [vector_values(index, self.eval_int) for index in indices]
         unresolved = shape + strides + [elem_offset]
         if (
             len(shape) != len(index_vectors)
@@ -900,21 +889,50 @@ class LaneWalker:
             )
         return intervals[0]
 
-    def access_ptr_region(self, expression: Any, required_flag: int) -> tuple[str, int]:
+    def _access_ptr_parts(self, expression: Any) -> tuple[Any, int]:
+        peeled = peel_static_byte_offsets(
+            expression,
+            lambda node: (
+                getattr(node.op, "name", "")
+                if isinstance(node, self.tirx.Call)
+                else None
+            ),
+            self.eval_int,
+        )
+        if peeled is None:
+            raise CaptureError(
+                "TILELANG_ACCESS_PTR_UNRESOLVED",
+                "async memory operand has a dynamic byte-offset wrapper",
+                {"expression": str(expression)},
+            )
+        core, wrapper_byte_offset = peeled
         if (
-            not isinstance(expression, self.tirx.Call)
-            or getattr(expression.op, "name", "") not in {"tirx.tvm_access_ptr", "tir.tvm_access_ptr"}
-            or len(expression.args) != 5
+            not isinstance(core, self.tirx.Call)
+            or getattr(core.op, "name", "") not in {"tirx.tvm_access_ptr", "tir.tvm_access_ptr"}
+            or len(core.args) != 5
         ):
             raise CaptureError(
                 "TILELANG_ACCESS_PTR_UNRESOLVED",
-                "async memory operand must be a five-argument tvm_access_ptr",
+                "async memory operand must reduce to a five-argument tvm_access_ptr",
                 {"expression": str(expression)},
             )
-        offset = self.eval_int(expression.args[2])
-        extent = self.eval_int(expression.args[3])
-        flags = self.eval_int(expression.args[4])
-        data = expression.args[1]
+        return core, wrapper_byte_offset
+
+    def access_ptr_dtype(self, expression: Any) -> Any:
+        core, _wrapper_byte_offset = self._access_ptr_parts(expression)
+        return core.args[0].dtype
+
+    def access_ptr_region(
+        self,
+        expression: Any,
+        required_flag: int,
+        logical_elements: int | None = None,
+    ) -> tuple[str, int]:
+        core, wrapper_byte_offset = self._access_ptr_parts(expression)
+        offset = self.eval_int(core.args[2])
+        extent = self.eval_int(core.args[3])
+        flags = self.eval_int(core.args[4])
+        data = core.args[1]
         allocation_label = getattr(data, "name", None)
         if offset is None or extent is None or flags is None or allocation_label is None:
             raise CaptureError(
@@ -928,26 +946,24 @@ class LaneWalker:
                 "async access pointer flags do not include the required mode",
                 {"flags": flags, "required_flag": required_flag},
             )
-        import re
-
-        dtype_match = re.search(r"(?:u?int|float|bfloat)(\d+)", str(expression.args[0]))
-        scope_values = re.findall(r'"([^"]+)"', str(getattr(expression.args[1], "type_annotation", "")))
-        if dtype_match is None or not scope_values:
+        bits = dtype_bit_width(core.args[0].dtype)
+        scope_values = re.findall(r'"([^"]+)"', str(getattr(data, "type_annotation", "")))
+        element_count = extent if logical_elements is None else logical_elements
+        if (
+            bits is None
+            or not scope_values
+            or offset < 0
+            or element_count <= 0
+            or offset * bits % 8
+            or element_count * bits % 8
+        ):
             raise CaptureError(
                 "TILELANG_ACCESS_PTR_UNRESOLVED",
-                "async access pointer dtype or address space is unresolved",
+                "async access pointer dtype, address space, or byte footprint is unresolved",
                 {"expression": str(expression)},
             )
-        bits = int(dtype_match.group(1))
-        if bits <= 0 or bits % 8:
-            raise CaptureError(
-                "TILELANG_DTYPE_UNSUPPORTED",
-                "async access pointer element width is not byte-aligned",
-                {"dtype": str(expression.args[0])},
-            )
-        width = bits // 8
-        byte_offset = offset * width
-        byte_extent = extent * width
+        byte_offset = offset * bits // 8
+        byte_extent = element_count * bits // 8
         scope = scope_values[-1]
         resolved = self.eval_pointer(data)
         if resolved is None:
@@ -962,7 +978,7 @@ class LaneWalker:
         region = self.capture.region(
             allocation,
             scope,
-            alias_offset + byte_offset,
+            alias_offset + wrapper_byte_offset + byte_offset,
             byte_extent,
         )
         return region, byte_extent
@@ -994,6 +1010,9 @@ class LaneWalker:
                     deferred_errors.append(error)
                 return
             if not isinstance(node, self.tirx.Call):
+                return
+            call_name = getattr(node.op, "name", "")
+            if is_pure_payload_call(call_name, len(node.args)):
                 return
             effect = node.op.get_attr("TCallEffectKind")
             effect_value = getattr(effect, "value", None)
@@ -1324,6 +1343,14 @@ class LaneWalker:
             return
         name = getattr(expression.op, "name", "")
         self.current_ir_operation = name
+        if name == "tl.set_max_nreg":
+            if not valid_set_max_nreg(expression.args, self.eval_int):
+                raise CaptureError(
+                    "TILELANG_SET_MAX_NREG_UNRESOLVED",
+                    "set_max_nreg requires a static PTX register count and action",
+                    {"args": [str(argument) for argument in expression.args]},
+                )
+            return
         if name == "tl.prefetch_tma_descriptor":
             if len(expression.args) != 1:
                 raise CaptureError(
@@ -1755,20 +1782,34 @@ class LaneWalker:
             if len(expression.args) != 3:
                 raise CaptureError(
                     "TILELANG_CP_ASYNC_UNRESOLVED",
-                    "ptx_cp_async requires destination, source, and byte count operands",
+                    "ptx_cp_async requires destination, source, and logical element count operands",
                 )
-            destination, destination_bytes = self.access_ptr_region(expression.args[0], 2)
-            source, source_bytes = self.access_ptr_region(expression.args[1], 1)
-            byte_count = self.eval_int(expression.args[2])
-            if (
-                byte_count is None
-                or byte_count <= 0
-                or byte_count > destination_bytes
-                or byte_count > source_bytes
-            ):
+            logical_count = self.eval_int(expression.args[2])
+            byte_count = cp_async_transfer_bytes(
+                logical_count,
+                self.access_ptr_dtype(expression.args[0]),
+                self.access_ptr_dtype(expression.args[1]),
+            ) if logical_count is not None else None
+            if byte_count is None:
                 raise CaptureError(
                     "TILELANG_CP_ASYNC_UNRESOLVED",
-                    "ptx_cp_async byte count exceeds a resolved access interval",
+                    "ptx_cp_async transfer width must resolve to 4, 8, or 16 bytes",
+                    {"logical_elements": logical_count},
+                )
+            destination, destination_bytes = self.access_ptr_region(
+                expression.args[0],
+                2,
+                logical_count,
+            )
+            source, source_bytes = self.access_ptr_region(
+                expression.args[1],
+                1,
+                logical_count,
+            )
+            if byte_count != destination_bytes or byte_count != source_bytes:
+                raise CaptureError(
+                    "TILELANG_CP_ASYNC_UNRESOLVED",
+                    "ptx_cp_async source and destination transfer widths differ",
                     {
                         "bytes": byte_count,
                         "source_extent": source_bytes,
