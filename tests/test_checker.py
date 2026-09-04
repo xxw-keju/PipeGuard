@@ -15,6 +15,7 @@ from pipeguard.model import (
     Event,
     PGIRError,
     _bucket_events_by_actor,
+    _dangling_dependencies,
     load_module,
     module_from_dict,
     stable_channel_handoff_id,
@@ -99,6 +100,40 @@ def test_events_by_actor_bucketing_preserves_validation_errors(mutation, code, d
 
     assert caught.value.code == code
     assert caught.value.details == details
+
+
+def test_dangling_dependencies_scan_only_dependency_ids_and_preserve_details():
+    class MembershipOnlyEvents(dict):
+        def __iter__(self):
+            raise AssertionError("event table must not be scanned")
+
+        def keys(self):
+            raise AssertionError("event keys must not be scanned")
+
+    events = MembershipOnlyEvents(known=object())
+
+    assert _dangling_dependencies(("missing-z", "known", "missing-a", "missing-z"), events) == [
+        "missing-a",
+        "missing-z",
+    ]
+
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["events"][3]["depends_on"] = ["missing-z", "init", "missing-a"]
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+    assert caught.value.code == "DANGLING_REFERENCE"
+    assert caught.value.details == {"event": "wait", "depends_on": ["missing-a", "missing-z"]}
+
+
+def test_self_dependency_remains_a_distinct_validation_error():
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["events"][3]["depends_on"] = ["wait"]
+
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+
+    assert caught.value.code == "SELF_DEPENDENCY"
+    assert caught.value.details == {"event": "wait"}
 
 
 def test_safe_handoff_has_visibility_path_and_manifest():

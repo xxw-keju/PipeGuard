@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from importlib.resources import files
 from pathlib import Path
@@ -166,6 +167,13 @@ def _bucket_events_by_actor(
         actor_id: tuple(sorted(bucket, key=lambda event: (event.seq, event.id)))
         for actor_id, bucket in buckets.items()
     }
+
+
+def _dangling_dependencies(
+    dependencies: tuple[str, ...],
+    events: Mapping[str, Event],
+) -> list[str]:
+    return sorted({dependency for dependency in dependencies if dependency not in events})
 
 
 def _schema(version: str) -> dict[str, Any]:
@@ -781,7 +789,7 @@ def _semantic_validate(module: Module) -> None:
         dangling_regions = sorted(value for value in referenced_regions if value not in regions)
         if dangling_regions:
             raise PGIRError("DANGLING_REFERENCE", "event references unknown region", {"event": event.id, "regions": dangling_regions})
-        dangling_dependencies = sorted(set(event.depends_on) - events.keys())
+        dangling_dependencies = _dangling_dependencies(event.depends_on, events)
         if dangling_dependencies:
             raise PGIRError("DANGLING_REFERENCE", "event has dangling dependencies", {"event": event.id, "depends_on": dangling_dependencies})
         if event.id in event.depends_on:
