@@ -52,9 +52,9 @@ The deterministic source inventory at these locks contains:
 | DSL | Source files | Candidates | Lowerable recipes |
 | --- | ---: | ---: | ---: |
 | TileLang | 643 | 2,054 | 592 |
-| Triton | 135 | 802 | 4 |
+| Triton | 135 | 802 | 6 |
 
-TileLang has 590 conservative static recipes for dependency-closed, non-CPU/non-AMD PrimFuncs plus two reviewed recipes. Triton has three reviewed recipes and one statically inferred recipe backed by an explicit `ASTSource` payload and literal `GPUTarget("cuda", 90, 32)` compile site. Missing Triton signatures, constexprs, options, or targets are not guessed.
+TileLang has 590 conservative static recipes for dependency-closed, non-CPU/non-AMD PrimFuncs plus two reviewed recipes. Triton has three reviewed recipes and three statically inferred recipes backed by explicit `ASTSource` payloads and literal `GPUTarget("cuda", 90, 32)` compile sites. Missing Triton signatures, constexprs, options, or targets are not guessed.
 
 ## Frontend-only full run
 
