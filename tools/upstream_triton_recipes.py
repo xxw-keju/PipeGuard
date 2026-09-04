@@ -8,6 +8,7 @@ from upstream_common import RECIPE_VERSION, canonical_json, stable_id
 from upstream_pytest_params import is_pytest_raises_block, pytest_parameter_environments
 from upstream_static_eval import AMBIGUOUS, bind_once
 from upstream_triton_compile import triton_compile_evidence
+from upstream_triton_launch import triton_launch_evidence
 
 
 class AliasResolver(Protocol):
@@ -116,7 +117,10 @@ def _make_recipe(evidence: Any, call: ast.Call, relative_path: str) -> dict[str,
         "recipe_id": f"{candidate.candidate_id}-sm90-L{call.lineno}-{digest}",
         "candidate_id": candidate.candidate_id,
         "dsl": "triton",
-        "origin": f"static-inference:{relative_path}:{call.lineno}-{end_line}",
+        "origin": (
+            f"{getattr(evidence, 'origin_kind', 'static-inference')}:"
+            f"{relative_path}:{call.lineno}-{end_line}"
+        ),
         "lowerable": True,
         "unresolved": [],
         "bindings": {},
@@ -145,6 +149,8 @@ def infer_triton_recipes(
 
     def inspect_call(call: ast.Call, environment: dict[str, Any]) -> None:
         evidence = triton_compile_evidence(call, environment, aliases, candidates_by_node)
+        if evidence is None:
+            evidence = triton_launch_evidence(call, environment, aliases, candidates_by_node)
         if evidence is not None:
             recipes[evidence.candidate.candidate_id].append(
                 _make_recipe(evidence, call, relative_path)
