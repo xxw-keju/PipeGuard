@@ -45,6 +45,7 @@ def _artifacts_match(case_directory: Path, result: dict[str, Any]) -> bool:
         for path_key, hash_key in (
             ("path", "sha256"),
             ("reference_path", "reference_sha256"),
+            ("metadata_path", "metadata_sha256"),
         ):
             relative_text = artifact.get(path_key)
             expected = artifact.get(hash_key)
@@ -202,6 +203,8 @@ def _parse_snapshots(
         result["artifacts"][f"pgir:{symbol}"] = {
             "path": pgir_path.name,
             "sha256": _file_hash(pgir_path),
+            "metadata_path": metadata_path.name,
+            "metadata_sha256": _file_hash(metadata_path),
             "semantic_sha256": metadata["semantic_sha256"],
         }
 

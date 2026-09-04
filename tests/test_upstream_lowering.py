@@ -4,6 +4,7 @@ import json
 import os
 import subprocess
 import sys
+import types
 from pathlib import Path
 
 import jsonschema
@@ -16,6 +17,8 @@ TRITON_ROOT = Path(os.environ.get("TRITON_ROOT", "/mnt/project_dft/xuwen/PipeGua
 TILELANG_PYTHON = Path(os.environ.get("TILELANG_PYTHON", "/usr/local/miniconda3/envs/tl-pg/bin/python"))
 TRITON_PYTHON = Path(os.environ.get("TRITON_PYTHON", "/usr/local/miniconda3/envs/triton-pg/bin/python"))
 TRITON_PTXAS = Path(os.environ.get("TRITON_PTXAS_PATH", "/usr/local/cuda-12.9/bin/ptxas"))
+sys.path.insert(0, str(ROOT / "tools"))
+import upstream_worker  # noqa: E402
 
 
 def _request(dsl: str, candidate_id: str, recipe_name: str, source_root: Path, fingerprint: str):
@@ -125,3 +128,146 @@ def test_native_triton_upstream_lowering_reaches_alias_gate(tmp_path: Path):
     artifact = result["artifacts"]["raw_ir:kernel"]
     assert (output / artifact["path"]).exists()
     assert artifact["sha256"] == artifact["reference_sha256"]
+
+
+def _unit_request(dsl: str) -> dict:
+    return {
+        "fingerprint": "1" * 64,
+        "dsl": dsl,
+        "corpus_root": str(CORPUS),
+        "source_root": str(ROOT),
+        "manifest": {
+            "candidate_id": "unit-candidate",
+            "upstream": {"qualname": "kernel"},
+        },
+        "recipe": {
+            "recipe_id": "unit-recipe",
+            "lowerable": True,
+            "reference": {"mode": "direct_original"},
+        },
+    }
+
+
+def _isolate_unit_lowering(monkeypatch: pytest.MonkeyPatch, dsl: str) -> None:
+    monkeypatch.setitem(sys.modules, dsl, types.ModuleType(dsl))
+    monkeypatch.setattr(upstream_worker, "_capsule_module", lambda *_args: object())
+    monkeypatch.setattr(upstream_worker, "_direct_reference_module", lambda *_args: object())
+
+
+def _forbid_capture(*_args, **_kwargs):
+    pytest.fail("parity or lowering failure entered capture")
+
+
+def test_compiler_error_message_containing_parity_is_lowering_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    _isolate_unit_lowering(monkeypatch, "triton")
+
+    def fail_lowering(*_args, **_kwargs):
+        raise RuntimeError("compiler parity optimization failed")
+
+    monkeypatch.setattr(upstream_worker, "_lower_triton", fail_lowering)
+    monkeypatch.setattr(upstream_worker, "_capture_triton", _forbid_capture)
+    result = upstream_worker.run(_unit_request("triton"), tmp_path)
+
+    assert result["status"] == "LOWERING_ERROR"
+    assert result["diagnostics"][0]["code"] == "UPSTREAM_LOWERING_FAILED"
+    assert result["diagnostics"][0]["details"]["error_type"] == "RuntimeError"
+    assert result["artifacts"] == {}
+
+
+def test_triton_normalized_mismatch_preserves_both_raw_ir_without_capture(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    _isolate_unit_lowering(monkeypatch, "triton")
+
+    def lower_triton(_module, _recipe, *, resolution: str):
+        return (
+            "module { reference }\n"
+            if resolution == "original"
+            else "module { capsule }\n"
+        )
+
+    monkeypatch.setattr(upstream_worker, "_lower_triton", lower_triton)
+    monkeypatch.setattr(upstream_worker, "_capture_triton", _forbid_capture)
+    result = upstream_worker.run(_unit_request("triton"), tmp_path)
+
+    assert result["status"] == "LOWERING_ERROR"
+    assert result["diagnostics"][0]["code"] == "UPSTREAM_PARITY_MISMATCH"
+    assert result["diagnostics"][0]["details"]["error_type"] == "UpstreamParityError"
+    artifact = result["artifacts"]["raw_ir:kernel"]
+    for path_key, hash_key in (("path", "sha256"), ("reference_path", "reference_sha256")):
+        artifact_path = tmp_path / artifact[path_key]
+        assert artifact_path.is_file()
+        assert upstream_worker.sha256_text(artifact_path.read_text()) == artifact[hash_key]
+    assert not list(tmp_path.glob("snapshot*.json"))
+
+
+class _FakeTileLangIR:
+    @staticmethod
+    def save_json(module: str) -> str:
+        return module
+
+    @staticmethod
+    def structural_hash(module: str, *, map_free_vars: bool) -> int:
+        assert map_free_vars is False
+        return len(module)
+
+    @staticmethod
+    def structural_equal(left: str, right: str, *, map_free_vars: bool) -> bool:
+        assert map_free_vars is False
+        return left == right
+
+
+class _FakeTVM:
+    ir = _FakeTileLangIR()
+
+
+def test_tilelang_structural_mismatch_preserves_both_raw_ir_without_capture(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    _isolate_unit_lowering(monkeypatch, "tilelang")
+
+    def lower_tilelang(_module, _recipe, *, resolution: str):
+        module = "reference raw ir" if resolution == "original" else "capsule raw ir"
+        return _FakeTVM(), [("kernel", module)]
+
+    monkeypatch.setattr(upstream_worker, "_lower_tilelang", lower_tilelang)
+    monkeypatch.setattr(upstream_worker, "_capture_tilelang", _forbid_capture)
+    result = upstream_worker.run(_unit_request("tilelang"), tmp_path)
+
+    assert result["diagnostics"][0]["code"] == "UPSTREAM_PARITY_MISMATCH"
+    artifact = result["artifacts"]["raw_ir:kernel"]
+    assert (tmp_path / artifact["path"]).read_text() == "capsule raw ir"
+    assert (tmp_path / artifact["reference_path"]).read_text() == "reference raw ir"
+    assert not list(tmp_path.glob("snapshot*.json"))
+
+
+def test_tilelang_symbol_count_mismatch_preserves_every_raw_ir_without_capture(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    _isolate_unit_lowering(monkeypatch, "tilelang")
+
+    def lower_tilelang(_module, _recipe, *, resolution: str):
+        modules = (
+            [("first", "reference first"), ("second", "reference second")]
+            if resolution == "original"
+            else [("only", "capsule only")]
+        )
+        return _FakeTVM(), modules
+
+    monkeypatch.setattr(upstream_worker, "_lower_tilelang", lower_tilelang)
+    monkeypatch.setattr(upstream_worker, "_capture_tilelang", _forbid_capture)
+    result = upstream_worker.run(_unit_request("tilelang"), tmp_path)
+
+    assert result["diagnostics"][0]["code"] == "UPSTREAM_PARITY_MISMATCH"
+    assert set(result["artifacts"]) == {
+        "raw_ir:reference:0:first",
+        "raw_ir:reference:1:second",
+        "raw_ir:capsule:0:only",
+    }
+    for artifact in result["artifacts"].values():
+        artifact_path = tmp_path / artifact["path"]
+        assert artifact_path.is_file()
+        assert upstream_worker.sha256_text(artifact_path.read_text()) == artifact["sha256"]
+    assert not list(tmp_path.glob("snapshot*.json"))

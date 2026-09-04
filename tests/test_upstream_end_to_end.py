@@ -59,6 +59,13 @@ def test_native_upstream_capture_parses_pgir_without_checker(tmp_path: Path):
     assert all(result["status"] == "CAPTURED" for result in results)
     assert all(result["checker_loaded"] is False for result in results)
     assert all(any(key.startswith("pgir:") for key in result["artifacts"]) for result in results)
+    for result_path, result in zip(result_paths, results):
+        for key, artifact in result["artifacts"].items():
+            if not key.startswith("pgir:"):
+                continue
+            metadata_path = result_path.parent / artifact["metadata_path"]
+            assert hashlib.sha256(metadata_path.read_bytes()).hexdigest() == artifact["metadata_sha256"]
+            assert json.loads(metadata_path.read_text())["checker_loaded"] is False
     progress = [json.loads(line) for line in (run_root / "progress.jsonl").read_text().splitlines()]
     assert progress[0]["selected_total"] == 2
     assert progress[-1]["completed"] == 2
@@ -66,13 +73,17 @@ def test_native_upstream_capture_parses_pgir_without_checker(tmp_path: Path):
     corrupted_artifact = next(
         artifact for key, artifact in corrupted_result["artifacts"].items() if key.startswith("pgir:")
     )
-    corrupted_path = result_paths[0].parent / corrupted_artifact["path"]
+    corrupted_path = result_paths[0].parent / corrupted_artifact["metadata_path"]
     corrupted_path.write_text("{}\n")
     resumed = subprocess.run(command, cwd=ROOT, text=True, capture_output=True, timeout=240)
     assert resumed.returncode == 0, resumed.stderr
     resumed_summary = json.loads(resumed.stdout)
     assert resumed_summary["resumed"] == 1
-    assert hashlib.sha256(corrupted_path.read_bytes()).hexdigest() == corrupted_artifact["sha256"]
+    assert (
+        hashlib.sha256(corrupted_path.read_bytes()).hexdigest()
+        == corrupted_artifact["metadata_sha256"]
+    )
+    assert json.loads(corrupted_path.read_text())["checker_loaded"] is False
     fully_resumed = subprocess.run(command, cwd=ROOT, text=True, capture_output=True, timeout=60)
     assert fully_resumed.returncode == 0, fully_resumed.stderr
     assert json.loads(fully_resumed.stdout)["resumed"] == 2

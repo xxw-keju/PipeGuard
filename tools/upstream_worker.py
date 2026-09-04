@@ -37,6 +37,10 @@ PROFILE_DIAGNOSTICS = {
 }
 
 
+class UpstreamParityError(RuntimeError):
+    pass
+
+
 def _load_module(path: Path, name: str, import_roots: list[Path]):
     original_path = list(sys.path)
     try:
@@ -288,6 +292,51 @@ def _capture_triton(request: dict[str, Any], raw_path: Path, output: Path) -> tu
         return None, error.diagnostic()
 
 
+def _record_raw_units(
+    result: dict[str, Any],
+    output: Path,
+    dsl: str,
+    raw_units: list[tuple[str, str, str, str]],
+) -> list[Path]:
+    raw_paths: list[Path] = []
+    suffix = "device.tvm.json" if dsl == "tilelang" else "kernel.ttgir.mlir"
+    for index, (symbol, raw, reference_raw, normalized_hash) in enumerate(raw_units):
+        raw_path = output / (suffix if len(raw_units) == 1 else f"{index:03d}-{symbol}.{suffix}")
+        reference_path = output / (
+            f"reference.{suffix}"
+            if len(raw_units) == 1
+            else f"reference-{index:03d}-{symbol}.{suffix}"
+        )
+        atomic_write(raw_path, raw)
+        atomic_write(reference_path, reference_raw)
+        result["artifacts"][f"raw_ir:{symbol}"] = {
+            "path": raw_path.name,
+            "sha256": sha256_text(raw),
+            "reference_path": reference_path.name,
+            "reference_sha256": sha256_text(reference_raw),
+            "normalized_sha256": normalized_hash,
+        }
+        raw_paths.append(raw_path)
+    return raw_paths
+
+
+def _record_unpaired_tilelang_modules(
+    result: dict[str, Any],
+    output: Path,
+    tvm: Any,
+    side: str,
+    modules: list[tuple[str, Any]],
+) -> None:
+    for index, (symbol, module) in enumerate(modules):
+        raw = tvm.ir.save_json(module)
+        raw_path = output / f"{side}-{index:03d}-{symbol}.device.tvm.json"
+        atomic_write(raw_path, raw)
+        result["artifacts"][f"raw_ir:{side}:{index}:{symbol}"] = {
+            "path": raw_path.name,
+            "sha256": sha256_text(raw),
+        }
+
+
 def run(request: dict[str, Any], output: Path) -> dict[str, Any]:
     output.mkdir(parents=True, exist_ok=True)
     result = _base_result(request)
@@ -346,30 +395,65 @@ def run(request: dict[str, Any], output: Path) -> dict[str, Any]:
             )
             tvm, capsule_modules = _lower_tilelang(capsule, dict(recipe), resolution="capsule")
             if [name for name, _ in reference_modules] != [name for name, _ in capsule_modules]:
-                raise RuntimeError("device kernel symbol/count mismatch")
+                _record_unpaired_tilelang_modules(
+                    result, output, tvm, "reference", reference_modules
+                )
+                _record_unpaired_tilelang_modules(
+                    result, output, tvm, "capsule", capsule_modules
+                )
+                raise UpstreamParityError("device kernel symbol/count mismatch")
             raw_units = []
-            for (name, reference_module), (_, capsule_module) in zip(reference_modules, capsule_modules):
-                if not tvm.ir.structural_equal(reference_module, capsule_module, map_free_vars=False):
-                    raise RuntimeError(f"TileLang structural parity mismatch for {name}")
+            for (name, reference_module), (_, capsule_module) in zip(
+                reference_modules, capsule_modules
+            ):
                 reference_raw = tvm.ir.save_json(reference_module)
                 capsule_raw = tvm.ir.save_json(capsule_module)
-                normalized_hash = sha256_text(str(tvm.ir.structural_hash(capsule_module, map_free_vars=False)))
+                normalized_hash = sha256_text(
+                    str(tvm.ir.structural_hash(capsule_module, map_free_vars=False))
+                )
                 raw_units.append((name, capsule_raw, reference_raw, normalized_hash))
+            raw_paths = _record_raw_units(result, output, request["dsl"], raw_units)
+            for (name, reference_module), (_, capsule_module) in zip(
+                reference_modules, capsule_modules
+            ):
+                if not tvm.ir.structural_equal(
+                    reference_module, capsule_module, map_free_vars=False
+                ):
+                    raise UpstreamParityError(
+                        f"TileLang structural parity mismatch for {name}"
+                    )
         else:
             reference_text = _lower_triton(reference, recipe, resolution=reference_resolution)
             capsule_text = _lower_triton(capsule, recipe, resolution="capsule")
             normalized_reference = _normalize_triton_ir(reference_text)
             normalized_capsule = _normalize_triton_ir(capsule_text)
+            raw_units = [
+                ("kernel", capsule_text, reference_text, sha256_text(normalized_capsule))
+            ]
+            raw_paths = _record_raw_units(result, output, request["dsl"], raw_units)
             if normalized_reference != normalized_capsule:
-                raise RuntimeError("Triton TTGIR parity mismatch after provenance-only normalization")
-            raw_units = [("kernel", capsule_text, reference_text, sha256_text(normalized_capsule))]
+                raise UpstreamParityError(
+                    "Triton TTGIR parity mismatch after provenance-only normalization"
+                )
         result["timings"]["lowering_and_parity"] = time.monotonic() - phase
+    except UpstreamParityError as error:
+        result["status"] = "LOWERING_ERROR"
+        result["phase"] = "lowering_parity"
+        result["diagnostics"] = [_diagnostic(
+            "UPSTREAM_PARITY_MISMATCH",
+            str(error),
+            error_type=type(error).__name__,
+            traceback=traceback.format_exc(limit=20),
+        )]
+        return result
     except Exception as error:
         result["status"] = "LOWERING_ERROR"
         result["phase"] = "lowering_parity"
-        code = "UPSTREAM_PARITY_MISMATCH" if "parity" in str(error).lower() or "symbol/count" in str(error) else "UPSTREAM_LOWERING_FAILED"
         result["diagnostics"] = [_diagnostic(
-            code, str(error), error_type=type(error).__name__, traceback=traceback.format_exc(limit=20)
+            "UPSTREAM_LOWERING_FAILED",
+            str(error),
+            error_type=type(error).__name__,
+            traceback=traceback.format_exc(limit=20),
         )]
         return result
     if not raw_units:
@@ -383,19 +467,9 @@ def run(request: dict[str, Any], output: Path) -> dict[str, Any]:
         return result
     snapshots: list[dict[str, Any]] = []
     phase = time.monotonic()
-    for index, (symbol, raw, reference_raw, normalized_hash) in enumerate(raw_units):
-        suffix = "device.tvm.json" if request["dsl"] == "tilelang" else "kernel.ttgir.mlir"
-        raw_path = output / (suffix if len(raw_units) == 1 else f"{index:03d}-{symbol}.{suffix}")
-        reference_path = output / (f"reference.{suffix}" if len(raw_units) == 1 else f"reference-{index:03d}-{symbol}.{suffix}")
-        atomic_write(raw_path, raw)
-        atomic_write(reference_path, reference_raw)
-        result["artifacts"][f"raw_ir:{symbol}"] = {
-            "path": raw_path.name,
-            "sha256": sha256_text(raw),
-            "reference_path": reference_path.name,
-            "reference_sha256": sha256_text(reference_raw),
-            "normalized_sha256": normalized_hash,
-        }
+    for index, ((symbol, _raw, _reference_raw, _normalized_hash), raw_path) in enumerate(
+        zip(raw_units, raw_paths)
+    ):
         if request["dsl"] == "tilelang":
             snapshot, diagnostic = _capture_tilelang(request, raw_path, output)
         else:
