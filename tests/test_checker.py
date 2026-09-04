@@ -48,6 +48,14 @@ def test_empty_finite_event_graph_is_safe_for_both_pgir_versions(fixture: str):
     assert check_module(module, engine="crosscheck")["verdict"] == "SAFE"
 
 
+def test_module_indexes_are_constructed_once_and_reused():
+    module = load("safe_handoff.json")
+    assert module.event_map is module.event_map
+    assert module.resource_map is module.resource_map
+    assert module.region_map is module.region_map
+    assert module.actor_map is module.actor_map
+
+
 def test_events_by_actor_buckets_once_in_actor_order_and_sorts_each_trace():
     class SinglePassEvents(tuple):
         iterations = 0

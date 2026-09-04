@@ -128,22 +128,26 @@ class Module:
     regions: tuple[Region, ...]
     events: tuple[Event, ...]
     events_by_actor: dict[str, tuple[Event, ...]] = field(compare=False, hash=False)
+    _event_map: dict[str, Event] = field(compare=False, hash=False, repr=False)
+    _resource_map: dict[str, Resource] = field(compare=False, hash=False, repr=False)
+    _region_map: dict[str, Region] = field(compare=False, hash=False, repr=False)
+    _actor_map: dict[str, Actor] = field(compare=False, hash=False, repr=False)
 
     @property
     def event_map(self) -> dict[str, Event]:
-        return {event.id: event for event in self.events}
+        return self._event_map
 
     @property
     def resource_map(self) -> dict[str, Resource]:
-        return {resource.id: resource for resource in self.resources}
+        return self._resource_map
 
     @property
     def region_map(self) -> dict[str, Region]:
-        return {region.id: region for region in self.regions}
+        return self._region_map
 
     @property
     def actor_map(self) -> dict[str, Actor]:
-        return {actor.id: actor for actor in self.actors}
+        return self._actor_map
 
     @property
     def required_logical_waits(self) -> dict[tuple[str, int, int], frozenset[str]]:
@@ -1311,7 +1315,18 @@ def module_from_dict(data: dict[str, Any]) -> Module:
         visibility_mask=VisibilityMask.from_mapping(item["visibility_mask"]) if "visibility_mask" in item else None,
     ) for item in data["events"])
     grouped = _bucket_events_by_actor(actors, events)
-    module = Module(data, actors, resources, regions, events, grouped)
+    module = Module(
+        raw=data,
+        actors=actors,
+        resources=resources,
+        regions=regions,
+        events=events,
+        events_by_actor=grouped,
+        _event_map={event.id: event for event in events},
+        _resource_map={resource.id: resource for resource in resources},
+        _region_map={region.id: region for region in regions},
+        _actor_map={actor.id: actor for actor in actors},
+    )
     _semantic_validate(module)
     return module
 
