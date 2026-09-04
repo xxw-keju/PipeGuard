@@ -41,7 +41,7 @@ The extractor is static: it parses Python AST, resolves decorator aliases and wr
 
 The corpus runner uses the pinned frontend environments. TileLang recipes are materialized with the original factory/`get_tir` path and lowered through public `tilelang.lower(...).device_mod`. Triton recipes are compiled through public `triton.compile(ASTSource(...)).asm["ttgir"]`. The raw compiler artifact is passed to the existing strict snapshot-v2 capture adapters and PGIR parser.
 
-The initial corpus flow stops after PGIR parsing. It does not invoke `pipeguard.checker` or produce a SAFE/UNSAFE verdict.
+The corpus runner stops after PGIR parsing and records `checker_loaded=false`; checker verification is a separate phase over successfully normalized PGIR. This keeps frontend coverage failures distinct from synchronization or data-hazard verdicts.
 
 Bulk generated TIR/TTGIR, snapshots, normalized PGIR, logs, and progress files live under `generated/` and are intentionally excluded from Git. Source indexes, capsules, manifests, and reviewed recipes are tracked.
 
@@ -51,10 +51,12 @@ The deterministic source inventory at these locks contains:
 
 | DSL | Source files | Candidates | Lowerable recipes |
 | --- | ---: | ---: | ---: |
-| TileLang | 643 | 2,054 | 592 |
-| Triton | 135 | 802 | 6 |
+| TileLang | 643 | 2,054 | 585 |
+| Triton | 135 | 802 | 14 |
 
-TileLang has 590 conservative static recipes for dependency-closed, non-CPU/non-AMD PrimFuncs plus two reviewed recipes. Triton has three reviewed recipes and three statically inferred recipes backed by explicit `ASTSource` payloads and literal `GPUTarget("cuda", 90, 32)` compile sites. Missing Triton signatures, constexprs, options, or targets are not guessed.
+TileLang has 583 static profile-specialization recipes plus two reviewed recipes. Static classification rejects 18 PrimFuncs that explicitly call Blackwell `tcgen05` operations and two PrimFuncs defined inside expected-failure scopes. Source-directory names do not substitute for operation evidence: 13 dependency-closed PrimFuncs under AMD/CPU test directories are attempted under the SM90 profile, producing six additional normalized PGIR programs while unknown effects and control still fail closed.
+
+Triton has three reviewed recipes, three recipes inferred from exact literal `ASTSource` plus `GPUTarget("cuda", 90, 32)` compile sites, and eight profile-derived all-constexpr single-CTA launch recipes. Dynamic grids, runtime pointer specialization attributes, autotune winners, aliases, and unknown compiler options are not guessed.
 
 ## Frontend-only full run
 
@@ -65,26 +67,38 @@ Run the current concrete recipe set with a 150-second dual-DSL heartbeat:
   --dsl all \
   --tilelang-root /mnt/project_dft/xuwen/PipeGuard-asplos/tilelang \
   --triton-root /mnt/project_dft/xuwen/PipeGuard-asplos/triton \
-  --output corpus/upstream/generated/parse-runs-final \
+  --triton-ptxas /usr/local/cuda-12.9/bin/ptxas \
+  --output corpus/upstream/generated/final-current-all \
   --jobs 6 \
   --progress-interval 150 \
   --timeout 300 \
   --parse-timeout 60
 ```
 
-The final fingerprinted run selected 596 recipes and completed in 817 seconds:
+The fresh fingerprinted run selected 599 recipes and completed in 652.6 seconds:
 
 | DSL | CAPTURED | PROFILE_SKIPPED | UNSUPPORTED | LOWERING_ERROR | TIMEOUT | IMPORT_ERROR |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| TileLang | 68 | 51 | 155 | 311 | 7 | 0 |
-| Triton | 1 | 0 | 3 | 0 | 0 | 0 |
+| TileLang | 95 | 51 | 146 | 292 | 1 | 0 |
+| Triton | 12 | 0 | 2 | 0 | 0 | 0 |
 
 These counts have distinct meanings:
 
-- 311 TileLang recipes failed in the pinned compiler's native lowering or strict reference/capsule parity; this group includes compiler and transform negative tests and is not a frontend parse verdict.
+- 292 TileLang recipes failed in the pinned compiler's native lowering or strict reference/capsule parity; compiler/transform fixtures that are not statically identifiable as expected failures remain visible here rather than being labeled from historical outcomes.
 - 51 TileLang recipes were outside the selected parsing profile: 44 required multiple CTAs and seven lowered to no device kernel.
-- 155 TileLang raw-IR cases reached capture and failed closed. The largest recognizer classes were nested expression effects (51), unresolved static `Bind` values (24), unresolved participants (22), dynamic control (14), and symbolic regions (10).
-- Six TileLang snapshots reached the PGIR adapter but exceeded its isolated 60-second timeout; one additional TileLang worker exceeded the 300-second native-lowering timeout.
-- Two Triton cases required explicit external-pointer alias evidence, and one had unresolved ordinary scalar-pointer provenance.
+- 146 TileLang raw-IR cases reached capture and failed closed. The largest recognizer classes were unknown nested expression effects (41), unresolved static `Bind` values (24), unresolved participants (22), dynamic control (15), and unsupported barrier/address/attribute forms. Unknown dtype, alias, proxy, region, and TMA evidence also remain explicit failures.
+- One TileLang native worker exceeded 300 seconds. No PGIR parser exceeded its isolated 60-second timeout.
+- The two Triton failures both used multiple external pointer bases without SHA-bound alias evidence. Scalar single-pointer accesses and statically certified empty protocol graphs are captured.
 
-In total, 277 recipes produced 278 raw device-IR units, 75 strict snapshots were emitted, and 69 recipes completed normalized PGIR parsing. `pipeguard.checker` remained unloaded throughout. Repeating the command validated every fingerprint and artifact hash and resumed all 596 results in 6.2 seconds.
+In total, 302 recipes produced 303 raw device-IR units. The 107 captured recipes emitted 108 strict snapshots and 108 normalized PGIR units because one recipe contains two device kernels. `pipeguard.checker` remained unloaded throughout the runner. Repeating the command validated every fingerprint and artifact hash and resumed all 599 results in 4.75 seconds.
+
+## Checker verification
+
+Every normalized PGIR unit was checked separately with the maximal engine after frontend capture:
+
+| DSL | SAFE | DATA_HAZARD | SYNC_HAZARD | Timeout/error |
+| --- | ---: | ---: | ---: | ---: |
+| TileLang | 72 | 22 | 2 | 0 |
+| Triton | 12 | 0 | 0 | 0 |
+
+All 12 Triton cases also matched the exhaustive engine under `crosscheck`. The largest TileLang case contains 1,048,576 events: loading took 22.28 seconds and maximal checking took 42.58 seconds, producing a deterministic `DATA_HAZARD` witness. Five 262,144-event cases each loaded in about 5.1--5.9 seconds and checked in about 8.0--8.2 seconds. The memory-only fast path records one canonical transition per event and analytically equivalent singleton held-anchor boundaries; protocol-bearing fixtures continue through incremental held-anchor analysis and reduced exhaustive crosschecks.
