@@ -1,7 +1,11 @@
 from __future__ import annotations
 
-from collections import deque
+from bisect import bisect_right
+from collections import defaultdict, deque
+from collections.abc import Iterator
 from dataclasses import dataclass
+from heapq import heappop, heappush, merge
+from itertools import islice
 from typing import Any, Literal
 
 from .engine import Executor, ExplorationLimit, ProtocolError
@@ -423,16 +427,47 @@ def _effects(module: Module) -> list[Effect]:
     return sorted(result, key=lambda effect: effect.id)
 
 
-def _may_alias(module: Module, left: str, right: str) -> bool:
-    a = module.region_map[left]
-    b = module.region_map[right]
-    return (
-        a.address_space == b.address_space
-        and a.owner_cta_rank == b.owner_cta_rank
-        and a.allocation_id == b.allocation_id
-        and a.offset < b.offset + b.extent
-        and b.offset < a.offset + a.extent
-    )
+def _overlapping_effect_pairs(
+    module: Module,
+    effects: list[Effect],
+) -> Iterator[tuple[Effect, Effect]]:
+    effects_by_region: dict[str, list[int]] = defaultdict(list)
+    for index, effect in enumerate(effects):
+        effects_by_region[effect.region].append(index)
+
+    regions_by_allocation: dict[tuple[str, int | None, str], list[Any]] = defaultdict(list)
+    for region_id in effects_by_region:
+        region = module.region_map[region_id]
+        regions_by_allocation[
+            (region.address_space, region.owner_cta_rank, region.allocation_id)
+        ].append(region)
+
+    overlapping_regions: dict[str, set[str]] = {
+        region_id: {region_id}
+        for region_id in effects_by_region
+    }
+    for regions in regions_by_allocation.values():
+        active: dict[str, Any] = {}
+        ends: list[tuple[int, str]] = []
+        for region in sorted(regions, key=lambda item: (item.offset, item.id)):
+            while ends and ends[0][0] <= region.offset:
+                _end, expired = heappop(ends)
+                active.pop(expired, None)
+            for other in active.values():
+                overlapping_regions[region.id].add(other.id)
+                overlapping_regions[other.id].add(region.id)
+            active[region.id] = region
+            heappush(ends, (region.offset + region.extent, region.id))
+
+    for left_index, left in enumerate(effects):
+        streams = []
+        for region_id in overlapping_regions[left.region]:
+            indices = effects_by_region[region_id]
+            position = bisect_right(indices, left_index)
+            if position < len(indices):
+                streams.append(islice(indices, position, None))
+        for right_index in merge(*streams):
+            yield left, effects[right_index]
 
 
 def _arrivals(module: Module, resource: str, lifecycle_epoch: int, generation: int) -> list[Event]:
@@ -676,54 +711,53 @@ def _completion_observed(module: Module, graph: PDG, window: Effect, point: Effe
 
 def _data_hazard(module: Module, graph: PDG) -> dict[str, Any] | None:
     effects = _effects(module)
-    for index, left in enumerate(effects):
-        for right in effects[index + 1:]:
-            if left.actor == right.actor and not left.async_window and not right.async_window:
-                continue
-            if left.mode == right.mode == "READ" or not _may_alias(module, left.region, right.region):
-                continue
-            safe = False
-            query = ""
-            if not left.async_window and not right.async_window:
-                if left.actor == right.actor:
-                    safe = graph.reachable(left.end, right.begin) or graph.reachable(right.end, left.begin)
-                else:
-                    safe = (
-                        _mbarrier_visibility(module, graph, left, right)
-                        or _mbarrier_visibility(module, graph, right, left)
-                        or _collective_visibility(module, graph, left, right)
-                        or _collective_visibility(module, graph, right, left)
-                        or _channel_visibility(module, graph, left, right)
-                        or _channel_visibility(module, graph, right, left)
-                    )
-                query = "point conflict requires same-actor order or a typed mbarrier/collective/channel visibility transfer"
-            elif left.async_window and right.async_window:
+    for left, right in _overlapping_effect_pairs(module, effects):
+        if left.actor == right.actor and not left.async_window and not right.async_window:
+            continue
+        if left.mode == right.mode == "READ":
+            continue
+        safe = False
+        query = ""
+        if not left.async_window and not right.async_window:
+            if left.actor == right.actor:
                 safe = graph.reachable(left.end, right.begin) or graph.reachable(right.end, left.begin)
-                query = "async windows must be non-overlapping"
             else:
-                window, point = (left, right) if left.async_window else (right, left)
-                if window.mode == "READ":
-                    # A generic WRITE feeding an async READ requires a matching
-                    # generic-to-async proxy fence.
-                    point_before = _proxy_visible(module, graph, point, window)
-                    completion_before = _completion_observed(module, graph, window, point)
-                    query = "generic write before async read requires a direction/scope/region-compatible proxy fence, or overwrite must follow observed completion"
-                else:
-                    point_before = graph.reachable(point.end, window.begin)
-                    completion_before = _completion_observed(module, graph, window, point)
-                    query = "async-copy destination conflict must precede issue or follow observed completion"
-                safe = point_before or completion_before
-            if not safe:
-                return {
-                    "category": "UNORDERED_CONFLICT",
-                    "events": sorted({left.begin, right.begin}),
-                    "effects": [
-                        {"id": effect.id, "actor": effect.actor, "mode": effect.mode, "region": effect.region, "window": [effect.begin, effect.end]}
-                        for effect in (left, right)
-                    ],
-                    "missing_path": query,
-                    "repair": "add a supported, region-scoped mbarrier handoff; generic-to-TMA source publication additionally requires proxy support",
-                }
+                safe = (
+                    _mbarrier_visibility(module, graph, left, right)
+                    or _mbarrier_visibility(module, graph, right, left)
+                    or _collective_visibility(module, graph, left, right)
+                    or _collective_visibility(module, graph, right, left)
+                    or _channel_visibility(module, graph, left, right)
+                    or _channel_visibility(module, graph, right, left)
+                )
+            query = "point conflict requires same-actor order or a typed mbarrier/collective/channel visibility transfer"
+        elif left.async_window and right.async_window:
+            safe = graph.reachable(left.end, right.begin) or graph.reachable(right.end, left.begin)
+            query = "async windows must be non-overlapping"
+        else:
+            window, point = (left, right) if left.async_window else (right, left)
+            if window.mode == "READ":
+                # A generic WRITE feeding an async READ requires a matching
+                # generic-to-async proxy fence.
+                point_before = _proxy_visible(module, graph, point, window)
+                completion_before = _completion_observed(module, graph, window, point)
+                query = "generic write before async read requires a direction/scope/region-compatible proxy fence, or overwrite must follow observed completion"
+            else:
+                point_before = graph.reachable(point.end, window.begin)
+                completion_before = _completion_observed(module, graph, window, point)
+                query = "async-copy destination conflict must precede issue or follow observed completion"
+            safe = point_before or completion_before
+        if not safe:
+            return {
+                "category": "UNORDERED_CONFLICT",
+                "events": sorted({left.begin, right.begin}),
+                "effects": [
+                    {"id": effect.id, "actor": effect.actor, "mode": effect.mode, "region": effect.region, "window": [effect.begin, effect.end]}
+                    for effect in (left, right)
+                ],
+                "missing_path": query,
+                "repair": "add a supported, region-scoped mbarrier handoff; generic-to-TMA source publication additionally requires proxy support",
+            }
     return None
 
 
@@ -833,6 +867,13 @@ def _stuck_report(
     return _protocol_report(error, state.trace, graph, boundaries, digest, statistics)
 
 
+def _independent_program_memory_only(module: Module) -> bool:
+    return all(
+        event.type in {"MemRead", "MemWrite"} and not event.depends_on
+        for event in module.events
+    )
+
+
 def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dict[str, Any]:
     normalized = normalize_module(module)
     digest = stable_digest(normalized)
@@ -855,34 +896,43 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
         if canonical.stuck:
             return _stuck_report(executor, canonical.state, graph, boundaries, digest, statistics)
 
-        outcomes = incremental.analyze_streams()
-        boundaries = sorted(outcomes.boundaries, key=lambda item: item["anchor"])
-        graph.add_edges(outcomes.dynamic_edges)
-        _finish_incremental_statistics(statistics, incremental.counters)
-        if outcomes.error is not None:
-            assert outcomes.error_state is not None
-            return _protocol_report(outcomes.error, outcomes.error_state.trace, graph, boundaries, digest, statistics)
-        if outcomes.stuck_state is not None:
-            return _stuck_report(executor, outcomes.stuck_state, graph, boundaries, digest, statistics)
-        if outcomes.unreachable_anchor is not None:
-            assert outcomes.unreachable_state is not None
-            return _inconclusive(
-                "ANCHOR_NOT_REACHED",
-                "held anchor was not enabled at its terminal boundary",
-                digest,
-                graph,
-                boundaries,
-                statistics,
-                {
-                    "anchor": outcomes.unreachable_anchor,
-                    "boundary": list(executor.boundary(outcomes.unreachable_state)),
-                },
-            )
-        for item in boundaries:
-            anchor = item["anchor"]
-            for event_id in item["boundary"]:
-                if event_id != anchor:
-                    graph.add_edge(anchor, event_id, "BOUNDARY_ORDER")
+        if _independent_program_memory_only(module):
+            boundaries = [
+                {"anchor": anchor, "boundary": [anchor]}
+                for anchor in anchors
+            ]
+            incremental.counters.anchor_boundaries = len(boundaries)
+            _finish_incremental_statistics(statistics, incremental.counters)
+            statistics["analytical_program_only_boundaries"] = len(boundaries)
+        else:
+            outcomes = incremental.analyze_streams()
+            boundaries = sorted(outcomes.boundaries, key=lambda item: item["anchor"])
+            graph.add_edges(outcomes.dynamic_edges)
+            _finish_incremental_statistics(statistics, incremental.counters)
+            if outcomes.error is not None:
+                assert outcomes.error_state is not None
+                return _protocol_report(outcomes.error, outcomes.error_state.trace, graph, boundaries, digest, statistics)
+            if outcomes.stuck_state is not None:
+                return _stuck_report(executor, outcomes.stuck_state, graph, boundaries, digest, statistics)
+            if outcomes.unreachable_anchor is not None:
+                assert outcomes.unreachable_state is not None
+                return _inconclusive(
+                    "ANCHOR_NOT_REACHED",
+                    "held anchor was not enabled at its terminal boundary",
+                    digest,
+                    graph,
+                    boundaries,
+                    statistics,
+                    {
+                        "anchor": outcomes.unreachable_anchor,
+                        "boundary": list(executor.boundary(outcomes.unreachable_state)),
+                    },
+                )
+            for item in boundaries:
+                anchor = item["anchor"]
+                for event_id in item["boundary"]:
+                    if event_id != anchor:
+                        graph.add_edge(anchor, event_id, "BOUNDARY_ORDER")
     else:
         try:
             global_outcomes = executor.explore_all()

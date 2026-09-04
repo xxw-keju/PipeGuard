@@ -8,7 +8,15 @@ from pathlib import Path
 import fastjsonschema
 import pytest
 
-from pipeguard.checker import _anchor_ids, check_module
+import pipeguard.checker as checker_module
+from pipeguard.checker import (
+    Effect,
+    _anchor_ids,
+    _data_hazard,
+    _effects,
+    _overlapping_effect_pairs,
+    check_module,
+)
 from pipeguard.engine import ExecutionState, Executor, ProtocolError, Transition
 from pipeguard.incremental import END, IncrementalEngine, StableReadySet, build_anchor_streams
 from pipeguard.model import (
@@ -46,6 +54,80 @@ def test_empty_finite_event_graph_is_safe_for_both_pgir_versions(fixture: str):
     module = module_from_dict(raw)
     assert check_module(module, engine="maximal")["verdict"] == "SAFE"
     assert check_module(module, engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.parametrize("fixture", ["safe_handoff.json", "missing_sync_data_hazard.json"])
+def test_overlapping_effect_index_preserves_naive_pair_order(fixture: str):
+    module = load(fixture)
+    effects = _effects(module)
+    expected = []
+    for left_index, left in enumerate(effects):
+        left_region = module.region_map[left.region]
+        for right in effects[left_index + 1:]:
+            right_region = module.region_map[right.region]
+            if (
+                left_region.address_space == right_region.address_space
+                and left_region.owner_cta_rank == right_region.owner_cta_rank
+                and left_region.allocation_id == right_region.allocation_id
+                and left_region.offset < right_region.offset + right_region.extent
+                and right_region.offset < left_region.offset + left_region.extent
+            ):
+                expected.append((left.id, right.id))
+    actual = [
+        (left.id, right.id)
+        for left, right in _overlapping_effect_pairs(module, effects)
+    ]
+    assert actual == expected
+
+
+def test_data_hazard_disjoint_intervals_do_not_scan_all_effect_pairs(monkeypatch):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["resources"] = []
+    raw["regions"] = [
+        {
+            "id": f"region-{index}",
+            "allocation_id": "array",
+            "address_space": "GLOBAL",
+            "offset": index * 4,
+            "extent": 4,
+        }
+        for index in range(4096)
+    ]
+    actor_sequences = {actor["id"]: 0 for actor in raw["actors"]}
+    raw["events"] = []
+    for index, region in enumerate(raw["regions"]):
+        actor = raw["actors"][index % len(raw["actors"])]["id"]
+        sequence = actor_sequences[actor]
+        actor_sequences[actor] += 1
+        raw["events"].append({
+            "id": f"write-{index}",
+            "type": "MemWrite",
+            "actor": actor,
+            "seq": sequence,
+            "region": region["id"],
+        })
+    module = module_from_dict(raw)
+
+    class NoQuadraticSlice(list):
+        def __getitem__(self, key):
+            if isinstance(key, slice):
+                raise AssertionError("data hazard scan sliced the complete effect suffix")
+            return super().__getitem__(key)
+
+    effects = NoQuadraticSlice(
+        Effect(
+            id=f"effect-{event.id}",
+            actor=event.actor,
+            mode="WRITE",
+            region=event.region,
+            begin=event.id,
+            end=event.id,
+            async_window=False,
+        )
+        for event in module.events
+    )
+    monkeypatch.setattr(checker_module, "_effects", lambda _module: effects)
+    assert _data_hazard(module, object()) is None
 
 
 def test_module_indexes_are_constructed_once_and_reused():
@@ -1139,11 +1221,12 @@ def test_incremental_operation_counts_scale_by_work_not_timing():
         assert result["verdict"] == "SAFE"
         assert statistics["n_ext"] == size
         assert statistics["t_eff"] == 1
-        assert statistics["state_initializations"] == 2
-        assert statistics["completed_passes"] == 2
+        assert statistics["state_initializations"] == 1
+        assert statistics["completed_passes"] == 1
         assert statistics["anchor_boundaries"] == size
-        assert statistics["transitions_by_kind"]["PROGRAM"] == 2 * size
-        assert statistics["transition_attempts"] == 2 * size
+        assert statistics["analytical_program_only_boundaries"] == size
+        assert statistics["transitions_by_kind"]["PROGRAM"] == size
+        assert statistics["transition_attempts"] == size
         assert statistics["scheduler_work_units"] <= 10 * size
         assert statistics["worklist_pops"] == statistics["transition_attempts"]
         assert statistics["stale_worklist_pops"] == 0
@@ -1171,7 +1254,8 @@ def test_incremental_statistics_certificate_is_deterministic():
         "engine_completion": 0,
         "total": 3,
     }
-    assert first["boundary_evaluations"] == 6
+    assert first["boundary_evaluations"] == 0
+    assert first["analytical_program_only_boundaries"] == 6
 
 
 @pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
