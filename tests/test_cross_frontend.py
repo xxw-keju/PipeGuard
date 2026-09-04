@@ -5,6 +5,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 from pipeguard.checker import check_module
 from pipeguard.frontends import (
     semantic_digest,
@@ -14,6 +16,7 @@ from pipeguard.frontends import (
 )
 from pipeguard.frontends.tilelang import _EVENT_TYPES as TILELANG_EVENT_TYPES
 from pipeguard.frontends.tilelang import _event as tilelang_event
+from pipeguard.frontends.common import FrontendError
 from pipeguard.frontends.triton import _EVENT_TYPES as TRITON_EVENT_TYPES
 from pipeguard.frontends.triton import _event as triton_event
 from pipeguard.model import IMPLEMENTED_EVENTS
@@ -27,6 +30,37 @@ TRITON_ASYNC = FIXTURES / "triton_async_pipeline.snapshot.json"
 
 def _load(path: Path) -> dict:
     return json.loads(path.read_text())
+
+
+def _as_v2(snapshot: dict, prefix: str, stage: str) -> dict:
+    snapshot["snapshot_version"] = f"{prefix}-snapshot-v2"
+    snapshot["producer"]["adapter_version"] = f"{prefix}-pgir-v2"
+    snapshot["profile"] = {
+        "id": "sm90-single-cta-static-v1",
+        "source_ir_sha256": "0" * 64,
+        "compiler_ir_stage": stage,
+        "target_rule": f"{prefix}-fixture-target-v1",
+    }
+    operation_count = len(snapshot["operations"])
+    snapshot["extraction"].update({
+        "static_expansions": 0,
+        "executable_nodes_seen": operation_count,
+        "classified_nodes": operation_count,
+        "emitting_nodes": operation_count,
+        "elided_nodes": 0,
+        "events_emitted": operation_count,
+        "allocation_identity_evidence": "fixture-allocation-identity-v1",
+        "alias_evidence": "fixture-exact-alias-v1",
+        "participant_evidence": "fixture-static-participants-v1",
+    })
+    for index, operation in enumerate(snapshot["operations"]):
+        operation["evidence"] = {
+            "source_location": f"fixture:{index}",
+            "activation_path": ["root", index],
+            "recognizer_rule": f"fixture-{prefix}-rule-v1",
+            "ir_operation": operation["op"],
+        }
+    return snapshot
 
 
 def _without_wait(snapshot: dict) -> dict:
@@ -70,6 +104,84 @@ def _witness_shape(result: dict) -> dict:
 def test_both_frontend_operation_tables_cover_every_implemented_pgir_event():
     assert frozenset(TILELANG_EVENT_TYPES.values()) == IMPLEMENTED_EVENTS
     assert frozenset(TRITON_EVENT_TYPES.values()) == IMPLEMENTED_EVENTS
+
+
+@pytest.mark.parametrize(
+    ("path", "prefix", "stage", "convert"),
+    [
+        (TILELANG, "tilelang", "post-inject-fence-proxy", tilelang_snapshot_to_module),
+        (TRITON, "triton", "post-ttgir-pipeline", triton_snapshot_to_module),
+    ],
+)
+def test_v2_extraction_certificate_preserves_legacy_pgir_semantics(
+    path: Path,
+    prefix: str,
+    stage: str,
+    convert,
+):
+    legacy = convert(_load(path))
+    certified = convert(_as_v2(_load(path), prefix, stage))
+    assert semantic_signature(certified) == semantic_signature(legacy)
+
+
+@pytest.mark.parametrize(
+    ("path", "prefix", "stage", "convert"),
+    [
+        (TILELANG, "tilelang", "post-inject-fence-proxy", tilelang_snapshot_to_module),
+        (TRITON, "triton", "post-ttgir-pipeline", triton_snapshot_to_module),
+    ],
+)
+def test_v2_extraction_certificate_rejects_incomplete_accounting(
+    path: Path,
+    prefix: str,
+    stage: str,
+    convert,
+):
+    snapshot = _as_v2(_load(path), prefix, stage)
+    snapshot["extraction"]["classified_nodes"] -= 1
+    with pytest.raises(FrontendError) as caught:
+        convert(snapshot)
+    assert caught.value.code == "FRONTEND_EXTRACTION_ACCOUNTING_INVALID"
+
+
+@pytest.mark.parametrize(
+    ("path", "prefix", "stage", "convert"),
+    [
+        (TILELANG, "tilelang", "post-inject-fence-proxy", tilelang_snapshot_to_module),
+        (TRITON, "triton", "post-ttgir-pipeline", triton_snapshot_to_module),
+    ],
+)
+def test_v2_extraction_certificate_requires_event_evidence(
+    path: Path,
+    prefix: str,
+    stage: str,
+    convert,
+):
+    snapshot = _as_v2(_load(path), prefix, stage)
+    snapshot["operations"][0].pop("evidence")
+    with pytest.raises(FrontendError) as caught:
+        convert(snapshot)
+    assert caught.value.code == "FRONTEND_FIELDS_MISSING"
+
+
+@pytest.mark.parametrize(
+    ("path", "prefix", "stage", "convert"),
+    [
+        (TILELANG, "tilelang", "post-inject-fence-proxy", tilelang_snapshot_to_module),
+        (TRITON, "triton", "post-ttgir-pipeline", triton_snapshot_to_module),
+    ],
+)
+def test_v2_extraction_certificate_rejects_bad_ir_digest(
+    path: Path,
+    prefix: str,
+    stage: str,
+    convert,
+):
+    snapshot = _as_v2(_load(path), prefix, stage)
+    snapshot["profile"]["source_ir_sha256"] = "not-a-digest"
+    with pytest.raises(FrontendError) as caught:
+        convert(snapshot)
+    assert caught.value.code == "FRONTEND_PROVENANCE_INVALID"
 
 
 def test_frontends_preserve_typed_async_fields_exactly():

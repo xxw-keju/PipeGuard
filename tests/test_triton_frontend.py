@@ -55,6 +55,9 @@ def test_triton_snapshot_runs_through_crosschecked_checker():
 
 def test_live_triton_ttgir_capture_fixture_is_safe():
     snapshot = json.loads(CAPTURED_SNAPSHOT.read_text())
+    assert snapshot["snapshot_version"] == "triton-snapshot-v2"
+    assert snapshot["extraction"]["events_emitted"] == len(snapshot["operations"])
+    assert all("evidence" in operation for operation in snapshot["operations"])
     assert [operation["op"] for operation in snapshot["operations"]] == [
         "triton.mbarrier.init",
         "triton.mbarrier.arrive",
@@ -63,12 +66,15 @@ def test_live_triton_ttgir_capture_fixture_is_safe():
     result = check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")
     assert result["verdict"] == "SAFE"
     assert result["artifacts"]["normalized_sha256"] == (
-        "eb604645de9b36b7968d9845904b9b880b85bdd37ca0f0de3bf119c4c809932d"
+        "0e9caead37773095633454aceb26d749e76a5380bb3a21c511263b3316b6f7b0"
     )
 
 
 def test_live_triton_cp_async_capture_fixture_is_safe():
     snapshot = json.loads(CAPTURED_ASYNC_SNAPSHOT.read_text())
+    assert snapshot["snapshot_version"] == "triton-snapshot-v2"
+    assert snapshot["extraction"]["events_emitted"] == len(snapshot["operations"])
+    assert all("evidence" in operation for operation in snapshot["operations"])
     assert [operation["op"] for operation in snapshot["operations"]] == [
         "triton.cp_async.issue",
         "triton.cp_async.commit_group",
@@ -78,7 +84,7 @@ def test_live_triton_cp_async_capture_fixture_is_safe():
     result = check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")
     assert result["verdict"] == "SAFE"
     assert result["artifacts"]["normalized_sha256"] == (
-        "fd4230eb8f554185780d2748b16b4920dc9b8582f71b49c72a084dd44efa0014"
+        "933c705f72ab0dc148823471e25b0c9d70bab8350bbc5e9eeab183c213eb80ce"
     )
     assert result["statistics"]["n_ext"] == 5
     assert result["statistics"]["t_eff"] == 2

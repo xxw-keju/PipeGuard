@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import subprocess
@@ -9,8 +10,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
-SNAPSHOT_VERSION = "triton-snapshot-v1"
-ADAPTER_VERSION = "triton-pgir-v1"
+SNAPSHOT_VERSION = "triton-snapshot-v2"
+ADAPTER_VERSION = "triton-pgir-v2"
 
 
 class CaptureError(Exception):
@@ -58,11 +59,19 @@ class TritonCapture:
         "ttg.local_load",
     }
 
-    def __init__(self, triton: Any, module: Any, source: str, command: str):
+    def __init__(
+        self,
+        triton: Any,
+        module: Any,
+        source: str,
+        command: str,
+        source_ir_sha256: str,
+    ):
         self.triton = triton
         self.module = module
         self.source = source
         self.command = command
+        self.source_ir_sha256 = source_ir_sha256
         self.operations: list[Any] = []
         module.walk(self.operations.append)
         functions = [operation for operation in self.operations if operation.get_name() == "tt.func"]
@@ -113,6 +122,10 @@ class TritonCapture:
         self.group_tokens: dict[int, int] = {}
         self.wait_tokens: set[int] = set()
         self.cp_group_seq = 0
+        self.executable_nodes_seen = 0
+        self.classified_nodes = 0
+        self.emitting_nodes = 0
+        self.elided_nodes = 0
 
     def _integer_module_attr(self, name: str) -> int:
         value = self.module.get_int_attr(name)
@@ -300,11 +313,18 @@ class TritonCapture:
         return identifier
 
     def _emit(self, op: str, operation_index: int, **fields: Any) -> None:
+        ir_operation = self.operations[operation_index].get_name()
         self.output_operations.append({
             "id": f"triton:{self.actor}:e{self.sequence:05d}:op{operation_index:05d}",
             "op": op,
             "actor": self.actor,
             "seq": self.sequence,
+            "evidence": {
+                "source_location": f"operation-index:{operation_index}",
+                "activation_path": ["root", operation_index],
+                "recognizer_rule": f"{ir_operation}->{op}:v1",
+                "ir_operation": ir_operation,
+            },
             **fields,
         })
         self.sequence += 1
@@ -427,6 +447,9 @@ class TritonCapture:
             name = operation.get_name()
             if name in self._CONTAINERS:
                 continue
+            self.executable_nodes_seen += 1
+            self.classified_nodes += 1
+            before = len(self.output_operations)
             if name == "ttg.local_alloc":
                 if operation.get_num_operands() != 0:
                     raise CaptureError(
@@ -434,8 +457,10 @@ class TritonCapture:
                         "ttg.local_alloc with an input has a shared-memory write effect",
                         {"operation": name, "operation_index": index},
                     )
+                self.elided_nodes += 1
                 continue
             if name in self._DECLARATIONS:
+                self.elided_nodes += 1
                 continue
             if name not in self._SUPPORTED:
                 raise CaptureError(
@@ -464,6 +489,10 @@ class TritonCapture:
                 "ttg.local_load",
             }:
                 self._capture_async(operation, index)
+                if len(self.output_operations) > before:
+                    self.emitting_nodes += 1
+                else:
+                    self.elided_nodes += 1
                 continue
             if operation.get_num_operands() < 1:
                 raise CaptureError(
@@ -545,6 +574,10 @@ class TritonCapture:
                     stream_rank=generation,
                     polling_coalesced=True,
                 )
+            if len(self.output_operations) > before:
+                self.emitting_nodes += 1
+            else:
+                self.elided_nodes += 1
         if not self.output_operations:
             raise CaptureError(
                 "TRITON_OPERATIONS_MISSING",
@@ -553,6 +586,12 @@ class TritonCapture:
         triton_root = Path(self.triton.__file__).resolve().parents[1]
         return {
             "snapshot_version": SNAPSHOT_VERSION,
+            "profile": {
+                "id": "sm90-single-cta-static-v1",
+                "source_ir_sha256": self.source_ir_sha256,
+                "compiler_ir_stage": "post-ttgir-pipeline",
+                "target_rule": "triton-cuda-90-v1",
+            },
             "producer": {
                 "dsl_version": str(self.triton.__version__),
                 "dsl_commit": _git_revision(triton_root),
@@ -577,6 +616,15 @@ class TritonCapture:
                 "no_cluster_effects": True,
                 "alias_precision": "EXACT",
                 "parity_normalization_status": "RESOLVED",
+                "static_expansions": 0,
+                "executable_nodes_seen": self.executable_nodes_seen,
+                "classified_nodes": self.classified_nodes,
+                "emitting_nodes": self.emitting_nodes,
+                "elided_nodes": self.elided_nodes,
+                "events_emitted": len(self.output_operations),
+                "allocation_identity_evidence": "ttgir-ssa-definition-identity-v1",
+                "alias_evidence": "single-external-base-v1",
+                "participant_evidence": "ttgir-static-warp-geometry-v1",
             },
             "actors": [{
                 "id": self.actor,
@@ -604,14 +652,21 @@ def capture_file(path: Path, source: str, command: str) -> dict[str, Any]:
     ir.load_dialects(context)
     nvidia.load_dialects(context)
     try:
+        source_ir = path.read_bytes()
         module = ir.parse_mlir_module(str(path), context)
-    except RuntimeError as error:
+    except (OSError, RuntimeError) as error:
         raise CaptureError(
             "TRITON_IR_INPUT_INVALID",
             "TTGIR MLIR module could not be parsed",
             {"path": str(path), "error": str(error)},
         ) from error
-    return TritonCapture(triton, module, source, command).capture()
+    return TritonCapture(
+        triton,
+        module,
+        source,
+        command,
+        hashlib.sha256(source_ir).hexdigest(),
+    ).capture()
 
 
 def main(argv: list[str] | None = None) -> int:

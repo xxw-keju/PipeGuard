@@ -9,8 +9,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
-SNAPSHOT_VERSION = "tilelang-snapshot-v1"
-ADAPTER_VERSION = "tilelang-pgir-v1"
+SNAPSHOT_VERSION = "tilelang-snapshot-v2"
+ADAPTER_VERSION = "tilelang-pgir-v2"
 MAX_STATIC_UNROLL = 256
 
 
@@ -46,12 +46,21 @@ def _git_revision(path: Path) -> str:
 
 
 class TileLangCapture:
-    def __init__(self, tvm: Any, tirx: Any, module: Any, source: str, command: str):
+    def __init__(
+        self,
+        tvm: Any,
+        tirx: Any,
+        module: Any,
+        source: str,
+        command: str,
+        source_ir_sha256: str,
+    ):
         self.tvm = tvm
         self.tirx = tirx
         self.module = module
         self.source = source
         self.command = command
+        self.source_ir_sha256 = source_ir_sha256
         functions = [func for func in module.functions.values() if isinstance(func, tirx.PrimFunc)]
         if len(functions) != 1:
             raise CaptureError(
@@ -86,6 +95,27 @@ class TileLangCapture:
         self.resources: dict[str, dict[str, Any]] = {}
         self.regions: dict[str, dict[str, Any]] = {}
         self.operations: list[dict[str, Any]] = []
+        self.static_expansions = 0
+        self.executable_nodes_seen = 0
+        self.classified_nodes = 0
+        self.emitting_nodes = 0
+        self.elided_nodes = 0
+        target = dict(self.func.attrs).get("target") if self.func.attrs else None
+        self.target_text = str(target)
+        if "sm_90" not in self.target_text:
+            raise CaptureError(
+                "TILELANG_TARGET_UNSUPPORTED",
+                "TileLang capture supports only SM90 targets",
+                {"target": self.target_text},
+            )
+
+    def classify_leaf(self, operation_count_before: int) -> None:
+        self.executable_nodes_seen += 1
+        self.classified_nodes += 1
+        if len(self.operations) > operation_count_before:
+            self.emitting_nodes += 1
+        else:
+            self.elided_nodes += 1
 
     def _thread_extents(self) -> dict[str, int]:
         attrs = dict(self.func.attrs) if self.func.attrs else {}
@@ -124,16 +154,14 @@ class TileLangCapture:
                 "captured mbarrier operations require an explicit static initialization",
             )
         tilelang_root = Path(sys.modules["tilelang"].__file__).resolve().parents[1]
-        target = dict(self.func.attrs).get("target") if self.func.attrs else None
-        target_text = str(target)
-        if "sm_90" not in target_text:
-            raise CaptureError(
-                "TILELANG_TARGET_UNSUPPORTED",
-                "TileLang capture supports only SM90 targets",
-                {"target": target_text},
-            )
         return {
             "snapshot_version": SNAPSHOT_VERSION,
+            "profile": {
+                "id": "sm90-single-cta-static-v1",
+                "source_ir_sha256": self.source_ir_sha256,
+                "compiler_ir_stage": "post-inject-fence-proxy",
+                "target_rule": "tilelang-sm90-target-v1",
+            },
             "producer": {
                 "dsl_version": str(getattr(sys.modules["tilelang"], "__version__", "unavailable")),
                 "dsl_commit": _git_revision(tilelang_root),
@@ -158,6 +186,15 @@ class TileLangCapture:
                 "no_cluster_effects": True,
                 "alias_precision": "EXACT",
                 "parity_normalization_status": "RESOLVED",
+                "static_expansions": self.static_expansions,
+                "executable_nodes_seen": self.executable_nodes_seen,
+                "classified_nodes": self.classified_nodes,
+                "emitting_nodes": self.emitting_nodes,
+                "elided_nodes": self.elided_nodes,
+                "events_emitted": len(self.operations),
+                "allocation_identity_evidence": "tir-buffer-data-identity-v1",
+                "alias_evidence": "single-base-or-distinct-tir-buffer-v1",
+                "participant_evidence": "primfunc-thread-extent-lane-enumeration-v1",
             },
             "actors": [
                 {"id": actor, "kind": "LANE", "participants": [lane]}
@@ -269,6 +306,7 @@ class LaneWalker:
         self.cp_group_seq = 0
         self.cp_staged = 0
         self.pending_proxy: dict[str, Any] | None = None
+        self.current_ir_operation = "unknown"
 
     def finalize(self) -> None:
         if self.pending_proxy is not None:
@@ -279,6 +317,11 @@ class LaneWalker:
             )
 
     def emit(self, op: str, path: tuple[Any, ...], **fields: Any) -> None:
+        ir_operation = fields.pop("_ir_operation", self.current_ir_operation)
+        recognizer_rule = fields.pop(
+            "_recognizer_rule",
+            f"{ir_operation}->{op}:v1",
+        )
         if self.pending_proxy is not None and op != "tilelang.cp_async.issue":
             raise CaptureError(
                 "TILELANG_PROXY_TARGET_UNRESOLVED",
@@ -291,6 +334,12 @@ class LaneWalker:
             "op": op,
             "actor": self.actor,
             "seq": self.sequence,
+            "evidence": {
+                "source_location": "/".join(map(str, path)),
+                "activation_path": [str(item) for item in path],
+                "recognizer_rule": recognizer_rule,
+                "ir_operation": ir_operation,
+            },
             **fields,
         })
         self.sequence += 1
@@ -438,9 +487,37 @@ class LaneWalker:
         def visit(node: Any) -> None:
             if isinstance(node, self.tirx.BufferLoad):
                 loads.append(node)
+                return
+            if not isinstance(node, self.tirx.Call):
+                return
+            effect = node.op.get_attr("TCallEffectKind")
+            effect_value = getattr(effect, "value", None)
+            pure_values = {
+                self.tirx.CallEffectKind.ExprAnnotation.value,
+                self.tirx.CallEffectKind.Pure.value,
+            }
+            if effect_value not in pure_values:
+                raise CaptureError(
+                    "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED",
+                    "nested TIRX call is not proven side-effect free",
+                    {
+                        "operation": getattr(node.op, "name", ""),
+                        "effect_kind": effect_value,
+                    },
+                )
 
         self.tirx.stmt_functor.post_order_visit(self.tirx.Evaluate(expression), visit)
         return loads
+
+    def _emit_expression_loads(self, expression: Any, path: tuple[Any, ...]) -> None:
+        for index, load in enumerate(self._buffer_loads(expression)):
+            region = self.capture.memory_region(load.buffer, load.indices, self)
+            self.emit(
+                "tilelang.mem.read",
+                (*path, "read", index),
+                _ir_operation="BufferLoad",
+                region=region,
+            )
 
     def walk(self, statement: Any, path: tuple[Any, ...]) -> None:
         if statement is None:
@@ -517,6 +594,7 @@ class LaneWalker:
             variable = statement.loop_var.name
             old = self.bindings.get(variable)
             for iteration in range(minimum, minimum + extent):
+                self.capture.static_expansions += 1
                 self.bindings[variable] = iteration
                 self.walk(statement.body, (*path, "for", variable, iteration))
             if old is None:
@@ -525,14 +603,24 @@ class LaneWalker:
                 self.bindings[variable] = old
             return
         if name == "BufferStore":
+            before = len(self.capture.operations)
+            self.current_ir_operation = name
             for index, load in enumerate(self._buffer_loads(statement.value)):
                 region = self.capture.memory_region(load.buffer, load.indices, self)
-                self.emit("tilelang.mem.read", (*path, "rhs", index), region=region)
+                self.emit(
+                    "tilelang.mem.read",
+                    (*path, "rhs", index),
+                    _ir_operation="BufferLoad",
+                    region=region,
+                )
             region = self.capture.memory_region(statement.buffer, statement.indices, self)
             self.emit("tilelang.mem.write", path, region=region)
+            self.capture.classify_leaf(before)
             return
         if name == "Evaluate":
+            before = len(self.capture.operations)
             self.evaluate(statement.value, path)
+            self.capture.classify_leaf(before)
             return
         if name in {"Block", "BlockRealize"}:
             child = statement.body if name == "Block" else statement.block
@@ -545,6 +633,7 @@ class LaneWalker:
         )
 
     def evaluate(self, expression: Any, path: tuple[Any, ...]) -> None:
+        self.current_ir_operation = type(expression).__name__
         if isinstance(expression, self.tirx.IntImm):
             return
         if isinstance(expression, self.tirx.BufferLoad):
@@ -552,12 +641,10 @@ class LaneWalker:
             self.emit("tilelang.mem.read", path, region=region)
             return
         if not isinstance(expression, self.tirx.Call):
-            raise CaptureError(
-                "TILELANG_EXPRESSION_UNSUPPORTED",
-                "Evaluate expression has no sound capture rule",
-                {"expression": type(expression).__name__, "path": list(path)},
-            )
+            self._emit_expression_loads(expression, path)
+            return
         name = getattr(expression.op, "name", "")
+        self.current_ir_operation = name
         if name == "tl.ptx_fence_barrier_init":
             return
         if name == "tl.fence_proxy_async":
@@ -747,11 +834,7 @@ class LaneWalker:
                 wait_group_count=wait_count,
             )
             return
-        raise CaptureError(
-            "TILELANG_OPERATION_UNSUPPORTED",
-            "lowered TileLang call has no sound capture rule",
-            {"operation": name, "path": list(path)},
-        )
+        self._emit_expression_loads(expression, path)
 
     def _barrier_operand(self, call: Any, index: int) -> str:
         if len(call.args) <= index or not isinstance(call.args[index], self.tirx.BufferLoad):
@@ -776,14 +859,22 @@ def capture_file(path: Path, source: str, command: str) -> dict[str, Any]:
             {"error": str(error)},
         ) from error
     try:
-        module = tvm.ir.load_json(path.read_text())
+        source_ir = path.read_text()
+        module = tvm.ir.load_json(source_ir)
     except (OSError, ValueError, TypeError) as error:
         raise CaptureError(
             "TILELANG_IR_INPUT_INVALID",
             "TileLang IR JSON could not be loaded",
             {"path": str(path), "error": str(error)},
         ) from error
-    return TileLangCapture(tvm, tirx, module, source, command).capture()
+    return TileLangCapture(
+        tvm,
+        tirx,
+        module,
+        source,
+        command,
+        hashlib.sha256(source_ir.encode("utf-8")).hexdigest(),
+    ).capture()
 
 
 def main(argv: list[str] | None = None) -> int:

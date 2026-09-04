@@ -60,6 +60,9 @@ def test_tilelang_snapshot_runs_through_crosschecked_checker():
 
 def test_live_tilelang_tirx_capture_fixture_is_safe():
     snapshot = json.loads(CAPTURED_SNAPSHOT.read_text())
+    assert snapshot["snapshot_version"] == "tilelang-snapshot-v2"
+    assert snapshot["extraction"]["events_emitted"] == len(snapshot["operations"])
+    assert all("evidence" in operation for operation in snapshot["operations"])
     assert [operation["op"] for operation in snapshot["operations"]] == [
         "tilelang.mbarrier.init",
         "tilelang.barrier.arrive",
@@ -75,12 +78,15 @@ def test_live_tilelang_tirx_capture_fixture_is_safe():
     result = check_module(tilelang_snapshot_to_module(snapshot), engine="crosscheck")
     assert result["verdict"] == "SAFE"
     assert result["artifacts"]["normalized_sha256"] == (
-        "247597b7fcb584d27ee51143d011b7598c2f6432eebe954840f72fdace893711"
+        "90834cc007b7d7b91e191c76da8afbca8180e74f5212d468eebccbb15fa56910"
     )
 
 
 def test_live_tilelang_cp_async_capture_fixture_is_safe():
     snapshot = json.loads(CAPTURED_ASYNC_SNAPSHOT.read_text())
+    assert snapshot["snapshot_version"] == "tilelang-snapshot-v2"
+    assert snapshot["extraction"]["events_emitted"] == len(snapshot["operations"])
+    assert all("evidence" in operation for operation in snapshot["operations"])
     operations = [operation["op"] for operation in snapshot["operations"]]
     assert operations[:5] == [
         "tilelang.mem.write",
@@ -92,7 +98,7 @@ def test_live_tilelang_cp_async_capture_fixture_is_safe():
     result = check_module(tilelang_snapshot_to_module(snapshot), engine="crosscheck")
     assert result["verdict"] == "SAFE"
     assert result["artifacts"]["normalized_sha256"] == (
-        "19acb70850fd179e55cd10996202e5ca04a998b34afd21d8cf8f98313680dd20"
+        "3eff6f0b22566cdf3dbab74174726634049ae56fa48f9e532b6d369c5c60d591"
     )
     assert result["statistics"]["n_ext"] == 11
     assert result["statistics"]["t_eff"] == 3
