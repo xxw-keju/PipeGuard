@@ -11,7 +11,10 @@ from pipeguard.checker import _anchor_ids, check_module
 from pipeguard.engine import ExecutionState, Executor, ProtocolError, Transition
 from pipeguard.incremental import END, IncrementalEngine, StableReadySet, build_anchor_streams
 from pipeguard.model import (
+    Actor,
+    Event,
     PGIRError,
+    _bucket_events_by_actor,
     load_module,
     module_from_dict,
     stable_channel_handoff_id,
@@ -30,6 +33,72 @@ def load(name: str):
 
 def verdict(name: str) -> dict:
     return check_module(load(name))
+
+
+def test_events_by_actor_buckets_once_in_actor_order_and_sorts_each_trace():
+    class SinglePassEvents(tuple):
+        iterations = 0
+
+        def __iter__(self):
+            self.iterations += 1
+            if self.iterations > 1:
+                raise AssertionError("events were scanned more than once")
+            return super().__iter__()
+
+    actors = (
+        Actor("z_actor", "LANE", (0,)),
+        Actor("a_actor", "LANE", (1,)),
+        Actor("empty_actor", "LANE", (2,)),
+    )
+    events = SinglePassEvents((
+        Event("a_late", "MemRead", "a_actor", 1),
+        Event("z_late", "MemRead", "z_actor", 1),
+        Event("a_tie_b", "MemRead", "a_actor", 0),
+        Event("unknown", "MemRead", "missing_actor", 0),
+        Event("z_early", "MemRead", "z_actor", 0),
+        Event("a_tie_a", "MemRead", "a_actor", 0),
+    ))
+
+    grouped = _bucket_events_by_actor(actors, events)
+
+    assert events.iterations == 1
+    assert list(grouped) == ["z_actor", "a_actor", "empty_actor"]
+    assert [[event.id for event in trace] for trace in grouped.values()] == [
+        ["z_early", "z_late"],
+        ["a_tie_a", "a_tie_b", "a_late"],
+        [],
+    ]
+
+
+@pytest.mark.parametrize(
+    ("mutation", "code", "details"),
+    [
+        (
+            lambda raw: raw["events"][0].update(actor="missing"),
+            "DANGLING_REFERENCE",
+            {"event": "init", "actor": "missing"},
+        ),
+        (
+            lambda raw: raw["events"][1].update(id=raw["events"][0]["id"]),
+            "DUPLICATE_ID",
+            {"id": "init", "kind": "event"},
+        ),
+        (
+            lambda raw: raw["events"][1].update(seq=3),
+            "NONCONTIGUOUS_SEQUENCE",
+            {"actor": "a_producer", "sequence": [0, 2, 3]},
+        ),
+    ],
+)
+def test_events_by_actor_bucketing_preserves_validation_errors(mutation, code, details):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    mutation(raw)
+
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+
+    assert caught.value.code == code
+    assert caught.value.details == details
 
 
 def test_safe_handoff_has_visibility_path_and_manifest():

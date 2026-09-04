@@ -153,6 +153,21 @@ class Module:
         return {key: frozenset(event_ids) for key, event_ids in required.items()}
 
 
+def _bucket_events_by_actor(
+    actors: tuple[Actor, ...],
+    events: tuple[Event, ...],
+) -> dict[str, tuple[Event, ...]]:
+    buckets: dict[str, list[Event]] = {actor.id: [] for actor in actors}
+    for event in events:
+        bucket = buckets.get(event.actor)
+        if bucket is not None:
+            bucket.append(event)
+    return {
+        actor_id: tuple(sorted(bucket, key=lambda event: (event.seq, event.id)))
+        for actor_id, bucket in buckets.items()
+    }
+
+
 def _schema(version: str) -> dict[str, Any]:
     if not isinstance(version, str) or version not in {"pgir-v1", "pgir-v2"}:
         raise PGIRError(
@@ -1267,7 +1282,7 @@ def module_from_dict(data: dict[str, Any]) -> Module:
         regions=tuple(sorted(item.get("regions", []))),
         visibility_mask=VisibilityMask.from_mapping(item["visibility_mask"]) if "visibility_mask" in item else None,
     ) for item in data["events"])
-    grouped = {actor.id: tuple(sorted((event for event in events if event.actor == actor.id), key=lambda event: (event.seq, event.id))) for actor in actors}
+    grouped = _bucket_events_by_actor(actors, events)
     module = Module(data, actors, resources, regions, events, grouped)
     _semantic_validate(module)
     return module
