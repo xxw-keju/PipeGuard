@@ -66,7 +66,7 @@ def test_live_triton_ttgir_capture_fixture_is_safe():
     result = check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")
     assert result["verdict"] == "SAFE"
     assert result["artifacts"]["normalized_sha256"] == (
-        "0e9caead37773095633454aceb26d749e76a5380bb3a21c511263b3316b6f7b0"
+        "ba00aad9e0770c770bd4333bbb78d8f9610d33cfe92d13ca179feffbfcdf8177"
     )
 
 
@@ -84,7 +84,7 @@ def test_live_triton_cp_async_capture_fixture_is_safe():
     result = check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")
     assert result["verdict"] == "SAFE"
     assert result["artifacts"]["normalized_sha256"] == (
-        "933c705f72ab0dc148823471e25b0c9d70bab8350bbc5e9eeab183c213eb80ce"
+        "11e50354a29213d1df99123dd4219a431a03664188666750026be7d0ee578963"
     )
     assert result["statistics"]["n_ext"] == 5
     assert result["statistics"]["t_eff"] == 2

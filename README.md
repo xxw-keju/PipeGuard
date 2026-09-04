@@ -48,14 +48,14 @@ Triton capture likewise runs outside the checker and uses Triton's MLIR bindings
 
 ```bash
 /usr/local/miniconda3/envs/triton-pg/bin/python tools/triton_capture.py \
-  kernel.ttgir.mlir --source path/to/kernel.py > kernel.triton.json
+  kernel.ttgir.mlir --source path/to/kernel.py --grid-ctas 1 > kernel.triton.json
 /usr/bin/python3 -m pipeguard check kernel.triton.json \
   --frontend triton --engine crosscheck
 ```
 
-`triton-snapshot-v2` automatically captures one post-pipeline `cuda:90` TTGIR function with one CTA, static warp geometry, one straight-line executable block, direct mbarrier SSA identity, and cp.async copy/commit/wait token chains. As with TileLang v2, it binds the exact source IR and compiler profile, accounts for every classified executable operation, and carries per-event recognizer provenance. Missing or contradictory evidence fails before PGIR construction; legacy `triton-snapshot-v1` remains a trusted-producer compatibility format rather than an automated-capture completeness certificate.
+`triton-snapshot-v2` captures one post-pipeline `cuda:90` TTGIR function with static warp geometry and explicit `--grid-ctas 1` launch evidence. `ttg.num-ctas = 1` alone is only cluster geometry and is not accepted as proof of a single-CTA launch. The frontend reconstructs region/block topology from native MLIR bindings, statically unfolds `scf.for`, selected `scf.if`, `scf.execute_region`, and terminating `scf.while` with carried SSA values, and rejects dynamic or repeating control states. `arith.*` and `math.*` are classified as pure payload computation; a result that affects control, address, mask, or protocol evidence must still be statically evaluated at its consumer.
 
-Async global sources must have exact contiguous provenance `scalar pointer → splat → static make_range → addptr`; destinations must be direct static `ttg.local_alloc` memdescs, commit operands must name staged copy tokens, waits must name committed tokens with static `num`, and a following `ttg.local_load` must consume the wait token. Multiple external pointer bases without alias evidence, multiple blocks/regions, SSA aliases, dynamic operands, unknown operations, non-SM90 targets, and multi-CTA modules fail closed. The committed v2 mbarrier and cp.async TTGIR fixtures are parsed by Triton `61c02bcd`, then validated and crosschecked by the dependency-free core process.
+Ordinary global load/store, initialized shared allocations, tokenless/token-observed local loads, static masks, loop-dependent pointer offsets, disjoint pointer footprints, footprint-preserving aliases, and static `ttg.memdesc_index` views normalize to exact memory events. cp.async accepts direct or statically masked copy forms; a merged masked copy expands into existing `CpAsyncIssue` events, while empty commit and zero-token wait retain the existing group FSM. No Triton-specific protocol is introduced. Multiple external bases without alias evidence, unresolved masks/views/tokens, atomics, arbitrary inline assembly, dynamic control, unknown effectful operations, non-SM90 targets, and multi-CTA launches fail closed. Snapshot v2 binds source/profile/accounting and per-event recognizer provenance; v1 remains trusted-producer compatibility only. The committed fixtures are parsed by Triton `61c02bcd`, then validated by the dependency-free core process.
 
 Equivalent frontend snapshots can be alpha-normalized and checked together:
 
