@@ -357,6 +357,48 @@ module attributes {{"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.tar
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_pure_kernel_emits_empty_protocol_graph_and_checks_safe(tmp_path: Path):
+    fixture = _scalar_pointer_ttgir(
+        tmp_path,
+        "",
+        """    %one = arith.constant 1 : i32
+    %two = arith.constant 2 : i32
+    %sum = arith.addi %one, %two : i32""",
+    )
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "pure-empty-protocol",
+    )
+    assert snapshot["operations"] == []
+    assert snapshot["extraction"]["classified_nodes"] == snapshot["extraction"]["executable_nodes_seen"]
+    assert snapshot["extraction"]["classified_nodes"] > 0
+    assert snapshot["extraction"]["emitting_nodes"] == 0
+    assert snapshot["extraction"]["events_emitted"] == 0
+    module = triton_snapshot_to_module(snapshot)
+    assert check_module(module, engine="maximal")["verdict"] == "SAFE"
+    assert check_module(module, engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_unknown_effect_is_not_misclassified_as_empty_protocol(tmp_path: Path):
+    fixture = _scalar_pointer_ttgir(
+        tmp_path,
+        "",
+        '    tt.print "unknown" { hex = false, isSigned = array<i32: 0>}',
+    )
+    process = _run_capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "unknown-effect-not-empty",
+    )
+    assert process.returncode == 2
+    assert json.loads(process.stdout)["diagnostics"][0]["code"] == "TRITON_OPERATION_UNSUPPORTED"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
 def test_triton_scalar_pointer_argument_tracks_direct_and_static_addptr_access(tmp_path: Path):
     fixture = _scalar_pointer_ttgir(
         tmp_path,

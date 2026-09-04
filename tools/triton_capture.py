@@ -2041,11 +2041,6 @@ class TritonCapture:
                 "fence_async_shared has no statically resolved async consumer",
                 {"operation_index": self.pending_proxy_fence},
             )
-        if not self.output_operations:
-            raise CaptureError(
-                "TRITON_OPERATIONS_MISSING",
-                "TTGIR module contains no supported protocol operations",
-            )
         triton_root = Path(self.triton.__file__).resolve().parents[1]
         return {
             "snapshot_version": SNAPSHOT_VERSION,

@@ -303,10 +303,11 @@ def validate_snapshot_envelope(
             {"constructs": snapshot["unsupported_constructs"]},
         )
     operations = snapshot["operations"]
-    if not isinstance(operations, list) or not operations:
+    if not isinstance(operations, list):
         raise FrontendError(
-            "FRONTEND_OPERATIONS_MISSING",
-            f"{dsl} snapshot must contain a nonempty operation list",
+            "FRONTEND_FIELD_TYPE",
+            f"{dsl} snapshot operations must be a list",
+            {"location": "/operations"},
         )
     if not is_v2:
         return False

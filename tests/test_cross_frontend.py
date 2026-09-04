@@ -189,6 +189,31 @@ def test_v2_extraction_certificate_preserves_legacy_pgir_semantics(
     assert semantic_signature(certified) == semantic_signature(legacy)
 
 
+def test_certified_empty_protocol_graphs_are_equivalent_and_safe_across_frontends():
+    modules = []
+    for path, prefix, stage, convert in [
+        (TILELANG, "tilelang", "post-inject-fence-proxy", tilelang_snapshot_to_module),
+        (TRITON, "triton", "post-ttgir-pipeline", triton_snapshot_to_module),
+    ]:
+        snapshot = _as_v2(_load(path), prefix, stage)
+        snapshot["resources"] = []
+        snapshot["regions"] = []
+        snapshot["operations"] = []
+        snapshot["extraction"].update({
+            "static_expansions": 0,
+            "executable_nodes_seen": 0,
+            "classified_nodes": 0,
+            "emitting_nodes": 0,
+            "elided_nodes": 0,
+            "events_emitted": 0,
+        })
+        module = convert(snapshot)
+        assert check_module(module, engine="maximal")["verdict"] == "SAFE"
+        assert check_module(module, engine="crosscheck")["verdict"] == "SAFE"
+        modules.append(module)
+    assert semantic_signature(modules[0]) == semantic_signature(modules[1])
+
+
 @pytest.mark.parametrize(
     ("path", "prefix", "stage", "convert"),
     [

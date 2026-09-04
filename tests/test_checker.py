@@ -39,6 +39,15 @@ def verdict(name: str) -> dict:
     return check_module(load(name))
 
 
+@pytest.mark.parametrize("fixture", ["safe_handoff.json", "cluster_dsmem_handoff.json"])
+def test_empty_finite_event_graph_is_safe_for_both_pgir_versions(fixture: str):
+    raw = json.loads((FIXTURES / fixture).read_text())
+    raw["events"] = []
+    module = module_from_dict(raw)
+    assert check_module(module, engine="maximal")["verdict"] == "SAFE"
+    assert check_module(module, engine="crosscheck")["verdict"] == "SAFE"
+
+
 def test_events_by_actor_buckets_once_in_actor_order_and_sorts_each_trace():
     class SinglePassEvents(tuple):
         iterations = 0
