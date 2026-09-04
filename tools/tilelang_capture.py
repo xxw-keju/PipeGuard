@@ -11,7 +11,6 @@ from typing import Any
 
 SNAPSHOT_VERSION = "tilelang-snapshot-v2"
 ADAPTER_VERSION = "tilelang-pgir-v2"
-MAX_STATIC_UNROLL = 256
 
 
 class CaptureError(Exception):
@@ -100,14 +99,29 @@ class TileLangCapture:
         self.classified_nodes = 0
         self.emitting_nodes = 0
         self.elided_nodes = 0
-        target = dict(self.func.attrs).get("target") if self.func.attrs else None
+        self.allocation_ids: dict[Any, str] = {}
+        self.used_allocation_ids: set[str] = set()
+        self.global_allocation_keys: set[Any] = set()
+        attrs = dict(self.func.attrs) if self.func.attrs else {}
+        self.noalias = bool(attrs.get("tirx.noalias", False))
+        target = attrs.get("target")
         self.target_text = str(target)
-        if "sm_90" not in self.target_text:
+        target_kind = getattr(getattr(target, "kind", None), "name", None)
+        target_attrs = dict(getattr(target, "attrs", {})) if target is not None else {}
+        target_arch = str(target_attrs.get("arch", ""))
+        target_warp_size = int(target_attrs.get("thread_warp_size", 0))
+        if target_kind != "cuda" or target_arch not in {"sm_90", "sm_90a"} or target_warp_size != 32:
             raise CaptureError(
                 "TILELANG_TARGET_UNSUPPORTED",
-                "TileLang capture supports only SM90 targets",
-                {"target": self.target_text},
+                "TileLang capture supports only CUDA SM90 targets with 32-lane warps",
+                {
+                    "target": self.target_text,
+                    "kind": target_kind,
+                    "arch": target_arch,
+                    "warp_size": target_warp_size,
+                },
             )
+        self.target_rule = f"tilelang-cuda-{target_arch}-v1"
 
     def classify_leaf(self, operation_count_before: int) -> None:
         self.executable_nodes_seen += 1
@@ -116,6 +130,33 @@ class TileLangCapture:
             self.emitting_nodes += 1
         else:
             self.elided_nodes += 1
+
+    def allocation_id(self, data: Any, scope: str, actor: str, label: str) -> str:
+        key: Any = (data, actor) if scope == "local" else data
+        if key in self.allocation_ids:
+            return self.allocation_ids[key]
+        if scope == "global":
+            if self.global_allocation_keys and not self.noalias:
+                raise CaptureError(
+                    "TILELANG_ALIAS_UNRESOLVED",
+                    "multiple global pointer bases require tirx.noalias evidence",
+                    {"allocation": label},
+                )
+            self.global_allocation_keys.add(key)
+        preferred = f"{actor}:{label}" if scope == "local" else label
+        identifier = preferred
+        suffix = 1
+        while identifier in self.used_allocation_ids:
+            identifier = f"{preferred}:{suffix}"
+            suffix += 1
+        self.allocation_ids[key] = identifier
+        self.used_allocation_ids.add(identifier)
+        return identifier
+
+    def allocation_for_buffer(self, buffer: Any, actor: str) -> str:
+        scope = str(buffer.scope())
+        label = getattr(buffer.data, "name", None) or buffer.name
+        return self.allocation_id(buffer.data, scope, actor, label)
 
     def _thread_extents(self) -> dict[str, int]:
         attrs = dict(self.func.attrs) if self.func.attrs else {}
@@ -160,7 +201,7 @@ class TileLangCapture:
                 "id": "sm90-single-cta-static-v1",
                 "source_ir_sha256": self.source_ir_sha256,
                 "compiler_ir_stage": "post-inject-fence-proxy",
-                "target_rule": "tilelang-sm90-target-v1",
+                "target_rule": self.target_rule,
             },
             "producer": {
                 "dsl_version": str(getattr(sys.modules["tilelang"], "__version__", "unavailable")),
@@ -192,8 +233,8 @@ class TileLangCapture:
                 "emitting_nodes": self.emitting_nodes,
                 "elided_nodes": self.elided_nodes,
                 "events_emitted": len(self.operations),
-                "allocation_identity_evidence": "tir-buffer-data-identity-v1",
-                "alias_evidence": "single-base-or-distinct-tir-buffer-v1",
+                "allocation_identity_evidence": "tir-buffer-data-object-and-actor-identity-v1",
+                "alias_evidence": "tirx.noalias-v1" if self.noalias else "single-global-base-v1",
                 "participant_evidence": "primfunc-thread-extent-lane-enumeration-v1",
             },
             "actors": [
@@ -210,13 +251,19 @@ class TileLangCapture:
         }
 
     def mbarrier(self, buffer: Any, indices: Any, evaluator: "LaneWalker") -> str:
-        allocation = getattr(buffer.data, "name", None) or buffer.name
+        allocation = self.allocation_for_buffer(buffer, evaluator.actor)
         offset, extent = evaluator.byte_interval(buffer, indices)
         if "barrier" not in evaluator.buffer_scope(buffer):
             raise CaptureError(
                 "TILELANG_BARRIER_ADDRESS_UNRESOLVED",
                 "mbarrier operand is not in shared.barrier storage",
                 {"buffer": buffer.name, "scope": evaluator.buffer_scope(buffer)},
+            )
+        if extent != 8 or offset % 8:
+            raise CaptureError(
+                "TILELANG_BARRIER_ADDRESS_UNRESOLVED",
+                "mbarrier storage must be one aligned eight-byte object",
+                {"buffer": buffer.name, "offset": offset, "extent": extent},
             )
         identifier = f"mbarrier:{allocation}:{offset}:{extent}"
         self.resources.setdefault(identifier, {
@@ -287,7 +334,7 @@ class TileLangCapture:
         return identifier
 
     def memory_region(self, buffer: Any, indices: Any, evaluator: "LaneWalker") -> str:
-        allocation = getattr(buffer.data, "name", None) or buffer.name
+        allocation = self.allocation_for_buffer(buffer, evaluator.actor)
         offset, extent = evaluator.byte_interval(buffer, indices)
         return self.region(allocation, evaluator.buffer_scope(buffer), offset, extent)
 
@@ -299,7 +346,7 @@ class LaneWalker:
         self.tirx = capture.tirx
         self.lane = lane
         self.actor = capture.actor_ids[lane]
-        self.bindings: dict[str, int] = {}
+        self.bindings: dict[Any, int] = {}
         self.sequence = 0
         self.arrival_rank: dict[str, int] = {}
         self.wait_rank: dict[str, int] = {}
@@ -348,18 +395,56 @@ class LaneWalker:
         if isinstance(expression, self.tirx.IntImm):
             return int(expression.value)
         if isinstance(expression, self.tirx.Var):
-            return self.bindings.get(expression.name)
-        unary = {"Cast": "value"}
-        if type(expression).__name__ in unary:
-            return self.eval_int(getattr(expression, unary[type(expression).__name__]))
+            return self.bindings.get(expression)
+        try:
+            replacements = {
+                variable: self.tirx.IntImm(variable.dtype, value)
+                for variable, value in self.bindings.items()
+            }
+            substituted = self.tirx.stmt_functor.substitute(expression, replacements)
+            simplified = self.capture.tvm.arith.Analyzer().simplify(substituted)
+            if isinstance(simplified, self.tirx.IntImm):
+                return int(simplified.value)
+        except Exception:
+            pass
+        name = type(expression).__name__
+        if name == "Cast":
+            return self.eval_int(expression.value)
+        if name == "Not":
+            value = self.eval_int(expression.a)
+            return None if value is None else int(not value)
+        if name == "Select":
+            condition = self.eval_int(expression.condition)
+            if condition is None:
+                return None
+            return self.eval_int(expression.true_value if condition else expression.false_value)
+        if name == "Let":
+            value = self.eval_int(expression.value)
+            if value is None:
+                return None
+            old = self.bindings.get(expression.var)
+            self.bindings[expression.var] = value
+            result = self.eval_int(expression.body)
+            if old is None:
+                self.bindings.pop(expression.var, None)
+            else:
+                self.bindings[expression.var] = old
+            return result
+
+        def trunc_div(left: int, right: int) -> int:
+            quotient = abs(left) // abs(right)
+            return -quotient if (left < 0) != (right < 0) else quotient
+
         binary = {
             "Add": lambda a, b: a + b,
             "Sub": lambda a, b: a - b,
             "Mul": lambda a, b: a * b,
-            "Div": lambda a, b: a // b,
+            "Div": trunc_div,
             "FloorDiv": lambda a, b: a // b,
-            "Mod": lambda a, b: a % b,
+            "Mod": lambda a, b: a - trunc_div(a, b) * b,
             "FloorMod": lambda a, b: a % b,
+            "Min": min,
+            "Max": max,
             "EQ": lambda a, b: int(a == b),
             "NE": lambda a, b: int(a != b),
             "LT": lambda a, b: int(a < b),
@@ -369,15 +454,15 @@ class LaneWalker:
             "And": lambda a, b: int(bool(a) and bool(b)),
             "Or": lambda a, b: int(bool(a) or bool(b)),
         }
-        function = binary.get(type(expression).__name__)
+        function = binary.get(name)
         if function is not None:
             left = self.eval_int(expression.a)
             right = self.eval_int(expression.b)
-            if left is not None and right is not None:
-                return function(left, right)
-            return None
+            if left is None or right is None or (name in {"Div", "FloorDiv", "Mod", "FloorMod"} and right == 0):
+                return None
+            return function(left, right)
         if isinstance(expression, self.tirx.Call):
-            name = getattr(expression.op, "name", "")
+            call_name = getattr(expression.op, "name", "")
             functions = {
                 "tirx.bitwise_xor": lambda a, b: a ^ b,
                 "tirx.bitwise_and": lambda a, b: a & b,
@@ -385,11 +470,13 @@ class LaneWalker:
                 "tirx.shift_left": lambda a, b: a << b,
                 "tirx.shift_right": lambda a, b: a >> b,
             }
-            function = functions.get(name)
+            function = functions.get(call_name)
             if function is not None and len(expression.args) == 2:
                 left = self.eval_int(expression.args[0])
                 right = self.eval_int(expression.args[1])
                 if left is not None and right is not None:
+                    if call_name in {"tirx.shift_left", "tirx.shift_right"} and right < 0:
+                        return None
                     return function(left, right)
         return None
 
@@ -412,13 +499,26 @@ class LaneWalker:
     def byte_interval(self, buffer: Any, indices: Any) -> tuple[int, int]:
         shape = [self.eval_int(item) for item in buffer.shape]
         index_values = [self.eval_int(item) for item in indices]
-        if not shape or len(shape) != len(index_values) or any(value is None for value in shape + index_values):
+        elem_offset = self.eval_int(buffer.elem_offset)
+        raw_strides = list(buffer.strides)
+        strides = [self.eval_int(item) for item in raw_strides]
+        unresolved = shape + index_values + strides + [elem_offset]
+        if (
+            len(shape) != len(index_values)
+            or (raw_strides and len(strides) != len(shape))
+            or any(value is None for value in unresolved)
+        ):
             raise CaptureError(
                 "TILELANG_REGION_UNRESOLVED",
-                "buffer region offset or shape is symbolic",
-                {"buffer": buffer.name, "indices": [str(item) for item in indices]},
+                "buffer region offset, strides, shape, or indices are symbolic",
+                {
+                    "buffer": buffer.name,
+                    "indices": [str(item) for item in indices],
+                    "strides": [str(item) for item in raw_strides],
+                    "elem_offset": str(buffer.elem_offset),
+                },
             )
-        linear = 0
+        assert elem_offset is not None
         for dimension, index in zip(shape, index_values):
             assert dimension is not None and index is not None
             if dimension <= 0 or not 0 <= index < dimension:
@@ -427,7 +527,17 @@ class LaneWalker:
                     "buffer access is outside its static shape",
                     {"buffer": buffer.name, "shape": shape, "indices": index_values},
                 )
-            linear = linear * dimension + index
+        if raw_strides:
+            linear = elem_offset + sum(
+                int(index) * int(stride)
+                for index, stride in zip(index_values, strides)
+            )
+        else:
+            linear = 0
+            for dimension, index in zip(shape, index_values):
+                assert dimension is not None and index is not None
+                linear = linear * dimension + index
+            linear += elem_offset
         width = self._dtype_bytes(buffer)
         return linear * width, width
 
@@ -445,8 +555,9 @@ class LaneWalker:
         offset = self.eval_int(expression.args[2])
         extent = self.eval_int(expression.args[3])
         flags = self.eval_int(expression.args[4])
-        allocation = getattr(expression.args[1], "name", None)
-        if offset is None or extent is None or flags is None or allocation is None:
+        data = expression.args[1]
+        allocation_label = getattr(data, "name", None)
+        if offset is None or extent is None or flags is None or allocation_label is None:
             raise CaptureError(
                 "TILELANG_ACCESS_PTR_UNRESOLVED",
                 "async access pointer has symbolic offset, extent, flags, or allocation",
@@ -478,15 +589,36 @@ class LaneWalker:
         width = bits // 8
         byte_offset = offset * width
         byte_extent = extent * width
-        region = self.capture.region(allocation, scope_values[-1], byte_offset, byte_extent)
+        scope = scope_values[-1]
+        allocation = self.capture.allocation_id(data, scope, self.actor, allocation_label)
+        region = self.capture.region(allocation, scope, byte_offset, byte_extent)
         return region, byte_extent
+
+    def _access_enabled(self, access: Any) -> bool:
+        predicate = getattr(access, "predicate", None)
+        if predicate is None:
+            return True
+        value = self.eval_int(predicate)
+        if value is None:
+            raise CaptureError(
+                "TILELANG_PREDICATE_UNRESOLVED",
+                "memory predicate is not statically resolvable",
+                {"predicate": str(predicate)},
+            )
+        return bool(value)
 
     def _buffer_loads(self, expression: Any) -> list[Any]:
         loads: list[Any] = []
+        unsupported_effects: list[dict[str, Any]] = []
+        deferred_errors: list[CaptureError] = []
 
         def visit(node: Any) -> None:
             if isinstance(node, self.tirx.BufferLoad):
-                loads.append(node)
+                try:
+                    if self._access_enabled(node):
+                        loads.append(node)
+                except CaptureError as error:
+                    deferred_errors.append(error)
                 return
             if not isinstance(node, self.tirx.Call):
                 return
@@ -497,16 +629,20 @@ class LaneWalker:
                 self.tirx.CallEffectKind.Pure.value,
             }
             if effect_value not in pure_values:
-                raise CaptureError(
-                    "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED",
-                    "nested TIRX call is not proven side-effect free",
-                    {
-                        "operation": getattr(node.op, "name", ""),
-                        "effect_kind": effect_value,
-                    },
-                )
+                unsupported_effects.append({
+                    "operation": getattr(node.op, "name", ""),
+                    "effect_kind": effect_value,
+                })
 
         self.tirx.stmt_functor.post_order_visit(self.tirx.Evaluate(expression), visit)
+        if deferred_errors:
+            raise deferred_errors[0]
+        if unsupported_effects:
+            raise CaptureError(
+                "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED",
+                "nested TIRX call is not proven side-effect free",
+                {"calls": unsupported_effects},
+            )
         return loads
 
     def _emit_expression_loads(self, expression: Any, path: tuple[Any, ...]) -> None:
@@ -531,13 +667,14 @@ class LaneWalker:
             if statement.attr_key == "thread_extent":
                 tag = str(getattr(statement.node, "thread_tag", ""))
                 extent = self.eval_int(statement.value)
-                variable = getattr(getattr(statement.node, "var", None), "name", None)
+                variable = getattr(statement.node, "var", None)
                 if extent is None or variable is None:
                     raise CaptureError(
                         "TILELANG_PARTICIPANTS_UNRESOLVED",
                         "thread binding is not statically resolvable",
                         {"tag": tag, "path": list(path)},
                     )
+                had_old = variable in self.bindings
                 old = self.bindings.get(variable)
                 if tag == "threadIdx.x":
                     self.bindings[variable] = self.lane
@@ -556,10 +693,26 @@ class LaneWalker:
                         {"tag": tag},
                     )
                 self.walk(statement.body, (*path, "attr", tag))
-                if old is None:
-                    self.bindings.pop(variable, None)
-                else:
+                if had_old:
+                    assert old is not None
                     self.bindings[variable] = old
+                else:
+                    self.bindings.pop(variable, None)
+                return
+            transparent_attributes = {
+                "buffer_dim_align",
+                "double_buffer_scope",
+                "pipeline_exec_scope",
+                "pipeline_scope",
+                "pragma_auto_unroll_max_step",
+                "pragma_unroll_explicit",
+                "realize_scope",
+                "software_pipeline_order",
+                "software_pipeline_stage",
+                "storage_scope",
+            }
+            if statement.attr_key in transparent_attributes:
+                self.walk(statement.body, (*path, "attr", statement.attr_key))
                 return
             raise CaptureError(
                 "TILELANG_ATTRIBUTE_UNSUPPORTED",
@@ -567,9 +720,56 @@ class LaneWalker:
                 {"attribute": statement.attr_key, "path": list(path)},
             )
         if name in {"AllocBuffer", "DeclBuffer"}:
+            self.capture.allocation_for_buffer(statement.buffer, self.actor)
             body = getattr(statement, "body", None)
             if body is not None:
                 self.walk(body, (*path, "buffer", statement.buffer.name))
+            return
+        if name == "Bind":
+            before = len(self.capture.operations)
+            value = self.eval_int(statement.value)
+            if value is None:
+                raise CaptureError(
+                    "TILELANG_STATIC_VALUE_UNRESOLVED",
+                    "TIRX Bind value is not statically resolvable",
+                    {"variable": str(statement.var), "value": str(statement.value)},
+                )
+            self.bindings[statement.var] = value
+            self.capture.classify_leaf(before)
+            return
+        if name == "LetStmt":
+            value = self.eval_int(statement.value)
+            if value is None:
+                raise CaptureError(
+                    "TILELANG_STATIC_VALUE_UNRESOLVED",
+                    "TIRX LetStmt value is not statically resolvable",
+                    {"variable": str(statement.var), "value": str(statement.value)},
+                )
+            had_old = statement.var in self.bindings
+            old = self.bindings.get(statement.var)
+            self.bindings[statement.var] = value
+            self.walk(statement.body, (*path, "let", statement.var.name))
+            if had_old:
+                assert old is not None
+                self.bindings[statement.var] = old
+            else:
+                self.bindings.pop(statement.var, None)
+            return
+        if name == "AssertStmt":
+            condition = self.eval_int(statement.condition)
+            if condition is None:
+                raise CaptureError(
+                    "TILELANG_DYNAMIC_CONTROL_FLOW_UNSUPPORTED",
+                    "TIRX assertion condition is not statically resolvable",
+                    {"condition": str(statement.condition)},
+                )
+            if not condition:
+                raise CaptureError(
+                    "TILELANG_STATIC_ASSERTION_FAILED",
+                    "TIRX static assertion is false",
+                    {"condition": str(statement.condition)},
+                )
+            self.walk(statement.body, (*path, "assert"))
             return
         if name == "IfThenElse":
             condition = self.eval_int(statement.condition)
@@ -582,25 +782,52 @@ class LaneWalker:
             branch = statement.then_case if condition else statement.else_case
             self.walk(branch, (*path, "if", int(bool(condition))))
             return
+        if name == "While":
+            seen_states: set[frozenset[tuple[Any, int]]] = set()
+            iteration = 0
+            while True:
+                condition = self.eval_int(statement.condition)
+                if condition is None:
+                    raise CaptureError(
+                        "TILELANG_DYNAMIC_CONTROL_FLOW_UNSUPPORTED",
+                        "TileLang while condition cannot be evaluated statically",
+                        {"condition": str(statement.condition), "iteration": iteration},
+                    )
+                if not condition:
+                    break
+                state = frozenset(self.bindings.items())
+                if state in seen_states:
+                    raise CaptureError(
+                        "TILELANG_NONFINITE_CONTROL_FLOW",
+                        "TileLang while loop repeats a static state",
+                        {"condition": str(statement.condition), "iteration": iteration},
+                    )
+                seen_states.add(state)
+                self.capture.static_expansions += 1
+                self.walk(statement.body, (*path, "while", iteration))
+                iteration += 1
+            return
         if name == "For":
             minimum = self.eval_int(statement.min)
             extent = self.eval_int(statement.extent)
-            if minimum is None or extent is None or extent < 0 or extent > MAX_STATIC_UNROLL:
+            if minimum is None or extent is None or extent < 0:
                 raise CaptureError(
                     "TILELANG_DYNAMIC_CONTROL_FLOW_UNSUPPORTED",
-                    "TileLang loop must have a bounded static extent",
+                    "TileLang loop must have a finite static extent",
                     {"loop": str(statement.loop_var), "extent": str(statement.extent)},
                 )
-            variable = statement.loop_var.name
+            variable = statement.loop_var
+            had_old = variable in self.bindings
             old = self.bindings.get(variable)
             for iteration in range(minimum, minimum + extent):
                 self.capture.static_expansions += 1
                 self.bindings[variable] = iteration
-                self.walk(statement.body, (*path, "for", variable, iteration))
-            if old is None:
-                self.bindings.pop(variable, None)
-            else:
+                self.walk(statement.body, (*path, "for", variable.name, iteration))
+            if had_old:
+                assert old is not None
                 self.bindings[variable] = old
+            else:
+                self.bindings.pop(variable, None)
             return
         if name == "BufferStore":
             before = len(self.capture.operations)
@@ -613,8 +840,9 @@ class LaneWalker:
                     _ir_operation="BufferLoad",
                     region=region,
                 )
-            region = self.capture.memory_region(statement.buffer, statement.indices, self)
-            self.emit("tilelang.mem.write", path, region=region)
+            if self._access_enabled(statement):
+                region = self.capture.memory_region(statement.buffer, statement.indices, self)
+                self.emit("tilelang.mem.write", path, region=region)
             self.capture.classify_leaf(before)
             return
         if name == "Evaluate":
@@ -622,9 +850,63 @@ class LaneWalker:
             self.evaluate(statement.value, path)
             self.capture.classify_leaf(before)
             return
-        if name in {"Block", "BlockRealize"}:
-            child = statement.body if name == "Block" else statement.block
-            self.walk(child, (*path, name.lower()))
+        if name in {"BlockRealize", "SBlockRealize"}:
+            block = statement.block
+            iter_vars = list(block.iter_vars)
+            iter_values = list(statement.iter_values)
+            if len(iter_vars) != len(iter_values):
+                raise CaptureError(
+                    "TILELANG_BLOCK_BINDING_UNRESOLVED",
+                    "BlockRealize iter values do not match block iter variables",
+                    {"block": str(block.name_hint)},
+                )
+            saved: list[tuple[Any, bool, int | None]] = []
+            for iter_var, value_expression in zip(iter_vars, iter_values):
+                value = self.eval_int(value_expression)
+                if value is None:
+                    raise CaptureError(
+                        "TILELANG_BLOCK_BINDING_UNRESOLVED",
+                        "BlockRealize iter value is not statically resolvable",
+                        {"block": str(block.name_hint), "value": str(value_expression)},
+                    )
+                saved.append((iter_var.var, iter_var.var in self.bindings, self.bindings.get(iter_var.var)))
+                self.bindings[iter_var.var] = value
+            predicate = self.eval_int(statement.predicate)
+            if predicate is None:
+                raise CaptureError(
+                    "TILELANG_DYNAMIC_CONTROL_FLOW_UNSUPPORTED",
+                    "BlockRealize predicate is not statically resolvable",
+                    {"block": str(block.name_hint), "predicate": str(statement.predicate)},
+                )
+            if predicate:
+                reduction_vars = [
+                    iter_var for iter_var in iter_vars
+                    if int(iter_var.iter_type) == self.tirx.IterVar.CommReduce
+                ]
+                run_init = block.init is not None
+                for iter_var in reduction_vars:
+                    minimum = self.eval_int(iter_var.dom.min) if iter_var.dom is not None else None
+                    if minimum is None:
+                        raise CaptureError(
+                            "TILELANG_BLOCK_INIT_UNRESOLVED",
+                            "reduction block minimum is not statically resolvable",
+                            {"block": str(block.name_hint)},
+                        )
+                    run_init = run_init and self.bindings[iter_var.var] == minimum
+                if run_init:
+                    self.walk(block.init, (*path, "block", block.name_hint, "init"))
+                self.walk(block.body, (*path, "block", block.name_hint, "body"))
+            for variable, had_old, old in reversed(saved):
+                if had_old:
+                    assert old is not None
+                    self.bindings[variable] = old
+                else:
+                    self.bindings.pop(variable, None)
+            return
+        if name in {"Block", "SBlock"}:
+            if statement.init is not None:
+                self.walk(statement.init, (*path, "block", statement.name_hint, "init"))
+            self.walk(statement.body, (*path, "block", statement.name_hint, "body"))
             return
         raise CaptureError(
             "TILELANG_STATEMENT_UNSUPPORTED",
@@ -637,8 +919,9 @@ class LaneWalker:
         if isinstance(expression, self.tirx.IntImm):
             return
         if isinstance(expression, self.tirx.BufferLoad):
-            region = self.capture.memory_region(expression.buffer, expression.indices, self)
-            self.emit("tilelang.mem.read", path, region=region)
+            if self._access_enabled(expression):
+                region = self.capture.memory_region(expression.buffer, expression.indices, self)
+                self.emit("tilelang.mem.read", path, region=region)
             return
         if not isinstance(expression, self.tirx.Call):
             self._emit_expression_loads(expression, path)
@@ -646,6 +929,11 @@ class LaneWalker:
         name = getattr(expression.op, "name", "")
         self.current_ir_operation = name
         if name == "tl.ptx_fence_barrier_init":
+            if expression.args:
+                raise CaptureError(
+                    "TILELANG_OPERATION_MALFORMED",
+                    "ptx_fence_barrier_init must not have operands",
+                )
             return
         if name == "tl.fence_proxy_async":
             if expression.args or self.pending_proxy is not None:
@@ -694,8 +982,14 @@ class LaneWalker:
             )
             return
         if name in {"tirx.ptx_init_barrier_thread_count", "tir.ptx_init_barrier_thread_count"}:
+            if len(expression.args) != 2:
+                raise CaptureError(
+                    "TILELANG_MBARRIER_COUNT_UNRESOLVED",
+                    "mbarrier initialization requires barrier and count operands",
+                    {"operation": name, "operands": len(expression.args)},
+                )
             resource = self._barrier_operand(expression, 0)
-            count = self.eval_int(expression.args[1]) if len(expression.args) > 1 else None
+            count = self.eval_int(expression.args[1])
             if count is None or count <= 0:
                 raise CaptureError(
                     "TILELANG_MBARRIER_COUNT_UNRESOLVED",
@@ -711,6 +1005,12 @@ class LaneWalker:
             )
             return
         if name in {"tirx.ptx_arrive_barrier", "tir.ptx_arrive_barrier"}:
+            if len(expression.args) != 1:
+                raise CaptureError(
+                    "TILELANG_MBARRIER_ARRIVE_UNRESOLVED",
+                    "mbarrier arrival requires exactly one barrier operand",
+                    {"operation": name, "operands": len(expression.args)},
+                )
             resource = self._barrier_operand(expression, 0)
             generation = self.arrival_rank.get(resource, 0)
             self.arrival_rank[resource] = generation + 1
@@ -725,8 +1025,14 @@ class LaneWalker:
             )
             return
         if name == "tl.mbarrier_wait_parity":
+            if len(expression.args) != 2:
+                raise CaptureError(
+                    "TILELANG_PARITY_UNRESOLVED",
+                    "mbarrier wait requires barrier and parity operands",
+                    {"operands": len(expression.args)},
+                )
             resource = self._barrier_operand(expression, 0)
-            parity = self.eval_int(expression.args[1]) if len(expression.args) > 1 else None
+            parity = self.eval_int(expression.args[1])
             generation = self.wait_rank.get(resource, 0)
             if parity is None or parity != generation % 2:
                 raise CaptureError(
