@@ -28,7 +28,7 @@ from upstream_common import (
     stable_id,
 )
 from upstream_tilelang_recipes import classify_tilelang_recipe, tilelang_parent_map
-from upstream_triton_recipes import infer_triton_recipes
+from upstream_triton_recipes import infer_triton_recipes, promote_inferred_root_roles
 
 
 DEFAULT_INCLUDE = {
@@ -431,6 +431,8 @@ def extract_dsl(dsl: str, source_root: Path, output_root: Path, *, allow_commit_
             infer_triton_recipes(candidates, tree, aliases, relative)
             if dsl == "triton" else {}
         )
+        if dsl == "triton":
+            roles = promote_inferred_root_roles(roles, inferred_triton_recipes)
         tilelang_parents = tilelang_parent_map(tree) if dsl == "tilelang" else {}
         source_lines = source.splitlines(keepends=True)
         blob_hash = git_blob_hash(source_root, Path(relative))

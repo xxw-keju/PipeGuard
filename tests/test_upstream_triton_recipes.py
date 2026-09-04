@@ -10,7 +10,8 @@ import pytest
 ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
-from upstream_extract import AliasTable, CandidateVisitor, infer_triton_recipes  # noqa: E402
+from upstream_extract import AliasTable, CandidateVisitor, candidate_roles, infer_triton_recipes  # noqa: E402
+from upstream_triton_recipes import promote_inferred_root_roles  # noqa: E402
 from upstream_pytest_params import pytest_parameter_environments  # noqa: E402
 from upstream_static_eval import json_literal_value, literal_value  # noqa: E402
 
@@ -21,6 +22,28 @@ def _discover(source: str):
     visitor = CandidateVisitor("triton", "case.py", source, aliases)
     visitor.visit(tree)
     return tree, aliases, visitor.candidates
+
+
+def test_inferred_astsource_recipe_promotes_indirect_compile_candidate_to_root():
+    source = """\
+import triton
+import triton.language as tl
+from triton.backends.compiler import GPUTarget
+from triton.compiler import ASTSource
+
+@triton.jit
+def kernel(K: tl.constexpr):
+    pass
+
+source = ASTSource(fn=kernel, signature={"K": "constexpr"}, constexprs={"K": 1})
+triton.compile(source, target=GPUTarget("cuda", 90, 32))
+"""
+    tree, aliases, candidates = _discover(source)
+    roles, _dependencies = candidate_roles(candidates, tree)
+    assert roles[candidates[0].candidate_id] == "UNCLASSIFIED"
+    inferred = infer_triton_recipes(candidates, tree, aliases, "case.py")
+    promoted = promote_inferred_root_roles(roles, inferred)
+    assert promoted[candidates[0].candidate_id] == "ROOT"
 
 
 def test_literal_parametrize_emits_only_non_raises_compile_recipes():

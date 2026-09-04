@@ -136,6 +136,19 @@ def _make_recipe(evidence: Any, call: ast.Call, relative_path: str) -> dict[str,
     }
 
 
+def promote_inferred_root_roles(
+    roles: dict[str, str],
+    inferred_recipes: dict[str, list[dict[str, Any]]],
+) -> dict[str, str]:
+    promoted = dict(roles)
+    for candidate_id, recipes in inferred_recipes.items():
+        if not recipes:
+            continue
+        role = promoted[candidate_id]
+        promoted[candidate_id] = "ROOT_HELPER" if role in {"HELPER", "ROOT_HELPER"} else "ROOT"
+    return promoted
+
+
 def infer_triton_recipes(
     candidates: list[Any],
     tree: ast.Module,
