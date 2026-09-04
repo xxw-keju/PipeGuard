@@ -161,10 +161,6 @@ class TritonCapture:
             )
         self.entry_block = entry_blocks[0]
         entry = self.blocks[self.entry_block]
-        self.function_argument_indices = {
-            entry.get_argument(index).id(): index
-            for index in range(entry.get_num_arguments())
-        }
         self.num_ctas = self._integer_module_attr("ttg.num-ctas")
         self.num_warps = self._integer_module_attr("ttg.num-warps")
         self.threads_per_warp = self._integer_module_attr("ttg.threads-per-warp")
@@ -218,14 +214,14 @@ class TritonCapture:
         self.barrier_lifecycle: dict[str, int] = {}
         self.sequence = 0
         self.ranges: dict[int, tuple[int, int]] = {}
-        self.pointer_bases: dict[int, tuple[str, int]] = {}
+        self.scalar_pointer_arguments: dict[int, tuple[str, int]] = {}
         self.pointer_values: dict[int, tuple[str, int, tuple[int, ...]]] = {}
         self.pointer_regions: dict[int, str] = {}
         self.pointer_region_sets: dict[int, tuple[str, ...]] = {}
         self.memdesc_regions: dict[int, str] = {}
         self.descriptor_regions: dict[int, str] = {}
         self.barrier_arguments: dict[int, str] = {}
-        self.external_allocations: dict[int, str] = {}
+        self.external_allocations: set[str] = set()
         self.staged_tokens: set[int] = set()
         self.group_tokens: dict[int, int] = {}
         self.wait_tokens: set[int] = set()
@@ -291,12 +287,61 @@ class TritonCapture:
             elements *= dimension
         return elements, bits // 8
 
+    @staticmethod
+    def _scalar_pointer_width(type_text: str) -> int | None:
+        pointer = re.fullmatch(r"!tt\.ptr<([^,>]+)(?:,\s*\d+)?>", type_text)
+        if pointer is None:
+            return None
+        element = re.match(r"^(?:i|ui|f|bf)(\d+)", pointer.group(1))
+        if element is None:
+            return None
+        bits = int(element.group(1))
+        return bits // 8 if bits > 0 and bits % 8 == 0 else None
+
+    def _ensure_pointer_value(
+        self,
+        value_id: int,
+    ) -> tuple[str, int, tuple[int, ...]] | None:
+        pointer = self.pointer_values.get(value_id)
+        if pointer is not None:
+            return pointer
+        argument = self.scalar_pointer_arguments.get(value_id)
+        if argument is None:
+            return None
+        allocation, width = argument
+        self._set_pointer_value(value_id, allocation, width, (0,))
+        return self.pointer_values[value_id]
+
+    def _mark_external_pointer(
+        self,
+        value_id: int,
+    ) -> tuple[str, int, tuple[int, ...]] | None:
+        pointer = self._ensure_pointer_value(value_id)
+        if pointer is not None and pointer[0].startswith("global-arg:"):
+            self.external_allocations.add(pointer[0])
+        return pointer
+
+    def _require_resolved_external_aliases(self) -> None:
+        if len(self.external_allocations) > 1:
+            raise CaptureError(
+                "TRITON_ALIAS_UNRESOLVED",
+                "multiple external pointer bases require explicit alias evidence",
+                {"external_bases": len(self.external_allocations)},
+            )
+
     def _record_function_arguments(self) -> None:
         block = self.blocks[self.entry_block]
         for index in range(block.get_num_arguments()):
             argument = block.get_argument(index)
             type_text = str(argument.get_type())
-            if "!ttg.memdesc<" in type_text:
+            if type_text.startswith("!tt.ptr<"):
+                width = self._scalar_pointer_width(type_text)
+                if width is not None:
+                    self.scalar_pointer_arguments[argument.id()] = (
+                        f"global-arg:{index}",
+                        width,
+                    )
+            elif "!ttg.memdesc<" in type_text:
                 elements, width = self._value_extent(argument)
                 allocation = f"shared-arg:{index}"
                 region = self._region(allocation, "SHARED", 0, elements * width)
@@ -397,7 +442,7 @@ class TritonCapture:
                 "tt.addptr provenance is malformed",
                 {"operation_index": index},
             )
-        base = self.pointer_values.get(operation.get_operand(0).id())
+        base = self._mark_external_pointer(operation.get_operand(0).id())
         offset_value = self.static_values.get(operation.get_operand(1).id())
         if base is None or offset_value is None:
             return False
@@ -525,17 +570,33 @@ class TritonCapture:
                 operand = operation.get_operand(0)
                 if "!tt.ptr<" not in str(operand.get_type()):
                     continue
-                argument_index = self.function_argument_indices.get(operand.id())
-                label = (
-                    f"global-arg:{argument_index}"
-                    if argument_index is not None
-                    else f"global-base:{len(self.external_allocations)}"
+                base = self._mark_external_pointer(operand.id())
+                if base is None:
+                    continue
+                allocation, width, offsets = base
+                if len(offsets) != 1:
+                    raise CaptureError(
+                        "TRITON_POINTER_PROVENANCE_UNRESOLVED",
+                        "tt.splat pointer operand is not scalar",
+                        {"operation_index": index},
+                    )
+                elements, result_width = self._value_extent(operation.get_result(0))
+                if result_width != width:
+                    raise CaptureError(
+                        "TRITON_POINTER_PROVENANCE_UNRESOLVED",
+                        "tt.splat changes pointer element width",
+                        {
+                            "operation_index": index,
+                            "source_width": width,
+                            "result_width": result_width,
+                        },
+                    )
+                self._set_pointer_value(
+                    operation.get_result(0).id(),
+                    allocation,
+                    width,
+                    offsets * elements,
                 )
-                allocation = self.external_allocations.setdefault(operand.id(), label)
-                elements, width = self._value_extent(operation.get_result(0))
-                result_id = operation.get_result(0).id()
-                self.pointer_bases[result_id] = (allocation, width)
-                self._set_pointer_value(result_id, allocation, width, (0,) * elements)
             elif name == "tt.addptr":
                 self._resolve_addptr(operation, index)
             elif name == "ttg.local_alloc":
@@ -1072,6 +1133,7 @@ class TritonCapture:
                 {"operation": name, "operation_index": index, "operands": operand_count},
             )
         pointer_id = operation.get_operand(0).id()
+        self._mark_external_pointer(pointer_id)
         regions = self.pointer_region_sets.get(pointer_id)
         if not regions:
             raise CaptureError(
@@ -1108,7 +1170,7 @@ class TritonCapture:
                     {"operation_index": index, "operands": operand_count},
                 )
             pointer_id = operation.get_operand(0).id()
-            pointer = self.pointer_values.get(pointer_id)
+            pointer = self._mark_external_pointer(pointer_id)
             destination = self.memdesc_regions.get(operation.get_operand(1).id())
             if pointer is None or destination is None:
                 raise CaptureError(
@@ -1347,6 +1409,8 @@ class TritonCapture:
             if operand_id in self.pointer_values:
                 allocation, width, offsets = self.pointer_values[operand_id]
                 self._set_pointer_value(result.id(), allocation, width, offsets)
+            elif operand_id in self.scalar_pointer_arguments:
+                self.scalar_pointer_arguments[result.id()] = self.scalar_pointer_arguments[operand_id]
             if operand_id in self.memdesc_regions:
                 region_id = self.memdesc_regions[operand_id]
                 if name in {"ttg.memdesc_reshape", "ttg.memdesc_reinterpret", "ttg.memdesc_trans"}:
@@ -1493,6 +1557,7 @@ class TritonCapture:
         target_id = target.id()
         for mapping in (
             self.static_values,
+            self.scalar_pointer_arguments,
             self.pointer_values,
             self.pointer_regions,
             self.pointer_region_sets,
@@ -1967,13 +2032,9 @@ class TritonCapture:
     def capture(self) -> dict[str, Any]:
         self._record_function_arguments()
         self._record_definitions()
-        if len(self.external_allocations) > 1:
-            raise CaptureError(
-                "TRITON_ALIAS_UNRESOLVED",
-                "multiple external pointer bases require explicit alias evidence",
-                {"external_bases": len(self.external_allocations)},
-            )
+        self._require_resolved_external_aliases()
         self._execute_block(self.entry_block, ("root",))
+        self._require_resolved_external_aliases()
         if self.pending_proxy_fence is not None:
             raise CaptureError(
                 "TRITON_PROXY_FENCE_UNRESOLVED",

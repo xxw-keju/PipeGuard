@@ -55,7 +55,7 @@ def _run_capture(
 def _capture(
     python: Path,
     tool: str,
-    fixture: str,
+    fixture: str | Path,
     source: str,
     seed: int = 1,
     descriptor_evidence: str | None = None,
@@ -341,6 +341,99 @@ def test_triton_initialized_local_alloc_emits_shared_write_then_read():
     ]
     assert snapshot["operations"][0]["region"] == snapshot["operations"][1]["region"]
     assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
+
+
+def _scalar_pointer_ttgir(tmp_path: Path, arguments: str, body: str) -> Path:
+    path = tmp_path / "scalar-pointer.ttgir.mlir"
+    path.write_text(f"""\
+module attributes {{"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:90", "ttg.threads-per-warp" = 32 : i32}} {{
+  tt.func public @scalar_pointer({arguments}) {{
+{body}
+    tt.return
+  }}
+}}
+""")
+    return path
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_scalar_pointer_argument_tracks_direct_and_static_addptr_access(tmp_path: Path):
+    fixture = _scalar_pointer_ttgir(
+        tmp_path,
+        "%base: !tt.ptr<i32>",
+        """    %zero = arith.constant 0 : i32
+    tt.store %base, %zero : !tt.ptr<i32>
+    %two = arith.constant 2 : i32
+    %offset = tt.addptr %base, %two : !tt.ptr<i32>, i32
+    %loaded = tt.load %offset : !tt.ptr<i32>""",
+    )
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "scalar-pointer-direct-addptr",
+    )
+    assert [(operation["op"], operation["region"]) for operation in snapshot["operations"]] == [
+        ("triton.mem.write", "region:global:global-arg:0:0:4"),
+        ("triton.mem.read", "region:global:global-arg:0:8:4"),
+    ]
+    assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_unused_scalar_pointer_does_not_create_alias_obligation(tmp_path: Path):
+    fixture = _scalar_pointer_ttgir(
+        tmp_path,
+        "%used: !tt.ptr<i32>, %unused: !tt.ptr<i32>",
+        """    %zero = arith.constant 0 : i32
+    tt.store %used, %zero : !tt.ptr<i32>""",
+    )
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "scalar-pointer-unused-argument",
+    )
+    assert [region["allocation_id"] for region in snapshot["regions"]] == ["global-arg:0"]
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_multiple_used_scalar_pointers_still_require_alias_evidence(tmp_path: Path):
+    fixture = _scalar_pointer_ttgir(
+        tmp_path,
+        "%left: !tt.ptr<i32>, %right: !tt.ptr<i32>",
+        """    %zero = arith.constant 0 : i32
+    tt.store %left, %zero : !tt.ptr<i32>
+    tt.store %right, %zero : !tt.ptr<i32>""",
+    )
+    process = _run_capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "scalar-pointer-alias-required",
+    )
+    assert process.returncode == 2
+    result = json.loads(process.stdout)
+    assert result["diagnostics"][0]["code"] == "TRITON_ALIAS_UNRESOLVED"
+    assert result["diagnostics"][0]["details"] == {"external_bases": 2}
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_used_subbyte_scalar_pointer_fails_closed(tmp_path: Path):
+    fixture = _scalar_pointer_ttgir(
+        tmp_path,
+        "%base: !tt.ptr<i1>",
+        """    %false = arith.constant false
+    tt.store %base, %false : !tt.ptr<i1>""",
+    )
+    process = _run_capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "scalar-pointer-subbyte",
+    )
+    assert process.returncode == 2
+    assert json.loads(process.stdout)["diagnostics"][0]["code"] == "TRITON_MEMORY_ACCESS_UNRESOLVED"
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
