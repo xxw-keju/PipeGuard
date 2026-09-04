@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 from typing import Any
 
 
@@ -378,6 +379,9 @@ def operation_to_event(
     *,
     prefix: str,
     parity_derivation_kind: str,
+    operation_fields: Mapping[str, set[str]],
+    optional_by_operation: Mapping[str, set[str]],
+    event_types: Mapping[str, str],
     require_evidence: bool = False,
 ) -> dict[str, Any]:
     if not isinstance(operation, dict):
@@ -387,7 +391,6 @@ def operation_to_event(
             {"location": f"/operations/{index}"},
         )
     op = operation.get("op")
-    operation_fields = prefixed_operation_fields(prefix)
     if op not in operation_fields:
         raise FrontendError(
             "FRONTEND_UNKNOWN_OPERATION",
@@ -397,7 +400,7 @@ def operation_to_event(
     required = COMMON_OPERATION_FIELDS | operation_fields[op]
     if require_evidence:
         required = required | {"evidence"}
-    optional = OPTIONAL_OPERATION_FIELDS | prefixed_optional_fields(prefix).get(op, set())
+    optional = OPTIONAL_OPERATION_FIELDS | optional_by_operation.get(op, set())
     require_exact_keys(operation, required, optional, f"/operations/{index}")
     evidence = operation.get("evidence")
     if evidence is not None:
@@ -419,7 +422,7 @@ def operation_to_event(
             )
     event = {
         "id": operation["id"],
-        "type": prefixed_event_types(prefix)[op],
+        "type": event_types[op],
         "actor": operation["actor"],
         "seq": operation["seq"],
     }

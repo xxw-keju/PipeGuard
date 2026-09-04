@@ -4,10 +4,12 @@ import hashlib
 import json
 from collections.abc import Mapping
 from dataclasses import dataclass, field
+from functools import lru_cache
 from importlib.resources import files
 from pathlib import Path
 from typing import Any
 
+import fastjsonschema
 import jsonschema
 
 from .protocols import RESOURCE_KINDS, VisibilityMask
@@ -176,6 +178,7 @@ def _dangling_dependencies(
     return sorted({dependency for dependency in dependencies if dependency not in events})
 
 
+@lru_cache(maxsize=None)
 def _schema(version: str) -> dict[str, Any]:
     if not isinstance(version, str) or version not in {"pgir-v1", "pgir-v2"}:
         raise PGIRError(
@@ -347,11 +350,28 @@ def _strict_integers(data: Any) -> None:
                     _strict_integer(evidence[name], f"/events/{index}/parity_evidence/{name}")
 
 
+@lru_cache(maxsize=None)
+def _fast_schema_validator(version: str) -> Any:
+    return fastjsonschema.compile(_schema(version))
+
+
+@lru_cache(maxsize=None)
+def _diagnostic_schema_validator(version: str) -> jsonschema.Draft202012Validator:
+    return jsonschema.Draft202012Validator(_schema(version))
+
+
 def _schema_validate(data: Any) -> None:
     _strict_integers(data)
     version = data.get("schema_version") if isinstance(data, dict) else None
-    validator = jsonschema.Draft202012Validator(_schema(version))
-    errors = sorted(validator.iter_errors(data), key=lambda error: (list(error.absolute_path), error.message))
+    try:
+        _fast_schema_validator(version)(data)
+        return
+    except fastjsonschema.JsonSchemaException:
+        pass
+    errors = sorted(
+        _diagnostic_schema_validator(version).iter_errors(data),
+        key=lambda error: (list(error.absolute_path), error.message),
+    )
     if errors:
         error = errors[0]
         path = "/" + "/".join(str(part) for part in error.absolute_path)

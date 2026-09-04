@@ -43,6 +43,9 @@ def _event(
         index,
         prefix="triton",
         parity_derivation_kind="PHASE_SSA",
+        operation_fields=_OPERATION_FIELDS,
+        optional_by_operation=_OPTIONAL_BY_OPERATION,
+        event_types=_EVENT_TYPES,
         require_evidence=require_evidence,
     )
 

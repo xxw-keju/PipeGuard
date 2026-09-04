@@ -5,6 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+import fastjsonschema
 import pytest
 
 from pipeguard.checker import _anchor_ids, check_module
@@ -16,6 +17,8 @@ from pipeguard.model import (
     PGIRError,
     _bucket_events_by_actor,
     _dangling_dependencies,
+    _diagnostic_schema_validator,
+    _fast_schema_validator,
     load_module,
     module_from_dict,
     stable_channel_handoff_id,
@@ -134,6 +137,33 @@ def test_self_dependency_remains_a_distinct_validation_error():
 
     assert caught.value.code == "SELF_DEPENDENCY"
     assert caught.value.details == {"event": "wait"}
+
+
+@pytest.mark.parametrize("fixture", ["safe_handoff.json", "cluster_dsmem_handoff.json"])
+def test_fast_schema_acceptance_matches_canonical_validator(fixture: str):
+    valid = json.loads((FIXTURES / fixture).read_text())
+    documents = [valid]
+    for mutation in (
+        lambda raw: raw.update(unexpected=True),
+        lambda raw: raw["events"][0].update(unexpected=True),
+        lambda raw: raw["events"][0].update(id=""),
+        lambda raw: raw["events"][0].update(seq=-1),
+        lambda raw: raw["events"][0].update(depends_on=["duplicate", "duplicate"]),
+    ):
+        raw = json.loads(json.dumps(valid))
+        mutation(raw)
+        documents.append(raw)
+
+    fast = _fast_schema_validator(valid["schema_version"])
+    canonical = _diagnostic_schema_validator(valid["schema_version"])
+    for raw in documents:
+        try:
+            fast(raw)
+            fast_accepts = True
+        except fastjsonschema.JsonSchemaException:
+            fast_accepts = False
+        canonical_accepts = next(canonical.iter_errors(raw), None) is None
+        assert fast_accepts == canonical_accepts
 
 
 def test_safe_handoff_has_visibility_path_and_manifest():
