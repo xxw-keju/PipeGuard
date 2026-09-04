@@ -71,7 +71,7 @@ For exact aliases, a conflicting pair is safe exactly when one direction has bot
 1. PDG must-order separating the required endpoint from the other access; and
 2. the required typed visibility transfer or completion observation.
 
-The implemented transfer cases are exhaustive for the supported domain: mbarrier publication/observation, typed collective release/observe, channel commit/handoff/wait and release/reacquire, generic-to-async ProxyFence with matching direction/scope/region/mask, and async-to-generic typed completion observation. Engine order alone is deliberately excluded from visibility.
+The implemented transfer cases are exhaustive for the supported domain: mbarrier publication/observation, typed collective release/observe, channel commit/handoff/wait and release/reacquire, generic-to-async ProxyFence with matching direction/scope/region/mask, and async-to-generic typed completion observation. A ProxyFence normally publishes its issuing actor's writes; an elected issuer may additionally publish another actor's shared write only when a typed collective transfer first carries that write to the issuer. Mere dependency reachability or a control-only barrier is insufficient. Engine order alone is deliberately excluded from visibility.
 
 Therefore:
 

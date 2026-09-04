@@ -78,7 +78,7 @@ def test_live_tilelang_tirx_capture_fixture_is_safe():
     result = check_module(tilelang_snapshot_to_module(snapshot), engine="crosscheck")
     assert result["verdict"] == "SAFE"
     assert result["artifacts"]["normalized_sha256"] == (
-        "90834cc007b7d7b91e191c76da8afbca8180e74f5212d468eebccbb15fa56910"
+        "806a9c417eaeba4d30316cf7b7b1e3e45d5f06a155280d16a8b688ea2974f825"
     )
 
 
@@ -98,7 +98,7 @@ def test_live_tilelang_cp_async_capture_fixture_is_safe():
     result = check_module(tilelang_snapshot_to_module(snapshot), engine="crosscheck")
     assert result["verdict"] == "SAFE"
     assert result["artifacts"]["normalized_sha256"] == (
-        "3eff6f0b22566cdf3dbab74174726634049ae56fa48f9e532b6d369c5c60d591"
+        "707d03034a828a7e54d8cd865e87f88c21e6afc53f2f7f094ee4fc78f1f65b03"
     )
     assert result["statistics"]["n_ext"] == 11
     assert result["statistics"]["t_eff"] == 3

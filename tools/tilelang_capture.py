@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+from itertools import product
 import subprocess
 import sys
 from pathlib import Path
@@ -53,6 +54,7 @@ class TileLangCapture:
         source: str,
         command: str,
         source_ir_sha256: str,
+        descriptor_evidence: dict[str, Any] | None = None,
     ):
         self.tvm = tvm
         self.tirx = tirx
@@ -60,6 +62,7 @@ class TileLangCapture:
         self.source = source
         self.command = command
         self.source_ir_sha256 = source_ir_sha256
+        self.descriptor_evidence = descriptor_evidence or {}
         functions = [func for func in module.functions.values() if isinstance(func, tirx.PrimFunc)]
         if len(functions) != 1:
             raise CaptureError(
@@ -91,6 +94,37 @@ class TileLangCapture:
                     {"thread_extents": self.thread_extents},
                 )
         self.actor_ids = tuple(f"lane:{lane:04d}" for lane in range(self.cta_threads))
+        call_names: set[str] = set()
+        warpgroup_register_data: set[Any] = set()
+
+        def record_call(node: Any) -> None:
+            if isinstance(node, tirx.Call):
+                name = getattr(node.op, "name", "")
+                call_names.add(name)
+                if name == "tl.warpgroup_fence_operand" and len(node.args) == 4:
+                    warpgroup_register_data.add(node.args[1])
+
+        tirx.stmt_functor.post_order_visit(self.func.body, record_call)
+        self.uses_warpgroup = any(
+            name.startswith("tl.warpgroup_") or name == "tl.ptx_wgmma_ss"
+            for name in call_names
+        )
+        self.warpgroup_register_data = warpgroup_register_data
+        if self.uses_warpgroup and self.cta_threads % 128:
+            raise CaptureError(
+                "TILELANG_WGMMA_PARTICIPANTS_UNRESOLVED",
+                "warpgroup operations require a CTA size divisible by 128",
+                {"cta_threads": self.cta_threads},
+            )
+        self.warpgroup_ids = tuple(
+            f"warpgroup:{group:02d}"
+            for group in range(self.cta_threads // 128)
+        ) if self.uses_warpgroup else ()
+        self.all_actor_ids = (*self.actor_ids, *self.warpgroup_ids)
+        self.actor_sequences: dict[str, int] = {}
+        self.warpgroup_sync_events: dict[tuple[str, str], str] = {}
+        self.wgmma_descriptors: dict[Any, str] = {}
+        self.wgmma_group_seq: dict[str, int] = {}
         self.resources: dict[str, dict[str, Any]] = {}
         self.regions: dict[str, dict[str, Any]] = {}
         self.operations: list[dict[str, Any]] = []
@@ -132,7 +166,7 @@ class TileLangCapture:
             self.elided_nodes += 1
 
     def allocation_id(self, data: Any, scope: str, actor: str, label: str) -> str:
-        key: Any = (data, actor) if scope == "local" else data
+        key: Any = (data, actor) if scope.startswith("local") else data
         if key in self.allocation_ids:
             return self.allocation_ids[key]
         if scope == "global":
@@ -143,7 +177,7 @@ class TileLangCapture:
                     {"allocation": label},
                 )
             self.global_allocation_keys.add(key)
-        preferred = f"{actor}:{label}" if scope == "local" else label
+        preferred = f"{actor}:{label}" if scope.startswith("local") else label
         identifier = preferred
         suffix = 1
         while identifier in self.used_allocation_ids:
@@ -234,12 +268,26 @@ class TileLangCapture:
                 "elided_nodes": self.elided_nodes,
                 "events_emitted": len(self.operations),
                 "allocation_identity_evidence": "tir-buffer-data-object-and-actor-identity-v1",
-                "alias_evidence": "tirx.noalias-v1" if self.noalias else "single-global-base-v1",
+                "alias_evidence": (
+                    "tirx.noalias-plus-sha-bound-tma-descriptors-v1"
+                    if self.descriptor_evidence
+                    else "tirx.noalias-v1" if self.noalias else "single-global-base-v1"
+                ),
                 "participant_evidence": "primfunc-thread-extent-lane-enumeration-v1",
             },
             "actors": [
-                {"id": actor, "kind": "LANE", "participants": [lane]}
-                for lane, actor in enumerate(self.actor_ids)
+                *[
+                    {"id": actor, "kind": "LANE", "participants": [lane]}
+                    for lane, actor in enumerate(self.actor_ids)
+                ],
+                *[
+                    {
+                        "id": actor,
+                        "kind": "WARPGROUP",
+                        "participants": list(range(group * 128, (group + 1) * 128)),
+                    }
+                    for group, actor in enumerate(self.warpgroup_ids)
+                ],
             ],
             "resources": [self.resources[key] for key in sorted(self.resources)],
             "regions": [self.regions[key] for key in sorted(self.regions)],
@@ -251,8 +299,9 @@ class TileLangCapture:
         }
 
     def mbarrier(self, buffer: Any, indices: Any, evaluator: "LaneWalker") -> str:
-        allocation = self.allocation_for_buffer(buffer, evaluator.actor)
+        allocation, base_offset = evaluator.buffer_allocation(buffer)
         offset, extent = evaluator.byte_interval(buffer, indices)
+        offset += base_offset
         if "barrier" not in evaluator.buffer_scope(buffer):
             raise CaptureError(
                 "TILELANG_BARRIER_ADDRESS_UNRESOLVED",
@@ -269,7 +318,7 @@ class TileLangCapture:
         self.resources.setdefault(identifier, {
             "id": identifier,
             "kind": "mbarrier",
-            "participants": list(self.actor_ids),
+            "participants": list(self.all_actor_ids),
         })
         return identifier
 
@@ -304,6 +353,145 @@ class TileLangCapture:
         })
         return identifier
 
+    def tma_store_group(self, owner: str) -> str:
+        identifier = f"tma_store:{owner}"
+        self.resources.setdefault(identifier, {
+            "id": identifier,
+            "kind": "async_group",
+            "participants": [owner],
+            "capacity": 8,
+            "protocol": "TMA_STORE",
+            "scope": "CTA",
+        })
+        return identifier
+
+    def warpgroup_for_lane(self, lane: int) -> str:
+        group = lane // 128
+        if group >= len(self.warpgroup_ids):
+            raise CaptureError(
+                "TILELANG_WGMMA_PARTICIPANTS_UNRESOLVED",
+                "lane is outside the statically recovered warpgroup topology",
+                {"lane": lane},
+            )
+        return self.warpgroup_ids[group]
+
+    def wgmma_resource(self, owner: str) -> str:
+        identifier = f"wgmma:{owner}"
+        self.resources.setdefault(identifier, {
+            "id": identifier,
+            "kind": "async_group",
+            "participants": [owner],
+            "capacity": 8,
+            "protocol": "WGMMA",
+            "scope": "CTA",
+        })
+        return identifier
+
+    def tma_segments(
+        self,
+        descriptor: Any,
+        coordinates: list[int],
+        destination: str,
+    ) -> list[tuple[str, str, int]]:
+        name = getattr(descriptor, "name", None)
+        evidence = self.descriptor_evidence.get(name)
+        if not isinstance(evidence, dict) or set(evidence) != {
+            "allocation_id",
+            "element_bytes",
+            "shape",
+            "strides",
+            "tile_shape",
+            "coordinate_order",
+        }:
+            raise CaptureError(
+                "TILELANG_TMA_DESCRIPTOR_UNRESOLVED",
+                "TMA descriptor requires exact shape/stride evidence bound to this IR",
+                {"descriptor": name},
+            )
+        allocation = evidence["allocation_id"]
+        element_bytes = evidence["element_bytes"]
+        shape = evidence["shape"]
+        strides = evidence["strides"]
+        tile_shape = evidence["tile_shape"]
+        coordinate_order = evidence["coordinate_order"]
+        rank = len(shape) if isinstance(shape, list) else -1
+        if (
+            not isinstance(allocation, str)
+            or not allocation
+            or isinstance(element_bytes, bool)
+            or not isinstance(element_bytes, int)
+            or element_bytes <= 0
+            or rank <= 0
+            or not isinstance(strides, list)
+            or not isinstance(tile_shape, list)
+            or len(strides) != rank
+            or len(tile_shape) != rank
+            or not isinstance(coordinate_order, list)
+            or sorted(coordinate_order) != list(range(rank))
+            or len(coordinates) < rank
+            or any(not isinstance(value, int) or value <= 0 for value in shape)
+            or any(not isinstance(value, int) or value <= 0 for value in strides)
+            or any(not isinstance(value, int) or value <= 0 for value in tile_shape)
+            or any(value != 0 for value in coordinates[rank:])
+        ):
+            raise CaptureError(
+                "TILELANG_TMA_DESCRIPTOR_UNRESOLVED",
+                "TMA descriptor evidence or coordinate rank is malformed",
+                {"descriptor": name, "coordinates": coordinates},
+            )
+        coordinates = [coordinates[index] for index in coordinate_order]
+        for coordinate, tile, dimension in zip(coordinates, tile_shape, shape):
+            if coordinate < 0 or coordinate + tile > dimension:
+                raise CaptureError(
+                    "TILELANG_TMA_DESCRIPTOR_UNRESOLVED",
+                    "TMA tile lies outside the evidenced descriptor shape",
+                    {"descriptor": name, "coordinates": coordinates},
+                )
+        destination_region = self.regions[destination]
+        elements = 1
+        for dimension in tile_shape:
+            elements *= dimension
+        if elements * element_bytes != destination_region["extent"]:
+            raise CaptureError(
+                "TILELANG_TMA_DESCRIPTOR_UNRESOLVED",
+                "TMA tile footprint differs from destination access interval",
+                {
+                    "descriptor": name,
+                    "tile_bytes": elements * element_bytes,
+                    "destination_bytes": destination_region["extent"],
+                },
+            )
+        runs: list[list[int]] = []
+        destination_offset = destination_region["offset"]
+        for logical_index in product(*(range(dimension) for dimension in tile_shape)):
+            source_element = sum(
+                (coordinate + index) * stride
+                for coordinate, index, stride in zip(coordinates, logical_index, strides)
+            )
+            source_offset = source_element * element_bytes
+            if (
+                runs
+                and source_offset == runs[-1][0] + runs[-1][2]
+                and destination_offset == runs[-1][1] + runs[-1][2]
+            ):
+                runs[-1][2] += element_bytes
+            else:
+                runs.append([source_offset, destination_offset, element_bytes])
+            destination_offset += element_bytes
+        return [
+            (
+                self.region(allocation, "global", source_offset, extent),
+                self.region(
+                    destination_region["allocation_id"],
+                    "shared",
+                    destination_offset,
+                    extent,
+                ),
+                extent,
+            )
+            for source_offset, destination_offset, extent in runs
+        ]
+
     def region(self, allocation: str, scope: str, offset: int, extent: int) -> str:
         address_space = {
             "shared": "SHARED",
@@ -311,6 +499,8 @@ class TileLangCapture:
             "global": "GLOBAL",
             "local": "REGISTER",
         }.get(scope)
+        if address_space is None and scope.startswith("local"):
+            address_space = "REGISTER"
         if address_space is None:
             raise CaptureError(
                 "TILELANG_ADDRESS_SPACE_UNSUPPORTED",
@@ -333,10 +523,27 @@ class TileLangCapture:
         })
         return identifier
 
+    def memory_regions(self, buffer: Any, indices: Any, evaluator: "LaneWalker") -> list[str]:
+        allocation, base_offset = evaluator.buffer_allocation(buffer)
+        return [
+            self.region(
+                allocation,
+                evaluator.buffer_scope(buffer),
+                base_offset + offset,
+                extent,
+            )
+            for offset, extent in evaluator.byte_intervals(buffer, indices)
+        ]
+
     def memory_region(self, buffer: Any, indices: Any, evaluator: "LaneWalker") -> str:
-        allocation = self.allocation_for_buffer(buffer, evaluator.actor)
-        offset, extent = evaluator.byte_interval(buffer, indices)
-        return self.region(allocation, evaluator.buffer_scope(buffer), offset, extent)
+        regions = self.memory_regions(buffer, indices, evaluator)
+        if len(regions) != 1:
+            raise CaptureError(
+                "TILELANG_REGION_UNRESOLVED",
+                "protocol operand requires one exact contiguous region",
+                {"buffer": buffer.name, "regions": regions},
+            )
+        return regions[0]
 
 
 class LaneWalker:
@@ -347,13 +554,43 @@ class LaneWalker:
         self.lane = lane
         self.actor = capture.actor_ids[lane]
         self.bindings: dict[Any, int] = {}
+        self.pointer_aliases: dict[Any, tuple[Any, int]] = {}
         self.sequence = 0
         self.arrival_rank: dict[str, int] = {}
         self.wait_rank: dict[str, int] = {}
         self.cp_group_seq = 0
         self.cp_staged = 0
+        self.tma_store_group_seq = 0
         self.pending_proxy: dict[str, Any] | None = None
         self.current_ir_operation = "unknown"
+        self.wgmma_accumulator_region: str | None = None
+        self.wgmma_fence_seen = False
+        self.wgmma_arrived = False
+        self.active_warpgroup_dependency: str | None = None
+        self.last_lane_event_id: str | None = None
+
+    def warpgroup_owner(self) -> str:
+        return self.capture.warpgroup_for_lane(self.lane)
+
+    def is_warpgroup_leader(self) -> bool:
+        return self.lane % 128 == 0
+
+    def warpgroup_sync_key(self, path: tuple[Any, ...]) -> tuple[str, str]:
+        return self.warpgroup_owner(), _stable_path(path)
+
+    def publish_warpgroup_dependency(self, event_id: str, path: tuple[Any, ...]) -> None:
+        self.capture.warpgroup_sync_events[self.warpgroup_sync_key(path)] = event_id
+        self.active_warpgroup_dependency = event_id
+
+    def observe_warpgroup_dependency(self, path: tuple[Any, ...]) -> None:
+        key = self.warpgroup_sync_key(path)
+        if key not in self.capture.warpgroup_sync_events:
+            raise CaptureError(
+                "TILELANG_WARPGROUP_ORDER_UNRESOLVED",
+                "nonleader lane reached warpgroup synchronization before its leader evidence",
+                {"lane": self.lane, "path": list(path)},
+            )
+        self.active_warpgroup_dependency = self.capture.warpgroup_sync_events[key]
 
     def finalize(self) -> None:
         if self.pending_proxy is not None:
@@ -369,18 +606,29 @@ class LaneWalker:
             "_recognizer_rule",
             f"{ir_operation}->{op}:v1",
         )
-        if self.pending_proxy is not None and op != "tilelang.cp_async.issue":
+        actor = fields.pop("_actor", self.actor)
+        if self.pending_proxy is not None and op not in {
+            "tilelang.cp_async.issue",
+            "tilelang.tma_load.issue",
+            "tilelang.tma_store.issue",
+            "tilelang.wgmma.issue",
+        }:
             raise CaptureError(
                 "TILELANG_PROXY_TARGET_UNRESOLVED",
                 "fence_proxy_async must be followed immediately by a supported async issue",
                 {"event": self.pending_proxy["id"], "next_operation": op},
             )
-        identifier = f"tl:{self.actor}:e{self.sequence:05d}:{_stable_path((*path, op))}"
+        if actor == self.actor and self.active_warpgroup_dependency is not None:
+            fields.setdefault("depends_on", [self.active_warpgroup_dependency])
+        sequence = self.capture.actor_sequences.get(actor, 0)
+        if actor != self.actor and sequence == 0 and self.last_lane_event_id is not None:
+            fields.setdefault("depends_on", [self.last_lane_event_id])
+        identifier = f"tl:{actor}:e{sequence:05d}:{_stable_path((*path, op))}"
         self.capture.operations.append({
             "id": identifier,
             "op": op,
-            "actor": self.actor,
-            "seq": self.sequence,
+            "actor": actor,
+            "seq": sequence,
             "evidence": {
                 "source_location": "/".join(map(str, path)),
                 "activation_path": [str(item) for item in path],
@@ -389,7 +637,9 @@ class LaneWalker:
             },
             **fields,
         })
-        self.sequence += 1
+        self.capture.actor_sequences[actor] = sequence + 1
+        if actor == self.actor:
+            self.last_lane_event_id = identifier
 
     def eval_int(self, expression: Any) -> int | None:
         if isinstance(expression, self.tirx.IntImm):
@@ -463,6 +713,14 @@ class LaneWalker:
             return function(left, right)
         if isinstance(expression, self.tirx.Call):
             call_name = getattr(expression.op, "name", "")
+            if call_name == "tl.tl_shuffle_elect" and len(expression.args) == 1:
+                thread_extent = self.eval_int(expression.args[0])
+                if thread_extent is None or thread_extent < 0:
+                    return None
+                if thread_extent == 0:
+                    return int(self.lane == 0)
+                group_extent = ((thread_extent + 31) // 32) * 32
+                return int(self.lane % group_extent == 0)
             functions = {
                 "tirx.bitwise_xor": lambda a, b: a ^ b,
                 "tirx.bitwise_and": lambda a, b: a & b,
@@ -480,6 +738,56 @@ class LaneWalker:
                     return function(left, right)
         return None
 
+    def eval_pointer(self, expression: Any) -> tuple[Any, int] | None:
+        if isinstance(expression, self.tirx.Var):
+            return self.pointer_aliases.get(expression, (expression, 0))
+        if (
+            isinstance(expression, self.tirx.Call)
+            and getattr(expression.op, "name", "") == "tirx.handle_add_byte_offset"
+            and len(expression.args) == 2
+        ):
+            base = self.eval_pointer(expression.args[0])
+            byte_offset = self.eval_int(expression.args[1])
+            if base is None or byte_offset is None:
+                return None
+            return base[0], base[1] + byte_offset
+        return None
+
+    def buffer_allocation(self, buffer: Any) -> tuple[str, int]:
+        resolved = self.eval_pointer(buffer.data)
+        if resolved is None:
+            raise CaptureError(
+                "TILELANG_ALIAS_UNRESOLVED",
+                "buffer data pointer cannot be reduced to a static allocation and byte offset",
+                {"buffer": buffer.name, "data": str(buffer.data)},
+            )
+        data, byte_offset = resolved
+        label = getattr(data, "name", None) or buffer.name
+        scope = self.buffer_scope(buffer)
+        allocation_actor = self.actor
+        if data in self.capture.warpgroup_register_data and scope.startswith("local"):
+            owner = self.warpgroup_owner()
+            elements = 1
+            for dimension in buffer.shape:
+                value = self.eval_int(dimension)
+                if value is None or value <= 0:
+                    raise CaptureError(
+                        "TILELANG_WGMMA_ACCUMULATOR_UNRESOLVED",
+                        "warpgroup accumulator shape must be static",
+                        {"buffer": buffer.name},
+                    )
+                elements *= value
+            per_lane_bytes = elements * self._dtype_bytes(buffer)
+            byte_offset += self.lane % 128 * per_lane_bytes
+            allocation_actor = owner
+        allocation = self.capture.allocation_id(
+            data,
+            scope,
+            allocation_actor,
+            label,
+        )
+        return allocation, byte_offset
+
     def buffer_scope(self, buffer: Any) -> str:
         raw = buffer.scope()
         return str(raw)
@@ -496,17 +804,38 @@ class LaneWalker:
             )
         return bits // 8 * lanes
 
-    def byte_interval(self, buffer: Any, indices: Any) -> tuple[int, int]:
+    def byte_intervals(self, buffer: Any, indices: Any) -> list[tuple[int, int]]:
         shape = [self.eval_int(item) for item in buffer.shape]
-        index_values = [self.eval_int(item) for item in indices]
         elem_offset = self.eval_int(buffer.elem_offset)
         raw_strides = list(buffer.strides)
         strides = [self.eval_int(item) for item in raw_strides]
-        unresolved = shape + index_values + strides + [elem_offset]
+        index_vectors: list[tuple[int, ...] | None] = []
+        for index in indices:
+            index_name = type(index).__name__
+            if index_name == "Ramp":
+                base = self.eval_int(index.base)
+                stride = self.eval_int(index.stride)
+                lanes = int(index.lanes) if isinstance(index.lanes, int) else self.eval_int(index.lanes)
+                if base is None or stride is None or lanes is None or lanes <= 0:
+                    index_vectors.append(None)
+                else:
+                    index_vectors.append(tuple(base + lane * stride for lane in range(lanes)))
+            elif index_name == "Broadcast":
+                value = self.eval_int(index.value)
+                lanes = int(index.lanes) if isinstance(index.lanes, int) else self.eval_int(index.lanes)
+                if value is None or lanes is None or lanes <= 0:
+                    index_vectors.append(None)
+                else:
+                    index_vectors.append((value,) * lanes)
+            else:
+                value = self.eval_int(index)
+                index_vectors.append(None if value is None else (value,))
+        unresolved = shape + strides + [elem_offset]
         if (
-            len(shape) != len(index_values)
+            len(shape) != len(index_vectors)
             or (raw_strides and len(strides) != len(shape))
             or any(value is None for value in unresolved)
+            or any(vector is None for vector in index_vectors)
         ):
             raise CaptureError(
                 "TILELANG_REGION_UNRESOLVED",
@@ -518,28 +847,58 @@ class LaneWalker:
                     "elem_offset": str(buffer.elem_offset),
                 },
             )
-        assert elem_offset is not None
-        for dimension, index in zip(shape, index_values):
-            assert dimension is not None and index is not None
-            if dimension <= 0 or not 0 <= index < dimension:
-                raise CaptureError(
-                    "TILELANG_REGION_OUT_OF_BOUNDS",
-                    "buffer access is outside its static shape",
-                    {"buffer": buffer.name, "shape": shape, "indices": index_values},
-                )
-        if raw_strides:
-            linear = elem_offset + sum(
-                int(index) * int(stride)
-                for index, stride in zip(index_values, strides)
+        vectors = [vector for vector in index_vectors if vector is not None]
+        lane_count = max((len(vector) for vector in vectors), default=1)
+        if any(len(vector) not in {1, lane_count} for vector in vectors):
+            raise CaptureError(
+                "TILELANG_REGION_UNRESOLVED",
+                "vectorized buffer indices have incompatible lane counts",
+                {"buffer": buffer.name},
             )
-        else:
-            linear = 0
+        assert elem_offset is not None
+        linears: list[int] = []
+        for lane in range(lane_count):
+            index_values = [vector[0] if len(vector) == 1 else vector[lane] for vector in vectors]
             for dimension, index in zip(shape, index_values):
-                assert dimension is not None and index is not None
-                linear = linear * dimension + index
-            linear += elem_offset
+                assert dimension is not None
+                if dimension <= 0 or not 0 <= index < dimension:
+                    raise CaptureError(
+                        "TILELANG_REGION_OUT_OF_BOUNDS",
+                        "buffer access is outside its static shape",
+                        {"buffer": buffer.name, "shape": shape, "indices": index_values},
+                    )
+            if raw_strides:
+                linear = elem_offset + sum(
+                    index * int(stride)
+                    for index, stride in zip(index_values, strides)
+                )
+            else:
+                linear = 0
+                for dimension, index in zip(shape, index_values):
+                    assert dimension is not None
+                    linear = linear * dimension + index
+                linear += elem_offset
+            linears.append(linear)
         width = self._dtype_bytes(buffer)
-        return linear * width, width
+        merged: list[list[int]] = []
+        for linear in sorted(set(linears)):
+            start = linear * width
+            end = start + width
+            if merged and start <= merged[-1][1]:
+                merged[-1][1] = max(merged[-1][1], end)
+            else:
+                merged.append([start, end])
+        return [(start, end - start) for start, end in merged]
+
+    def byte_interval(self, buffer: Any, indices: Any) -> tuple[int, int]:
+        intervals = self.byte_intervals(buffer, indices)
+        if len(intervals) != 1:
+            raise CaptureError(
+                "TILELANG_REGION_UNRESOLVED",
+                "protocol operand requires one exact contiguous byte interval",
+                {"buffer": buffer.name, "intervals": intervals},
+            )
+        return intervals[0]
 
     def access_ptr_region(self, expression: Any, required_flag: int) -> tuple[str, int]:
         if (
@@ -590,8 +949,22 @@ class LaneWalker:
         byte_offset = offset * width
         byte_extent = extent * width
         scope = scope_values[-1]
-        allocation = self.capture.allocation_id(data, scope, self.actor, allocation_label)
-        region = self.capture.region(allocation, scope, byte_offset, byte_extent)
+        resolved = self.eval_pointer(data)
+        if resolved is None:
+            raise CaptureError(
+                "TILELANG_ACCESS_PTR_UNRESOLVED",
+                "async access pointer base alias is unresolved",
+                {"expression": str(expression)},
+            )
+        base, alias_offset = resolved
+        base_label = getattr(base, "name", None) or allocation_label
+        allocation = self.capture.allocation_id(base, scope, self.actor, base_label)
+        region = self.capture.region(
+            allocation,
+            scope,
+            alias_offset + byte_offset,
+            byte_extent,
+        )
         return region, byte_extent
 
     def _access_enabled(self, access: Any) -> bool:
@@ -647,13 +1020,15 @@ class LaneWalker:
 
     def _emit_expression_loads(self, expression: Any, path: tuple[Any, ...]) -> None:
         for index, load in enumerate(self._buffer_loads(expression)):
-            region = self.capture.memory_region(load.buffer, load.indices, self)
-            self.emit(
-                "tilelang.mem.read",
-                (*path, "read", index),
-                _ir_operation="BufferLoad",
-                region=region,
-            )
+            for region_index, region in enumerate(
+                self.capture.memory_regions(load.buffer, load.indices, self)
+            ):
+                self.emit(
+                    "tilelang.mem.read",
+                    (*path, "read", index, region_index),
+                    _ir_operation="BufferLoad",
+                    region=region,
+                )
 
     def walk(self, statement: Any, path: tuple[Any, ...]) -> None:
         if statement is None:
@@ -699,9 +1074,20 @@ class LaneWalker:
                 else:
                     self.bindings.pop(variable, None)
                 return
+            if statement.attr_key == "warp_specialize":
+                enabled = self.eval_int(statement.value)
+                if enabled != 1:
+                    raise CaptureError(
+                        "TILELANG_PARTICIPANTS_UNRESOLVED",
+                        "warp_specialize attribute must be statically enabled",
+                        {"value": str(statement.value)},
+                    )
+                self.walk(statement.body, (*path, "attr", "warp_specialize"))
+                return
             transparent_attributes = {
                 "buffer_dim_align",
                 "double_buffer_scope",
+                "lexical_alloc_scope",
                 "pipeline_exec_scope",
                 "pipeline_scope",
                 "pragma_auto_unroll_max_step",
@@ -720,7 +1106,7 @@ class LaneWalker:
                 {"attribute": statement.attr_key, "path": list(path)},
             )
         if name in {"AllocBuffer", "DeclBuffer"}:
-            self.capture.allocation_for_buffer(statement.buffer, self.actor)
+            self.buffer_allocation(statement.buffer)
             body = getattr(statement, "body", None)
             if body is not None:
                 self.walk(body, (*path, "buffer", statement.buffer.name))
@@ -728,13 +1114,17 @@ class LaneWalker:
         if name == "Bind":
             before = len(self.capture.operations)
             value = self.eval_int(statement.value)
-            if value is None:
-                raise CaptureError(
-                    "TILELANG_STATIC_VALUE_UNRESOLVED",
-                    "TIRX Bind value is not statically resolvable",
-                    {"variable": str(statement.var), "value": str(statement.value)},
-                )
-            self.bindings[statement.var] = value
+            if value is not None:
+                self.bindings[statement.var] = value
+            else:
+                pointer = self.eval_pointer(statement.value)
+                if pointer is None:
+                    raise CaptureError(
+                        "TILELANG_STATIC_VALUE_UNRESOLVED",
+                        "TIRX Bind value is neither a static integer nor a static pointer alias",
+                        {"variable": str(statement.var), "value": str(statement.value)},
+                    )
+                self.pointer_aliases[statement.var] = pointer
             self.capture.classify_leaf(before)
             return
         if name == "LetStmt":
@@ -833,16 +1223,20 @@ class LaneWalker:
             before = len(self.capture.operations)
             self.current_ir_operation = name
             for index, load in enumerate(self._buffer_loads(statement.value)):
-                region = self.capture.memory_region(load.buffer, load.indices, self)
-                self.emit(
-                    "tilelang.mem.read",
-                    (*path, "rhs", index),
-                    _ir_operation="BufferLoad",
-                    region=region,
-                )
+                for region_index, region in enumerate(
+                    self.capture.memory_regions(load.buffer, load.indices, self)
+                ):
+                    self.emit(
+                        "tilelang.mem.read",
+                        (*path, "rhs", index, region_index),
+                        _ir_operation="BufferLoad",
+                        region=region,
+                    )
             if self._access_enabled(statement):
-                region = self.capture.memory_region(statement.buffer, statement.indices, self)
-                self.emit("tilelang.mem.write", path, region=region)
+                for region_index, region in enumerate(
+                    self.capture.memory_regions(statement.buffer, statement.indices, self)
+                ):
+                    self.emit("tilelang.mem.write", (*path, region_index), region=region)
             self.capture.classify_leaf(before)
             return
         if name == "Evaluate":
@@ -920,14 +1314,23 @@ class LaneWalker:
             return
         if isinstance(expression, self.tirx.BufferLoad):
             if self._access_enabled(expression):
-                region = self.capture.memory_region(expression.buffer, expression.indices, self)
-                self.emit("tilelang.mem.read", path, region=region)
+                for region_index, region in enumerate(
+                    self.capture.memory_regions(expression.buffer, expression.indices, self)
+                ):
+                    self.emit("tilelang.mem.read", (*path, region_index), region=region)
             return
         if not isinstance(expression, self.tirx.Call):
             self._emit_expression_loads(expression, path)
             return
         name = getattr(expression.op, "name", "")
         self.current_ir_operation = name
+        if name == "tl.prefetch_tma_descriptor":
+            if len(expression.args) != 1:
+                raise CaptureError(
+                    "TILELANG_TMA_DESCRIPTOR_UNRESOLVED",
+                    "prefetch_tma_descriptor requires one descriptor operand",
+                )
+            return
         if name == "tl.ptx_fence_barrier_init":
             if expression.args:
                 raise CaptureError(
@@ -960,7 +1363,7 @@ class LaneWalker:
             self.pending_proxy = self.capture.operations[-1]
             return
         if name in {"tirx.tvm_storage_sync", "tir.tvm_storage_sync"}:
-            if len(expression.args) != 1 or str(expression.args[0]).strip('"') != "shared":
+            if len(expression.args) != 1 or str(expression.args[0]).strip('"') not in {"shared", "shared.dyn"}:
                 raise CaptureError(
                     "TILELANG_BARRIER_SCOPE_UNSUPPORTED",
                     "only full-CTA shared storage synchronization is supported",
@@ -1034,24 +1437,319 @@ class LaneWalker:
             resource = self._barrier_operand(expression, 0)
             parity = self.eval_int(expression.args[1])
             generation = self.wait_rank.get(resource, 0)
+            if (
+                parity == 1
+                and generation == 0
+                and self.arrival_rank.get(resource, 0) == 0
+            ):
+                return
             if parity is None or parity != generation % 2:
                 raise CaptureError(
                     "TILELANG_PARITY_UNRESOLVED",
                     "wait parity does not match the recovered gap-free stream rank",
                     {"resource": resource, "rank": generation, "parity": parity},
                 )
+            if self.capture.uses_warpgroup and not self.is_warpgroup_leader():
+                self.observe_warpgroup_dependency(path)
+                return
             self.wait_rank[resource] = generation + 1
+            actor = self.warpgroup_owner() if self.capture.uses_warpgroup else self.actor
             self.emit(
                 "tilelang.mbarrier.wait_parity",
                 path,
+                _actor=actor,
                 resource=resource,
                 lifecycle_epoch=0,
                 generation=generation,
                 raw_parity=parity,
-                logical_stream_id=f"{self.actor}:{resource}",
+                logical_stream_id=f"{actor}:{resource}",
                 stream_rank=generation,
                 polling_coalesced=True,
             )
+            if self.capture.uses_warpgroup:
+                self.publish_warpgroup_dependency(self.capture.operations[-1]["id"], path)
+            return
+        if name == "tl.mbarrier_expect_tx":
+            if len(expression.args) != 2:
+                raise CaptureError(
+                    "TILELANG_TMA_EXPECT_UNRESOLVED",
+                    "mbarrier_expect_tx requires barrier and byte count",
+                )
+            resource = self._barrier_operand(expression, 0)
+            byte_count = self.eval_int(expression.args[1])
+            if byte_count is None or byte_count <= 0:
+                raise CaptureError(
+                    "TILELANG_TMA_EXPECT_UNRESOLVED",
+                    "mbarrier expected transaction bytes must be static and positive",
+                )
+            generation = self.arrival_rank.get(resource, 0)
+            self.emit(
+                "tilelang.mbarrier.expect_tx",
+                path,
+                resource=resource,
+                lifecycle_epoch=0,
+                generation=generation,
+                bytes=byte_count,
+            )
+            return
+        if name == "tl.tma_load":
+            if len(expression.args) < 4:
+                raise CaptureError(
+                    "TILELANG_TMA_LOAD_UNRESOLVED",
+                    "tma_load requires descriptor, barrier, destination, and coordinates",
+                )
+            descriptor = expression.args[0]
+            resource = self._barrier_operand(expression, 1)
+            destination, _destination_bytes = self.access_ptr_region(expression.args[2], 2)
+            coordinates = [self.eval_int(argument) for argument in expression.args[3:]]
+            if any(value is None for value in coordinates):
+                raise CaptureError(
+                    "TILELANG_TMA_LOAD_UNRESOLVED",
+                    "TMA coordinates must be statically resolved",
+                    {"coordinates": [str(argument) for argument in expression.args[3:]]},
+                )
+            generation = self.arrival_rank.get(resource, 0)
+            for source, destination_segment, byte_count in self.capture.tma_segments(
+                descriptor,
+                [int(value) for value in coordinates],
+                destination,
+            ):
+                self.emit(
+                    "tilelang.tma_load.issue",
+                    path,
+                    resource=resource,
+                    source_region=source,
+                    destination_region=destination_segment,
+                    bytes=byte_count,
+                    lifecycle_epoch=0,
+                    generation=generation,
+                )
+            return
+        if name == "tl.tma_store":
+            if len(expression.args) != 5:
+                raise CaptureError(
+                    "TILELANG_TMA_STORE_UNRESOLVED",
+                    "tma_store requires destination, source, bytes, reduction, and eviction operands",
+                )
+            destination, destination_bytes = self.access_ptr_region(expression.args[0], 2)
+            source, source_bytes = self.access_ptr_region(expression.args[1], 1)
+            byte_count = self.eval_int(expression.args[2])
+            if (
+                byte_count is None
+                or byte_count <= 0
+                or byte_count > source_bytes
+                or byte_count > destination_bytes
+                or self.eval_int(expression.args[3]) is None
+                or self.eval_int(expression.args[4]) is None
+            ):
+                raise CaptureError(
+                    "TILELANG_TMA_STORE_UNRESOLVED",
+                    "TMA store byte count or mode operands are unresolved",
+                )
+            if self.pending_proxy is not None:
+                self.pending_proxy["to_domain"] = "TMA"
+                self.pending_proxy["regions"] = [source]
+                self.pending_proxy["visibility_mask"]["shared"] = True
+                self.pending_proxy = None
+            owner = self.actor
+            resource = self.capture.tma_store_group(owner)
+            self.emit(
+                "tilelang.tma_store.issue",
+                path,
+                resource=resource,
+                group_owner=owner,
+                source_region=source,
+                destination_region=destination,
+                bytes=byte_count,
+            )
+            return
+        if name == "tl.tma_store_arrive":
+            if expression.args:
+                raise CaptureError(
+                    "TILELANG_TMA_STORE_COMMIT_UNRESOLVED",
+                    "tma_store_arrive must not have operands",
+                )
+            if self.lane % 128:
+                return
+            owner = self.actor
+            resource = self.capture.tma_store_group(owner)
+            self.emit(
+                "tilelang.tma_store.commit_group",
+                path,
+                resource=resource,
+                group_owner=owner,
+                group_seq=self.tma_store_group_seq,
+            )
+            self.tma_store_group_seq += 1
+            return
+        if name == "tl.tma_store_wait":
+            wait_count = self.eval_int(expression.args[0]) if len(expression.args) == 2 else None
+            read_only = self.eval_int(expression.args[1]) if len(expression.args) == 2 else None
+            if wait_count is None or not 0 <= wait_count <= 7 or read_only not in {0, 1}:
+                raise CaptureError(
+                    "TILELANG_TMA_STORE_WAIT_UNRESOLVED",
+                    "tma_store_wait requires static count and read modifier",
+                )
+            if self.lane % 128:
+                return
+            owner = self.actor
+            resource = self.capture.tma_store_group(owner)
+            self.emit(
+                "tilelang.tma_store.wait_group",
+                path,
+                resource=resource,
+                group_owner=owner,
+                wait_group_count=wait_count,
+                wait_mode="READ_ONLY" if read_only else "GLOBAL",
+            )
+            return
+        if name == "tl.initialize_wgmma_descriptor":
+            if (
+                len(expression.args) != 5
+                or not isinstance(expression.args[0], self.tirx.BufferLoad)
+            ):
+                raise CaptureError(
+                    "TILELANG_WGMMA_DESCRIPTOR_UNRESOLVED",
+                    "initialize_wgmma_descriptor has malformed descriptor or source operands",
+                )
+            region, _extent = self.access_ptr_region(expression.args[1], 1)
+            for argument in expression.args[2:]:
+                if self.eval_int(argument) is None:
+                    raise CaptureError(
+                        "TILELANG_WGMMA_DESCRIPTOR_UNRESOLVED",
+                        "WGMMA descriptor layout operands must be static",
+                    )
+            descriptor = expression.args[0]
+            self.capture.wgmma_descriptors[descriptor.buffer.data] = region
+            return
+        if name == "tl.warpgroup_fence_operand":
+            if len(expression.args) != 4:
+                raise CaptureError(
+                    "TILELANG_WGMMA_FENCE_UNRESOLVED",
+                    "warpgroup_fence_operand requires dtype, accumulator, offset, and extent",
+                )
+            if not self.is_warpgroup_leader():
+                return
+            import re
+
+            dtype_match = re.search(r"(\d+)", str(expression.args[0]))
+            data = expression.args[1]
+            offset = self.eval_int(expression.args[2])
+            extent = self.eval_int(expression.args[3])
+            if dtype_match is None or offset is None or extent is None or extent <= 0:
+                raise CaptureError(
+                    "TILELANG_WGMMA_FENCE_UNRESOLVED",
+                    "warpgroup accumulator region is not statically resolved",
+                )
+            width = int(dtype_match.group(1)) // 8
+            owner = self.warpgroup_owner()
+            label = getattr(data, "name", "accumulator")
+            allocation = self.capture.allocation_id(data, "local", owner, label)
+            self.wgmma_accumulator_region = self.capture.region(
+                allocation,
+                "local",
+                offset * width,
+                extent * width * 128,
+            )
+            self.wgmma_fence_seen = True
+            return
+        if name == "tl.warpgroup_arrive":
+            if expression.args:
+                raise CaptureError(
+                    "TILELANG_WGMMA_FENCE_UNRESOLVED",
+                    "warpgroup_arrive must not have operands",
+                )
+            if self.is_warpgroup_leader():
+                self.wgmma_arrived = True
+            return
+        if name == "tl.ptx_wgmma_ss":
+            if len(expression.args) != 15:
+                raise CaptureError(
+                    "TILELANG_WGMMA_UNRESOLVED",
+                    "ptx_wgmma_ss operand signature is unsupported",
+                    {"operands": len(expression.args)},
+                )
+            if not self.is_warpgroup_leader():
+                return
+            source_regions = [
+                self.capture.wgmma_descriptors.get(expression.args[position])
+                for position in (6, 8)
+            ]
+            if (
+                any(region is None for region in source_regions)
+                or self.wgmma_accumulator_region is None
+                or not self.wgmma_fence_seen
+                or not self.wgmma_arrived
+                or any(self.eval_int(expression.args[position]) is None for position in (7, 9, 11, 12, 13, 14))
+            ):
+                raise CaptureError(
+                    "TILELANG_WGMMA_UNRESOLVED",
+                    "WGMMA descriptors, accumulator, fence, or static offsets are unresolved",
+                )
+            owner = self.warpgroup_owner()
+            resource = self.capture.wgmma_resource(owner)
+            self.emit(
+                "tilelang.wgmma.fence_operand",
+                (*path, "fence"),
+                _actor=owner,
+                resource=resource,
+                group_owner=owner,
+                regions=source_regions,
+            )
+            self.emit(
+                "tilelang.wgmma.issue",
+                path,
+                _actor=owner,
+                resource=resource,
+                group_owner=owner,
+                regions=source_regions,
+                destination_region=self.wgmma_accumulator_region,
+            )
+            return
+        if name == "tl.warpgroup_commit_batch":
+            if expression.args:
+                raise CaptureError(
+                    "TILELANG_WGMMA_COMMIT_UNRESOLVED",
+                    "warpgroup_commit_batch must not have operands",
+                )
+            if not self.is_warpgroup_leader():
+                return
+            owner = self.warpgroup_owner()
+            resource = self.capture.wgmma_resource(owner)
+            group_seq = self.capture.wgmma_group_seq.get(owner, 0)
+            self.emit(
+                "tilelang.wgmma.commit_group",
+                path,
+                _actor=owner,
+                resource=resource,
+                group_owner=owner,
+                group_seq=group_seq,
+            )
+            self.capture.wgmma_group_seq[owner] = group_seq + 1
+            return
+        if name == "tl.warpgroup_wait":
+            wait_count = self.eval_int(expression.args[0]) if len(expression.args) == 1 else None
+            if wait_count is None or not 0 <= wait_count <= 7:
+                raise CaptureError(
+                    "TILELANG_WGMMA_WAIT_UNRESOLVED",
+                    "warpgroup_wait requires a static count in [0, 7]",
+                )
+            if not self.is_warpgroup_leader():
+                self.observe_warpgroup_dependency(path)
+                return
+            owner = self.warpgroup_owner()
+            resource = self.capture.wgmma_resource(owner)
+            for completion_kind in ("OPERANDS_RELEASED", "RESULT_READY"):
+                self.emit(
+                    "tilelang.wgmma.wait_group",
+                    (*path, completion_kind.lower()),
+                    _actor=owner,
+                    resource=resource,
+                    group_owner=owner,
+                    wait_group_count=wait_count,
+                    completion_kind=completion_kind,
+                )
+            self.publish_warpgroup_dependency(self.capture.operations[-1]["id"], path)
             return
         if name == "tl.ptx_cp_async":
             if len(expression.args) != 3:
@@ -1153,7 +1851,12 @@ class LaneWalker:
         return self.capture.mbarrier(operand.buffer, operand.indices, self)
 
 
-def capture_file(path: Path, source: str, command: str) -> dict[str, Any]:
+def capture_file(
+    path: Path,
+    source: str,
+    command: str,
+    descriptor_evidence_path: Path | None = None,
+) -> dict[str, Any]:
     try:
         import tilelang
         from tilelang import tvm
@@ -1173,24 +1876,68 @@ def capture_file(path: Path, source: str, command: str) -> dict[str, Any]:
             "TileLang IR JSON could not be loaded",
             {"path": str(path), "error": str(error)},
         ) from error
-    return TileLangCapture(
-        tvm,
-        tirx,
-        module,
-        source,
-        command,
-        hashlib.sha256(source_ir.encode("utf-8")).hexdigest(),
-    ).capture()
+    source_digest = hashlib.sha256(source_ir.encode("utf-8")).hexdigest()
+    descriptor_evidence: dict[str, Any] = {}
+    if descriptor_evidence_path is not None:
+        try:
+            evidence = json.loads(descriptor_evidence_path.read_text())
+        except (OSError, json.JSONDecodeError) as error:
+            raise CaptureError(
+                "TILELANG_TMA_DESCRIPTOR_UNRESOLVED",
+                "TileLang descriptor evidence could not be read",
+                {"path": str(descriptor_evidence_path), "error": str(error)},
+            ) from error
+        if (
+            not isinstance(evidence, dict)
+            or set(evidence) != {"evidence_version", "source_ir_sha256", "descriptors"}
+            or evidence.get("evidence_version") != "tilelang-tma-descriptor-evidence-v1"
+            or evidence.get("source_ir_sha256") != source_digest
+            or not isinstance(evidence.get("descriptors"), dict)
+        ):
+            raise CaptureError(
+                "TILELANG_TMA_DESCRIPTOR_UNRESOLVED",
+                "TileLang descriptor evidence is malformed or bound to different IR",
+                {"path": str(descriptor_evidence_path)},
+            )
+        descriptor_evidence = evidence["descriptors"]
+    try:
+        return TileLangCapture(
+            tvm,
+            tirx,
+            module,
+            source,
+            command,
+            source_digest,
+            descriptor_evidence,
+        ).capture()
+    except CaptureError:
+        raise
+    except Exception as error:
+        raise CaptureError(
+            "TILELANG_CAPTURE_FAILURE",
+            "TileLang binding or capture analysis failed closed",
+            {"error_type": type(error).__name__, "error": str(error)},
+        ) from error
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Capture a strict TileLang TIRX snapshot for PipeGuard")
     parser.add_argument("input", type=Path, help="TVM JSON containing one lowered TileLang device PrimFunc")
     parser.add_argument("--source", required=True, help="stable source/provenance label")
+    parser.add_argument(
+        "--descriptor-evidence",
+        type=Path,
+        help="SHA-bound exact TMA descriptor shape/stride evidence",
+    )
     parser.add_argument("--pretty", action="store_true")
     args = parser.parse_args(argv)
     try:
-        result = capture_file(args.input, args.source, " ".join(sys.argv))
+        result = capture_file(
+            args.input,
+            args.source,
+            " ".join(sys.argv),
+            args.descriptor_evidence,
+        )
     except CaptureError as error:
         result = {
             "captured": False,

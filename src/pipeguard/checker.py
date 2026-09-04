@@ -596,7 +596,6 @@ def _proxy_visible(module: Module, graph: PDG, point: Effect, window: Effect) ->
     for fence in module.events:
         if (
             fence.type != "ProxyFence"
-            or fence.actor != point_event.actor
             or fence.from_domain != "GENERIC"
             or fence.to_domain != target_domain
             or fence.scope != "CTA"
@@ -605,6 +604,18 @@ def _proxy_visible(module: Module, graph: PDG, point: Effect, window: Effect) ->
             or not any(_region_covers(module, region, window.region) for region in fence.regions)
         ):
             continue
+        if fence.actor != point_event.actor:
+            fence_observation = Effect(
+                id=f"proxy-source:{point.id}:{fence.id}",
+                actor=fence.actor,
+                mode="READ",
+                region=point.region,
+                begin=fence.id,
+                end=fence.id,
+                async_window=False,
+            )
+            if not _collective_visibility(module, graph, point, fence_observation):
+                continue
         mask = fence.visibility_mask
         assert mask is not None
         if source_region.address_space == "SHARED" and mask.shared:
@@ -620,7 +631,16 @@ def _completion_observed(module: Module, graph: PDG, window: Effect, point: Effe
     issue = module.event_map[window.begin]
     if issue.type in {"CpAsyncIssue", "WgmmaIssue", "TmaStoreIssue"}:
         point_event = module.event_map[point.begin]
-        return point_event.actor == issue.actor and graph.reachable(window.end, point.begin)
+        same_owner = point_event.actor == issue.actor
+        if issue.type == "WgmmaIssue" and not same_owner:
+            actors = module.actor_map
+            owner = actors[issue.actor]
+            consumer = actors[point_event.actor]
+            same_owner = (
+                owner.kind == "WARPGROUP"
+                and set(consumer.participants).issubset(owner.participants)
+            )
+        return same_owner and graph.reachable(window.end, point.begin)
     point_event = module.event_map[point.begin]
     streams = engine_completion_streams(module).values()
 

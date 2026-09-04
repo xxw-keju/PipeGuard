@@ -63,6 +63,71 @@ def _as_v2(snapshot: dict, prefix: str, stage: str) -> dict:
     return snapshot
 
 
+def _typed_protocol_snapshot(path: Path, prefix: str, protocol: str) -> dict:
+    snapshot = _load(path)
+    snapshot["target"]["cta_threads"] = 128
+    snapshot["actors"] = [{
+        "id": "owner",
+        "kind": "WARPGROUP",
+        "participants": list(range(128)),
+    }]
+    if protocol == "wgmma":
+        snapshot["resources"] = [{
+            "id": "wgmma",
+            "kind": "async_group",
+            "participants": ["owner"],
+            "capacity": 8,
+            "protocol": "WGMMA",
+            "scope": "CTA",
+        }]
+        snapshot["regions"] = [
+            {"id": "a", "allocation_id": "a", "address_space": "SHARED", "offset": 0, "extent": 64},
+            {"id": "b", "allocation_id": "b", "address_space": "SHARED", "offset": 0, "extent": 64},
+            {"id": "acc", "allocation_id": "acc", "address_space": "REGISTER", "offset": 0, "extent": 64},
+        ]
+        operations = [
+            {"id": "fence", "op": f"{prefix}.wgmma.fence_operand", "resource": "wgmma", "group_owner": "owner", "regions": ["a", "b"]},
+            {"id": "issue", "op": f"{prefix}.wgmma.issue", "resource": "wgmma", "group_owner": "owner", "regions": ["a", "b"], "destination_region": "acc"},
+            {"id": "commit", "op": f"{prefix}.wgmma.commit_group", "resource": "wgmma", "group_owner": "owner", "group_seq": 0},
+            {"id": "operands", "op": f"{prefix}.wgmma.wait_group", "resource": "wgmma", "group_owner": "owner", "wait_group_count": 0, "completion_kind": "OPERANDS_RELEASED"},
+            {"id": "result", "op": f"{prefix}.wgmma.wait_group", "resource": "wgmma", "group_owner": "owner", "wait_group_count": 0, "completion_kind": "RESULT_READY"},
+            {"id": "read", "op": f"{prefix}.mem.read", "region": "acc"},
+        ]
+    else:
+        snapshot["resources"] = [{
+            "id": "stores",
+            "kind": "async_group",
+            "participants": ["owner"],
+            "capacity": 8,
+            "protocol": "TMA_STORE",
+            "scope": "CTA",
+        }]
+        snapshot["regions"] = [
+            {"id": "source", "allocation_id": "source", "address_space": "SHARED", "offset": 0, "extent": 64},
+            {"id": "destination", "allocation_id": "destination", "address_space": "GLOBAL", "offset": 0, "extent": 64},
+        ]
+        operations = [
+            {"id": "write", "op": f"{prefix}.mem.write", "region": "source"},
+            {
+                "id": "proxy", "op": f"{prefix}.proxy_fence", "from_domain": "GENERIC",
+                "to_domain": "TMA", "scope": "CTA", "regions": ["source"],
+                "visibility_mask": {
+                    "shared": True, "global_read": False, "global_write": False,
+                    "tensor_read": False, "tensor_write": False, "control_only": False,
+                },
+            },
+            {"id": "issue", "op": f"{prefix}.tma_store.issue", "resource": "stores", "group_owner": "owner", "source_region": "source", "destination_region": "destination", "bytes": 64},
+            {"id": "commit", "op": f"{prefix}.tma_store.commit_group", "resource": "stores", "group_owner": "owner", "group_seq": 0},
+            {"id": "wait", "op": f"{prefix}.tma_store.wait_group", "resource": "stores", "group_owner": "owner", "wait_group_count": 0, "wait_mode": "GLOBAL"},
+            {"id": "read", "op": f"{prefix}.mem.read", "region": "destination"},
+        ]
+    snapshot["operations"] = [
+        {"actor": "owner", "seq": sequence, **operation}
+        for sequence, operation in enumerate(operations)
+    ]
+    return snapshot
+
+
 def _without_wait(snapshot: dict) -> dict:
     snapshot["operations"] = [
         operation
@@ -290,6 +355,24 @@ def test_equivalent_async_frontends_cover_proxy_group_engine_and_window_semantic
         assert report["statistics"]["full_enabled_scans"] == 0
         assert report["statistics"]["state_clones"] == 0
         assert report["statistics"]["replayed_prefix_steps"] == 0
+
+
+@pytest.mark.parametrize("protocol", ["wgmma", "tma_store"])
+def test_equivalent_typed_protocols_share_one_pgir_signature_and_checker(protocol: str):
+    tilelang = tilelang_snapshot_to_module(
+        _typed_protocol_snapshot(TILELANG_ASYNC, "tilelang", protocol)
+    )
+    triton = triton_snapshot_to_module(
+        _typed_protocol_snapshot(TRITON_ASYNC, "triton", protocol)
+    )
+    assert semantic_signature(tilelang) == semantic_signature(triton)
+    assert semantic_digest(tilelang) == semantic_digest(triton)
+    reports = [
+        check_module(tilelang, engine="crosscheck"),
+        check_module(triton, engine="crosscheck"),
+    ]
+    assert [report["verdict"] for report in reports] == ["SAFE", "SAFE"]
+    assert reports[0]["artifacts"]["crosscheck"] == reports[1]["artifacts"]["crosscheck"]
 
 
 def test_equivalent_wrong_proxy_frontends_have_same_async_hazard_witness():

@@ -1709,6 +1709,25 @@ def test_wgmma_typed_endpoints_close_their_own_windows(engine):
     assert {operands, result_ready}.issubset(anchors)
 
 
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_wgmma_result_wait_publishes_to_member_lane_actor(engine):
+    raw = json.loads(json.dumps(wgmma_module(overwrite_operand=False).raw))
+    raw["actors"].append({"id": "lane0", "kind": "LANE", "participants": [0]})
+    read = next(event for event in raw["events"] if event["id"] == "accumulator_read")
+    read.update({"actor": "lane0", "seq": 0, "depends_on": ["wait_result"]})
+    assert check_module(module_from_dict(raw), engine=engine)["verdict"] == "SAFE"
+
+
+def test_wgmma_result_wait_does_not_publish_outside_owner_warpgroup():
+    raw = json.loads(json.dumps(wgmma_module(overwrite_operand=False).raw))
+    raw["target"]["cta_threads"] = 129
+    raw["actors"].append({"id": "outsider", "kind": "LANE", "participants": [128]})
+    read = next(event for event in raw["events"] if event["id"] == "accumulator_read")
+    read.update({"actor": "outsider", "seq": 0, "depends_on": ["wait_result"]})
+    result = check_module(module_from_dict(raw), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+
+
 def test_wgmma_result_ready_does_not_release_shared_operands():
     result = check_module(
         wgmma_module(wait_operands=False, wait_result=True, read_accumulator=False),
@@ -2139,6 +2158,95 @@ def test_directional_proxy_fence_publishes_generic_write_to_tma(engine):
     executor = Executor(module)
     state = executor.explore().state
     assert [transfer.to_domain for transfer in state.visibility_transfers] == ["TMA"]
+
+
+def elected_proxy_tma_store_module(control_only: bool = False):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["target"]["cta_threads"] = 2
+    raw["actors"] = [
+        {"id": "writer", "kind": "LANE", "participants": [0]},
+        {"id": "fencer", "kind": "LANE", "participants": [1]},
+    ]
+    visibility = full_visibility_mask()
+    visibility["control_only"] = control_only
+    if control_only:
+        visibility.update({
+            "shared": False,
+            "global_read": False,
+            "global_write": False,
+            "tensor_read": False,
+            "tensor_write": False,
+        })
+    raw["resources"] = [
+        {
+            "id": "cta", "kind": "cta_barrier", "participants": ["writer", "fencer"],
+            "capacity": 2, "scope": "CTA", "visibility_mask": visibility,
+        },
+        {
+            "id": "stores", "kind": "async_group", "participants": ["fencer"],
+            "capacity": 8, "protocol": "TMA_STORE", "scope": "CTA",
+        },
+    ]
+    raw["regions"] = [
+        {
+            "id": "shared", "allocation_id": "shared", "address_space": "SHARED",
+            "offset": 0, "extent": 64,
+        },
+        {
+            "id": "global", "allocation_id": "global", "address_space": "GLOBAL",
+            "offset": 0, "extent": 64,
+        },
+    ]
+    raw["events"] = [
+        {"id": "write", "type": "MemWrite", "actor": "writer", "seq": 0, "region": "shared"},
+        {
+            "id": "writer_arrive", "type": "BarrierArrive", "actor": "writer", "seq": 1,
+            "resource": "cta", "invocation_id": 0, "count": 1,
+        },
+        {
+            "id": "writer_observe", "type": "BarrierObserve", "actor": "writer", "seq": 2,
+            "resource": "cta", "invocation_id": 0,
+        },
+        {
+            "id": "fencer_arrive", "type": "BarrierArrive", "actor": "fencer", "seq": 0,
+            "resource": "cta", "invocation_id": 0, "count": 1,
+        },
+        {
+            "id": "fencer_observe", "type": "BarrierObserve", "actor": "fencer", "seq": 1,
+            "resource": "cta", "invocation_id": 0,
+        },
+        {
+            "id": "proxy", "type": "ProxyFence", "actor": "fencer", "seq": 2,
+            "from_domain": "GENERIC", "to_domain": "TMA", "scope": "CTA",
+            "regions": ["shared"], "visibility_mask": full_visibility_mask(),
+        },
+        {
+            "id": "store", "type": "TmaStoreIssue", "actor": "fencer", "seq": 3,
+            "resource": "stores", "group_owner": "fencer", "source_region": "shared",
+            "destination_region": "global", "bytes": 64,
+        },
+        {
+            "id": "commit", "type": "TmaStoreCommitGroup", "actor": "fencer", "seq": 4,
+            "resource": "stores", "group_owner": "fencer", "group_seq": 0,
+        },
+        {
+            "id": "wait", "type": "TmaStoreWaitGroup", "actor": "fencer", "seq": 5,
+            "resource": "stores", "group_owner": "fencer", "wait_group_count": 0,
+            "wait_mode": "GLOBAL",
+        },
+    ]
+    return module_from_dict(raw)
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_elected_proxy_fence_publishes_collective_shared_writes(engine):
+    assert check_module(elected_proxy_tma_store_module(), engine=engine)["verdict"] == "SAFE"
+
+
+def test_elected_proxy_fence_requires_typed_collective_visibility():
+    result = check_module(elected_proxy_tma_store_module(control_only=True), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+    assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
 
 
 def test_proxy_wrong_domain_does_not_publish():

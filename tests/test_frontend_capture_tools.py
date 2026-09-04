@@ -29,6 +29,8 @@ def _run_capture(
     source: str,
     seed: int = 1,
     grid_ctas: int = 1,
+    descriptor_evidence: str | None = None,
+    binding_evidence: str | None = None,
 ):
     environment = dict(os.environ)
     environment["PYTHONHASHSEED"] = str(seed)
@@ -38,6 +40,10 @@ def _run_capture(
     command = [str(python), str(ROOT / "tools" / tool), str(fixture_path), "--source", source]
     if tool == "triton_capture.py":
         command.extend(["--grid-ctas", str(grid_ctas)])
+    if descriptor_evidence is not None:
+        command.extend(["--descriptor-evidence", str(FIXTURES / descriptor_evidence)])
+    if binding_evidence is not None:
+        command.extend(["--binding-evidence", str(FIXTURES / binding_evidence)])
     return subprocess.run(
         command,
         cwd=ROOT,
@@ -46,8 +52,24 @@ def _run_capture(
     )
 
 
-def _capture(python: Path, tool: str, fixture: str, source: str, seed: int = 1) -> tuple[bytes, dict]:
-    process = _run_capture(python, tool, fixture, source, seed)
+def _capture(
+    python: Path,
+    tool: str,
+    fixture: str,
+    source: str,
+    seed: int = 1,
+    descriptor_evidence: str | None = None,
+    binding_evidence: str | None = None,
+) -> tuple[bytes, dict]:
+    process = _run_capture(
+        python,
+        tool,
+        fixture,
+        source,
+        seed,
+        descriptor_evidence=descriptor_evidence,
+        binding_evidence=binding_evidence,
+    )
     process.check_returncode()
     return process.stdout, json.loads(process.stdout)
 
@@ -82,6 +104,147 @@ def test_live_tilelang_capture_has_complete_v2_certificate_and_crosschecks(
     assert snapshot["extraction"]["events_emitted"] == len(snapshot["operations"])
     assert all(operation["evidence"] for operation in snapshot["operations"])
     assert check_module(tilelang_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_mbarrier_invalidate_reinitializes_existing_lifecycle_fsm():
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        "triton_mbarrier_reuse.ttgir.mlir",
+        "live-triton-mbarrier-reuse",
+    )
+    assert [(operation["op"], operation.get("lifecycle_epoch"))
+            for operation in snapshot["operations"]] == [
+        ("triton.mbarrier.init", 0),
+        ("triton.mbarrier.arrive", 0),
+        ("triton.mbarrier.wait_parity", 0),
+        ("triton.mbarrier.invalidate", 0),
+        ("triton.mbarrier.init", 1),
+        ("triton.mbarrier.arrive", 1),
+        ("triton.mbarrier.wait_parity", 1),
+    ]
+    assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_tma_load_maps_expect_issue_wait_to_existing_barrier_fsm():
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        "triton_tma_load.ttgir.mlir",
+        "live-triton-tma-load",
+    )
+    assert [operation["op"] for operation in snapshot["operations"]] == [
+        "triton.mbarrier.init",
+        "triton.mbarrier.arrive_expect_tx",
+        "triton.tma_load.issue",
+        "triton.mbarrier.wait_parity",
+        "triton.mem.read",
+    ]
+    assert snapshot["operations"][1]["bytes"] == 16384
+    assert snapshot["operations"][2]["bytes"] == 16384
+    assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_nonzero_tma_coordinates_use_exact_descriptor_segments():
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        "triton_tma_load_nonzero.ttgir.mlir",
+        "live-triton-tma-load-nonzero",
+        binding_evidence="triton_tma_load_nonzero.binding.json",
+    )
+    issues = [
+        operation for operation in snapshot["operations"]
+        if operation["op"] == "triton.tma_load.issue"
+    ]
+    assert len(issues) == 64
+    assert sum(issue["bytes"] for issue in issues) == 16384
+    assert issues[0]["source_region"] == "region:global:global:tma:256:256"
+    assert issues[-1]["source_region"] == "region:global:global:tma:32512:256"
+    result = check_module(triton_snapshot_to_module(snapshot), engine="maximal")
+    assert result["verdict"] == "SAFE"
+    assert result["statistics"]["full_enabled_scans"] == 0
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_compiler_fenced_tma_store_maps_to_existing_typed_group_fsm():
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        "triton_tma_store_fenced.ttgir.mlir",
+        "live-triton-tma-store",
+        binding_evidence="triton_tma_store_fenced.binding.json",
+    )
+    assert [operation["op"] for operation in snapshot["operations"]] == [
+        "triton.mem.write",
+        "triton.proxy_fence",
+        "triton.tma_store.issue",
+        "triton.tma_store.commit_group",
+        "triton.tma_store.wait_group",
+    ]
+    assert snapshot["operations"][-1]["wait_mode"] == "GLOBAL"
+    assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_hidden_read_only_unit_attribute_requires_sha_bound_evidence():
+    missing = _run_capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        "triton_tma_store_read_only_fenced.ttgir.mlir",
+        "missing-binding-evidence",
+    )
+    assert missing.returncode == 2
+    assert json.loads(missing.stdout)["diagnostics"][0]["code"] == "TRITON_BINDING_EVIDENCE_REQUIRED"
+
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        "triton_tma_store_read_only_fenced.ttgir.mlir",
+        "live-triton-tma-store-read-only",
+        binding_evidence="triton_tma_store_read_only_fenced.binding.json",
+    )
+    assert snapshot["operations"][-1]["wait_mode"] == "READ_ONLY"
+    assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_compiler_fenced_wgmma_maps_to_existing_typed_group_fsm():
+    _output, fenced = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        "triton_wgmma_fenced.ttgir.mlir",
+        "live-triton-wgmma-fenced",
+    )
+    assert [operation["op"] for operation in fenced["operations"]] == [
+        "triton.mem.write",
+        "triton.mem.write",
+        "triton.proxy_fence",
+        "triton.wgmma.fence_operand",
+        "triton.wgmma.issue",
+        "triton.wgmma.commit_group",
+        "triton.wgmma.wait_group",
+        "triton.wgmma.wait_group",
+    ]
+    waits = fenced["operations"][-2:]
+    assert [wait["completion_kind"] for wait in waits] == [
+        "OPERANDS_RELEASED",
+        "RESULT_READY",
+    ]
+    assert check_module(triton_snapshot_to_module(fenced), engine="crosscheck")["verdict"] == "SAFE"
+
+    _output, unfenced = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        "triton_wgmma.ttgir.mlir",
+        "live-triton-wgmma-unfenced",
+    )
+    result = check_module(triton_snapshot_to_module(unfenced), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+    assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
@@ -312,6 +475,43 @@ def test_triton_static_while_unfolds_carried_ssa_values():
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_warp_specialize_uses_sha_bound_static_partition_evidence():
+    missing = _run_capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        "triton_warp_specialize.ttgir.mlir",
+        "missing-partition-evidence",
+    )
+    assert missing.returncode == 2
+    assert json.loads(missing.stdout)["diagnostics"][0]["code"] == "TRITON_BINDING_EVIDENCE_REQUIRED"
+
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        "triton_warp_specialize.ttgir.mlir",
+        "live-triton-warp-specialize",
+        binding_evidence="triton_warp_specialize.binding.json",
+    )
+    assert [(actor["id"], actor["kind"], len(actor["participants"]))
+            for actor in snapshot["actors"]] == [
+        ("cta", "WARPGROUP", 128),
+        ("partition:0", "WARPGROUP", 128),
+    ]
+    assert [(operation["actor"], operation["op"])
+            for operation in snapshot["operations"]] == [
+        ("cta", "triton.mem.write"),
+        ("cta", "triton.mem.read"),
+        ("partition:0", "triton.mem.read"),
+        ("cta", "triton.mem.read"),
+    ]
+    assert snapshot["operations"][2]["depends_on"] == [snapshot["operations"][0]["id"]]
+    assert snapshot["operations"][3]["depends_on"] == [snapshot["operations"][2]["id"]]
+    result = check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+    assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
 def test_triton_static_regions_unfold_for_and_select_if_paths():
     _output, snapshot = _capture(
         TRITON_PYTHON,
@@ -393,6 +593,87 @@ def test_tilelang_capture_rejects_out_of_profile_targets_and_unknown_aliases(
     result = json.loads(process.stdout)
     assert result["verdict"] == "UNSUPPORTED"
     assert result["diagnostics"][0]["code"] == code
+
+
+@pytest.mark.skipif(not TILELANG_PYTHON.exists(), reason="pinned TileLang capture environment unavailable")
+def test_real_tilelang_tma_store_uses_elected_proxy_publication():
+    _output, snapshot = _capture(
+        TILELANG_PYTHON,
+        "tilelang_capture.py",
+        "tilelang_tma_store_device.tvm.json",
+        "live-tilelang-tma-store",
+    )
+    protocol = [
+        operation["op"] for operation in snapshot["operations"]
+        if operation["op"] in {
+            "tilelang.proxy_fence",
+            "tilelang.tma_store.issue",
+            "tilelang.tma_store.commit_group",
+            "tilelang.tma_store.wait_group",
+        }
+    ]
+    assert protocol == [
+        "tilelang.proxy_fence",
+        "tilelang.tma_store.issue",
+        "tilelang.tma_store.commit_group",
+        "tilelang.tma_store.wait_group",
+    ]
+    result = check_module(tilelang_snapshot_to_module(snapshot), engine="maximal")
+    assert result["verdict"] == "SAFE"
+    assert result["statistics"]["full_enabled_scans"] == 0
+    assert result["statistics"]["state_clones"] == 0
+
+
+@pytest.mark.skipif(not TILELANG_PYTHON.exists(), reason="pinned TileLang capture environment unavailable")
+def test_tilelang_tma_descriptor_evidence_is_bound_to_exact_ir(tmp_path: Path):
+    evidence = json.loads(
+        (FIXTURES / "tilelang_warp_specialized_descriptors.json").read_text()
+    )
+    evidence["source_ir_sha256"] = "0" * 64
+    path = tmp_path / "descriptors.json"
+    path.write_text(json.dumps(evidence))
+    process = _run_capture(
+        TILELANG_PYTHON,
+        "tilelang_capture.py",
+        "tilelang_warp_specialized_device.tvm.json",
+        "bad-descriptor-evidence",
+        descriptor_evidence=str(path),
+    )
+    assert process.returncode == 2
+    result = json.loads(process.stdout)
+    assert result["diagnostics"][0]["code"] == "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+
+
+@pytest.mark.skipif(not TILELANG_PYTHON.exists(), reason="pinned TileLang capture environment unavailable")
+def test_real_tilelang_warp_specialized_tma_wgmma_capture_is_complete():
+    _output, snapshot = _capture(
+        TILELANG_PYTHON,
+        "tilelang_capture.py",
+        "tilelang_warp_specialized_device.tvm.json",
+        "live-tilelang-warp-specialized",
+        descriptor_evidence="tilelang_warp_specialized_descriptors.json",
+    )
+    operation_types = {operation["op"] for operation in snapshot["operations"]}
+    assert {
+        "tilelang.mbarrier.expect_tx",
+        "tilelang.tma_load.issue",
+        "tilelang.wgmma.fence_operand",
+        "tilelang.wgmma.issue",
+        "tilelang.wgmma.commit_group",
+        "tilelang.wgmma.wait_group",
+    } <= operation_types
+    assert {actor["kind"] for actor in snapshot["actors"]} == {"LANE", "WARPGROUP"}
+    regions = {region["id"]: region for region in snapshot["regions"]}
+    issue = next(operation for operation in snapshot["operations"]
+                 if operation["op"] == "tilelang.wgmma.issue")
+    accumulator = regions[issue["destination_region"]]
+    assert any(
+        operation["op"] == "tilelang.mem.read"
+        and regions[operation["region"]]["allocation_id"] == accumulator["allocation_id"]
+        for operation in snapshot["operations"]
+    )
+    assert snapshot["extraction"]["classified_nodes"] == snapshot["extraction"]["executable_nodes_seen"]
+    tilelang_snapshot_to_module(snapshot)
 
 
 @pytest.mark.skipif(not TILELANG_PYTHON.exists(), reason="pinned TileLang capture environment unavailable")
