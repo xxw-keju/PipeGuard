@@ -1,0 +1,76 @@
+{
+  "bindings": {
+    "N": 12
+  },
+  "candidate_id": "cf8b1d885d4ff5d7",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {
+        "9": {
+          "descriptor": {
+            "allocation_id": "global:input",
+            "coordinate_order": [
+              0
+            ],
+            "element_bytes": 4,
+            "shape": [
+              12
+            ],
+            "strides": [
+              1
+            ],
+            "tile_shape": [
+              4
+            ]
+          }
+        }
+      },
+      "evidence_version": "triton-binding-evidence-v1",
+      "scalar_values": {
+        "1": 12,
+        "2": 1
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "N": 12
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "N": "constexpr",
+      "input_desc": "tensordesc<fp32[4]>",
+      "output_ptr": "*fp32"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_pipeliner.py:338;test_tma_load_unaligned_stage_size:N=12,block=4,dtype=fp32",
+  "recipe_id": "cf8b1d885d4ff5d7-sm90-L338-a1c7fadc",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

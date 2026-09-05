@@ -1,0 +1,65 @@
+{
+  "bindings": {
+    "consumer_sem": "acquire",
+    "producer_sem": "release",
+    "scope": "gpu"
+  },
+  "candidate_id": "163a9256b66373ca",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:payload",
+        "1": "global:flag",
+        "2": "global:out"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "consumer_sem": "acquire",
+      "producer_sem": "release",
+      "scope": "gpu"
+    },
+    "grid": [
+      2,
+      1,
+      1
+    ],
+    "grid_ctas": 2,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 1
+    },
+    "signature": {
+      "consumer_sem": "constexpr",
+      "flag_ptr": "*i32",
+      "out_ptr": "*i32",
+      "payload_ptr": "*i32",
+      "producer_sem": "constexpr",
+      "scope": "constexpr"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/test/gsan/test_gsan.py:900;producer=release,consumer=acquire,scope=gpu",
+  "recipe_id": "163a9256b66373ca-sm90-L900-1f926104",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

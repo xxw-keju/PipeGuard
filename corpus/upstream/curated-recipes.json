@@ -2827,7 +2827,26 @@
       "candidate_id": "02a01b31d816ac75",
       "compiler": {
         "attrs": {},
-        "binding_evidence": null,
+        "binding_evidence": {
+          "array_attributes": {},
+          "evidence_version": "triton-binding-evidence-v1",
+          "pointer_allocations": {
+            "0": "global:dx",
+            "1": "global:dy",
+            "2": "global:partial_dw",
+            "3": "global:partial_db",
+            "4": "global:x",
+            "5": "global:w",
+            "6": "global:mean",
+            "7": "global:rstd",
+            "8": "global:locks"
+          },
+          "scalar_values": {
+            "10": 8192,
+            "9": 8192
+          },
+          "unit_attributes": {}
+        },
         "constexprs": {
           "BLOCK_SIZE_N": 8192,
           "GROUP_SIZE_M": 96
@@ -2863,7 +2882,7 @@
         "resolver_kwargs": {}
       },
       "origin": "ai-reviewed-launch:python/tutorials/05-layer-norm.py:282;tutorial-test:M=1151,N=8192,dtype=fp16",
-      "recipe_id": "02a01b31d816ac75-sm90-L282-bfe01a59",
+      "recipe_id": "02a01b31d816ac75-sm90-L282-17eda5ee",
       "reference": {
         "mode": "reference_replay"
       },
@@ -16713,6 +16732,1657 @@
       },
       "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:7537;pytest-param:rank=6,trans_a=true,trans_b=true",
       "recipe_id": "d2caddee9d12d888-sm90-L7537-80d3bd8c",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "N": 12
+      },
+      "candidate_id": "cf8b1d885d4ff5d7",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": {
+          "array_attributes": {
+            "9": {
+              "descriptor": {
+                "allocation_id": "global:input",
+                "coordinate_order": [
+                  0
+                ],
+                "element_bytes": 4,
+                "shape": [
+                  12
+                ],
+                "strides": [
+                  1
+                ],
+                "tile_shape": [
+                  4
+                ]
+              }
+            }
+          },
+          "evidence_version": "triton-binding-evidence-v1",
+          "scalar_values": {
+            "1": 12,
+            "2": 1
+          },
+          "unit_attributes": {}
+        },
+        "constexprs": {
+          "N": 12
+        },
+        "grid": [
+          1,
+          1,
+          1
+        ],
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "N": "constexpr",
+          "input_desc": "tensordesc<fp32[4]>",
+          "output_ptr": "*fp32"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_pipeliner.py:338;test_tma_load_unaligned_stage_size:N=12,block=4,dtype=fp32",
+      "recipe_id": "cf8b1d885d4ff5d7-sm90-L338-a1c7fadc",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "BLOCK_K": 32,
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "K": 128,
+        "M": 512,
+        "N": 512,
+        "NUM_STAGES": 4
+      },
+      "candidate_id": "c7f1c721d03bc61b",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": {
+          "array_attributes": {
+            "36": {
+              "descriptor": {
+                "allocation_id": "global:a",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  512,
+                  128
+                ],
+                "strides": [
+                  128,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  32
+                ]
+              }
+            },
+            "38": {
+              "descriptor": {
+                "allocation_id": "global:b",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  128,
+                  512
+                ],
+                "strides": [
+                  512,
+                  1
+                ],
+                "tile_shape": [
+                  32,
+                  64
+                ]
+              }
+            },
+            "42": {
+              "descriptor": {
+                "allocation_id": "global:a",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  512,
+                  128
+                ],
+                "strides": [
+                  128,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  32
+                ]
+              }
+            },
+            "44": {
+              "descriptor": {
+                "allocation_id": "global:b",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  128,
+                  512
+                ],
+                "strides": [
+                  512,
+                  1
+                ],
+                "tile_shape": [
+                  32,
+                  64
+                ]
+              }
+            },
+            "48": {
+              "descriptor": {
+                "allocation_id": "global:a",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  512,
+                  128
+                ],
+                "strides": [
+                  128,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  32
+                ]
+              }
+            },
+            "50": {
+              "descriptor": {
+                "allocation_id": "global:b",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  128,
+                  512
+                ],
+                "strides": [
+                  512,
+                  1
+                ],
+                "tile_shape": [
+                  32,
+                  64
+                ]
+              }
+            },
+            "71": {
+              "descriptor": {
+                "allocation_id": "global:a",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  512,
+                  128
+                ],
+                "strides": [
+                  128,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  32
+                ]
+              }
+            },
+            "73": {
+              "descriptor": {
+                "allocation_id": "global:b",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  128,
+                  512
+                ],
+                "strides": [
+                  512,
+                  1
+                ],
+                "tile_shape": [
+                  32,
+                  64
+                ]
+              }
+            },
+            "87": {
+              "descriptor": {
+                "allocation_id": "global:c",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  512,
+                  512
+                ],
+                "strides": [
+                  512,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  64
+                ]
+              }
+            }
+          },
+          "evidence_version": "triton-binding-evidence-v1",
+          "scalar_values": {
+            "1": 512,
+            "11": 512,
+            "12": 512,
+            "13": 512,
+            "14": 1,
+            "15": 512,
+            "16": 512,
+            "17": 128,
+            "2": 128,
+            "3": 128,
+            "4": 1,
+            "6": 128,
+            "7": 512,
+            "8": 512,
+            "9": 1
+          },
+          "unit_attributes": {
+            "88": []
+          }
+        },
+        "constexprs": {
+          "BLOCK_K": 32,
+          "BLOCK_M": 64,
+          "BLOCK_N": 64,
+          "NUM_STAGES": 4
+        },
+        "grid": [
+          64,
+          1,
+          1
+        ],
+        "grid_ctas": 64,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "BLOCK_K": "constexpr",
+          "BLOCK_M": "constexpr",
+          "BLOCK_N": "constexpr",
+          "K": "i32",
+          "M": "i32",
+          "N": "i32",
+          "NUM_STAGES": "constexpr",
+          "a_ptr": "tensordesc<fp16[64,32]>",
+          "b_ptr": "tensordesc<fp16[32,64]>",
+          "output_ptr": "tensordesc<fp16[64,64]>"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_pipeliner.py:268;test_pipeline_matmul:scale=false,M=512,N=512,K=128,blocks=64x64x32,stages=4,dtype=fp16",
+      "recipe_id": "c7f1c721d03bc61b-sm90-L268-e1540c77",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "A_USE_TMA": true,
+        "BLOCK_SIZE_K": 64,
+        "BLOCK_SIZE_M": 128,
+        "BLOCK_SIZE_N": 128,
+        "B_USE_TMA": true,
+        "GROUP_SIZE_M": 8,
+        "K": 32,
+        "M": 32,
+        "N": 32,
+        "USE_FP8": false,
+        "a_stride0": 32,
+        "a_stride1": 1,
+        "b_stride0": 32,
+        "b_stride1": 1,
+        "c_stride0": 32,
+        "c_stride1": 1,
+        "num_stages": 2
+      },
+      "candidate_id": "eb083ac05e70b7a6",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": {
+          "array_attributes": {
+            "265": {
+              "partition_num_warps": [
+                4
+              ],
+              "warp_group_start_ids": [
+                4
+              ]
+            }
+          },
+          "evidence_version": "triton-binding-evidence-v1",
+          "pointer_allocations": {
+            "0": "global:a",
+            "1": "global:b",
+            "2": "global:c"
+          },
+          "scalar_values": {
+            "3": 32,
+            "4": 32,
+            "5": 32,
+            "6": 32,
+            "7": 32,
+            "8": 32
+          },
+          "unit_attributes": {}
+        },
+        "constexprs": {
+          "A_USE_TMA": true,
+          "BLOCK_SIZE_K": 64,
+          "BLOCK_SIZE_M": 128,
+          "BLOCK_SIZE_N": 128,
+          "B_USE_TMA": true,
+          "GROUP_SIZE_M": 8,
+          "USE_FP8": false,
+          "a_stride1": 1,
+          "b_stride1": 1,
+          "c_stride1": 1,
+          "num_stages": 2
+        },
+        "grid": [
+          1,
+          1,
+          1
+        ],
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "A_USE_TMA": "constexpr",
+          "BLOCK_SIZE_K": "constexpr",
+          "BLOCK_SIZE_M": "constexpr",
+          "BLOCK_SIZE_N": "constexpr",
+          "B_USE_TMA": "constexpr",
+          "GROUP_SIZE_M": "constexpr",
+          "K": "i32",
+          "M": "i32",
+          "N": "i32",
+          "USE_FP8": "constexpr",
+          "a_ptr": "*fp16",
+          "a_stride0": "i32",
+          "a_stride1": "constexpr",
+          "b_ptr": "*fp16",
+          "b_stride0": "i32",
+          "b_stride1": "constexpr",
+          "c_ptr": "*fp16",
+          "c_stride0": "i32",
+          "c_stride1": "constexpr",
+          "num_stages": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_warp_specialization.py:306;pytest:M=32,N=32,K=32,blocks=128x128x64,stages=2,warps=4,fp16,tma=true",
+      "recipe_id": "eb083ac05e70b7a6-sm90-L306-b567a3bc",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {},
+      "candidate_id": "cff782d8e96e5e14",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": {
+          "array_attributes": {},
+          "evidence_version": "triton-binding-evidence-v1",
+          "pointer_allocations": {
+            "0": "global:target",
+            "1": "global:scratch",
+            "2": "global:counter"
+          },
+          "unit_attributes": {}
+        },
+        "constexprs": {},
+        "grid": [
+          2,
+          1,
+          1
+        ],
+        "grid_ctas": 2,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 1
+        },
+        "signature": {
+          "counter_ptr": "*i32",
+          "ptr": "*i32",
+          "scratch_ptr": "*i32"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/gsan/test_gsan_failures.py:374;case=raw",
+      "recipe_id": "cff782d8e96e5e14-sm90-L374-8fe8c143",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {},
+      "candidate_id": "d0a5c3c0286e82a8",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": {
+          "array_attributes": {},
+          "evidence_version": "triton-binding-evidence-v1",
+          "pointer_allocations": {
+            "0": "global:target",
+            "1": "global:scratch",
+            "2": "global:counter"
+          },
+          "unit_attributes": {}
+        },
+        "constexprs": {},
+        "grid": [
+          2,
+          1,
+          1
+        ],
+        "grid_ctas": 2,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 1
+        },
+        "signature": {
+          "counter_ptr": "*i32",
+          "ptr": "*i32",
+          "scratch_ptr": "*i32"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/gsan/test_gsan_failures.py:382;case=war",
+      "recipe_id": "d0a5c3c0286e82a8-sm90-L382-8fe8c143",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {},
+      "candidate_id": "13be8eb69ca6fee9",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": {
+          "array_attributes": {},
+          "evidence_version": "triton-binding-evidence-v1",
+          "pointer_allocations": {
+            "0": "global:target",
+            "1": "global:scratch",
+            "2": "global:counter"
+          },
+          "unit_attributes": {}
+        },
+        "constexprs": {},
+        "grid": [
+          2,
+          1,
+          1
+        ],
+        "grid_ctas": 2,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 1
+        },
+        "signature": {
+          "counter_ptr": "*i32",
+          "ptr": "*i32",
+          "scratch_ptr": "*i32"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/gsan/test_gsan_failures.py:390;case=waw",
+      "recipe_id": "13be8eb69ca6fee9-sm90-L390-8fe8c143",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "consumer_sem": "acquire",
+        "producer_sem": "release",
+        "scope": "gpu"
+      },
+      "candidate_id": "163a9256b66373ca",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": {
+          "array_attributes": {},
+          "evidence_version": "triton-binding-evidence-v1",
+          "pointer_allocations": {
+            "0": "global:payload",
+            "1": "global:flag",
+            "2": "global:out"
+          },
+          "unit_attributes": {}
+        },
+        "constexprs": {
+          "consumer_sem": "acquire",
+          "producer_sem": "release",
+          "scope": "gpu"
+        },
+        "grid": [
+          2,
+          1,
+          1
+        ],
+        "grid_ctas": 2,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 1
+        },
+        "signature": {
+          "consumer_sem": "constexpr",
+          "flag_ptr": "*i32",
+          "out_ptr": "*i32",
+          "payload_ptr": "*i32",
+          "producer_sem": "constexpr",
+          "scope": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/gsan/test_gsan.py:900;producer=release,consumer=acquire,scope=gpu",
+      "recipe_id": "163a9256b66373ca-sm90-L900-1f926104",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "consumer_sem": "acquire",
+        "producer_sem": "relaxed",
+        "scope": "gpu"
+      },
+      "candidate_id": "8a26c63d09839623",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": {
+          "array_attributes": {},
+          "evidence_version": "triton-binding-evidence-v1",
+          "pointer_allocations": {
+            "0": "global:payload",
+            "1": "global:flag",
+            "2": "global:counter",
+            "3": "global:scratch"
+          },
+          "unit_attributes": {}
+        },
+        "constexprs": {
+          "consumer_sem": "acquire",
+          "producer_sem": "relaxed",
+          "scope": "gpu"
+        },
+        "grid": [
+          2,
+          1,
+          1
+        ],
+        "grid_ctas": 2,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 1
+        },
+        "signature": {
+          "consumer_sem": "constexpr",
+          "counter_ptr": "*i32",
+          "flag_ptr": "*i32",
+          "payload_ptr": "*i32",
+          "producer_sem": "constexpr",
+          "scope": "constexpr",
+          "scratch_ptr": "*i32"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/gsan/test_gsan_failures.py:565;producer=relaxed,consumer=acquire,scope=gpu",
+      "recipe_id": "8a26c63d09839623-sm90-L565-feb36ccd",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "consumer_sem": "acquire",
+        "producer_sem": "release",
+        "scope": "cta"
+      },
+      "candidate_id": "8a26c63d09839623",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": {
+          "array_attributes": {},
+          "evidence_version": "triton-binding-evidence-v1",
+          "pointer_allocations": {
+            "0": "global:payload",
+            "1": "global:flag",
+            "2": "global:counter",
+            "3": "global:scratch"
+          },
+          "unit_attributes": {}
+        },
+        "constexprs": {
+          "consumer_sem": "acquire",
+          "producer_sem": "release",
+          "scope": "cta"
+        },
+        "grid": [
+          2,
+          1,
+          1
+        ],
+        "grid_ctas": 2,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 1
+        },
+        "signature": {
+          "consumer_sem": "constexpr",
+          "counter_ptr": "*i32",
+          "flag_ptr": "*i32",
+          "payload_ptr": "*i32",
+          "producer_sem": "constexpr",
+          "scope": "constexpr",
+          "scratch_ptr": "*i32"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/gsan/test_gsan_failures.py:565;producer=release,consumer=acquire,scope=cta",
+      "recipe_id": "8a26c63d09839623-sm90-L565-a540c7b8",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "SEM": null,
+        "triton_dtype": {
+          "__pipeguard_triton_dtype__": "int32"
+        }
+      },
+      "candidate_id": "109ee10290fc7cb1",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": {
+          "array_attributes": {},
+          "evidence_version": "triton-binding-evidence-v1",
+          "pointer_allocations": {
+            "0": "global:data",
+            "1": "global:lock"
+          },
+          "unit_attributes": {}
+        },
+        "constexprs": {
+          "SEM": null,
+          "triton_dtype": {
+            "__pipeguard_triton_dtype__": "int32"
+          }
+        },
+        "grid": [
+          2000,
+          1,
+          1
+        ],
+        "grid_ctas": 2000,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "Lock": "*i32",
+          "SEM": "constexpr",
+          "data": "*fp32",
+          "triton_dtype": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:2037;dtype=int32,sem=default-acq_rel,num_ctas=1",
+      "recipe_id": "109ee10290fc7cb1-sm90-L2037-c48e83ae",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "SEM": "relaxed",
+        "triton_dtype": {
+          "__pipeguard_triton_dtype__": "int32"
+        }
+      },
+      "candidate_id": "109ee10290fc7cb1",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": {
+          "array_attributes": {},
+          "evidence_version": "triton-binding-evidence-v1",
+          "pointer_allocations": {
+            "0": "global:data",
+            "1": "global:lock"
+          },
+          "unit_attributes": {}
+        },
+        "constexprs": {
+          "SEM": "relaxed",
+          "triton_dtype": {
+            "__pipeguard_triton_dtype__": "int32"
+          }
+        },
+        "grid": [
+          2000,
+          1,
+          1
+        ],
+        "grid_ctas": 2000,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "Lock": "*i32",
+          "SEM": "constexpr",
+          "data": "*fp32",
+          "triton_dtype": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:2037;dtype=int32,sem=relaxed,num_ctas=1",
+      "recipe_id": "109ee10290fc7cb1-sm90-L2037-3d994450",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "A_USE_TMA": true,
+        "BLOCK_SIZE_K": 64,
+        "BLOCK_SIZE_M": 128,
+        "BLOCK_SIZE_N": 128,
+        "B_USE_TMA": true,
+        "GROUP_SIZE_M": 8,
+        "K": 512,
+        "M": 2048,
+        "N": 2048,
+        "USE_FP8": false,
+        "a_stride0": 512,
+        "a_stride1": 1,
+        "b_stride0": 512,
+        "b_stride1": 1,
+        "c_stride0": 2048,
+        "c_stride1": 1,
+        "num_stages": 2
+      },
+      "candidate_id": "eb083ac05e70b7a6",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": {
+          "array_attributes": {
+            "118": {
+              "descriptor": {
+                "allocation_id": "global:a",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  2048,
+                  512
+                ],
+                "strides": [
+                  512,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  64
+                ]
+              }
+            },
+            "126": {
+              "descriptor": {
+                "allocation_id": "global:b",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  2048,
+                  512
+                ],
+                "strides": [
+                  512,
+                  1
+                ],
+                "tile_shape": [
+                  128,
+                  64
+                ]
+              }
+            },
+            "132": {
+              "descriptor": {
+                "allocation_id": "global:a",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  2048,
+                  512
+                ],
+                "strides": [
+                  512,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  64
+                ]
+              }
+            },
+            "197": {
+              "descriptor": {
+                "allocation_id": "global:c",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  2048,
+                  2048
+                ],
+                "strides": [
+                  2048,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  128
+                ]
+              }
+            },
+            "261": {
+              "descriptor": {
+                "allocation_id": "global:c",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  2048,
+                  2048
+                ],
+                "strides": [
+                  2048,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  128
+                ]
+              }
+            },
+            "265": {
+              "partition_num_warps": [
+                4,
+                4
+              ],
+              "warp_group_start_ids": [
+                4,
+                8
+              ]
+            }
+          },
+          "evidence_version": "triton-binding-evidence-v1",
+          "pointer_allocations": {
+            "0": "global:a",
+            "1": "global:b",
+            "2": "global:c"
+          },
+          "scalar_values": {
+            "3": 512,
+            "4": 512,
+            "5": 2048,
+            "6": 2048,
+            "7": 2048,
+            "8": 512
+          },
+          "unit_attributes": {
+            "188": [
+              "implicit_wgmma_wait_group_0"
+            ],
+            "198": [],
+            "252": [
+              "implicit_wgmma_wait_group_0"
+            ],
+            "262": []
+          }
+        },
+        "constexprs": {
+          "A_USE_TMA": true,
+          "BLOCK_SIZE_K": 64,
+          "BLOCK_SIZE_M": 128,
+          "BLOCK_SIZE_N": 128,
+          "B_USE_TMA": true,
+          "GROUP_SIZE_M": 8,
+          "USE_FP8": false,
+          "a_stride1": 1,
+          "b_stride1": 1,
+          "c_stride1": 1,
+          "num_stages": 2
+        },
+        "grid": [
+          256,
+          1,
+          1
+        ],
+        "grid_ctas": 256,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "A_USE_TMA": "constexpr",
+          "BLOCK_SIZE_K": "constexpr",
+          "BLOCK_SIZE_M": "constexpr",
+          "BLOCK_SIZE_N": "constexpr",
+          "B_USE_TMA": "constexpr",
+          "GROUP_SIZE_M": "constexpr",
+          "K": "i32",
+          "M": "i32",
+          "N": "i32",
+          "USE_FP8": "constexpr",
+          "a_ptr": "*fp16",
+          "a_stride0": "i32",
+          "a_stride1": "constexpr",
+          "b_ptr": "*fp16",
+          "b_stride0": "i32",
+          "b_stride1": "constexpr",
+          "c_ptr": "*fp16",
+          "c_stride0": "i32",
+          "c_stride1": "constexpr",
+          "num_stages": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_warp_specialization.py:306;pytest:M=2048,N=2048,K=512,blocks=128x128x64,stages=2,warps=4,fp16,tma=true",
+      "recipe_id": "eb083ac05e70b7a6-sm90-L306-a82a5075",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "BLOCK_SIZE_K": 128,
+        "BLOCK_SIZE_M": 128,
+        "BLOCK_SIZE_N": 256,
+        "EPILOGUE_SUBTILE": false,
+        "FLATTEN": false,
+        "GROUP_SIZE_M": 8,
+        "K": 512,
+        "M": 8192,
+        "N": 8192,
+        "NUM_SMS": 132,
+        "WARP_SPECIALIZE": true
+      },
+      "candidate_id": "8932e202e2971994",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": {
+          "array_attributes": {
+            "119": {
+              "descriptor": {
+                "allocation_id": "global:a",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  8192,
+                  512
+                ],
+                "strides": [
+                  512,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  128
+                ]
+              }
+            },
+            "127": {
+              "descriptor": {
+                "allocation_id": "global:b",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  8192,
+                  512
+                ],
+                "strides": [
+                  512,
+                  1
+                ],
+                "tile_shape": [
+                  256,
+                  128
+                ]
+              }
+            },
+            "133": {
+              "descriptor": {
+                "allocation_id": "global:a",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  8192,
+                  512
+                ],
+                "strides": [
+                  512,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  128
+                ]
+              }
+            },
+            "205": {
+              "descriptor": {
+                "allocation_id": "global:c",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  8192,
+                  8192
+                ],
+                "strides": [
+                  8192,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  256
+                ]
+              }
+            },
+            "276": {
+              "descriptor": {
+                "allocation_id": "global:c",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  8192,
+                  8192
+                ],
+                "strides": [
+                  8192,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  256
+                ]
+              }
+            },
+            "282": {
+              "partition_num_warps": [
+                4,
+                4
+              ],
+              "warp_group_start_ids": [
+                4,
+                8
+              ]
+            }
+          },
+          "evidence_version": "triton-binding-evidence-v1",
+          "pointer_allocations": {
+            "0": "global:a",
+            "1": "global:b",
+            "2": "global:c"
+          },
+          "scalar_values": {
+            "3": 8192,
+            "4": 8192,
+            "5": 512
+          },
+          "unit_attributes": {
+            "185": [
+              "implicit_wgmma_wait_group_0"
+            ],
+            "206": [],
+            "255": [
+              "implicit_wgmma_wait_group_0"
+            ],
+            "277": []
+          }
+        },
+        "constexprs": {
+          "BLOCK_SIZE_K": 128,
+          "BLOCK_SIZE_M": 128,
+          "BLOCK_SIZE_N": 256,
+          "EPILOGUE_SUBTILE": false,
+          "FLATTEN": false,
+          "GROUP_SIZE_M": 8,
+          "NUM_SMS": 132,
+          "WARP_SPECIALIZE": true
+        },
+        "grid": [
+          132,
+          1,
+          1
+        ],
+        "grid_ctas": 132,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 2,
+          "num_warps": 4
+        },
+        "signature": {
+          "BLOCK_SIZE_K": "constexpr",
+          "BLOCK_SIZE_M": "constexpr",
+          "BLOCK_SIZE_N": "constexpr",
+          "EPILOGUE_SUBTILE": "constexpr",
+          "FLATTEN": "constexpr",
+          "GROUP_SIZE_M": "constexpr",
+          "K": "i32",
+          "M": "i32",
+          "N": "i32",
+          "NUM_SMS": "constexpr",
+          "WARP_SPECIALIZE": "constexpr",
+          "a_ptr": "*fp16",
+          "b_ptr": "*fp16",
+          "c_ptr": "*fp16"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/tutorials/09-persistent-matmul.py:845-846;validate:M=8192,N=8192,K=512,fp16;source-config:BM128,BN256,BK128,stages2,warps4,subtile=false;H100-NUM_SMS=132;warp_specialize=true,flatten=false",
+      "recipe_id": "8932e202e2971994-sm90-L687-01138f46",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "BLOCK_SIZE_K": 128,
+        "BLOCK_SIZE_M": 128,
+        "BLOCK_SIZE_N": 256,
+        "EPILOGUE_SUBTILE": false,
+        "FLATTEN": false,
+        "GROUP_SIZE_M": 8,
+        "K": 128,
+        "M": 8192,
+        "N": 8192,
+        "NUM_SMS": 132,
+        "WARP_SPECIALIZE": true
+      },
+      "candidate_id": "8932e202e2971994",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": {
+          "array_attributes": {
+            "119": {
+              "descriptor": {
+                "allocation_id": "global:a",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  8192,
+                  128
+                ],
+                "strides": [
+                  128,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  128
+                ]
+              }
+            },
+            "127": {
+              "descriptor": {
+                "allocation_id": "global:b",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  8192,
+                  128
+                ],
+                "strides": [
+                  128,
+                  1
+                ],
+                "tile_shape": [
+                  256,
+                  128
+                ]
+              }
+            },
+            "133": {
+              "descriptor": {
+                "allocation_id": "global:a",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  8192,
+                  128
+                ],
+                "strides": [
+                  128,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  128
+                ]
+              }
+            },
+            "205": {
+              "descriptor": {
+                "allocation_id": "global:c",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  8192,
+                  8192
+                ],
+                "strides": [
+                  8192,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  256
+                ]
+              }
+            },
+            "276": {
+              "descriptor": {
+                "allocation_id": "global:c",
+                "coordinate_order": [
+                  0,
+                  1
+                ],
+                "element_bytes": 2,
+                "shape": [
+                  8192,
+                  8192
+                ],
+                "strides": [
+                  8192,
+                  1
+                ],
+                "tile_shape": [
+                  64,
+                  256
+                ]
+              }
+            },
+            "282": {
+              "partition_num_warps": [
+                4,
+                4
+              ],
+              "warp_group_start_ids": [
+                4,
+                8
+              ]
+            }
+          },
+          "evidence_version": "triton-binding-evidence-v1",
+          "pointer_allocations": {
+            "0": "global:a",
+            "1": "global:b",
+            "2": "global:c"
+          },
+          "scalar_values": {
+            "3": 8192,
+            "4": 8192,
+            "5": 128
+          },
+          "unit_attributes": {
+            "185": [
+              "implicit_wgmma_wait_group_0"
+            ],
+            "206": [],
+            "255": [
+              "implicit_wgmma_wait_group_0"
+            ],
+            "277": []
+          }
+        },
+        "constexprs": {
+          "BLOCK_SIZE_K": 128,
+          "BLOCK_SIZE_M": 128,
+          "BLOCK_SIZE_N": 256,
+          "EPILOGUE_SUBTILE": false,
+          "FLATTEN": false,
+          "GROUP_SIZE_M": 8,
+          "NUM_SMS": 132,
+          "WARP_SPECIALIZE": true
+        },
+        "grid": [
+          132,
+          1,
+          1
+        ],
+        "grid_ctas": 132,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 2,
+          "num_warps": 4
+        },
+        "signature": {
+          "BLOCK_SIZE_K": "constexpr",
+          "BLOCK_SIZE_M": "constexpr",
+          "BLOCK_SIZE_N": "constexpr",
+          "EPILOGUE_SUBTILE": "constexpr",
+          "FLATTEN": "constexpr",
+          "GROUP_SIZE_M": "constexpr",
+          "K": "i32",
+          "M": "i32",
+          "N": "i32",
+          "NUM_SMS": "constexpr",
+          "WARP_SPECIALIZE": "constexpr",
+          "a_ptr": "*fp16",
+          "b_ptr": "*fp16",
+          "c_ptr": "*fp16"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/tutorials/09-persistent-matmul.py:15,845-846;validate:M=8192,N=8192,K=128,fp16;source-config:BM128,BN256,BK128,stages2,warps4,subtile=false;H100-NUM_SMS=132;warp_specialize=true,flatten=false",
+      "recipe_id": "8932e202e2971994-sm90-L687-0fca4567",
       "reference": {
         "mode": "reference_replay"
       },

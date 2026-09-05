@@ -7,7 +7,16 @@ import triton
 
 import triton.language as tl
 
-from triton.experimental.gsan._testing_utils import atomic_poll, shadow_cell_from_address, shadow_tensor_for, SHADOW_GRANULARITY_BYTES
+# dependency slice: triton.experimental.gsan._testing_utils
+@triton.jit
+def nanosleep(duration):
+    duration = tl.to_tensor(duration)
+    tl.inline_asm_elementwise("nanosleep.u32 $1; mov.b32 $0, 0;", "=r, r", [duration], tl.int32, is_pure=False, pack=1)
+
+@triton.jit
+def atomic_poll(ptr, expect, sem: tl.constexpr = "relaxed", scope: tl.constexpr = "gpu"):
+    while tl.atomic_add(ptr, 0, sem=sem, scope=scope) != expect:
+        nanosleep(100)
 
 @triton.jit
 def _single_cta_atomic_sync_kernel(counter_ptr, payload_ptr, peer_payload_ptr, num_ready_ptr, seen_peer_ptr,

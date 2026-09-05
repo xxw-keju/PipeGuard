@@ -1,0 +1,221 @@
+{
+  "bindings": {
+    "BLOCK_SIZE_K": 128,
+    "BLOCK_SIZE_M": 128,
+    "BLOCK_SIZE_N": 256,
+    "EPILOGUE_SUBTILE": false,
+    "FLATTEN": false,
+    "GROUP_SIZE_M": 8,
+    "K": 512,
+    "M": 8192,
+    "N": 8192,
+    "NUM_SMS": 132,
+    "WARP_SPECIALIZE": true
+  },
+  "candidate_id": "8932e202e2971994",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {
+        "119": {
+          "descriptor": {
+            "allocation_id": "global:a",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              8192,
+              512
+            ],
+            "strides": [
+              512,
+              1
+            ],
+            "tile_shape": [
+              64,
+              128
+            ]
+          }
+        },
+        "127": {
+          "descriptor": {
+            "allocation_id": "global:b",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              8192,
+              512
+            ],
+            "strides": [
+              512,
+              1
+            ],
+            "tile_shape": [
+              256,
+              128
+            ]
+          }
+        },
+        "133": {
+          "descriptor": {
+            "allocation_id": "global:a",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              8192,
+              512
+            ],
+            "strides": [
+              512,
+              1
+            ],
+            "tile_shape": [
+              64,
+              128
+            ]
+          }
+        },
+        "205": {
+          "descriptor": {
+            "allocation_id": "global:c",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              8192,
+              8192
+            ],
+            "strides": [
+              8192,
+              1
+            ],
+            "tile_shape": [
+              64,
+              256
+            ]
+          }
+        },
+        "276": {
+          "descriptor": {
+            "allocation_id": "global:c",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              8192,
+              8192
+            ],
+            "strides": [
+              8192,
+              1
+            ],
+            "tile_shape": [
+              64,
+              256
+            ]
+          }
+        },
+        "282": {
+          "partition_num_warps": [
+            4,
+            4
+          ],
+          "warp_group_start_ids": [
+            4,
+            8
+          ]
+        }
+      },
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:a",
+        "1": "global:b",
+        "2": "global:c"
+      },
+      "scalar_values": {
+        "3": 8192,
+        "4": 8192,
+        "5": 512
+      },
+      "unit_attributes": {
+        "185": [
+          "implicit_wgmma_wait_group_0"
+        ],
+        "206": [],
+        "255": [
+          "implicit_wgmma_wait_group_0"
+        ],
+        "277": []
+      }
+    },
+    "constexprs": {
+      "BLOCK_SIZE_K": 128,
+      "BLOCK_SIZE_M": 128,
+      "BLOCK_SIZE_N": 256,
+      "EPILOGUE_SUBTILE": false,
+      "FLATTEN": false,
+      "GROUP_SIZE_M": 8,
+      "NUM_SMS": 132,
+      "WARP_SPECIALIZE": true
+    },
+    "grid": [
+      132,
+      1,
+      1
+    ],
+    "grid_ctas": 132,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 2,
+      "num_warps": 4
+    },
+    "signature": {
+      "BLOCK_SIZE_K": "constexpr",
+      "BLOCK_SIZE_M": "constexpr",
+      "BLOCK_SIZE_N": "constexpr",
+      "EPILOGUE_SUBTILE": "constexpr",
+      "FLATTEN": "constexpr",
+      "GROUP_SIZE_M": "constexpr",
+      "K": "i32",
+      "M": "i32",
+      "N": "i32",
+      "NUM_SMS": "constexpr",
+      "WARP_SPECIALIZE": "constexpr",
+      "a_ptr": "*fp16",
+      "b_ptr": "*fp16",
+      "c_ptr": "*fp16"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/tutorials/09-persistent-matmul.py:845-846;validate:M=8192,N=8192,K=512,fp16;source-config:BM128,BN256,BK128,stages2,warps4,subtile=false;H100-NUM_SMS=132;warp_specialize=true,flatten=false",
+  "recipe_id": "8932e202e2971994-sm90-L687-01138f46",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

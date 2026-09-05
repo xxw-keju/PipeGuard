@@ -7,8 +7,16 @@ import triton
 
 import triton.language as tl
 
-from triton.experimental.gsan._testing_utils import (atomic_poll, load_one_i32, shadow_cell_from_address, store_one_i32,
-                                                     thread_state_from_smid)
+# dependency slice: triton.experimental.gsan._testing_utils
+@triton.jit
+def nanosleep(duration):
+    duration = tl.to_tensor(duration)
+    tl.inline_asm_elementwise("nanosleep.u32 $1; mov.b32 $0, 0;", "=r, r", [duration], tl.int32, is_pure=False, pack=1)
+
+@triton.jit
+def atomic_poll(ptr, expect, sem: tl.constexpr = "relaxed", scope: tl.constexpr = "gpu"):
+    while tl.atomic_add(ptr, 0, sem=sem, scope=scope) != expect:
+        nanosleep(100)
 
 @triton.jit
 def _ordered_mixed_scope_release_rmw_kernel(payload_ptr, counter_ptr, ready_ptr):

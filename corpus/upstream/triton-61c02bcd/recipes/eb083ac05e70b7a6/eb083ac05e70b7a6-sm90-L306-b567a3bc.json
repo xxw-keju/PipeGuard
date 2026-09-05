@@ -1,0 +1,118 @@
+{
+  "bindings": {
+    "A_USE_TMA": true,
+    "BLOCK_SIZE_K": 64,
+    "BLOCK_SIZE_M": 128,
+    "BLOCK_SIZE_N": 128,
+    "B_USE_TMA": true,
+    "GROUP_SIZE_M": 8,
+    "K": 32,
+    "M": 32,
+    "N": 32,
+    "USE_FP8": false,
+    "a_stride0": 32,
+    "a_stride1": 1,
+    "b_stride0": 32,
+    "b_stride1": 1,
+    "c_stride0": 32,
+    "c_stride1": 1,
+    "num_stages": 2
+  },
+  "candidate_id": "eb083ac05e70b7a6",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {
+        "265": {
+          "partition_num_warps": [
+            4
+          ],
+          "warp_group_start_ids": [
+            4
+          ]
+        }
+      },
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:a",
+        "1": "global:b",
+        "2": "global:c"
+      },
+      "scalar_values": {
+        "3": 32,
+        "4": 32,
+        "5": 32,
+        "6": 32,
+        "7": 32,
+        "8": 32
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "A_USE_TMA": true,
+      "BLOCK_SIZE_K": 64,
+      "BLOCK_SIZE_M": 128,
+      "BLOCK_SIZE_N": 128,
+      "B_USE_TMA": true,
+      "GROUP_SIZE_M": 8,
+      "USE_FP8": false,
+      "a_stride1": 1,
+      "b_stride1": 1,
+      "c_stride1": 1,
+      "num_stages": 2
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "A_USE_TMA": "constexpr",
+      "BLOCK_SIZE_K": "constexpr",
+      "BLOCK_SIZE_M": "constexpr",
+      "BLOCK_SIZE_N": "constexpr",
+      "B_USE_TMA": "constexpr",
+      "GROUP_SIZE_M": "constexpr",
+      "K": "i32",
+      "M": "i32",
+      "N": "i32",
+      "USE_FP8": "constexpr",
+      "a_ptr": "*fp16",
+      "a_stride0": "i32",
+      "a_stride1": "constexpr",
+      "b_ptr": "*fp16",
+      "b_stride0": "i32",
+      "b_stride1": "constexpr",
+      "c_ptr": "*fp16",
+      "c_stride0": "i32",
+      "c_stride1": "constexpr",
+      "num_stages": "constexpr"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_warp_specialization.py:306;pytest:M=32,N=32,K=32,blocks=128x128x64,stages=2,warps=4,fp16,tma=true",
+  "recipe_id": "eb083ac05e70b7a6-sm90-L306-b567a3bc",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

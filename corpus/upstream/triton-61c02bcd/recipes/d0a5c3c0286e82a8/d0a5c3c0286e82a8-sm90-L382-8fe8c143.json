@@ -1,0 +1,54 @@
+{
+  "bindings": {},
+  "candidate_id": "d0a5c3c0286e82a8",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:target",
+        "1": "global:scratch",
+        "2": "global:counter"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {},
+    "grid": [
+      2,
+      1,
+      1
+    ],
+    "grid_ctas": 2,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 1
+    },
+    "signature": {
+      "counter_ptr": "*i32",
+      "ptr": "*i32",
+      "scratch_ptr": "*i32"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/test/gsan/test_gsan_failures.py:382;case=war",
+  "recipe_id": "d0a5c3c0286e82a8-sm90-L382-8fe8c143",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

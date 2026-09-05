@@ -1,0 +1,287 @@
+{
+  "bindings": {
+    "BLOCK_K": 32,
+    "BLOCK_M": 64,
+    "BLOCK_N": 64,
+    "K": 128,
+    "M": 512,
+    "N": 512,
+    "NUM_STAGES": 4
+  },
+  "candidate_id": "c7f1c721d03bc61b",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {
+        "36": {
+          "descriptor": {
+            "allocation_id": "global:a",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              512,
+              128
+            ],
+            "strides": [
+              128,
+              1
+            ],
+            "tile_shape": [
+              64,
+              32
+            ]
+          }
+        },
+        "38": {
+          "descriptor": {
+            "allocation_id": "global:b",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              128,
+              512
+            ],
+            "strides": [
+              512,
+              1
+            ],
+            "tile_shape": [
+              32,
+              64
+            ]
+          }
+        },
+        "42": {
+          "descriptor": {
+            "allocation_id": "global:a",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              512,
+              128
+            ],
+            "strides": [
+              128,
+              1
+            ],
+            "tile_shape": [
+              64,
+              32
+            ]
+          }
+        },
+        "44": {
+          "descriptor": {
+            "allocation_id": "global:b",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              128,
+              512
+            ],
+            "strides": [
+              512,
+              1
+            ],
+            "tile_shape": [
+              32,
+              64
+            ]
+          }
+        },
+        "48": {
+          "descriptor": {
+            "allocation_id": "global:a",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              512,
+              128
+            ],
+            "strides": [
+              128,
+              1
+            ],
+            "tile_shape": [
+              64,
+              32
+            ]
+          }
+        },
+        "50": {
+          "descriptor": {
+            "allocation_id": "global:b",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              128,
+              512
+            ],
+            "strides": [
+              512,
+              1
+            ],
+            "tile_shape": [
+              32,
+              64
+            ]
+          }
+        },
+        "71": {
+          "descriptor": {
+            "allocation_id": "global:a",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              512,
+              128
+            ],
+            "strides": [
+              128,
+              1
+            ],
+            "tile_shape": [
+              64,
+              32
+            ]
+          }
+        },
+        "73": {
+          "descriptor": {
+            "allocation_id": "global:b",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              128,
+              512
+            ],
+            "strides": [
+              512,
+              1
+            ],
+            "tile_shape": [
+              32,
+              64
+            ]
+          }
+        },
+        "87": {
+          "descriptor": {
+            "allocation_id": "global:c",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              512,
+              512
+            ],
+            "strides": [
+              512,
+              1
+            ],
+            "tile_shape": [
+              64,
+              64
+            ]
+          }
+        }
+      },
+      "evidence_version": "triton-binding-evidence-v1",
+      "scalar_values": {
+        "1": 512,
+        "11": 512,
+        "12": 512,
+        "13": 512,
+        "14": 1,
+        "15": 512,
+        "16": 512,
+        "17": 128,
+        "2": 128,
+        "3": 128,
+        "4": 1,
+        "6": 128,
+        "7": 512,
+        "8": 512,
+        "9": 1
+      },
+      "unit_attributes": {
+        "88": []
+      }
+    },
+    "constexprs": {
+      "BLOCK_K": 32,
+      "BLOCK_M": 64,
+      "BLOCK_N": 64,
+      "NUM_STAGES": 4
+    },
+    "grid": [
+      64,
+      1,
+      1
+    ],
+    "grid_ctas": 64,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "BLOCK_K": "constexpr",
+      "BLOCK_M": "constexpr",
+      "BLOCK_N": "constexpr",
+      "K": "i32",
+      "M": "i32",
+      "N": "i32",
+      "NUM_STAGES": "constexpr",
+      "a_ptr": "tensordesc<fp16[64,32]>",
+      "b_ptr": "tensordesc<fp16[32,64]>",
+      "output_ptr": "tensordesc<fp16[64,64]>"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_pipeliner.py:268;test_pipeline_matmul:scale=false,M=512,N=512,K=128,blocks=64x64x32,stages=4,dtype=fp16",
+  "recipe_id": "c7f1c721d03bc61b-sm90-L268-e1540c77",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

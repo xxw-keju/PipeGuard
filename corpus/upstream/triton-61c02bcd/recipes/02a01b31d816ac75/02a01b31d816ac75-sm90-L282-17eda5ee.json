@@ -9,7 +9,26 @@
   "candidate_id": "02a01b31d816ac75",
   "compiler": {
     "attrs": {},
-    "binding_evidence": null,
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:dx",
+        "1": "global:dy",
+        "2": "global:partial_dw",
+        "3": "global:partial_db",
+        "4": "global:x",
+        "5": "global:w",
+        "6": "global:mean",
+        "7": "global:rstd",
+        "8": "global:locks"
+      },
+      "scalar_values": {
+        "10": 8192,
+        "9": 8192
+      },
+      "unit_attributes": {}
+    },
     "constexprs": {
       "BLOCK_SIZE_N": 8192,
       "GROUP_SIZE_M": 96
@@ -45,7 +64,7 @@
     "resolver_kwargs": {}
   },
   "origin": "ai-reviewed-launch:python/tutorials/05-layer-norm.py:282;tutorial-test:M=1151,N=8192,dtype=fp16",
-  "recipe_id": "02a01b31d816ac75-sm90-L282-bfe01a59",
+  "recipe_id": "02a01b31d816ac75-sm90-L282-17eda5ee",
   "reference": {
     "mode": "reference_replay"
   },

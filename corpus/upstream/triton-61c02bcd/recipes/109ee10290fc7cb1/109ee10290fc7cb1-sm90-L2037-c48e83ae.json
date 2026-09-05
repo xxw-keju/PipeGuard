@@ -1,0 +1,64 @@
+{
+  "bindings": {
+    "SEM": null,
+    "triton_dtype": {
+      "__pipeguard_triton_dtype__": "int32"
+    }
+  },
+  "candidate_id": "109ee10290fc7cb1",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:data",
+        "1": "global:lock"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "SEM": null,
+      "triton_dtype": {
+        "__pipeguard_triton_dtype__": "int32"
+      }
+    },
+    "grid": [
+      2000,
+      1,
+      1
+    ],
+    "grid_ctas": 2000,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "Lock": "*i32",
+      "SEM": "constexpr",
+      "data": "*fp32",
+      "triton_dtype": "constexpr"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:2037;dtype=int32,sem=default-acq_rel,num_ctas=1",
+  "recipe_id": "109ee10290fc7cb1-sm90-L2037-c48e83ae",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

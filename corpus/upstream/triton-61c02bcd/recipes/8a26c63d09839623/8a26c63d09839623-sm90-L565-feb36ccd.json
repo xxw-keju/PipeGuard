@@ -1,0 +1,67 @@
+{
+  "bindings": {
+    "consumer_sem": "acquire",
+    "producer_sem": "relaxed",
+    "scope": "gpu"
+  },
+  "candidate_id": "8a26c63d09839623",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:payload",
+        "1": "global:flag",
+        "2": "global:counter",
+        "3": "global:scratch"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "consumer_sem": "acquire",
+      "producer_sem": "relaxed",
+      "scope": "gpu"
+    },
+    "grid": [
+      2,
+      1,
+      1
+    ],
+    "grid_ctas": 2,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 1
+    },
+    "signature": {
+      "consumer_sem": "constexpr",
+      "counter_ptr": "*i32",
+      "flag_ptr": "*i32",
+      "payload_ptr": "*i32",
+      "producer_sem": "constexpr",
+      "scope": "constexpr",
+      "scratch_ptr": "*i32"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/test/gsan/test_gsan_failures.py:565;producer=relaxed,consumer=acquire,scope=gpu",
+  "recipe_id": "8a26c63d09839623-sm90-L565-feb36ccd",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}
