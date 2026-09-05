@@ -1,0 +1,55 @@
+{
+  "bindings": {
+    "BLOCK_M": 64,
+    "BLOCK_N": 64,
+    "stride_xm": 64,
+    "stride_xn": 1,
+    "stride_zm": 1,
+    "stride_zn": 64
+  },
+  "candidate_id": "6280418ca3050174",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "BLOCK_M": 64,
+      "BLOCK_N": 64
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "BLOCK_M": "constexpr",
+      "BLOCK_N": "constexpr",
+      "X": "*fp16",
+      "Z": "*fp16",
+      "stride_xm": "i32",
+      "stride_xn": "i32",
+      "stride_zm": "i32",
+      "stride_zn": "i32"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:3641;pytest-param:dtype_str=float16,shape=(64,64);layout=transpose",
+  "recipe_id": "6280418ca3050174-sm90-L3641-0788547a",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

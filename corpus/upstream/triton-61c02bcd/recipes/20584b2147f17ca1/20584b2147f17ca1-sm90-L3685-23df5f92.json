@@ -1,0 +1,59 @@
+{
+  "bindings": {
+    "in_shape1": 2,
+    "in_shape2": 4,
+    "ou_shape1": 4,
+    "ou_shape2": 2,
+    "trans1": 1,
+    "trans2": 0
+  },
+  "candidate_id": "20584b2147f17ca1",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "in_shape1": 2,
+      "in_shape2": 4,
+      "ou_shape1": 4,
+      "ou_shape2": 2,
+      "trans1": 1,
+      "trans2": 0
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "In": "*i8",
+      "Out": "*i8",
+      "in_shape1": "constexpr",
+      "in_shape2": "constexpr",
+      "ou_shape1": "constexpr",
+      "ou_shape2": "constexpr",
+      "trans1": "constexpr",
+      "trans2": "constexpr"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:3685;pytest-param:dtype_str=int8,shape=(2, 4),perm=(1, 0)",
+  "recipe_id": "20584b2147f17ca1-sm90-L3685-23df5f92",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

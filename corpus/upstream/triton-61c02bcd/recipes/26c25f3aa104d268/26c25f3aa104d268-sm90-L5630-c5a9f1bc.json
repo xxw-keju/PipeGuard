@@ -1,0 +1,52 @@
+{
+  "bindings": {
+    "BoolVar": true,
+    "IfType": "if_exp_dynamic_constexpr",
+    "StaticValue": 1
+  },
+  "candidate_id": "26c25f3aa104d268",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "BoolVar": true,
+      "IfType": "if_exp_dynamic_constexpr",
+      "StaticValue": 1
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "BoolVar": "constexpr",
+      "Cond": "*i32",
+      "IfType": "constexpr",
+      "Ret": "*fp32",
+      "StaticValue": "constexpr",
+      "XFalse": "*fp32",
+      "XTrue": "*fp32"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:5630;pytest-param:if_type=if_exp_dynamic_constexpr",
+  "recipe_id": "26c25f3aa104d268-sm90-L5630-c5a9f1bc",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

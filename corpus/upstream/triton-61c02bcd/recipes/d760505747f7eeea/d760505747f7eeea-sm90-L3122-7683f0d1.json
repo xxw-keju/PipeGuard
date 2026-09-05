@@ -1,0 +1,56 @@
+{
+  "bindings": {
+    "in_dtype": {
+      "__pipeguard_triton_dtype__": "int1"
+    },
+    "init": 1,
+    "out_dtype": {
+      "__pipeguard_triton_dtype__": "int1"
+    }
+  },
+  "candidate_id": "d760505747f7eeea",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "in_dtype": {
+        "__pipeguard_triton_dtype__": "int1"
+      },
+      "out_dtype": {
+        "__pipeguard_triton_dtype__": "int1"
+      }
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "in_dtype": "constexpr",
+      "init": "i32",
+      "out_dtype": "constexpr",
+      "out_ptr": "*i32"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:3122;init=1;in_dtype=tl.int1;out_dtype=tl.int1",
+  "recipe_id": "d760505747f7eeea-sm90-L3122-7683f0d1",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}
