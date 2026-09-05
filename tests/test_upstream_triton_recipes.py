@@ -244,7 +244,7 @@ def tuned_kernel(BLOCK: tl.constexpr):
     pass
 
 grid = lambda meta: (1,)
-runtime_kernel[(1,)](0, K=1)
+runtime_kernel[(1,)](tensor, K=1)
 grid_kernel[grid](K=1)
 tuned_kernel[(1,)]()
 """
@@ -252,7 +252,7 @@ tuned_kernel[(1,)]()
     analysis = analyze_triton_recipes(candidates, tree, aliases, "case.py")
     assert analysis.recipes == {}
     assert [attempt["code"] for attempt in analysis.attempts] == [
-        "RUNTIME_SPECIALIZATION_UNKNOWN",
+        "RUNTIME_VALUE_UNKNOWN",
         "GRID_UNKNOWN",
         "AUTOTUNE_WINNER_UNKNOWN",
     ]

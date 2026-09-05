@@ -6,6 +6,7 @@ from typing import Any, Protocol
 
 from upstream_static_eval import json_literal_value, keyword_nodes, literal_value, resolve_expression
 from upstream_triton_decisions import TritonEvidenceDecision
+from upstream_triton_specialization import bind_triton_arguments
 
 
 class AliasResolver(Protocol):
@@ -39,7 +40,7 @@ def _single_cta_grid(node: ast.AST, environment: dict[str, Any]) -> list[int] | 
         value = literal_value(node, environment)
     except ValueError:
         return None
-    if value == 1:
+    if value == 1 and not isinstance(value, bool):
         return [1]
     if (
         isinstance(value, (list, tuple))
@@ -185,16 +186,23 @@ def triton_launch_evidence(
     ignored = set(option_nodes)
     if warmup:
         ignored.add("grid")
-    binding = _bind_constexpr_arguments(candidate, call, environment, aliases, ignored)
+    binding, _code = bind_triton_arguments(
+        candidate,
+        call,
+        environment,
+        aliases,
+        keywords,
+        ignored,
+        warmup=warmup,
+    )
     if binding is None:
         return None
-    signature, constexprs = binding
     return TritonLaunchEvidence(
         candidate=candidate,
         compiler={
-            "signature": signature,
-            "constexprs": constexprs,
-            "attrs": {},
+            "signature": binding.signature,
+            "constexprs": binding.constexprs,
+            "attrs": binding.attrs,
             "options": options,
             "grid_ctas": 1,
             "binding_evidence": None,
@@ -276,22 +284,21 @@ def analyze_triton_launch(
         return TritonEvidenceDecision.rejected(
             mechanism, "OPTIONS_UNSUPPORTED", candidate_id=candidate_id
         )
-    arguments = candidate.node.args
-    if arguments.vararg is not None or arguments.kwarg is not None:
-        return TritonEvidenceDecision.rejected(
-            mechanism, "VARARGS_UNSUPPORTED", candidate_id=candidate_id
-        )
-    parameters = (*arguments.posonlyargs, *arguments.args, *arguments.kwonlyargs)
-    if any(not _is_constexpr(parameter.annotation, aliases) for parameter in parameters):
-        return TritonEvidenceDecision.rejected(
-            mechanism, "RUNTIME_SPECIALIZATION_UNKNOWN", candidate_id=candidate_id
-        )
     ignored = set(option_nodes)
     if warmup:
         ignored.add("grid")
-    if _bind_constexpr_arguments(candidate, call, environment, aliases, ignored) is None:
+    binding, code = bind_triton_arguments(
+        candidate,
+        call,
+        environment,
+        aliases,
+        keywords,
+        ignored,
+        warmup=warmup,
+    )
+    if binding is None:
         return TritonEvidenceDecision.rejected(
-            mechanism, "CONSTEXPR_BINDING_UNKNOWN", candidate_id=candidate_id
+            mechanism, code, candidate_id=candidate_id
         )
     evidence = triton_launch_evidence(call, environment, aliases, candidates_by_node)
     if evidence is None:

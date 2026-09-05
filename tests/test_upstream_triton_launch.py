@@ -57,12 +57,10 @@ kernel.warmup(grid=[1], K=4)
     [
         "kernel[grid](K=1)",
         "kernel[(2,)](K=1)",
-        "kernel[True](K=1)",
         "kernel[(1,)](K=value)",
         "kernel[(1,)](K=1, num_ctas=2)",
         "kernel[(1,)](K=1, num_warps=3)",
         "kernel[(1,)](K=1, unknown_option=4)",
-        "kernel[(1,)](**{'K': 1})",
         "kernel[*dims](K=1)",
         "kernel.warmup(K=1)",
         "kernel.warmup(K=1, grid=(1,), num_ctas=2)",
@@ -82,16 +80,38 @@ def kernel(K: tl.constexpr):
     assert _recipes(source) == []
 
 
-def test_launch_rejects_runtime_arguments_even_when_call_value_is_literal():
+def test_launch_infers_native_scalar_specialization_and_literal_splat():
+    recipes = _recipes('''
+import triton
+import triton.language as tl
+
+@triton.jit
+def kernel(value, K: tl.constexpr):
+    pass
+
+kernel[(1,)](0, **{"K": 1})
+''')
+    assert len(recipes) == 1
+    assert recipes[0]["compiler"] == {
+        "signature": {"value": "i32", "K": "constexpr"},
+        "constexprs": {"K": 1},
+        "attrs": {"value": [["tt.divisibility", 16]]},
+        "options": {},
+        "grid_ctas": 1,
+        "binding_evidence": None,
+    }
+
+
+def test_launch_rejects_boolean_grid():
     assert _recipes('''
 import triton
 import triton.language as tl
 
 @triton.jit
-def kernel(pointer, K: tl.constexpr):
+def kernel(K: tl.constexpr):
     pass
 
-kernel[(1,)](0, K=1)
+kernel[True](K=1)
 ''') == []
 
 

@@ -177,6 +177,28 @@ def _materialize_triton(module: Any, recipe: dict[str, Any], *, resolution: str)
     return value
 
 
+def _triton_attrs(function: Any, attrs: Any) -> dict[tuple[int, ...], list[list[Any]]]:
+    if not isinstance(attrs, dict):
+        raise TypeError("Triton recipe attrs must be an object")
+    arg_names = list(function.arg_names)
+    result: dict[tuple[int, ...], list[list[Any]]] = {}
+    for name, values in attrs.items():
+        if not isinstance(name, str) or name not in arg_names:
+            raise ValueError(f"unknown Triton attribute parameter: {name!r}")
+        if not isinstance(values, list) or any(
+            not isinstance(value, list)
+            or len(value) != 2
+            or not isinstance(value[0], str)
+            for value in values
+        ):
+            raise TypeError(f"invalid Triton attributes for parameter {name}")
+        path = (arg_names.index(name),)
+        if path in result:
+            raise ValueError(f"duplicate Triton attribute path for parameter {name}")
+        result[path] = values
+    return result
+
+
 def _lower_triton(module: Any, recipe: dict[str, Any], *, resolution: str) -> str:
     import triton
     from triton.backends.compiler import GPUTarget
@@ -188,7 +210,7 @@ def _lower_triton(module: Any, recipe: dict[str, Any], *, resolution: str) -> st
         fn=function,
         signature=compiler["signature"],
         constexprs=compiler.get("constexprs", {}),
-        attrs=compiler.get("attrs", {}),
+        attrs=_triton_attrs(function, compiler.get("attrs", {})),
     )
     target = GPUTarget("cuda", 90, recipe["target"].get("warp_size", 32))
     compiled = triton.compile(source, target=target, options=compiler.get("options", {}))
