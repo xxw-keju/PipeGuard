@@ -1,0 +1,46 @@
+{
+  "bindings": {
+    "XBLOCK": 16,
+    "xnumel": 10
+  },
+  "candidate_id": "55f21b35de6ec93c",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "XBLOCK": 16
+    },
+    "grid_ctas": 10,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "XBLOCK": "constexpr",
+      "in_ptr0": "*fp32",
+      "out_ptr0": "*fp32",
+      "xnumel": "i32"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/test/unit/runtime/test_launch.py:58;equivalent-repeat:62-62",
+  "recipe_id": "55f21b35de6ec93c-sm90-L58-9cd42675",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}
