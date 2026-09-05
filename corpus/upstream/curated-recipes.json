@@ -1994,6 +1994,339 @@
         "warp_size": 32
       },
       "unresolved": []
+    },
+    {
+      "bindings": {},
+      "candidate_id": "4b2b6cf9291cfc02",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {},
+        "grid_ctas": 1,
+        "options": {
+          "instrumentation_mode": "",
+          "maxnreg": 42,
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "out": "*i32"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-compile:python/test/unit/language/test_compile_only.py:172-173;pytest-param:instrumentation_mode=none",
+      "recipe_id": "4b2b6cf9291cfc02-sm90-L172-de0ad927",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {},
+      "candidate_id": "4b2b6cf9291cfc02",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {},
+        "grid_ctas": 1,
+        "options": {
+          "instrumentation_mode": "consan",
+          "maxnreg": 42,
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "out": "*i32"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-compile:python/test/unit/language/test_compile_only.py:172-173;pytest-param:instrumentation_mode=consan",
+      "recipe_id": "4b2b6cf9291cfc02-sm90-L172-794ab716",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {},
+      "candidate_id": "4b2b6cf9291cfc02",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {},
+        "grid_ctas": 1,
+        "options": {
+          "instrumentation_mode": "gsan",
+          "maxnreg": 42,
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "out": "*i32"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-compile:python/test/unit/language/test_compile_only.py:172-173;pytest-param:instrumentation_mode=gsan",
+      "recipe_id": "4b2b6cf9291cfc02-sm90-L172-a0dc3643",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {},
+      "candidate_id": "4b2b6cf9291cfc02",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {},
+        "grid_ctas": 1,
+        "options": {
+          "instrumentation_mode": "iisan",
+          "maxnreg": 42,
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "out": "*i32"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-compile:python/test/unit/language/test_compile_only.py:172-173;pytest-param:instrumentation_mode=iisan",
+      "recipe_id": "4b2b6cf9291cfc02-sm90-L172-14cb996e",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {},
+      "candidate_id": "4b2b6cf9291cfc02",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {},
+        "grid_ctas": 1,
+        "options": {
+          "instrumentation_mode": "fpsan",
+          "maxnreg": 42,
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "out": "*i32"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-compile:python/test/unit/language/test_compile_only.py:172-173;pytest-param:instrumentation_mode=fpsan",
+      "recipe_id": "4b2b6cf9291cfc02-sm90-L172-d98a6aed",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {},
+      "candidate_id": "4b2b6cf9291cfc02",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {},
+        "grid_ctas": 1,
+        "options": {
+          "instrumentation_mode": "gsan,consan",
+          "maxnreg": 42,
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "out": "*i32"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-compile:python/test/unit/language/test_compile_only.py:172-173;pytest-param:instrumentation_mode=gsan,consan",
+      "recipe_id": "4b2b6cf9291cfc02-sm90-L172-ab9f7218",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {},
+      "candidate_id": "4dd9b54cb507b9e0",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {},
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "K": "i32",
+          "M": "i32",
+          "N": "i32",
+          "a_ptr": "*fp32",
+          "b_ptr": "*fp32",
+          "c_ptr": "*fp32",
+          "stride_am": "i32",
+          "stride_bn": "i32",
+          "stride_cm": "i32"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-compile:python/test/unit/test_perf_warning.py:72-76;sm90-guard;equivalent-diagnostics-repeat:84-88",
+      "recipe_id": "4dd9b54cb507b9e0-sm90-L72-649fc848",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "XBLOCK": 1024
+      },
+      "candidate_id": "4129330b4e1225bc",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {
+          "XBLOCK": 1024
+        },
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 1
+        },
+        "signature": {
+          "XBLOCK": "constexpr",
+          "in_ptr0": "*i64",
+          "in_ptr1": "*i64",
+          "in_ptr2": "*fp16",
+          "in_ptr3": "*fp32",
+          "out_ptr0": "*fp16"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-compile:python/test/unit/test_perf_warning.py:138-141;XBLOCK=1024;equivalent-diagnostics-repeat:148-151",
+      "recipe_id": "4129330b4e1225bc-sm90-L138-1ebea653",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
     }
   ],
   "schema_version": "pipeguard-upstream-curated-recipes-v1"

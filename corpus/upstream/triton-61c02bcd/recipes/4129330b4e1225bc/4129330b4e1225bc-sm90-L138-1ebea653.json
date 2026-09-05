@@ -1,0 +1,47 @@
+{
+  "bindings": {
+    "XBLOCK": 1024
+  },
+  "candidate_id": "4129330b4e1225bc",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "XBLOCK": 1024
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 1
+    },
+    "signature": {
+      "XBLOCK": "constexpr",
+      "in_ptr0": "*i64",
+      "in_ptr1": "*i64",
+      "in_ptr2": "*fp16",
+      "in_ptr3": "*fp32",
+      "out_ptr0": "*fp16"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-compile:python/test/unit/test_perf_warning.py:138-141;XBLOCK=1024;equivalent-diagnostics-repeat:148-151",
+  "recipe_id": "4129330b4e1225bc-sm90-L138-1ebea653",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

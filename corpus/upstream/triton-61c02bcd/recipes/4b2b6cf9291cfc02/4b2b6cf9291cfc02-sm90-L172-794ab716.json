@@ -1,0 +1,40 @@
+{
+  "bindings": {},
+  "candidate_id": "4b2b6cf9291cfc02",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {},
+    "grid_ctas": 1,
+    "options": {
+      "instrumentation_mode": "consan",
+      "maxnreg": 42,
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "out": "*i32"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-compile:python/test/unit/language/test_compile_only.py:172-173;pytest-param:instrumentation_mode=consan",
+  "recipe_id": "4b2b6cf9291cfc02-sm90-L172-794ab716",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}
