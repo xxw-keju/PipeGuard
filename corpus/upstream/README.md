@@ -52,13 +52,13 @@ The deterministic source inventory at these locks contains:
 | DSL | Source files | Candidates | Lowerable recipes |
 | --- | ---: | ---: | ---: |
 | TileLang | 643 | 2,054 | 585 |
-| Triton | 135 | 802 | 35 |
+| Triton | 135 | 802 | 48 |
 
 TileLang has 583 static profile-specialization recipes plus two reviewed recipes. Static classification rejects 18 PrimFuncs that explicitly call Blackwell `tcgen05` operations and two PrimFuncs defined inside expected-failure scopes. Source-directory names do not substitute for operation evidence: 13 dependency-closed PrimFuncs under AMD/CPU test directories are attempted under the SM90 profile, producing six additional normalized PGIR programs while unknown effects and control still fail closed.
 
-Triton has 17 reviewed recipes and 18 statically inferred recipes. The reviewed set now grows by reading each real launch/warmup/compile context and recording one concrete recipe per statically proven parameter set; multiple parameter sets for one candidate remain separate recipes over one source capsule. The existing launch extractor remains useful as an index and rejection diagnostic, but it is no longer the primary coverage-expansion mechanism. Ordinary tensor addresses, dynamic pruning/hooks, opaque heuristics, unknown grids, aliases, and unknown compiler options remain fail-closed rather than being filled from observed runtime accidents.
+Triton has 30 reviewed recipes and 18 statically inferred recipes. The reviewed set now grows by reading each real launch/warmup/compile context and recording one concrete recipe per statically proven parameter set; multiple parameter sets for one candidate remain separate recipes over one source capsule. The existing launch extractor remains useful as an index and rejection diagnostic, but it is no longer the primary coverage-expansion mechanism. Ordinary tensor addresses, dynamic pruning/hooks, opaque heuristics, unknown grids, aliases, and unknown compiler options remain fail-closed rather than being filled from observed runtime accidents.
 
-An optional report-only rejection taxonomy keeps extractor limitations separate from immutable corpus evidence. Before applying reviewed overlays, automatic analysis partitions the corpus into 20 candidates with inferred recipes, 84 helpers, 180 unclassified candidates, 30 unresolved autotune roots, 441 ordinary runtime-parameter roots, 16 all-constexpr roots, and 31 zero-argument roots. Reviewed batches 1 and 2 raise the tracked source index to 34 candidates with 35 recipes without changing those automatic classifications. At relevant call sites, the largest automatic-rejection classes remain unknown runtime values, unknown grids, non-single-CTA grids, unknown autotune config construction, and dynamic autotune effects. The report lives under ignored `generated/` output and does not alter manifests, recipe IDs, or fingerprints.
+An optional report-only rejection taxonomy keeps extractor limitations separate from immutable corpus evidence. Before applying reviewed overlays, automatic analysis partitions the corpus into 20 candidates with inferred recipes, 84 helpers, 180 unclassified candidates, 30 unresolved autotune roots, 441 ordinary runtime-parameter roots, 16 all-constexpr roots, and 31 zero-argument roots. Reviewed batches 1 through 3 raise the tracked source index to 35 candidates with 48 recipes without changing those automatic classifications. At relevant call sites, the largest automatic-rejection classes remain unknown runtime values, unknown grids, non-single-CTA grids, unknown autotune config construction, and dynamic autotune effects. The report lives under ignored `generated/` output and does not alter manifests, recipe IDs, or fingerprints.
 
 The specialization rules were checked against locked Triton's native binder on 288 CUDA/HIP scalar, pointer, flag, and boundary combinations with zero mismatches. Truthy `jit_cache_hook` probes confirmed that observation returns before compilation, callable-grid evaluation, or launch. Probe output contains no pointer addresses or unredacted cache keys and is not tracked.
 
@@ -85,6 +85,12 @@ A closure instance with `cst=tl.constexpr(42)` exposed that JSON materialization
 
 A fresh Triton-only run over all 35 current recipes completed in 159.5 seconds with 22 `CAPTURED` and 13 `UNSUPPORTED`; an immediate repeat resumed 35/35 SHA-verified results in 0.209 seconds. Generated artifacts remain ignored.
 
+## AI-reviewed Triton curation batch 3
+
+The third batch expands the static pytest parameter list for `test_dtype_tensor.dtype_tensor_kernel` into 13 independent recipes over one source capsule: `int8`, `int16`, `int32`, `int64`, `int1`, `uint8`, `uint16`, `uint32`, `uint64`, `fp16`, `bf16`, `fp32`, and `fp64`. The list is taken directly from locked Triton's `SINT_TYPES + UINT_TYPES + STANDARD_FP_TYPES`; no runtime dtype is guessed.
+
+The worker reconstructs each compiler constexpr only from an explicit `{"__pipeguard_triton_dtype__": name}` marker. All 13 specializations pass source-derived capsule replay parity, strict capture, PGIR normalization, maximal checking, and exhaustive crosscheck as certified empty protocol graphs with `SAFE` verdicts. A fresh Triton-only run over all 48 current recipes completed in 192.1 seconds with 35 `CAPTURED` and 13 `UNSUPPORTED`; an immediate repeat resumed 48/48 SHA-verified results in 0.262 seconds.
+
 ## Frontend-only full run
 
 Run the current concrete recipe set with a 150-second dual-DSL heartbeat:
@@ -102,7 +108,7 @@ Run the current concrete recipe set with a 150-second dual-DSL heartbeat:
   --parse-timeout 60
 ```
 
-The last full dual-DSL baseline predates reviewed batch 1: it selected 606 recipes and completed in 646.7 seconds. The current inventory contains 620 recipes; its next fresh dual-DSL run is deferred until several small reviewed batches have accumulated.
+The last full dual-DSL baseline predates reviewed batch 1: it selected 606 recipes and completed in 646.7 seconds. The current inventory contains 633 recipes; its next fresh dual-DSL run is deferred until several small reviewed batches have accumulated.
 
 | DSL | CAPTURED | PROFILE_SKIPPED | UNSUPPORTED | LOWERING_ERROR | TIMEOUT | IMPORT_ERROR |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -128,4 +134,4 @@ Every normalized PGIR unit in the last full dual-DSL baseline was checked separa
 | TileLang | 72 | 22 | 2 | 0 |
 | Triton | 15 | 0 | 0 | 0 |
 
-All 15 baseline Triton cases matched the exhaustive engine under `crosscheck`; reviewed batches 1 and 2 add seven independently crosschecked `SAFE` cases. The largest TileLang case contains 1,048,576 events: loading took 22.28 seconds and maximal checking took 42.58 seconds, producing a deterministic `DATA_HAZARD` witness. Five 262,144-event cases each loaded in about 5.1--5.9 seconds and checked in about 8.0--8.2 seconds. The memory-only fast path records one canonical transition per event and analytically equivalent singleton held-anchor boundaries; protocol-bearing fixtures continue through incremental held-anchor analysis and reduced exhaustive crosschecks.
+All 15 baseline Triton cases matched the exhaustive engine under `crosscheck`; reviewed batches 1 through 3 add 20 independently crosschecked `SAFE` cases. The largest TileLang case contains 1,048,576 events: loading took 22.28 seconds and maximal checking took 42.58 seconds, producing a deterministic `DATA_HAZARD` witness. Five 262,144-event cases each loaded in about 5.1--5.9 seconds and checked in about 8.0--8.2 seconds. The memory-only fast path records one canonical transition per event and analytically equivalent singleton held-anchor boundaries; protocol-bearing fixtures continue through incremental held-anchor analysis and reduced exhaustive crosschecks.

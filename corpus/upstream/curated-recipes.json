@@ -799,6 +799,604 @@
         "warp_size": 32
       },
       "unresolved": []
+    },
+    {
+      "bindings": {
+        "dtype": {
+          "__pipeguard_triton_dtype__": "int8"
+        }
+      },
+      "candidate_id": "11814f0e8eb5a4ea",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {
+          "dtype": {
+            "__pipeguard_triton_dtype__": "int8"
+          }
+        },
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "dtype": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:7427;pytest-param:dtype=int8",
+      "recipe_id": "11814f0e8eb5a4ea-sm90-L7427-2dd03910",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "dtype": {
+          "__pipeguard_triton_dtype__": "int16"
+        }
+      },
+      "candidate_id": "11814f0e8eb5a4ea",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {
+          "dtype": {
+            "__pipeguard_triton_dtype__": "int16"
+          }
+        },
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "dtype": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:7427;pytest-param:dtype=int16",
+      "recipe_id": "11814f0e8eb5a4ea-sm90-L7427-44f8dd26",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "dtype": {
+          "__pipeguard_triton_dtype__": "int32"
+        }
+      },
+      "candidate_id": "11814f0e8eb5a4ea",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {
+          "dtype": {
+            "__pipeguard_triton_dtype__": "int32"
+          }
+        },
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "dtype": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:7427;pytest-param:dtype=int32",
+      "recipe_id": "11814f0e8eb5a4ea-sm90-L7427-88b630e4",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "dtype": {
+          "__pipeguard_triton_dtype__": "int64"
+        }
+      },
+      "candidate_id": "11814f0e8eb5a4ea",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {
+          "dtype": {
+            "__pipeguard_triton_dtype__": "int64"
+          }
+        },
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "dtype": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:7427;pytest-param:dtype=int64",
+      "recipe_id": "11814f0e8eb5a4ea-sm90-L7427-27796d50",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "dtype": {
+          "__pipeguard_triton_dtype__": "int1"
+        }
+      },
+      "candidate_id": "11814f0e8eb5a4ea",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {
+          "dtype": {
+            "__pipeguard_triton_dtype__": "int1"
+          }
+        },
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "dtype": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:7427;pytest-param:dtype=int1",
+      "recipe_id": "11814f0e8eb5a4ea-sm90-L7427-567cf164",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "dtype": {
+          "__pipeguard_triton_dtype__": "uint8"
+        }
+      },
+      "candidate_id": "11814f0e8eb5a4ea",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {
+          "dtype": {
+            "__pipeguard_triton_dtype__": "uint8"
+          }
+        },
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "dtype": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:7427;pytest-param:dtype=uint8",
+      "recipe_id": "11814f0e8eb5a4ea-sm90-L7427-8df819ca",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "dtype": {
+          "__pipeguard_triton_dtype__": "uint16"
+        }
+      },
+      "candidate_id": "11814f0e8eb5a4ea",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {
+          "dtype": {
+            "__pipeguard_triton_dtype__": "uint16"
+          }
+        },
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "dtype": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:7427;pytest-param:dtype=uint16",
+      "recipe_id": "11814f0e8eb5a4ea-sm90-L7427-380e65ff",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "dtype": {
+          "__pipeguard_triton_dtype__": "uint32"
+        }
+      },
+      "candidate_id": "11814f0e8eb5a4ea",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {
+          "dtype": {
+            "__pipeguard_triton_dtype__": "uint32"
+          }
+        },
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "dtype": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:7427;pytest-param:dtype=uint32",
+      "recipe_id": "11814f0e8eb5a4ea-sm90-L7427-bcbcbfb5",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "dtype": {
+          "__pipeguard_triton_dtype__": "uint64"
+        }
+      },
+      "candidate_id": "11814f0e8eb5a4ea",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {
+          "dtype": {
+            "__pipeguard_triton_dtype__": "uint64"
+          }
+        },
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "dtype": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:7427;pytest-param:dtype=uint64",
+      "recipe_id": "11814f0e8eb5a4ea-sm90-L7427-d7e7a035",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "dtype": {
+          "__pipeguard_triton_dtype__": "fp16"
+        }
+      },
+      "candidate_id": "11814f0e8eb5a4ea",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {
+          "dtype": {
+            "__pipeguard_triton_dtype__": "fp16"
+          }
+        },
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "dtype": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:7427;pytest-param:dtype=fp16",
+      "recipe_id": "11814f0e8eb5a4ea-sm90-L7427-ae2019d3",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "dtype": {
+          "__pipeguard_triton_dtype__": "bf16"
+        }
+      },
+      "candidate_id": "11814f0e8eb5a4ea",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {
+          "dtype": {
+            "__pipeguard_triton_dtype__": "bf16"
+          }
+        },
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "dtype": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:7427;pytest-param:dtype=bf16",
+      "recipe_id": "11814f0e8eb5a4ea-sm90-L7427-c0df3d2d",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "dtype": {
+          "__pipeguard_triton_dtype__": "fp32"
+        }
+      },
+      "candidate_id": "11814f0e8eb5a4ea",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {
+          "dtype": {
+            "__pipeguard_triton_dtype__": "fp32"
+          }
+        },
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "dtype": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:7427;pytest-param:dtype=fp32",
+      "recipe_id": "11814f0e8eb5a4ea-sm90-L7427-b7b342e1",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "dtype": {
+          "__pipeguard_triton_dtype__": "fp64"
+        }
+      },
+      "candidate_id": "11814f0e8eb5a4ea",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {
+          "dtype": {
+            "__pipeguard_triton_dtype__": "fp64"
+          }
+        },
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "dtype": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:7427;pytest-param:dtype=fp64",
+      "recipe_id": "11814f0e8eb5a4ea-sm90-L7427-a1250dbb",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
     }
   ],
   "schema_version": "pipeguard-upstream-curated-recipes-v1"
