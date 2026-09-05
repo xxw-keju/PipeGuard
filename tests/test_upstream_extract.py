@@ -109,6 +109,37 @@ def test_case(value):
     assert "pipeguard_bindings['scale']" in capsule
 
 
+def test_dependency_nodes_exclude_helper_and_class_parameters():
+    source = """import triton
+import triton.language as tl
+
+@triton.jit
+def helper(x):
+    return x
+
+@triton.aggregate
+class Box:
+    value: tl.tensor
+
+    def __init__(self, x):
+        self.value = x
+
+def test_case():
+    @triton.jit
+    def kernel():
+        value = helper(1)
+        box = Box(value)
+"""
+    tree, candidates = _discover("triton", source)
+    candidate = next(item for item in candidates if item.qualname == "test_case.kernel")
+    dependencies, unresolved = dependency_nodes(candidate, tree)
+    assert unresolved == set()
+    assert [node.name for node in dependencies if isinstance(node, (ast.FunctionDef, ast.ClassDef))] == [
+        "helper",
+        "Box",
+    ]
+
+
 def test_triton_recipe_requires_literal_astsource_and_explicit_sm90_target():
     source = """\
 import triton

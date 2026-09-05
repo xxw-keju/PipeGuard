@@ -286,6 +286,16 @@ def node_loaded_names(node: ast.AST) -> set[str]:
     return loaded - set(dir(builtins))
 
 
+def provider_free_names(node: ast.stmt) -> set[str]:
+    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+        return function_free_names(node)
+    if isinstance(node, ast.ClassDef):
+        visitor = NameUseVisitor()
+        visitor.visit(node)
+        return visitor.loaded - visitor.bound - set(dir(builtins))
+    return node_loaded_names(node) - bound_names(node)
+
+
 def module_providers(tree: ast.Module) -> dict[str, ast.stmt]:
     providers: dict[str, ast.stmt] = {}
     for statement in tree.body:
@@ -314,7 +324,7 @@ def dependency_nodes(candidate: Candidate, tree: ast.Module) -> tuple[list[ast.s
         key = id(provider)
         if key not in selected:
             selected[key] = provider
-            queue.extend(node_loaded_names(provider) - bound_names(provider))
+            queue.extend(provider_free_names(provider))
     for statement in tree.body:
         if isinstance(statement, ast.ImportFrom) and statement.module == "__future__":
             selected[id(statement)] = statement
