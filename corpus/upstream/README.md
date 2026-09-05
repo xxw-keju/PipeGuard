@@ -52,13 +52,13 @@ The deterministic source inventory at these locks contains:
 | DSL | Source files | Candidates | Lowerable recipes |
 | --- | ---: | ---: | ---: |
 | TileLang | 643 | 2,054 | 585 |
-| Triton | 135 | 802 | 197 |
+| Triton | 135 | 802 | 313 |
 
 TileLang has 583 static profile-specialization recipes plus two reviewed recipes. Static classification rejects 18 PrimFuncs that explicitly call Blackwell `tcgen05` operations and two PrimFuncs defined inside expected-failure scopes. Source-directory names do not substitute for operation evidence: 13 dependency-closed PrimFuncs under AMD/CPU test directories are attempted under the SM90 profile, producing six additional normalized PGIR programs while unknown effects and control still fail closed.
 
-Triton has 178 reviewed recipes and 19 statically inferred recipes. The reviewed set now grows by reading each real launch/warmup/compile context and recording one concrete recipe per statically proven parameter set; multiple parameter sets for one candidate remain separate recipes over one source capsule. The existing launch extractor remains useful as an index and rejection diagnostic, but it is no longer the primary coverage-expansion mechanism. Ordinary tensor addresses, dynamic pruning/hooks, opaque heuristics, unknown grids, aliases, and unknown compiler options remain fail-closed rather than being filled from observed runtime accidents.
+Triton has 294 reviewed recipes and 19 statically inferred recipes. The reviewed set now grows by reading each real launch/warmup/compile context and recording one concrete recipe per statically proven parameter set; multiple parameter sets for one candidate remain separate recipes over one source capsule. The existing launch extractor remains useful as an index and rejection diagnostic, but it is no longer the primary coverage-expansion mechanism. Ordinary tensor addresses, dynamic pruning/hooks, opaque heuristics, unknown grids, aliases, and unknown compiler options remain fail-closed rather than being filled from observed runtime accidents.
 
-An optional report-only rejection taxonomy keeps extractor limitations separate from immutable corpus evidence. Before applying reviewed overlays, automatic analysis partitions the corpus into 20 candidates with inferred recipes, 84 helpers, 180 unclassified candidates, 30 unresolved autotune roots, 441 ordinary runtime-parameter roots, 16 all-constexpr roots, and 31 zero-argument roots. Reviewed batches 1 through 10 plus the corrected dependency slice raise the tracked source index to 100 candidates with 197 recipes. The slicing correction restores one previously inferred test_tuple.py recipe whose helper parameters had been misclassified as unresolved; it does not infer launch values. At relevant call sites, the largest automatic-rejection classes remain unknown runtime values, unknown grids, non-single-CTA grids, unknown autotune config construction, and dynamic autotune effects. The report lives under ignored `generated/` output and does not alter manifests, recipe IDs, or fingerprints.
+An optional report-only rejection taxonomy keeps extractor limitations separate from immutable corpus evidence. Before applying reviewed overlays, automatic analysis partitions the corpus into 20 candidates with inferred recipes, 84 helpers, 180 unclassified candidates, 30 unresolved autotune roots, 441 ordinary runtime-parameter roots, 16 all-constexpr roots, and 31 zero-argument roots. Reviewed batches 1 through 11 plus the corrected dependency slice raise the tracked source index to 102 candidates with 313 recipes. The slicing correction restores one previously inferred test_tuple.py recipe whose helper parameters had been misclassified as unresolved; it does not infer launch values. At relevant call sites, the largest automatic-rejection classes remain unknown runtime values, unknown grids, non-single-CTA grids, unknown autotune config construction, and dynamic autotune effects. The report lives under ignored `generated/` output and does not alter manifests, recipe IDs, or fingerprints.
 
 The specialization rules were checked against locked Triton's native binder on 288 CUDA/HIP scalar, pointer, flag, and boundary combinations with zero mismatches. Truthy `jit_cache_hook` probes confirmed that observation returns before compilation, callable-grid evaluation, or launch. Probe output contains no pointer addresses or unredacted cache keys and is not tracked.
 
@@ -135,6 +135,12 @@ The tenth batch adds another 47 launch parameter sets over 14 `test_core.py` can
 
 Triton capture now classifies `tt.join`, `tt.split`, and `tt.unsplat` as value-only pure operations only when none of their operands or results carries pointer, memdesc, or tensor-descriptor provenance. Dedicated tests verify a pure join, a split/unsplat chain, and fail-closed pointer join. This restores three interleave recipes without weakening alias analysis. After the rule, 13 batch recipes produce PGIR and crosscheck `SAFE`; the other 34 terminate at explicit two- or three-base alias obligations. Native parity succeeds for all 47. The persisted batch run is under `corpus/upstream/generated/triton-test-core-b10/` and the focused operation-rule run is `corpus/upstream/generated/triton-value-pure-rule/f2d9348c4a318e6e`.
 
+## AI-reviewed Triton curation batch 11
+
+The eleventh batch expands two complete, finite pytest matrices from `test_core.py` into 116 reviewed recipes: all 96 combinations of two dtypes, two shapes, and 24 permutations for `test_trans_4d`, plus all 20 rank/transpose combinations for `test_dot_multidim`. Every recipe uses the source launch's single-CTA grid; the 4-D transpose recipes also retain `num_warps=8`. No autotune winner or runtime value is inferred.
+
+All 116 recipes pass native source/capsule TTGIR parity in the persisted run `corpus/upstream/generated/triton-test-core-b11/run/9da54157795da9ca`. Strict capture rejects all of them explicitly: 96 descriptor-based transpose variants contain unsupported `ttg.global_scratch_alloc`, while the 20 multidimensional dot variants require unresolved alias relations among three external pointer bases. These are frontend/profile gaps after successful native lowering, not missing specialization parameters or parser crashes.
+
 ## Frontend-only full run
 
 Run the current concrete recipe set with a 150-second dual-DSL heartbeat:
@@ -152,7 +158,7 @@ Run the current concrete recipe set with a 150-second dual-DSL heartbeat:
   --parse-timeout 60
 ```
 
-The last full dual-DSL baseline predates reviewed batch 1: it selected 606 recipes and completed in 646.7 seconds. The current inventory contains 782 recipes; its next fresh dual-DSL run follows the focused `test_core.py` checkpoints.
+The last full dual-DSL baseline predates reviewed batch 1: it selected 606 recipes and completed in 646.7 seconds. The current inventory contains 898 recipes; its next fresh dual-DSL run follows the focused `test_core.py` checkpoints.
 
 | DSL | CAPTURED | PROFILE_SKIPPED | UNSUPPORTED | LOWERING_ERROR | TIMEOUT | IMPORT_ERROR |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |

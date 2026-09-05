@@ -1,0 +1,77 @@
+{
+  "bindings": {
+    "in_shape1": 2,
+    "in_shape2": 2,
+    "in_shape3": 8,
+    "in_shape4": 64,
+    "ou_shape1": 64,
+    "ou_shape2": 8,
+    "ou_shape3": 2,
+    "ou_shape4": 2,
+    "trans1": 3,
+    "trans2": 2,
+    "trans3": 1,
+    "trans4": 0
+  },
+  "candidate_id": "f9f2c78e0785fd72",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "in_shape1": 2,
+      "in_shape2": 2,
+      "in_shape3": 8,
+      "in_shape4": 64,
+      "ou_shape1": 64,
+      "ou_shape2": 8,
+      "ou_shape3": 2,
+      "ou_shape4": 2,
+      "trans1": 3,
+      "trans2": 2,
+      "trans3": 1,
+      "trans4": 0
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 8
+    },
+    "signature": {
+      "In": "*i32",
+      "Out": "*i32",
+      "in_shape1": "constexpr",
+      "in_shape2": "constexpr",
+      "in_shape3": "constexpr",
+      "in_shape4": "constexpr",
+      "ou_shape1": "constexpr",
+      "ou_shape2": "constexpr",
+      "ou_shape3": "constexpr",
+      "ou_shape4": "constexpr",
+      "trans1": "constexpr",
+      "trans2": "constexpr",
+      "trans3": "constexpr",
+      "trans4": "constexpr"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:3721;pytest-param:dtype_str=int32,shape=(2, 2, 8, 64),perm=(3, 2, 1, 0)",
+  "recipe_id": "f9f2c78e0785fd72-sm90-L3721-40047093",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}
