@@ -51,6 +51,11 @@ class TritonCapture:
         "ttg.memdesc_index",
     }
     _CONTAINERS = {"builtin.module", "tt.func", "tt.return", "scf.yield"}
+    _VALUE_ONLY_PURE_OPERATIONS = {
+        "tt.join",
+        "tt.split",
+        "tt.unsplat",
+    }
     _PURE_OPERATIONS = {
         "arith.addi",
         "arith.andi",
@@ -1379,6 +1384,33 @@ class TritonCapture:
             elements, _width = self._value_extent(operation.get_result(0))
             self.static_values[operation.get_result(0).id()] = tuple(value for _ in range(elements))
 
+    def _execute_value_only_pure(self, operation: Any, index: int) -> None:
+        values = [
+            operation.get_operand(position)
+            for position in range(operation.get_num_operands())
+        ] + [
+            operation.get_result(position)
+            for position in range(operation.get_num_results())
+        ]
+        address_types = [
+            str(value.get_type())
+            for value in values
+            if any(
+                marker in str(value.get_type())
+                for marker in ("!tt.ptr<", "!ttg.memdesc<", "!tt.tensordesc<")
+            )
+        ]
+        if address_types:
+            raise CaptureError(
+                "TRITON_POINTER_PROVENANCE_UNRESOLVED",
+                "value-only operation cannot carry pointer or descriptor provenance",
+                {
+                    "operation": operation.get_name(),
+                    "operation_index": index,
+                    "types": address_types,
+                },
+            )
+
     def _evaluate_pure(self, operation: Any, index: int) -> None:
         if operation.get_num_results() != 1:
             return
@@ -1880,6 +1912,10 @@ class TritonCapture:
             return
         if name.startswith(("arith.", "math.")) or name in self._PURE_OPERATIONS:
             self._evaluate_pure(operation, index)
+            self.elided_nodes += 1
+            return
+        if name in self._VALUE_ONLY_PURE_OPERATIONS:
+            self._execute_value_only_pure(operation, index)
             self.elided_nodes += 1
             return
         if name not in self._SUPPORTED:

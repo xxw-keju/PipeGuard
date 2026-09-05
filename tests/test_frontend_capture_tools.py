@@ -398,6 +398,77 @@ def test_triton_unknown_effect_is_not_misclassified_as_empty_protocol(tmp_path: 
     assert json.loads(process.stdout)["diagnostics"][0]["code"] == "TRITON_OPERATION_UNSUPPORTED"
 
 
+def _join_ttgir(tmp_path: Path, element_type: str, *, shared_input: bool = False) -> Path:
+    path = tmp_path / "join.ttgir.mlir"
+    arguments = f"%x: {element_type}" if shared_input else f"%x: {element_type}, %y: {element_type}"
+    second_input = "%x" if shared_input else "%y"
+    path.write_text(f"""\
+#blocked = #ttg.blocked<{{sizePerThread = [1], threadsPerWarp = [32], warpsPerCTA = [4], order = [0]}}>
+#blocked1 = #ttg.blocked<{{sizePerThread = [1, 2], threadsPerWarp = [32, 1], warpsPerCTA = [4, 1], order = [1, 0]}}>
+module attributes {{"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:90", "ttg.threads-per-warp" = 32 : i32}} {{
+  tt.func public @value_join({arguments}) {{
+    %a = tt.splat %x : {element_type} -> tensor<1x{element_type}, #blocked>
+    %b = tt.splat {second_input} : {element_type} -> tensor<1x{element_type}, #blocked>
+    %joined = tt.join %a, %b : tensor<1x{element_type}, #blocked> -> tensor<1x2x{element_type}, #blocked1>
+    tt.return
+  }}
+}}
+""")
+    return path
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_value_join_is_protocol_pure(tmp_path: Path):
+    fixture = _join_ttgir(tmp_path, "i32")
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "value-join-pure",
+    )
+    assert snapshot["operations"] == []
+    assert snapshot["extraction"]["classified_nodes"] == snapshot["extraction"]["executable_nodes_seen"]
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_value_split_and_unsplat_are_protocol_pure(tmp_path: Path):
+    fixture = tmp_path / "split.ttgir.mlir"
+    fixture.write_text("""\
+#blocked = #ttg.blocked<{sizePerThread = [1], threadsPerWarp = [32], warpsPerCTA = [4], order = [0]}>
+#blocked1 = #ttg.blocked<{sizePerThread = [1, 2], threadsPerWarp = [32, 1], warpsPerCTA = [4, 1], order = [1, 0]}>
+module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:90", "ttg.threads-per-warp" = 32 : i32} {
+  tt.func public @value_split() {
+    %pair = arith.constant dense<[[1, 2]]> : tensor<1x2xi32, #blocked1>
+    %left, %right = tt.split %pair : tensor<1x2xi32, #blocked1> -> tensor<1xi32, #blocked>
+    %left_scalar = tt.unsplat %left : tensor<1xi32, #blocked>
+    %right_scalar = tt.unsplat %right : tensor<1xi32, #blocked>
+    tt.return
+  }
+}
+""")
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "value-split-unsplat-pure",
+    )
+    assert snapshot["operations"] == []
+    assert snapshot["extraction"]["classified_nodes"] == snapshot["extraction"]["executable_nodes_seen"]
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_pointer_join_fails_closed(tmp_path: Path):
+    fixture = _join_ttgir(tmp_path, "!tt.ptr<i32>", shared_input=True)
+    process = _run_capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "pointer-join-unsupported",
+    )
+    assert process.returncode == 2
+    assert json.loads(process.stdout)["diagnostics"][0]["code"] == "TRITON_POINTER_PROVENANCE_UNRESOLVED"
+
+
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
 def test_triton_scalar_pointer_argument_tracks_direct_and_static_addptr_access(tmp_path: Path):
     fixture = _scalar_pointer_ttgir(
