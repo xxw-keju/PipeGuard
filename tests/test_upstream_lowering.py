@@ -67,7 +67,9 @@ def test_curated_recipe_overlay_and_generated_recipes_validate():
         json.loads((CORPUS / "triton-61c02bcd" / "source-index.json").read_text()),
     ]
     lowerable_total = sum(item["lowerable_recipes"] for index in indexes for item in index["candidates"])
-    assert lowerable_total >= len(overlay["recipes"]) == 5
+    recipe_ids = [recipe["recipe_id"] for recipe in overlay["recipes"]]
+    assert lowerable_total >= len(overlay["recipes"]) >= 5
+    assert len(recipe_ids) == len(set(recipe_ids))
     indexed = {path.name for index in indexes for item in index["candidates"] for path in map(Path, item["recipe_paths"])}
     assert all(f"{recipe['recipe_id']}.json" in indexed for recipe in overlay["recipes"])
 
