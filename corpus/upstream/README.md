@@ -52,11 +52,15 @@ The deterministic source inventory at these locks contains:
 | DSL | Source files | Candidates | Lowerable recipes |
 | --- | ---: | ---: | ---: |
 | TileLang | 643 | 2,054 | 585 |
-| Triton | 135 | 802 | 14 |
+| Triton | 135 | 802 | 21 |
 
 TileLang has 583 static profile-specialization recipes plus two reviewed recipes. Static classification rejects 18 PrimFuncs that explicitly call Blackwell `tcgen05` operations and two PrimFuncs defined inside expected-failure scopes. Source-directory names do not substitute for operation evidence: 13 dependency-closed PrimFuncs under AMD/CPU test directories are attempted under the SM90 profile, producing six additional normalized PGIR programs while unknown effects and control still fail closed.
 
-Triton has three reviewed recipes, three recipes inferred from exact literal `ASTSource` plus `GPUTarget("cuda", 90, 32)` compile sites, and eight profile-derived all-constexpr single-CTA launch recipes. Dynamic grids, runtime pointer specialization attributes, autotune winners, aliases, and unknown compiler options are not guessed.
+Triton has three reviewed recipes, three recipes inferred from exact literal `ASTSource` plus `GPUTarget("cuda", 90, 32)` compile sites, and 15 profile-derived launch recipes. The launch extractor now reproduces the locked Triton scalar specialization rules, including integer type boundaries, value `1`, divisibility attributes, `do_not_specialize`, `do_not_specialize_on_alignment`, positional dtype-only warmup, closed single-CTA grid expressions, finite literal `triton.Config` expansion, and closed pure heuristics. When an entire literal autotune set is statically closed, every configuration is represented as a possible specialization; no benchmark winner is guessed. Ordinary tensor addresses, dynamic pruning/hooks, opaque heuristics, unknown grids, aliases, and unknown compiler options remain fail-closed.
+
+An optional report-only rejection taxonomy keeps extractor limitations separate from immutable corpus evidence. The current structural partition is 20 candidates with recipes, 84 helpers, 180 unclassified candidates, 30 unresolved autotune roots, 441 ordinary runtime-parameter roots, 16 all-constexpr roots, and 31 zero-argument roots. At relevant call sites, the largest remaining unique-candidate classes are unknown runtime values (111), unknown grids (65), non-single-CTA grids (26), unknown autotune config construction (11), and dynamic autotune effects (5). The report lives under ignored `generated/` output and does not alter manifests, recipe IDs, or fingerprints.
+
+The specialization rules were checked against locked Triton's native binder on 288 CUDA/HIP scalar, pointer, flag, and boundary combinations with zero mismatches. Truthy `jit_cache_hook` probes confirmed that observation returns before compilation, callable-grid evaluation, or launch. Probe output contains no pointer addresses or unredacted cache keys and is not tracked.
 
 ## Frontend-only full run
 
@@ -68,19 +72,19 @@ Run the current concrete recipe set with a 150-second dual-DSL heartbeat:
   --tilelang-root /mnt/project_dft/xuwen/PipeGuard-asplos/tilelang \
   --triton-root /mnt/project_dft/xuwen/PipeGuard-asplos/triton \
   --triton-ptxas /usr/local/cuda-12.9/bin/ptxas \
-  --output corpus/upstream/generated/final-current-all \
+  --output corpus/upstream/generated/final-specialization-run \
   --jobs 6 \
   --progress-interval 150 \
   --timeout 300 \
   --parse-timeout 60
 ```
 
-The fresh fingerprinted run selected 599 recipes and completed in 652.6 seconds:
+The fresh fingerprinted run selected 606 recipes and completed in 646.7 seconds:
 
 | DSL | CAPTURED | PROFILE_SKIPPED | UNSUPPORTED | LOWERING_ERROR | TIMEOUT | IMPORT_ERROR |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | TileLang | 95 | 51 | 146 | 292 | 1 | 0 |
-| Triton | 12 | 0 | 2 | 0 | 0 | 0 |
+| Triton | 15 | 0 | 6 | 0 | 0 | 0 |
 
 These counts have distinct meanings:
 
@@ -88,9 +92,9 @@ These counts have distinct meanings:
 - 51 TileLang recipes were outside the selected parsing profile: 44 required multiple CTAs and seven lowered to no device kernel.
 - 146 TileLang raw-IR cases reached capture and failed closed. The largest recognizer classes were unknown nested expression effects (41), unresolved static `Bind` values (24), unresolved participants (22), dynamic control (15), and unsupported barrier/address/attribute forms. Unknown dtype, alias, proxy, region, and TMA evidence also remain explicit failures.
 - One TileLang native worker exceeded 300 seconds. No PGIR parser exceeded its isolated 60-second timeout.
-- The two Triton failures both used multiple external pointer bases without SHA-bound alias evidence. Scalar single-pointer accesses and statically certified empty protocol graphs are captured.
+- The six Triton failures remain explicit: two use multiple external pointer bases without SHA-bound alias evidence, and four preserve runtime scalar loop/control values as dynamic SSA under native specialization. The extractor does not rewrite those runtime values as constexpr merely because one launch supplied a literal. Scalar cases whose native TTGIR is statically closed, single-pointer accesses, and certified empty protocol graphs are captured.
 
-In total, 302 recipes produced 303 raw device-IR units. The 107 captured recipes emitted 108 strict snapshots and 108 normalized PGIR units because one recipe contains two device kernels. `pipeguard.checker` remained unloaded throughout the runner. Repeating the command validated every fingerprint and artifact hash and resumed all 599 results in 4.75 seconds.
+In total, 309 recipes produced 310 raw device-IR units. The 110 captured recipes emitted 111 strict snapshots and 111 normalized PGIR units because one recipe contains two device kernels. `pipeguard.checker` remained unloaded throughout the runner. Repeating the command validated every fingerprint and artifact hash and resumed all 606 results in 5.92 seconds.
 
 ## Checker verification
 
@@ -99,6 +103,6 @@ Every normalized PGIR unit was checked separately with the maximal engine after 
 | DSL | SAFE | DATA_HAZARD | SYNC_HAZARD | Timeout/error |
 | --- | ---: | ---: | ---: | ---: |
 | TileLang | 72 | 22 | 2 | 0 |
-| Triton | 12 | 0 | 0 | 0 |
+| Triton | 15 | 0 | 0 | 0 |
 
-All 12 Triton cases also matched the exhaustive engine under `crosscheck`. The largest TileLang case contains 1,048,576 events: loading took 22.28 seconds and maximal checking took 42.58 seconds, producing a deterministic `DATA_HAZARD` witness. Five 262,144-event cases each loaded in about 5.1--5.9 seconds and checked in about 8.0--8.2 seconds. The memory-only fast path records one canonical transition per event and analytically equivalent singleton held-anchor boundaries; protocol-bearing fixtures continue through incremental held-anchor analysis and reduced exhaustive crosschecks.
+All 15 Triton cases also matched the exhaustive engine under `crosscheck`. The largest TileLang case contains 1,048,576 events: loading took 22.28 seconds and maximal checking took 42.58 seconds, producing a deterministic `DATA_HAZARD` witness. Five 262,144-event cases each loaded in about 5.1--5.9 seconds and checked in about 8.0--8.2 seconds. The memory-only fast path records one canonical transition per event and analytically equivalent singleton held-anchor boundaries; protocol-bearing fixtures continue through incremental held-anchor analysis and reduced exhaustive crosschecks.
