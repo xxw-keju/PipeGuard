@@ -22,7 +22,13 @@
       "properties": {
         "architecture": {"const": "sm90"}, "warp_size": {"const": 32},
         "cta_threads": {"type": "integer", "minimum": 1}, "shared_memory_bytes": {"type": "integer", "minimum": 0},
-        "grid_scope": {"const": "single_cta"}
+        "grid_scope": {"const": "single_cta"},
+        "launch_grid": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "integer", "minimum": 1}},
+        "selected_cta": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "integer", "minimum": 0}}
+      },
+      "dependentRequired": {
+        "launch_grid": ["selected_cta"],
+        "selected_cta": ["launch_grid"]
       }
     },
     "assumptions": {

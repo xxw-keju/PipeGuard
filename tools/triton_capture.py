@@ -110,7 +110,8 @@ class TritonCapture:
         source: str,
         command: str,
         source_ir_sha256: str,
-        grid_ctas: int,
+        launch_grid: tuple[int, int, int],
+        selected_cta: tuple[int, int, int],
         binding_evidence: dict[str, Any] | None = None,
     ):
         self.triton = triton
@@ -118,7 +119,8 @@ class TritonCapture:
         self.source = source
         self.command = command
         self.source_ir_sha256 = source_ir_sha256
-        self.grid_ctas = grid_ctas
+        self.launch_grid = launch_grid
+        self.selected_cta = selected_cta
         self.binding_evidence = binding_evidence or {}
         self.unit_attributes = {
             int(index): set(attributes)
@@ -128,12 +130,6 @@ class TritonCapture:
             int(index): attributes
             for index, attributes in self.binding_evidence.get("array_attributes", {}).items()
         }
-        if grid_ctas != 1:
-            raise CaptureError(
-                "TRITON_MULTI_CTA_UNSUPPORTED",
-                "PGIR-v1 capture requires explicit single-CTA launch evidence",
-                {"grid_ctas": grid_ctas},
-            )
         self.operations: list[Any] = []
         module.walk(self.operations.append)
         functions = [operation for operation in self.operations if operation.get_name() == "tt.func"]
@@ -1424,7 +1420,7 @@ class TritonCapture:
                     "tt.get_program_id axis is not static",
                     {"operation_index": index, "axis": axis},
                 )
-            self.static_values[result.id()] = 0
+            self.static_values[result.id()] = self.selected_cta[axis]
             return
         if name == "tt.get_num_programs":
             axis = operation.get_int_attr("axis")
@@ -1434,7 +1430,7 @@ class TritonCapture:
                     "tt.get_num_programs axis is not static",
                     {"operation_index": index, "axis": axis},
                 )
-            self.static_values[result.id()] = 1
+            self.static_values[result.id()] = self.launch_grid[axis]
             return
         if operation.get_num_operands() == 1:
             operand_id = operation.get_operand(0).id()
@@ -2084,7 +2080,7 @@ class TritonCapture:
                 "id": "sm90-single-cta-static-v1",
                 "source_ir_sha256": self.source_ir_sha256,
                 "compiler_ir_stage": "post-ttgir-pipeline",
-                "target_rule": "triton-cuda-90-explicit-grid-v1",
+                "target_rule": "triton-cuda-90-selected-cta-grid-v1",
             },
             "producer": {
                 "dsl_version": str(self.triton.__version__),
@@ -2099,6 +2095,8 @@ class TritonCapture:
                 "cta_threads": self.cta_threads,
                 "shared_memory_bytes": 0,
                 "grid_scope": "single_cta",
+                "launch_grid": list(self.launch_grid),
+                "selected_cta": list(self.selected_cta),
             },
             "extraction": {
                 "complete": True,
@@ -2119,9 +2117,9 @@ class TritonCapture:
                 "allocation_identity_evidence": "ttgir-ssa-definition-identity-v1",
                 "alias_evidence": "single-external-base-v1",
                 "participant_evidence": (
-                    "ttgir-sha-bound-warp-partitions-plus-grid-cli-v1"
+                    "ttgir-sha-bound-warp-partitions-plus-selected-grid-v1"
                     if len(self.actor_specs) > 1
-                    else "ttgir-static-warp-geometry-plus-grid-cli-v1"
+                    else "ttgir-static-warp-geometry-plus-selected-grid-v1"
                 ),
             },
             "actors": [self.actor_specs[key] for key in sorted(self.actor_specs)],
@@ -2132,12 +2130,65 @@ class TritonCapture:
         }
 
 
+def _normalize_grid_selection(
+    launch_grid: list[int] | tuple[int, ...] | None,
+    grid_ctas: int | None,
+    selected_cta: list[int] | tuple[int, ...],
+) -> tuple[tuple[int, int, int], tuple[int, int, int]]:
+    if launch_grid is None:
+        if isinstance(grid_ctas, bool) or not isinstance(grid_ctas, int) or grid_ctas < 1:
+            raise CaptureError(
+                "TRITON_GRID_EVIDENCE_INVALID",
+                "capture requires a finite positive launch grid",
+                {"grid_ctas": grid_ctas},
+            )
+        launch_grid = [grid_ctas]
+    if (
+        not isinstance(launch_grid, (list, tuple))
+        or not 1 <= len(launch_grid) <= 3
+        or any(isinstance(extent, bool) or not isinstance(extent, int) or extent < 1 for extent in launch_grid)
+    ):
+        raise CaptureError(
+            "TRITON_GRID_EVIDENCE_INVALID",
+            "launch grid must contain one to three positive integer extents",
+            {"launch_grid": launch_grid},
+        )
+    normalized_grid = tuple((*launch_grid, *(1 for _ in range(3 - len(launch_grid)))))
+    total_ctas = normalized_grid[0] * normalized_grid[1] * normalized_grid[2]
+    if grid_ctas is not None and grid_ctas != total_ctas:
+        raise CaptureError(
+            "TRITON_GRID_EVIDENCE_INVALID",
+            "launch grid dimensions disagree with the recorded total CTA count",
+            {"launch_grid": list(normalized_grid), "grid_ctas": grid_ctas},
+        )
+    if (
+        not isinstance(selected_cta, (list, tuple))
+        or len(selected_cta) != 3
+        or any(isinstance(index, bool) or not isinstance(index, int) or index < 0 for index in selected_cta)
+    ):
+        raise CaptureError(
+            "TRITON_CTA_SELECTION_INVALID",
+            "selected CTA must contain three nonnegative integer coordinates",
+            {"selected_cta": selected_cta},
+        )
+    normalized_cta = tuple(selected_cta)
+    if any(index >= extent for index, extent in zip(normalized_cta, normalized_grid)):
+        raise CaptureError(
+            "TRITON_CTA_SELECTION_INVALID",
+            "selected CTA is outside the finite launch grid",
+            {"launch_grid": list(normalized_grid), "selected_cta": list(normalized_cta)},
+        )
+    return normalized_grid, normalized_cta
+
+
 def capture_file(
     path: Path,
     source: str,
     command: str,
-    grid_ctas: int,
+    grid_ctas: int | None = None,
     binding_evidence_path: Path | None = None,
+    launch_grid: list[int] | tuple[int, ...] | None = None,
+    selected_cta: list[int] | tuple[int, ...] = (0, 0, 0),
 ) -> dict[str, Any]:
     try:
         import triton
@@ -2162,6 +2213,11 @@ def capture_file(
             {"path": str(path), "error": str(error)},
         ) from error
     source_digest = hashlib.sha256(source_ir).hexdigest()
+    normalized_grid, normalized_cta = _normalize_grid_selection(
+        launch_grid,
+        grid_ctas,
+        selected_cta,
+    )
     binding_evidence: dict[str, Any] = {}
     if binding_evidence_path is not None:
         try:
@@ -2204,7 +2260,8 @@ def capture_file(
             source,
             command,
             source_digest,
-            grid_ctas,
+            normalized_grid,
+            normalized_cta,
             binding_evidence,
         ).capture()
     except CaptureError:
@@ -2223,9 +2280,22 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--source", required=True, help="stable source/provenance label")
     parser.add_argument(
         "--grid-ctas",
-        required=True,
         type=int,
-        help="static total CTA count in the launch grid; PGIR-v1 requires 1",
+        help="legacy static total CTA count; interpreted as a one-dimensional launch grid",
+    )
+    parser.add_argument(
+        "--launch-grid",
+        type=int,
+        nargs="+",
+        help="one to three exact launch-grid extents",
+    )
+    parser.add_argument(
+        "--selected-cta",
+        type=int,
+        nargs=3,
+        default=(0, 0, 0),
+        metavar=("X", "Y", "Z"),
+        help="CTA coordinate to analyze; defaults to 0 0 0",
     )
     parser.add_argument(
         "--binding-evidence",
@@ -2239,8 +2309,10 @@ def main(argv: list[str] | None = None) -> int:
             args.input,
             args.source,
             " ".join(sys.argv),
-            args.grid_ctas,
-            args.binding_evidence,
+            grid_ctas=args.grid_ctas,
+            binding_evidence_path=args.binding_evidence,
+            launch_grid=args.launch_grid,
+            selected_cta=args.selected_cta,
         )
     except CaptureError as error:
         print(json.dumps({

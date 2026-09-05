@@ -255,7 +255,7 @@ def validate_snapshot_envelope(
     require_exact_keys(
         snapshot["target"],
         {"architecture", "warp_size", "cta_threads", "shared_memory_bytes", "grid_scope"},
-        set(),
+        {"launch_grid", "selected_cta"} if is_v2 else set(),
         "/target",
     )
     target = snapshot["target"]
@@ -276,6 +276,31 @@ def validate_snapshot_envelope(
             f"{dsl} snapshot has an invalid static CTA size",
             {"cta_threads": cta_threads},
         )
+    has_launch_grid = "launch_grid" in target
+    has_selected_cta = "selected_cta" in target
+    if has_launch_grid != has_selected_cta:
+        raise FrontendError(
+            "FRONTEND_TARGET_UNSUPPORTED",
+            f"{dsl} selected-CTA evidence must include both launch grid and CTA coordinate",
+            {"target": target},
+        )
+    if has_launch_grid:
+        launch_grid = target["launch_grid"]
+        selected_cta = target["selected_cta"]
+        if (
+            not isinstance(launch_grid, list)
+            or len(launch_grid) != 3
+            or any(isinstance(extent, bool) or not isinstance(extent, int) or extent < 1 for extent in launch_grid)
+            or not isinstance(selected_cta, list)
+            or len(selected_cta) != 3
+            or any(isinstance(index, bool) or not isinstance(index, int) or index < 0 for index in selected_cta)
+            or any(index >= extent for index, extent in zip(selected_cta, launch_grid))
+        ):
+            raise FrontendError(
+                "FRONTEND_TARGET_UNSUPPORTED",
+                f"{dsl} snapshot has invalid selected-CTA launch evidence",
+                {"launch_grid": launch_grid, "selected_cta": selected_cta},
+            )
     extraction_fields = _BASE_EXTRACTION_FIELDS | (_V2_EXTRACTION_FIELDS if is_v2 else set())
     require_exact_keys(snapshot["extraction"], extraction_fields, set(), "/extraction")
     extraction = snapshot["extraction"]

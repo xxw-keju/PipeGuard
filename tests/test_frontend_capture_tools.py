@@ -28,7 +28,9 @@ def _run_capture(
     fixture: str | Path,
     source: str,
     seed: int = 1,
-    grid_ctas: int = 1,
+    grid_ctas: int | None = 1,
+    launch_grid: tuple[int, ...] | None = None,
+    selected_cta: tuple[int, int, int] = (0, 0, 0),
     descriptor_evidence: str | None = None,
     binding_evidence: str | None = None,
 ):
@@ -39,7 +41,11 @@ def _run_capture(
         fixture_path = FIXTURES / fixture_path
     command = [str(python), str(ROOT / "tools" / tool), str(fixture_path), "--source", source]
     if tool == "triton_capture.py":
-        command.extend(["--grid-ctas", str(grid_ctas)])
+        if grid_ctas is not None:
+            command.extend(["--grid-ctas", str(grid_ctas)])
+        if launch_grid is not None:
+            command.extend(["--launch-grid", *(str(extent) for extent in launch_grid)])
+        command.extend(["--selected-cta", *(str(index) for index in selected_cta)])
     if descriptor_evidence is not None:
         command.extend(["--descriptor-evidence", str(FIXTURES / descriptor_evidence)])
     if binding_evidence is not None:
@@ -58,6 +64,9 @@ def _capture(
     fixture: str | Path,
     source: str,
     seed: int = 1,
+    grid_ctas: int | None = 1,
+    launch_grid: tuple[int, ...] | None = None,
+    selected_cta: tuple[int, int, int] = (0, 0, 0),
     descriptor_evidence: str | None = None,
     binding_evidence: str | None = None,
 ) -> tuple[bytes, dict]:
@@ -67,6 +76,9 @@ def _capture(
         fixture,
         source,
         seed,
+        grid_ctas=grid_ctas,
+        launch_grid=launch_grid,
+        selected_cta=selected_cta,
         descriptor_evidence=descriptor_evidence,
         binding_evidence=binding_evidence,
     )
@@ -578,17 +590,65 @@ def test_triton_capture_rejects_non_sm90_targets(tmp_path: Path, target: str):
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
-def test_triton_capture_rejects_multi_cta_launch_evidence():
+def test_triton_capture_selects_first_cta_from_exact_launch_grid():
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        "triton_static_memory.ttgir.mlir",
+        "multi-cta-selected-first",
+        grid_ctas=6,
+        launch_grid=(2, 3),
+    )
+    assert snapshot["target"]["grid_scope"] == "single_cta"
+    assert snapshot["target"]["launch_grid"] == [2, 3, 1]
+    assert snapshot["target"]["selected_cta"] == [0, 0, 0]
+    result = check_module(triton_snapshot_to_module(snapshot))
+    assert result["verdict"] == "SAFE"
+    assert "selected CTA [0, 0, 0] from launch grid [2, 3, 1]" in result["manifest"]["scope"]
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_capture_evaluates_program_id_and_num_programs_for_selected_cta(tmp_path: Path):
+    module = (FIXTURES / "triton_static_memory.ttgir.mlir").read_text()
+    path = tmp_path / "selected-grid.ttgir.mlir"
+    path.write_text(module.replace(
+        "    %range = tt.make_range {end = 16 : i32, start = 0 : i32} : tensor<16xi32, #blocked>",
+        """    %pid = tt.get_program_id x : i32
+    %programs = tt.get_num_programs y : i32
+    %origin = arith.addi %pid, %programs : i32
+    %origin_vector = tt.splat %origin : i32 -> tensor<16xi32, #blocked>
+    %local_range = tt.make_range {end = 16 : i32, start = 0 : i32} : tensor<16xi32, #blocked>
+    %range = arith.addi %local_range, %origin_vector : tensor<16xi32, #blocked>""",
+    ))
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        path,
+        "selected-grid-values",
+        grid_ctas=6,
+        launch_grid=(2, 3),
+        selected_cta=(1, 2, 0),
+    )
+    assert snapshot["target"]["selected_cta"] == [1, 2, 0]
+    assert [operation["region"] for operation in snapshot["operations"]] == [
+        "region:global:global-arg:0:4:16",
+        "region:global:global-arg:0:4:16",
+    ]
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_capture_rejects_inconsistent_launch_grid_evidence():
     process = _run_capture(
         TRITON_PYTHON,
         "triton_capture.py",
         "triton_static_memory.ttgir.mlir",
-        "multi-cta",
-        grid_ctas=2,
+        "inconsistent-grid",
+        grid_ctas=5,
+        launch_grid=(2, 3),
     )
     assert process.returncode == 2
     result = json.loads(process.stdout)
-    assert result["diagnostics"][0]["code"] == "TRITON_MULTI_CTA_UNSUPPORTED"
+    assert result["diagnostics"][0]["code"] == "TRITON_GRID_EVIDENCE_INVALID"
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")

@@ -355,6 +355,8 @@ def _capture_triton(request: dict[str, Any], raw_path: Path, output: Path) -> tu
             command=f"pipeguard-upstream:{request['fingerprint']}",
             grid_ctas=compiler["grid_ctas"],
             binding_evidence_path=evidence_path,
+            launch_grid=compiler.get("grid"),
+            selected_cta=(0, 0, 0),
         )
         return snapshot, None
     except triton_capture.CaptureError as error:
