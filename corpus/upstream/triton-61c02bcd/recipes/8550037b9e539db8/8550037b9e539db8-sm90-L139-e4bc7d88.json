@@ -1,0 +1,53 @@
+{
+  "bindings": {
+    "BLOCK_SIZE": 1024,
+    "n_elements": 10,
+    "p": 0.5,
+    "seed": [
+      123,
+      512
+    ]
+  },
+  "candidate_id": "8550037b9e539db8",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "BLOCK_SIZE": 1024
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "BLOCK_SIZE": "constexpr",
+      "n_elements": "i32",
+      "output_ptr": "*fp32",
+      "p": "fp32",
+      "seed": "i32",
+      "x_ptr": "*fp32"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/tutorials/04-low-memory-dropout.py:139;tutorial-input:n=10,p=0.5,seeds=123|512;same-compile-specialization",
+  "recipe_id": "8550037b9e539db8-sm90-L139-e4bc7d88",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

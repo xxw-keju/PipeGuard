@@ -11725,11 +11725,12 @@
       "capsule_path": "triton-61c02bcd/capsules/python/tutorials/04-low-memory-dropout.py/L44-L63__dropout__b77359c8488aa26d.py",
       "end_line": 63,
       "kind": "JIT_ENTRY",
-      "lowerable_recipes": 0,
+      "lowerable_recipes": 1,
       "manifest_path": "triton-61c02bcd/manifests/b77359c8488aa26d.json",
       "qualname": "_dropout",
       "recipe_paths": [
-        "triton-61c02bcd/recipes/b77359c8488aa26d/unresolved.json"
+        "triton-61c02bcd/recipes/b77359c8488aa26d/unresolved.json",
+        "triton-61c02bcd/recipes/b77359c8488aa26d/b77359c8488aa26d-sm90-L71-10787e18.json"
       ],
       "relative_path": "python/tutorials/04-low-memory-dropout.py",
       "role": "ROOT",
@@ -11740,11 +11741,12 @@
       "capsule_path": "triton-61c02bcd/capsules/python/tutorials/04-low-memory-dropout.py/L110-L131__seeded_dropout__8550037b9e539db8.py",
       "end_line": 131,
       "kind": "JIT_ENTRY",
-      "lowerable_recipes": 0,
+      "lowerable_recipes": 1,
       "manifest_path": "triton-61c02bcd/manifests/8550037b9e539db8.json",
       "qualname": "_seeded_dropout",
       "recipe_paths": [
-        "triton-61c02bcd/recipes/8550037b9e539db8/unresolved.json"
+        "triton-61c02bcd/recipes/8550037b9e539db8/unresolved.json",
+        "triton-61c02bcd/recipes/8550037b9e539db8/8550037b9e539db8-sm90-L139-e4bc7d88.json"
       ],
       "relative_path": "python/tutorials/04-low-memory-dropout.py",
       "role": "ROOT",
@@ -11755,11 +11757,12 @@
       "capsule_path": "triton-61c02bcd/capsules/python/tutorials/05-layer-norm.py/L48-L95__layer_norm_fwd_fused__3a2b5d012ec338da.py",
       "end_line": 95,
       "kind": "JIT_ENTRY",
-      "lowerable_recipes": 0,
+      "lowerable_recipes": 1,
       "manifest_path": "triton-61c02bcd/manifests/3a2b5d012ec338da.json",
       "qualname": "_layer_norm_fwd_fused",
       "recipe_paths": [
-        "triton-61c02bcd/recipes/3a2b5d012ec338da/unresolved.json"
+        "triton-61c02bcd/recipes/3a2b5d012ec338da/unresolved.json",
+        "triton-61c02bcd/recipes/3a2b5d012ec338da/3a2b5d012ec338da-sm90-L252-a519e46f.json"
       ],
       "relative_path": "python/tutorials/05-layer-norm.py",
       "role": "ROOT",
@@ -11770,11 +11773,12 @@
       "capsule_path": "triton-61c02bcd/capsules/python/tutorials/05-layer-norm.py/L132-L194__layer_norm_bwd_dx_fused__02a01b31d816ac75.py",
       "end_line": 194,
       "kind": "JIT_ENTRY",
-      "lowerable_recipes": 0,
+      "lowerable_recipes": 1,
       "manifest_path": "triton-61c02bcd/manifests/02a01b31d816ac75.json",
       "qualname": "_layer_norm_bwd_dx_fused",
       "recipe_paths": [
-        "triton-61c02bcd/recipes/02a01b31d816ac75/unresolved.json"
+        "triton-61c02bcd/recipes/02a01b31d816ac75/unresolved.json",
+        "triton-61c02bcd/recipes/02a01b31d816ac75/02a01b31d816ac75-sm90-L282-bfe01a59.json"
       ],
       "relative_path": "python/tutorials/05-layer-norm.py",
       "role": "ROOT",
@@ -11785,11 +11789,12 @@
       "capsule_path": "triton-61c02bcd/capsules/python/tutorials/05-layer-norm.py/L197-L221__layer_norm_bwd_dwdb__50d8d56cd9356f8a.py",
       "end_line": 221,
       "kind": "JIT_ENTRY",
-      "lowerable_recipes": 0,
+      "lowerable_recipes": 1,
       "manifest_path": "triton-61c02bcd/manifests/50d8d56cd9356f8a.json",
       "qualname": "_layer_norm_bwd_dwdb",
       "recipe_paths": [
-        "triton-61c02bcd/recipes/50d8d56cd9356f8a/unresolved.json"
+        "triton-61c02bcd/recipes/50d8d56cd9356f8a/unresolved.json",
+        "triton-61c02bcd/recipes/50d8d56cd9356f8a/50d8d56cd9356f8a-sm90-L290-ebe0a1d8.json"
       ],
       "relative_path": "python/tutorials/05-layer-norm.py",
       "role": "ROOT",
@@ -11905,11 +11910,12 @@
       "capsule_path": "triton-61c02bcd/capsules/python/tutorials/07-extern-functions.py/L31-L44__asin_kernel__2d0d1f1b9603c5e2.py",
       "end_line": 44,
       "kind": "JIT_ENTRY",
-      "lowerable_recipes": 0,
+      "lowerable_recipes": 1,
       "manifest_path": "triton-61c02bcd/manifests/2d0d1f1b9603c5e2.json",
       "qualname": "asin_kernel",
       "recipe_paths": [
-        "triton-61c02bcd/recipes/2d0d1f1b9603c5e2/unresolved.json"
+        "triton-61c02bcd/recipes/2d0d1f1b9603c5e2/unresolved.json",
+        "triton-61c02bcd/recipes/2d0d1f1b9603c5e2/2d0d1f1b9603c5e2-sm90-L60-5ace2ce3.json"
       ],
       "relative_path": "python/tutorials/07-extern-functions.py",
       "role": "ROOT",
@@ -12085,11 +12091,22 @@
       "capsule_path": "triton-61c02bcd/capsules/python/tutorials/11-programmatic-dependent-launch.py/L27-L55__add_kernel__bb9e99ec10973b60.py",
       "end_line": 55,
       "kind": "JIT_ENTRY",
-      "lowerable_recipes": 0,
+      "lowerable_recipes": 11,
       "manifest_path": "triton-61c02bcd/manifests/bb9e99ec10973b60.json",
       "qualname": "add_kernel",
       "recipe_paths": [
-        "triton-61c02bcd/recipes/bb9e99ec10973b60/unresolved.json"
+        "triton-61c02bcd/recipes/bb9e99ec10973b60/unresolved.json",
+        "triton-61c02bcd/recipes/bb9e99ec10973b60/bb9e99ec10973b60-sm90-L63-183bc1d8.json",
+        "triton-61c02bcd/recipes/bb9e99ec10973b60/bb9e99ec10973b60-sm90-L63-5a71ebb1.json",
+        "triton-61c02bcd/recipes/bb9e99ec10973b60/bb9e99ec10973b60-sm90-L63-6615ea61.json",
+        "triton-61c02bcd/recipes/bb9e99ec10973b60/bb9e99ec10973b60-sm90-L63-730b3040.json",
+        "triton-61c02bcd/recipes/bb9e99ec10973b60/bb9e99ec10973b60-sm90-L63-77310ad2.json",
+        "triton-61c02bcd/recipes/bb9e99ec10973b60/bb9e99ec10973b60-sm90-L63-7a9bd5e0.json",
+        "triton-61c02bcd/recipes/bb9e99ec10973b60/bb9e99ec10973b60-sm90-L63-805a9379.json",
+        "triton-61c02bcd/recipes/bb9e99ec10973b60/bb9e99ec10973b60-sm90-L63-a98c0e8e.json",
+        "triton-61c02bcd/recipes/bb9e99ec10973b60/bb9e99ec10973b60-sm90-L63-b485c38b.json",
+        "triton-61c02bcd/recipes/bb9e99ec10973b60/bb9e99ec10973b60-sm90-L63-c4faafcd.json",
+        "triton-61c02bcd/recipes/bb9e99ec10973b60/bb9e99ec10973b60-sm90-L63-d67f4376.json"
       ],
       "relative_path": "python/tutorials/11-programmatic-dependent-launch.py",
       "role": "ROOT",

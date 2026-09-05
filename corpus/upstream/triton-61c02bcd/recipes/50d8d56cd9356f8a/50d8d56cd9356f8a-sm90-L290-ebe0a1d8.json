@@ -1,0 +1,53 @@
+{
+  "bindings": {
+    "BLOCK_SIZE_M": 32,
+    "BLOCK_SIZE_N": 128,
+    "M": 96,
+    "N": 8192
+  },
+  "candidate_id": "50d8d56cd9356f8a",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "BLOCK_SIZE_M": 32,
+      "BLOCK_SIZE_N": 128
+    },
+    "grid_ctas": 64,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "BLOCK_SIZE_M": "constexpr",
+      "BLOCK_SIZE_N": "constexpr",
+      "DB": "*fp16",
+      "DW": "*fp16",
+      "FINAL_DB": "*fp16",
+      "FINAL_DW": "*fp16",
+      "M": "i32",
+      "N": "i32"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/tutorials/05-layer-norm.py:290;tutorial-test:M=1151,N=8192,dtype=fp16;reduction-M=96",
+  "recipe_id": "50d8d56cd9356f8a-sm90-L290-ebe0a1d8",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

@@ -1,0 +1,59 @@
+{
+  "bindings": {
+    "BLOCK_SIZE_N": 8192,
+    "GROUP_SIZE_M": 96,
+    "M": 1151,
+    "N": 8192,
+    "stride": 8192
+  },
+  "candidate_id": "02a01b31d816ac75",
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "BLOCK_SIZE_N": 8192,
+      "GROUP_SIZE_M": 96
+    },
+    "grid_ctas": 1151,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 8
+    },
+    "signature": {
+      "BLOCK_SIZE_N": "constexpr",
+      "DB": "*fp16",
+      "DW": "*fp16",
+      "DX": "*fp16",
+      "DY": "*fp16",
+      "GROUP_SIZE_M": "constexpr",
+      "Lock": "*i32",
+      "Mean": "*fp32",
+      "N": "i32",
+      "Rstd": "*fp32",
+      "W": "*fp16",
+      "X": "*fp16",
+      "stride": "i32"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": true,
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "origin": "ai-reviewed-launch:python/tutorials/05-layer-norm.py:282;tutorial-test:M=1151,N=8192,dtype=fp16",
+  "recipe_id": "02a01b31d816ac75-sm90-L282-bfe01a59",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}
