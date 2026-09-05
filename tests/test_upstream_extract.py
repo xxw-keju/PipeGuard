@@ -128,6 +128,54 @@ def kernel():
     assert "@triton.jit" in capsule
 
 
+def test_capsule_slices_used_triton_jit_helper_without_runtime_module_import(tmp_path: Path):
+    helper = tmp_path / "python" / "triton" / "experimental" / "gsan" / "_testing_utils.py"
+    helper.parent.mkdir(parents=True)
+    helper.write_text("""\
+import torch
+import triton
+import triton.language as tl
+
+@triton.jit
+def nanosleep(duration):
+    tl.inline_asm_elementwise("sleep", "=r", [duration], tl.int32, is_pure=False, pack=1)
+
+@triton.jit
+def atomic_poll(ptr):
+    nanosleep(1)
+    return tl.atomic_add(ptr, 0)
+
+def runtime_only():
+    return torch.zeros(1)
+""")
+    source = """\
+import triton
+import triton.language as tl
+from triton.experimental.gsan._testing_utils import atomic_poll, runtime_only
+
+@triton.jit
+def kernel(ptr):
+    atomic_poll(ptr)
+"""
+    tree, candidates = _discover("triton", source)
+    candidate = candidates[0]
+    dependencies, unresolved = dependency_nodes(candidate, tree)
+    capsule = make_capsule(
+        candidate,
+        dependencies,
+        unresolved,
+        source.splitlines(keepends=True),
+        source_root=tmp_path,
+    )
+    assert "# dependency slice: triton.experimental.gsan._testing_utils" in capsule
+    assert "def nanosleep" in capsule
+    assert "def atomic_poll" in capsule
+    assert "runtime_only" not in capsule
+    assert "import torch" not in capsule
+    assert "from triton.experimental.gsan._testing_utils" not in capsule
+    ast.parse(capsule)
+
+
 def test_dependency_nodes_exclude_helper_and_class_parameters():
     source = """import triton
 import triton.language as tl

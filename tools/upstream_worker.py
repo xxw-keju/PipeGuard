@@ -295,7 +295,13 @@ def _reference_replay_module(request: dict[str, Any], name: str, output: Path):
     if candidate is None:
         raise RuntimeError("candidate is not reproducible from locked upstream source")
     dependencies, unresolved = dependency_nodes(candidate, tree)
-    capsule = make_capsule(candidate, dependencies, unresolved, source.splitlines(keepends=True))
+    capsule = make_capsule(
+        candidate,
+        dependencies,
+        unresolved,
+        source.splitlines(keepends=True),
+        source_root=source_root,
+    )
     replay_path = output / "reference-replay.py"
     atomic_write(replay_path, capsule)
     tracked_root = Path(request["corpus_root"]).resolve(strict=True)

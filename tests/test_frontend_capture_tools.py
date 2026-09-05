@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import subprocess
@@ -32,7 +33,7 @@ def _run_capture(
     launch_grid: tuple[int, ...] | None = None,
     selected_cta: tuple[int, int, int] = (0, 0, 0),
     descriptor_evidence: str | None = None,
-    binding_evidence: str | None = None,
+    binding_evidence: str | Path | None = None,
 ):
     environment = dict(os.environ)
     environment["PYTHONHASHSEED"] = str(seed)
@@ -49,7 +50,10 @@ def _run_capture(
     if descriptor_evidence is not None:
         command.extend(["--descriptor-evidence", str(FIXTURES / descriptor_evidence)])
     if binding_evidence is not None:
-        command.extend(["--binding-evidence", str(FIXTURES / binding_evidence)])
+        evidence_path = Path(binding_evidence)
+        if not evidence_path.is_absolute():
+            evidence_path = FIXTURES / evidence_path
+        command.extend(["--binding-evidence", str(evidence_path)])
     return subprocess.run(
         command,
         cwd=ROOT,
@@ -68,7 +72,7 @@ def _capture(
     launch_grid: tuple[int, ...] | None = None,
     selected_cta: tuple[int, int, int] = (0, 0, 0),
     descriptor_evidence: str | None = None,
-    binding_evidence: str | None = None,
+    binding_evidence: str | Path | None = None,
 ) -> tuple[bytes, dict]:
     process = _run_capture(
         python,
@@ -140,12 +144,162 @@ def test_triton_mbarrier_invalidate_reinitializes_existing_lifecycle_fsm():
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
-def test_triton_tma_load_maps_expect_issue_wait_to_existing_barrier_fsm():
+def test_triton_initial_opposite_parity_wait_is_a_control_only_priming_poll(tmp_path: Path):
+    module = (FIXTURES / "triton_mbarrier.ttgir.mlir").read_text()
+    module = module.replace("%phase = arith.constant 0 : i32", "%phase = arith.constant 1 : i32")
+    module = module.replace(
+        "    ttng.arrive_barrier %bar, 1, %true : !ttg.memdesc<1xi64, #barrier, #smem, mutable>\n",
+        "",
+    )
+    fixture = tmp_path / "primed-mbarrier.ttgir.mlir"
+    fixture.write_text(module)
     _output, snapshot = _capture(
         TRITON_PYTHON,
         "triton_capture.py",
-        "triton_tma_load.ttgir.mlir",
+        fixture,
+        "primed-mbarrier",
+    )
+    assert [operation["op"] for operation in snapshot["operations"]] == [
+        "triton.mbarrier.init",
+    ]
+    assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_unconditional_arrive_barrier_defaults_to_true(tmp_path: Path):
+    module = (FIXTURES / "triton_mbarrier.ttgir.mlir").read_text().replace(
+        "ttng.arrive_barrier %bar, 1, %true",
+        "ttng.arrive_barrier %bar, 1",
+    )
+    fixture = tmp_path / "unconditional-arrive.ttgir.mlir"
+    fixture.write_text(module)
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "unconditional-arrive",
+    )
+    arrival = next(
+        operation for operation in snapshot["operations"]
+        if operation["op"] == "triton.mbarrier.arrive"
+    )
+    assert arrival["predicate"] is True
+    assert arrival["count"] == 1
+    assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_static_memdesc_indices_identify_distinct_barriers(tmp_path: Path):
+    fixture = tmp_path / "indexed-mbarriers.ttgir.mlir"
+    fixture.write_text("""\
+#barrier = #ttg.swizzled_shared<{vec = 1, perPhase = 1, maxPhase = 1, order = [0]}>
+#smem = #ttg.shared_memory
+module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:90", "ttg.threads-per-warp" = 32 : i32} {
+  tt.func public @indexed_mbarriers() {
+    %bars = ttg.local_alloc : () -> !ttg.memdesc<2x1xi64, #barrier, #smem, mutable>
+    %zero = arith.constant 0 : i32
+    %one = arith.constant 1 : i32
+    %true = arith.constant true
+    %phase = arith.constant 0 : i32
+    %bar0 = ttg.memdesc_index %bars[%zero] : !ttg.memdesc<2x1xi64, #barrier, #smem, mutable> -> !ttg.memdesc<1xi64, #barrier, #smem, mutable>
+    %bar1 = ttg.memdesc_index %bars[%one] : !ttg.memdesc<2x1xi64, #barrier, #smem, mutable> -> !ttg.memdesc<1xi64, #barrier, #smem, mutable>
+    ttng.init_barrier %bar0, 1 : !ttg.memdesc<1xi64, #barrier, #smem, mutable>
+    ttng.arrive_barrier %bar0, 1, %true : !ttg.memdesc<1xi64, #barrier, #smem, mutable>
+    ttng.wait_barrier %bar0, %phase : !ttg.memdesc<1xi64, #barrier, #smem, mutable>
+    ttng.init_barrier %bar1, 1 : !ttg.memdesc<1xi64, #barrier, #smem, mutable>
+    ttng.arrive_barrier %bar1, 1, %true : !ttg.memdesc<1xi64, #barrier, #smem, mutable>
+    ttng.wait_barrier %bar1, %phase : !ttg.memdesc<1xi64, #barrier, #smem, mutable>
+    ttg.local_dealloc %bars : !ttg.memdesc<2x1xi64, #barrier, #smem, mutable>
+    tt.return
+  }
+}
+""")
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "indexed-mbarriers",
+    )
+    resources = [operation["resource"] for operation in snapshot["operations"]]
+    assert len(set(resources[:3])) == 1
+    assert len(set(resources[3:])) == 1
+    assert resources[0] != resources[3]
+    assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_local_collective_barrier_uses_dsl_neutral_cta_protocol(tmp_path: Path):
+    fixture = _scalar_pointer_ttgir(
+        tmp_path,
+        "",
+        "    ttg.barrier local",
+    )
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "local-collective-barrier",
+    )
+    assert [operation["op"] for operation in snapshot["operations"]] == [
+        "triton.barrier.arrive",
+        "triton.barrier.observe",
+    ]
+    resource = snapshot["resources"][0]
+    assert resource["kind"] == "cta_barrier"
+    assert resource["capacity"] == 128
+    assert resource["visibility_mask"]["shared"] is True
+    assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
+
+    partial = tmp_path / "partial-collective.ttgir.mlir"
+    partial.write_text(fixture.read_text().replace(
+        '"ttg.num-warps" = 4 : i32,',
+        '"ttg.num-warps" = 4 : i32, "ttg.total-num-warps" = 8 : i32,',
+    ))
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        partial,
+        "partial-collective-barrier",
+    )
+    assert snapshot["target"]["cta_threads"] == 256
+    assert snapshot["resources"][0]["kind"] == "named_barrier"
+    assert snapshot["resources"][0]["capacity"] == 128
+    assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_tma_load_maps_expect_issue_wait_to_existing_barrier_fsm(tmp_path: Path):
+    fixture = FIXTURES / "triton_tma_load.ttgir.mlir"
+    missing = _run_capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "missing-tma-layout-evidence",
+    )
+    assert missing.returncode == 2
+    diagnostic = json.loads(missing.stdout)["diagnostics"][0]
+    assert diagnostic["code"] == "TRITON_TMA_DESCRIPTOR_UNRESOLVED"
+    operation_index = diagnostic["details"]["operation_index"]
+    evidence = tmp_path / "tma-layout.json"
+    evidence.write_text(json.dumps({
+        "evidence_version": "triton-binding-evidence-v1",
+        "source_ir_sha256": hashlib.sha256(fixture.read_bytes()).hexdigest(),
+        "unit_attributes": {},
+        "array_attributes": {str(operation_index): {"descriptor": {
+            "allocation_id": "global:tma",
+            "element_bytes": 4,
+            "shape": [64, 64],
+            "strides": [64, 1],
+            "tile_shape": [64, 64],
+            "coordinate_order": [1, 0],
+        }}},
+    }))
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
         "live-triton-tma-load",
+        binding_evidence=evidence,
     )
     assert [operation["op"] for operation in snapshot["operations"]] == [
         "triton.mbarrier.init",
@@ -210,7 +364,7 @@ def test_triton_hidden_read_only_unit_attribute_requires_sha_bound_evidence():
         "missing-binding-evidence",
     )
     assert missing.returncode == 2
-    assert json.loads(missing.stdout)["diagnostics"][0]["code"] == "TRITON_BINDING_EVIDENCE_REQUIRED"
+    assert json.loads(missing.stdout)["diagnostics"][0]["code"] == "TRITON_TMA_DESCRIPTOR_UNRESOLVED"
 
     _output, snapshot = _capture(
         TRITON_PYTHON,
@@ -257,6 +411,109 @@ def test_triton_compiler_fenced_wgmma_maps_to_existing_typed_group_fsm():
     result = check_module(triton_snapshot_to_module(unfenced), engine="crosscheck")
     assert result["verdict"] == "DATA_HAZARD"
     assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_loop_carried_wgmma_accumulator_keeps_register_identity(tmp_path: Path):
+    module = (FIXTURES / "triton_wgmma_fenced.ttgir.mlir").read_text()
+    module = module.replace(
+        """    %2 = ttng.warp_group_dot %0, %1, %cst_1 {isAsync = true} : !ttg.memdesc<128x64xf16, #shared, #smem> * !ttg.memdesc<64x64xf16, #shared1, #smem> -> tensor<128x64xf32, #mma>
+    %3 = ttng.warp_group_dot_wait %2 {pendings = 0 : i32} : tensor<128x64xf32, #mma>""",
+        """    %lower = arith.constant 0 : index
+    %upper = arith.constant 2 : index
+    %step = arith.constant 1 : index
+    %3 = scf.for %i = %lower to %upper step %step iter_args(%acc = %cst_1) -> (tensor<128x64xf32, #mma>) {
+      %2 = ttng.warp_group_dot %0, %1, %acc {isAsync = true} : !ttg.memdesc<128x64xf16, #shared, #smem> * !ttg.memdesc<64x64xf16, #shared1, #smem> -> tensor<128x64xf32, #mma>
+      %waited = ttng.warp_group_dot_wait %2 {pendings = 1 : i32} : tensor<128x64xf32, #mma>
+      scf.yield %waited : tensor<128x64xf32, #mma>
+    }
+    %done = ttng.warp_group_dot_wait %3 {pendings = 0 : i32} : tensor<128x64xf32, #mma>""",
+    )
+    fixture = tmp_path / "loop-carried-wgmma.ttgir.mlir"
+    fixture.write_text(module)
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "loop-carried-wgmma",
+    )
+    issues = [operation for operation in snapshot["operations"] if operation["op"] == "triton.wgmma.issue"]
+    assert len(issues) == 2
+    assert [issue["engine_seq"] for issue in issues] == [0, 1]
+    assert len({issue["engine_id"] for issue in issues}) == 1
+    assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_sha_bound_final_lowering_wait_orders_wgmma_before_arrive(tmp_path: Path):
+    module = (FIXTURES / "triton_wgmma_fenced.ttgir.mlir").read_text()
+    module = module.replace(
+        "#smem = #ttg.shared_memory",
+        "#barrier = #ttg.swizzled_shared<{vec = 1, perPhase = 1, maxPhase = 1, order = [0]}>\n#smem = #ttg.shared_memory",
+    ).replace(
+        "  tt.func public @wgmma_roundtrip() {",
+        """  tt.func public @wgmma_roundtrip() {
+    %bar = ttg.local_alloc : () -> !ttg.memdesc<1xi64, #barrier, #smem, mutable>
+    ttng.init_barrier %bar, 1 : !ttg.memdesc<1xi64, #barrier, #smem, mutable>""",
+    ).replace(
+        "    %3 = ttng.warp_group_dot_wait %2 {pendings = 0 : i32} : tensor<128x64xf32, #mma>",
+        "    ttng.arrive_barrier %bar, 1 : !ttg.memdesc<1xi64, #barrier, #smem, mutable>",
+    )
+    fixture = tmp_path / "implicit-wgmma-wait.ttgir.mlir"
+    fixture.write_text(module)
+    missing = _run_capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "implicit-wgmma-wait-missing",
+    )
+    assert missing.returncode == 2
+    diagnostic = json.loads(missing.stdout)["diagnostics"][0]
+    assert diagnostic["code"] == "TRITON_BINDING_EVIDENCE_REQUIRED"
+    operation_index = diagnostic["details"]["operation_index"]
+
+    evidence = tmp_path / "implicit-wgmma-wait.binding.json"
+    evidence.write_text(json.dumps({
+        "evidence_version": "triton-binding-evidence-v1",
+        "source_ir_sha256": hashlib.sha256(fixture.read_bytes()).hexdigest(),
+        "unit_attributes": {str(operation_index): ["implicit_wgmma_wait_group_0"]},
+        "array_attributes": {},
+    }))
+    process = subprocess.run(
+        [
+            str(TRITON_PYTHON),
+            str(ROOT / "tools" / "triton_capture.py"),
+            str(fixture),
+            "--source",
+            "implicit-wgmma-wait",
+            "--grid-ctas",
+            "1",
+            "--selected-cta",
+            "0",
+            "0",
+            "0",
+            "--binding-evidence",
+            str(evidence),
+        ],
+        cwd=ROOT,
+        capture_output=True,
+    )
+    process.check_returncode()
+    snapshot = json.loads(process.stdout)
+    arrival = next(
+        index for index, operation in enumerate(snapshot["operations"])
+        if operation["op"] == "triton.mbarrier.arrive"
+    )
+    waits = snapshot["operations"][arrival - 2:arrival]
+    assert [wait["op"] for wait in waits] == [
+        "triton.wgmma.wait_group",
+        "triton.wgmma.wait_group",
+    ]
+    assert {wait["completion_kind"] for wait in waits} == {
+        "OPERANDS_RELEASED",
+        "RESULT_READY",
+    }
+    assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
@@ -506,6 +763,42 @@ def test_triton_scalar_pointer_argument_tracks_direct_and_static_addptr_access(t
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_loop_induction_resolves_pointer_splat_per_activation(tmp_path: Path):
+    fixture = tmp_path / "loop-pointer-splat.ttgir.mlir"
+    fixture.write_text("""\
+#blocked = #ttg.blocked<{sizePerThread = [4], threadsPerWarp = [32], warpsPerCTA = [4], order = [0]}>
+module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:90", "ttg.threads-per-warp" = 32 : i32} {
+  tt.func public @loop_pointer_splat(%out: !tt.ptr<f32>, %value: tensor<4xf32, #blocked>) {
+    %zero = arith.constant 0 : index
+    %four = arith.constant 4 : index
+    %twelve = arith.constant 12 : index
+    %offsets = tt.make_range {end = 4 : i32, start = 0 : i32} : tensor<4xi32, #blocked>
+    scf.for %block_start = %zero to %twelve step %four {
+      %block_start_i32 = arith.index_cast %block_start : index to i32
+      %base = tt.addptr %out, %block_start_i32 : !tt.ptr<f32>, i32
+      %bases = tt.splat %base : !tt.ptr<f32> -> tensor<4x!tt.ptr<f32>, #blocked>
+      %pointers = tt.addptr %bases, %offsets : tensor<4x!tt.ptr<f32>, #blocked>, tensor<4xi32, #blocked>
+      tt.store %pointers, %value : tensor<4x!tt.ptr<f32>, #blocked>
+    }
+    tt.return
+  }
+}
+""")
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "loop-pointer-splat",
+    )
+    assert [operation["region"] for operation in snapshot["operations"]] == [
+        "region:global:global-arg:0:0:16",
+        "region:global:global-arg:0:16:16",
+        "region:global:global-arg:0:32:16",
+    ]
+    assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
 def test_triton_unused_scalar_pointer_does_not_create_alias_obligation(tmp_path: Path):
     fixture = _scalar_pointer_ttgir(
         tmp_path,
@@ -541,6 +834,185 @@ def test_triton_multiple_used_scalar_pointers_still_require_alias_evidence(tmp_p
     result = json.loads(process.stdout)
     assert result["diagnostics"][0]["code"] == "TRITON_ALIAS_UNRESOLVED"
     assert result["diagnostics"][0]["details"] == {"external_bases": 2}
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_sha_bound_pointer_allocations_resolve_alias_identity(tmp_path: Path):
+    fixture = _scalar_pointer_ttgir(
+        tmp_path,
+        "%left: !tt.ptr<i32>, %right: !tt.ptr<i32>",
+        """    %zero = arith.constant 0 : i32
+    tt.store %left, %zero : !tt.ptr<i32>
+    tt.store %right, %zero : !tt.ptr<i32>""",
+    )
+    evidence = tmp_path / "pointer-bindings.json"
+    evidence.write_text(json.dumps({
+        "evidence_version": "triton-binding-evidence-v1",
+        "source_ir_sha256": hashlib.sha256(fixture.read_bytes()).hexdigest(),
+        "unit_attributes": {},
+        "array_attributes": {},
+        "pointer_allocations": {"0": "global:left", "1": "global:right"},
+    }))
+    process = subprocess.run(
+        [
+            str(TRITON_PYTHON),
+            str(ROOT / "tools" / "triton_capture.py"),
+            str(fixture),
+            "--source",
+            "pointer-allocation-evidence",
+            "--grid-ctas",
+            "1",
+            "--selected-cta",
+            "0",
+            "0",
+            "0",
+            "--binding-evidence",
+            str(evidence),
+        ],
+        cwd=ROOT,
+        capture_output=True,
+    )
+    process.check_returncode()
+    snapshot = json.loads(process.stdout)
+    assert [region["allocation_id"] for region in snapshot["regions"]] == [
+        "global:left",
+        "global:right",
+    ]
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_sha_bound_runtime_scalar_resolves_native_ir_address(tmp_path: Path):
+    fixture = _scalar_pointer_ttgir(
+        tmp_path,
+        "%base: !tt.ptr<i32>, %offset: i32",
+        """    %true = arith.constant true
+    %one = arith.extui %true : i1 to i32
+    %two = arith.constant 2 : i32
+    %scaled = arith.divsi %offset, %two : i32
+    %final = arith.addi %scaled, %one : i32
+    %pointer = tt.addptr %base, %final : !tt.ptr<i32>, i32
+    %value = tt.load %pointer : !tt.ptr<i32>""",
+    )
+    evidence = tmp_path / "scalar-binding.json"
+    evidence.write_text(json.dumps({
+        "evidence_version": "triton-binding-evidence-v1",
+        "source_ir_sha256": hashlib.sha256(fixture.read_bytes()).hexdigest(),
+        "unit_attributes": {},
+        "array_attributes": {},
+        "pointer_allocations": {"0": "global:data"},
+        "scalar_values": {"1": 8},
+    }))
+    process = subprocess.run(
+        [
+            str(TRITON_PYTHON),
+            str(ROOT / "tools" / "triton_capture.py"),
+            str(fixture),
+            "--source",
+            "runtime-scalar-evidence",
+            "--grid-ctas",
+            "1",
+            "--selected-cta",
+            "0",
+            "0",
+            "0",
+            "--binding-evidence",
+            str(evidence),
+        ],
+        cwd=ROOT,
+        capture_output=True,
+    )
+    process.check_returncode()
+    snapshot = json.loads(process.stdout)
+    assert snapshot["operations"][0]["region"] == "region:global:global:data:20:4"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_pointer_allocation_evidence_must_name_pointer_arguments(tmp_path: Path):
+    fixture = _scalar_pointer_ttgir(
+        tmp_path,
+        "%left: !tt.ptr<i32>, %right: !tt.ptr<i32>",
+        """    %zero = arith.constant 0 : i32
+    tt.store %left, %zero : !tt.ptr<i32>
+    tt.store %right, %zero : !tt.ptr<i32>""",
+    )
+    evidence = tmp_path / "invalid-pointer-bindings.json"
+    evidence.write_text(json.dumps({
+        "evidence_version": "triton-binding-evidence-v1",
+        "source_ir_sha256": hashlib.sha256(fixture.read_bytes()).hexdigest(),
+        "unit_attributes": {},
+        "array_attributes": {},
+        "pointer_allocations": {"0": "global:left", "99": "global-arg:1"},
+    }))
+    process = _run_capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "invalid-pointer-allocation-evidence",
+        binding_evidence=evidence,
+    )
+    assert process.returncode == 2
+    assert json.loads(process.stdout)["diagnostics"][0]["code"] == "TRITON_BINDING_EVIDENCE_INVALID"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_integer_evaluation_uses_fixed_width_mlir_semantics(tmp_path: Path):
+    fixture = _scalar_pointer_ttgir(
+        tmp_path,
+        "%base: !tt.ptr<i32>",
+        """    %max = arith.constant 127 : i8
+    %one8 = arith.constant 1 : i8
+    %zero8 = arith.constant 0 : i8
+    %wrapped = arith.addi %max, %one8 : i8
+    %negative = arith.cmpi slt, %wrapped, %zero8 : i8
+    %zero32 = arith.constant 0 : i32
+    %one32 = arith.constant 1 : i32
+    %branch_offset = arith.select %negative, %zero32, %one32 : i32
+    %minus_one = arith.constant -1 : i8
+    %two8 = arith.constant 2 : i8
+    %unsigned_quotient = arith.divui %minus_one, %two8 : i8
+    %minus_three = arith.constant -3 : i8
+    %signed_remainder = arith.remsi %minus_three, %two8 : i8
+    %combined = arith.addi %unsigned_quotient, %signed_remainder : i8
+    %combined32 = arith.extsi %combined : i8 to i32
+    %offset = arith.addi %branch_offset, %combined32 : i32
+    %pointer = tt.addptr %base, %offset : !tt.ptr<i32>, i32
+    %value = tt.load %pointer : !tt.ptr<i32>""",
+    )
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "fixed-width-integer-semantics",
+    )
+    assert snapshot["operations"][0]["region"] == "region:global:global-arg:0:504:4"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_loop_does_not_reuse_stale_activation_value(tmp_path: Path):
+    fixture = _scalar_pointer_ttgir(
+        tmp_path,
+        "%base: !tt.ptr<i32>",
+        """    %lower = arith.constant 0 : index
+    %upper = arith.constant 2 : index
+    %step = arith.constant 1 : index
+    %one = arith.constant 1 : i32
+    %four = arith.constant 4 : i32
+    scf.for %iteration = %lower to %upper step %step {
+      %iteration_i32 = arith.index_cast %iteration : index to i32
+      %denominator = arith.subi %one, %iteration_i32 : i32
+      %offset = arith.divsi %four, %denominator : i32
+      %pointer = tt.addptr %base, %offset : !tt.ptr<i32>, i32
+      %value = tt.load %pointer : !tt.ptr<i32>
+    }""",
+    )
+    process = _run_capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "stale-loop-activation-value",
+    )
+    assert process.returncode == 2
+    assert json.loads(process.stdout)["diagnostics"][0]["code"] == "TRITON_MEMORY_ACCESS_UNRESOLVED"
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
@@ -758,6 +1230,7 @@ def test_triton_warp_specialize_uses_sha_bound_static_partition_evidence():
         "live-triton-warp-specialize",
         binding_evidence="triton_warp_specialize.binding.json",
     )
+    assert snapshot["target"]["cta_threads"] == 256
     assert [(actor["id"], actor["kind"], len(actor["participants"]))
             for actor in snapshot["actors"]] == [
         ("cta", "WARPGROUP", 128),

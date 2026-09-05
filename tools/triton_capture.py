@@ -47,6 +47,7 @@ class TritonCapture:
         "tt.make_range",
         "tt.splat",
         "tt.addptr",
+        "ttg.global_scratch_alloc",
         "ttg.local_alloc",
         "ttg.memdesc_index",
     }
@@ -60,6 +61,10 @@ class TritonCapture:
         "arith.addi",
         "arith.andi",
         "arith.cmpi",
+        "arith.divsi",
+        "arith.divui",
+        "arith.extsi",
+        "arith.extui",
         "arith.index_cast",
         "arith.maxsi",
         "arith.minsi",
@@ -68,6 +73,7 @@ class TritonCapture:
         "arith.remsi",
         "arith.select",
         "arith.subi",
+        "arith.trunci",
         "arith.xori",
         "tt.broadcast",
         "tt.expand_dims",
@@ -92,6 +98,8 @@ class TritonCapture:
         "ttg.async_commit_group",
         "ttg.async_wait",
         "ttg.local_load",
+        "ttg.local_dealloc",
+        "ttg.barrier",
         "tt.load",
         "tt.store",
         "ttng.async_tma_copy_global_to_local",
@@ -101,6 +109,9 @@ class TritonCapture:
         "ttng.fence_async_shared",
         "ttng.warp_group_dot",
         "ttng.warp_group_dot_wait",
+        "ttng.tensormap_create",
+        "ttng.tensormap_fenceproxy_acquire",
+        "ttng.reinterpret_tensor_descriptor",
     }
 
     def __init__(
@@ -130,8 +141,28 @@ class TritonCapture:
             int(index): attributes
             for index, attributes in self.binding_evidence.get("array_attributes", {}).items()
         }
+        self.pointer_argument_allocations = {
+            int(index): allocation
+            for index, allocation in self.binding_evidence.get("pointer_allocations", {}).items()
+        }
+        self.scalar_argument_values = {
+            int(index): value
+            for index, value in self.binding_evidence.get("scalar_values", {}).items()
+        }
+        self.evidenced_external_allocations = set(self.pointer_argument_allocations.values())
         self.operations: list[Any] = []
         module.walk(self.operations.append)
+        invalid_operation_indices = sorted(
+            index
+            for index in {*self.unit_attributes, *self.array_attributes}
+            if index < 0 or index >= len(self.operations)
+        )
+        if invalid_operation_indices:
+            raise CaptureError(
+                "TRITON_BINDING_EVIDENCE_INVALID",
+                "binding evidence references an unknown TTGIR operation",
+                {"indices": invalid_operation_indices, "operations": len(self.operations)},
+            )
         functions = [operation for operation in self.operations if operation.get_name() == "tt.func"]
         if len(functions) != 1:
             raise CaptureError(
@@ -186,7 +217,31 @@ class TritonCapture:
             )
         self.actor = "cta"
         total_num_warps = module.get_int_attr("ttg.total-num-warps")
-        self.total_num_warps = int(total_num_warps) if total_num_warps is not None else self.num_warps
+        evidenced_total_num_warps = self.num_warps
+        for index, attributes in self.array_attributes.items():
+            if (
+                self.operations[index].get_name() != "ttg.warp_specialize"
+                or not isinstance(attributes, dict)
+                or set(attributes) != {"partition_num_warps", "warp_group_start_ids"}
+            ):
+                continue
+            counts = attributes.get("partition_num_warps")
+            starts = attributes.get("warp_group_start_ids")
+            if (
+                isinstance(counts, list)
+                and isinstance(starts, list)
+                and len(counts) == len(starts)
+                and all(isinstance(value, int) and not isinstance(value, bool) for value in (*counts, *starts))
+            ):
+                evidenced_total_num_warps = max(
+                    evidenced_total_num_warps,
+                    *(start + count for start, count in zip(starts, counts)),
+                )
+        self.total_num_warps = (
+            int(total_num_warps)
+            if total_num_warps is not None
+            else evidenced_total_num_warps
+        )
         if self.total_num_warps < self.num_warps:
             raise CaptureError(
                 "TRITON_PARTICIPANTS_UNRESOLVED",
@@ -211,8 +266,9 @@ class TritonCapture:
         self.regions: dict[str, dict[str, Any]] = {}
         self.output_operations: list[dict[str, Any]] = []
         self.arrival_rank: dict[tuple[str, int], int] = {}
-        self.wait_rank: dict[tuple[str, int], int] = {}
+        self.wait_rank: dict[tuple[str, int, str], int] = {}
         self.barrier_lifecycle: dict[str, int] = {}
+        self.collective_barrier_invocations: dict[str, int] = {}
         self.sequence = 0
         self.ranges: dict[int, tuple[int, int]] = {}
         self.scalar_pointer_arguments: dict[int, tuple[str, int]] = {}
@@ -221,17 +277,22 @@ class TritonCapture:
         self.pointer_region_sets: dict[int, tuple[str, ...]] = {}
         self.memdesc_regions: dict[int, str] = {}
         self.descriptor_regions: dict[int, str] = {}
+        self.global_scratch_allocations: dict[int, tuple[str, int]] = {}
+        self.tensormap_sources: dict[int, tuple[str, int, tuple[int, ...]]] = {}
+        self.fenced_tensormaps: set[int] = set()
         self.barrier_arguments: dict[int, str] = {}
+        self.scalar_pointer_allocations: set[str] = set()
         self.external_allocations: set[str] = set()
         self.staged_tokens: set[int] = set()
         self.group_tokens: dict[int, int] = {}
         self.wait_tokens: set[int] = set()
         self.cp_group_seq = 0
-        self.wgmma_group_seq = 0
-        self.tma_store_group_seq = 0
+        self.wgmma_group_sequences: dict[str, int] = {}
+        self.tma_store_group_sequences: dict[str, int] = {}
         self.tma_expect_rank: dict[tuple[str, int], int] = {}
         self.tma_issue_generation: dict[tuple[str, int], int] = {}
         self.wgmma_results: dict[int, int] = {}
+        self.pending_wgmma_owners: set[str] = set()
         self.register_regions: dict[int, str] = {}
         self.pending_proxy_fence: int | None = None
         self.executable_nodes_seen = 0
@@ -299,6 +360,21 @@ class TritonCapture:
         bits = int(element.group(1))
         return bits // 8 if bits > 0 and bits % 8 == 0 else None
 
+    @staticmethod
+    def _integer_width(type_text: str) -> int | None:
+        match = re.search(r"(?:^|x)(?:i|ui)(\d+)(?:$|[,>])", type_text)
+        return int(match.group(1)) if match is not None else None
+
+    @staticmethod
+    def _unsigned_integer(value: int, bits: int) -> int:
+        return value & ((1 << bits) - 1)
+
+    @classmethod
+    def _signed_integer(cls, value: int, bits: int) -> int:
+        value = cls._unsigned_integer(value, bits)
+        sign = 1 << (bits - 1)
+        return value - (1 << bits) if value & sign else value
+
     def _ensure_pointer_value(
         self,
         value_id: int,
@@ -318,12 +394,15 @@ class TritonCapture:
         value_id: int,
     ) -> tuple[str, int, tuple[int, ...]] | None:
         pointer = self._ensure_pointer_value(value_id)
-        if pointer is not None and pointer[0].startswith("global-arg:"):
+        if pointer is not None and pointer[0] in self.scalar_pointer_allocations:
             self.external_allocations.add(pointer[0])
         return pointer
 
     def _require_resolved_external_aliases(self) -> None:
-        if len(self.external_allocations) > 1:
+        if (
+            len(self.external_allocations) > 1
+            and not self.external_allocations <= self.evidenced_external_allocations
+        ):
             raise CaptureError(
                 "TRITON_ALIAS_UNRESOLVED",
                 "multiple external pointer bases require explicit alias evidence",
@@ -332,16 +411,60 @@ class TritonCapture:
 
     def _record_function_arguments(self) -> None:
         block = self.blocks[self.entry_block]
-        for index in range(block.get_num_arguments()):
+        argument_count = block.get_num_arguments()
+        invalid_scalar_indices = sorted(
+            index for index in self.scalar_argument_values
+            if index < 0 or index >= argument_count
+        )
+        invalid_pointer_indices = sorted(
+            index for index in self.pointer_argument_allocations
+            if (
+                index < 0
+                or index >= argument_count
+                or not str(block.get_argument(index).get_type()).startswith("!tt.ptr<")
+            )
+        )
+        if invalid_scalar_indices or invalid_pointer_indices:
+            raise CaptureError(
+                "TRITON_BINDING_EVIDENCE_INVALID",
+                "argument evidence references an unknown or incompatible TTGIR argument",
+                {
+                    "scalar_indices": invalid_scalar_indices,
+                    "pointer_indices": invalid_pointer_indices,
+                    "arguments": argument_count,
+                },
+            )
+        for index in range(argument_count):
             argument = block.get_argument(index)
             type_text = str(argument.get_type())
+            if index in self.scalar_argument_values:
+                value = self.scalar_argument_values[index]
+                if (
+                    not re.fullmatch(r"(?:i|ui)\d+|index", type_text)
+                    or not isinstance(value, int)
+                    or isinstance(value, bool)
+                ):
+                    raise CaptureError(
+                        "TRITON_BINDING_EVIDENCE_INVALID",
+                        "scalar argument evidence requires an integer TTGIR scalar",
+                        {"index": index, "type": type_text, "value": value},
+                    )
+                bits = self._integer_width(type_text)
+                self.static_values[argument.id()] = (
+                    self._signed_integer(value, bits) if bits is not None else value
+                )
             if type_text.startswith("!tt.ptr<"):
                 width = self._scalar_pointer_width(type_text)
                 if width is not None:
-                    self.scalar_pointer_arguments[argument.id()] = (
+                    allocation = self.pointer_argument_allocations.get(
+                        index,
                         f"global-arg:{index}",
+                    )
+                    self.scalar_pointer_arguments[argument.id()] = (
+                        allocation,
                         width,
                     )
+                    self.scalar_pointer_allocations.add(allocation)
             elif "!ttg.memdesc<" in type_text:
                 elements, width = self._value_extent(argument)
                 allocation = f"shared-arg:{index}"
@@ -474,6 +597,52 @@ class TritonCapture:
         )
         return True
 
+    def _capture_collective_barrier(self, operation: Any, index: int) -> None:
+        if (
+            operation.get_num_operands() != 0
+            or operation.get_num_results() != 0
+            or operation.get_str_attr("scope") not in {None, "local"}
+        ):
+            raise CaptureError(
+                "TRITON_COLLECTIVE_BARRIER_UNRESOLVED",
+                "ttg.barrier must be an operand-free local barrier",
+                {"operation_index": index},
+            )
+        participants = self.actor_specs[self.current_actor]["participants"]
+        complete_cta = participants == list(range(self.cta_threads))
+        kind = "cta_barrier" if complete_cta else "named_barrier"
+        identifier = f"{kind}:{self.current_actor}"
+        self.resources.setdefault(identifier, {
+            "id": identifier,
+            "kind": kind,
+            "participants": [self.current_actor],
+            "capacity": len(participants),
+            "scope": "CTA",
+            "visibility_mask": {
+                "shared": True,
+                "global_read": False,
+                "global_write": False,
+                "tensor_read": False,
+                "tensor_write": False,
+                "control_only": False,
+            },
+        })
+        invocation = self.collective_barrier_invocations.get(identifier, 0)
+        self.collective_barrier_invocations[identifier] = invocation + 1
+        self._emit(
+            "triton.barrier.arrive",
+            index,
+            resource=identifier,
+            invocation_id=invocation,
+            count=len(participants),
+        )
+        self._emit(
+            "triton.barrier.observe",
+            index,
+            resource=identifier,
+            invocation_id=invocation,
+        )
+
     def _async_resource(self) -> str:
         identifier = f"cp_async:{self.current_actor}"
         self.resources.setdefault(identifier, {
@@ -483,6 +652,16 @@ class TritonCapture:
             "capacity": 8,
             "protocol": "CP_ASYNC",
             "scope": "CTA",
+        })
+        return identifier
+
+    def _async_engine_actor(self, protocol: str) -> str:
+        identifier = f"engine:{protocol.lower()}:{self.current_actor}"
+        participants = self.actor_specs[self.current_actor]["participants"]
+        self.actor_specs.setdefault(identifier, {
+            "id": identifier,
+            "kind": "ASYNC_ENGINE",
+            "participants": [participants[0]],
         })
         return identifier
 
@@ -600,6 +779,32 @@ class TritonCapture:
                 )
             elif name == "tt.addptr":
                 self._resolve_addptr(operation, index)
+            elif name == "ttg.global_scratch_alloc":
+                if operation.get_num_operands() != 0 or operation.get_num_results() != 1:
+                    raise CaptureError(
+                        "TRITON_GLOBAL_SCRATCH_UNRESOLVED",
+                        "global scratch allocation must have no operands and one result",
+                        {"operation_index": index},
+                    )
+                result = operation.get_result(0)
+                width = self._scalar_pointer_width(str(result.get_type()))
+                nbytes = operation.get_int_attr("nbytes")
+                alignment = operation.get_int_attr("alignment")
+                if (
+                    width is None
+                    or nbytes is None
+                    or int(nbytes) <= 0
+                    or alignment is None
+                    or int(alignment) <= 0
+                ):
+                    raise CaptureError(
+                        "TRITON_GLOBAL_SCRATCH_UNRESOLVED",
+                        "global scratch allocation lacks a finite size or alignment",
+                        {"operation_index": index},
+                    )
+                allocation = f"global-scratch:ssa:{index}:0"
+                self.global_scratch_allocations[result.id()] = (allocation, int(nbytes))
+                self._set_pointer_value(result.id(), allocation, width, (0,))
             elif name == "ttg.local_alloc":
                 if operation.get_num_results() != 1:
                     raise CaptureError(
@@ -628,35 +833,35 @@ class TritonCapture:
     def _resource(self, value: Any) -> str:
         if value.id() in self.barrier_arguments:
             identifier = self.barrier_arguments[value.id()]
-            self.resources.setdefault(identifier, {
-                "id": identifier,
-                "kind": "mbarrier",
-                "participants": [self.current_actor],
-            })
-            if self.current_actor not in self.resources[identifier]["participants"]:
-                self.resources[identifier]["participants"].append(self.current_actor)
-            return identifier
-        definition = self.result_definitions.get(value.id())
-        if definition is None:
-            raise CaptureError(
-                "TRITON_BARRIER_IDENTITY_UNRESOLVED",
-                "mbarrier SSA value has no local definition",
-            )
-        operation_index, result_index, result = definition
-        if self.operations[operation_index].get_name() != "ttg.local_alloc":
-            raise CaptureError(
-                "TRITON_BARRIER_ALIAS_UNSUPPORTED",
-                "mbarrier must refer directly to a ttg.local_alloc result",
-                {"defining_operation": self.operations[operation_index].get_name()},
-            )
-        result_type = str(result.get_type())
-        if "!ttg.memdesc<" not in result_type or "xi64" not in result_type or "shared_memory" not in result_type:
-            raise CaptureError(
-                "TRITON_BARRIER_TYPE_UNSUPPORTED",
-                "mbarrier allocation type is not a shared i64 memdesc",
-                {"type": result_type},
-            )
-        identifier = f"mbarrier:ssa:{operation_index}:{result_index}"
+        else:
+            result_type = str(value.get_type())
+            region_id = self.memdesc_regions.get(value.id())
+            if region_id is None:
+                definition = self.result_definitions.get(value.id())
+                raise CaptureError(
+                    "TRITON_BARRIER_IDENTITY_UNRESOLVED",
+                    "mbarrier SSA value has no exact shared-memory region",
+                    {
+                        "defining_operation": (
+                            self.operations[definition[0]].get_name()
+                            if definition is not None
+                            else None
+                        ),
+                    },
+                )
+            region = self.regions[region_id]
+            if (
+                "!ttg.memdesc<" not in result_type
+                or "xi64" not in result_type
+                or region["address_space"] != "SHARED"
+                or region["extent"] != 8
+            ):
+                raise CaptureError(
+                    "TRITON_BARRIER_TYPE_UNSUPPORTED",
+                    "mbarrier value is not one exact shared i64 element",
+                    {"type": result_type, "region": region_id},
+                )
+            identifier = f"mbarrier:{region_id}"
         self.resources.setdefault(identifier, {
             "id": identifier,
             "kind": "mbarrier",
@@ -714,14 +919,6 @@ class TritonCapture:
         is_load: bool,
     ) -> list[tuple[str, str, int]]:
         counterpart_region = self.regions[counterpart]
-        if descriptor_region is not None and all(value == 0 for value in coordinates):
-            descriptor = self.regions[descriptor_region]
-            if descriptor["extent"] == counterpart_region["extent"]:
-                return [
-                    (descriptor_region, counterpart, descriptor["extent"])
-                    if is_load
-                    else (counterpart, descriptor_region, descriptor["extent"])
-                ]
         operation_evidence = self.array_attributes.get(index, {})
         evidence = operation_evidence.get("descriptor") if isinstance(operation_evidence, dict) else None
         required = {
@@ -735,10 +932,25 @@ class TritonCapture:
         if not isinstance(evidence, dict) or set(evidence) != required:
             raise CaptureError(
                 "TRITON_TMA_DESCRIPTOR_UNRESOLVED",
-                "nonzero or noncontiguous TMA coordinates require SHA-bound descriptor evidence",
+                "TMA memory footprints require SHA-bound descriptor shape and stride evidence",
                 {"operation_index": index, "coordinates": coordinates},
             )
         allocation = evidence["allocation_id"]
+        if descriptor_region is not None:
+            known_allocation = self.regions[descriptor_region]["allocation_id"]
+            if (
+                not known_allocation.startswith("tensordesc-arg:")
+                and allocation != known_allocation
+            ):
+                raise CaptureError(
+                    "TRITON_BINDING_EVIDENCE_INVALID",
+                    "TMA descriptor evidence contradicts its source pointer allocation",
+                    {
+                        "operation_index": index,
+                        "evidenced_allocation": allocation,
+                        "source_allocation": known_allocation,
+                    },
+                )
         element_bytes = evidence["element_bytes"]
         shape = evidence["shape"]
         strides = evidence["strides"]
@@ -820,6 +1032,86 @@ class TritonCapture:
                 else (shared_region, global_region, extent)
             )
         return result
+
+    def _capture_tensormap(self, operation: Any, index: int) -> None:
+        name = operation.get_name()
+        if name == "ttng.tensormap_create":
+            if operation.get_num_operands() < 3 or operation.get_num_results() != 0:
+                raise CaptureError(
+                    "TRITON_TENSORMAP_UNRESOLVED",
+                    "tensormap creation requires scratch storage, a base pointer, and static metadata",
+                    {"operation_index": index},
+                )
+            scratch = operation.get_operand(0).id()
+            if scratch not in self.global_scratch_allocations:
+                raise CaptureError(
+                    "TRITON_TENSORMAP_UNRESOLVED",
+                    "tensormap destination is not a finite global scratch allocation",
+                    {"operation_index": index},
+                )
+            source = self._mark_external_pointer(operation.get_operand(1).id())
+            metadata = [
+                self.static_values.get(operation.get_operand(position).id())
+                for position in range(2, operation.get_num_operands())
+            ]
+            if source is None or any(value is None for value in metadata):
+                raise CaptureError(
+                    "TRITON_TENSORMAP_UNRESOLVED",
+                    "tensormap base pointer or metadata is unresolved",
+                    {"operation_index": index},
+                )
+            self.tensormap_sources[scratch] = source
+            return
+        if name == "ttng.tensormap_fenceproxy_acquire":
+            if operation.get_num_operands() != 1 or operation.get_num_results() != 0:
+                raise CaptureError(
+                    "TRITON_TENSORMAP_UNRESOLVED",
+                    "tensormap fence requires one scratch descriptor",
+                    {"operation_index": index},
+                )
+            scratch = operation.get_operand(0).id()
+            if scratch not in self.tensormap_sources:
+                raise CaptureError(
+                    "TRITON_TENSORMAP_UNRESOLVED",
+                    "tensormap fence has no preceding descriptor creation",
+                    {"operation_index": index},
+                )
+            self.fenced_tensormaps.add(scratch)
+            return
+        if operation.get_num_operands() != 1 or operation.get_num_results() != 1:
+            raise CaptureError(
+                "TRITON_TENSORMAP_UNRESOLVED",
+                "descriptor reinterpretation requires one scratch pointer and one result",
+                {"operation_index": index},
+            )
+        scratch = operation.get_operand(0).id()
+        if scratch not in self.fenced_tensormaps:
+            raise CaptureError(
+                "TRITON_TENSORMAP_UNRESOLVED",
+                "descriptor reinterpretation lacks a preceding proxy-acquire fence",
+                {"operation_index": index},
+            )
+        allocation, source_width, offsets = self.tensormap_sources[scratch]
+        if len(offsets) != 1:
+            raise CaptureError(
+                "TRITON_TENSORMAP_UNRESOLVED",
+                "tensormap base pointer is not scalar",
+                {"operation_index": index},
+            )
+        result = operation.get_result(0)
+        elements, result_width = self._value_extent(result)
+        if source_width != result_width:
+            raise CaptureError(
+                "TRITON_TENSORMAP_UNRESOLVED",
+                "tensormap element width disagrees with its source pointer",
+                {"operation_index": index},
+            )
+        self.descriptor_regions[result.id()] = self._region(
+            allocation,
+            "GLOBAL",
+            offsets[0] * source_width,
+            elements * result_width,
+        )
 
     def _capture_tma_store(self, operation: Any, index: int) -> None:
         name = operation.get_name()
@@ -915,14 +1207,16 @@ class TritonCapture:
                 destination_region=destination_region,
                 bytes=byte_count,
             )
+        owner = self.current_actor
+        sequence = self.tma_store_group_sequences.get(owner, 0)
         self._emit(
             "triton.tma_store.commit_group",
             index,
             resource=resource,
-            group_owner=self.current_actor,
-            group_seq=self.tma_store_group_seq,
+            group_owner=owner,
+            group_seq=sequence,
         )
-        self.tma_store_group_seq += 1
+        self.tma_store_group_sequences[owner] = sequence + 1
 
     def _capture_tma_load(self, operation: Any, index: int) -> None:
         name = operation.get_name()
@@ -1061,6 +1355,8 @@ class TritonCapture:
                 self.pending_proxy_fence = None
             destination = self._register_region(operation.get_operand(2))
             owner = self.current_actor
+            sequence = self.wgmma_group_sequences.get(owner, 0)
+            engine = self._async_engine_actor("WGMMA")
             self._emit(
                 "triton.wgmma.fence_operand",
                 index,
@@ -1075,18 +1371,21 @@ class TritonCapture:
                 group_owner=owner,
                 regions=regions,
                 destination_region=destination,
+                engine_id=engine,
+                engine_seq=sequence,
             )
             self._emit(
                 "triton.wgmma.commit_group",
                 index,
                 resource=resource,
                 group_owner=owner,
-                group_seq=self.wgmma_group_seq,
+                group_seq=sequence,
             )
             result = operation.get_result(0)
             self.register_regions[result.id()] = destination
-            self.wgmma_results[result.id()] = self.wgmma_group_seq
-            self.wgmma_group_seq += 1
+            self.wgmma_results[result.id()] = sequence
+            self.wgmma_group_sequences[owner] = sequence + 1
+            self.pending_wgmma_owners.add(owner)
             return
         wait_count = operation.get_int_attr("pendings")
         if (
@@ -1122,6 +1421,8 @@ class TritonCapture:
                 self.memdesc_regions[result.id()] = self.memdesc_regions[operand.id()]
             if operand.id() in self.wgmma_results:
                 self.wgmma_results[result.id()] = self.wgmma_results[operand.id()]
+        if int(wait_count) == 0:
+            self.pending_wgmma_owners.discard(self.current_actor)
 
     def _capture_memory(self, operation: Any, index: int) -> None:
         name = operation.get_name()
@@ -1373,6 +1674,33 @@ class TritonCapture:
         if name == "tt.splat" and operation.get_num_operands() == 1 and operation.get_num_results() == 1:
             operand = operation.get_operand(0)
             if "!tt.ptr<" in str(operand.get_type()):
+                base = self._mark_external_pointer(operand.id())
+                if base is None:
+                    return
+                allocation, width, offsets = base
+                if len(offsets) != 1:
+                    raise CaptureError(
+                        "TRITON_POINTER_PROVENANCE_UNRESOLVED",
+                        "tt.splat pointer operand is not scalar",
+                        {"operation_index": index},
+                    )
+                elements, result_width = self._value_extent(operation.get_result(0))
+                if result_width != width:
+                    raise CaptureError(
+                        "TRITON_POINTER_PROVENANCE_UNRESOLVED",
+                        "tt.splat changes pointer element width",
+                        {
+                            "operation_index": index,
+                            "source_width": width,
+                            "result_width": result_width,
+                        },
+                    )
+                self._set_pointer_value(
+                    operation.get_result(0).id(),
+                    allocation,
+                    width,
+                    offsets * elements,
+                )
                 return
             value = self.static_values.get(operand.id())
             if value is None:
@@ -1460,9 +1788,58 @@ class TritonCapture:
             "tt.reshape",
             "tt.trans",
             "ttg.convert_layout",
-            "arith.index_cast",
         } and len(operands) == 1 and operands[0] is not None:
             self.static_values[result.id()] = operands[0]
+            return
+        if name == "arith.index_cast" and len(operands) == 1 and operands[0] is not None:
+            bits = self._integer_width(str(result.get_type()))
+            value = operands[0]
+            convert = (lambda item: self._signed_integer(item, bits)) if bits is not None else (lambda item: item)
+            if isinstance(value, int) and not isinstance(value, bool):
+                self.static_values[result.id()] = convert(value)
+            elif isinstance(value, (tuple, list)) and all(
+                isinstance(item, int) and not isinstance(item, bool)
+                for item in value
+            ):
+                self.static_values[result.id()] = tuple(convert(item) for item in value)
+            return
+        if name in {"arith.extsi", "arith.extui"} and len(operands) == 1 and operands[0] is not None:
+            source_bits = self._integer_width(str(operation.get_operand(0).get_type()))
+            result_bits = self._integer_width(str(result.get_type()))
+            if source_bits is None or result_bits is None:
+                return
+
+            def extend(value: int) -> int:
+                source = (
+                    self._signed_integer(value, source_bits)
+                    if name == "arith.extsi"
+                    else self._unsigned_integer(value, source_bits)
+                )
+                return self._signed_integer(source, result_bits)
+
+            value = operands[0]
+            if isinstance(value, int) and not isinstance(value, bool):
+                self.static_values[result.id()] = extend(value)
+            elif isinstance(value, (tuple, list)) and all(
+                isinstance(item, int) and not isinstance(item, bool)
+                for item in value
+            ):
+                self.static_values[result.id()] = tuple(extend(item) for item in value)
+            return
+        if name == "arith.trunci" and len(operands) == 1 and operands[0] is not None:
+            bits = self._integer_width(str(result.get_type()))
+            if bits is None:
+                return
+            value = operands[0]
+            if isinstance(value, int) and not isinstance(value, bool):
+                self.static_values[result.id()] = self._signed_integer(value, bits)
+            elif isinstance(value, (tuple, list)) and all(
+                isinstance(item, int) and not isinstance(item, bool)
+                for item in value
+            ):
+                self.static_values[result.id()] = tuple(
+                    self._signed_integer(item, bits) for item in value
+                )
             return
         if name == "arith.select" and len(operands) == 3 and operands[0] is not None:
             condition, true_value, false_value = operands
@@ -1494,8 +1871,20 @@ class TritonCapture:
             return
         if any(not isinstance(value, int) or isinstance(value, bool) for value in (*left_values, *right_values)):
             return
+        operand_bits = self._integer_width(str(operation.get_operand(0).get_type()))
+        result_bits = self._integer_width(str(result.get_type()))
         if name == "arith.cmpi":
             predicate = operation.get_int_attr("predicate")
+            operand_type = str(operation.get_operand(0).get_type())
+            if predicate is None or (operand_bits is None and operand_type != "index"):
+                return
+            unsigned = predicate >= 6
+            if operand_bits is None:
+                normalize = lambda value, _bits: value
+                comparison_bits = 0
+            else:
+                normalize = self._unsigned_integer if unsigned else self._signed_integer
+                comparison_bits = operand_bits
             comparisons = {
                 0: lambda a, b: a == b,
                 1: lambda a, b: a != b,
@@ -1503,27 +1892,73 @@ class TritonCapture:
                 3: lambda a, b: a <= b,
                 4: lambda a, b: a > b,
                 5: lambda a, b: a >= b,
+                6: lambda a, b: a < b,
+                7: lambda a, b: a <= b,
+                8: lambda a, b: a > b,
+                9: lambda a, b: a >= b,
             }
             comparison = comparisons.get(predicate)
             if comparison is not None:
-                values = tuple(int(comparison(a, b)) for a, b in zip(left_values, right_values))
+                values = tuple(
+                    int(comparison(normalize(a, comparison_bits), normalize(b, comparison_bits)))
+                    for a, b in zip(left_values, right_values)
+                )
                 self.static_values[result.id()] = values[0] if scalar_result else values
+            return
+        result_type = str(result.get_type())
+        if result_bits is None and result_type != "index":
+            return
+
+        def signed_divide(left: int, right: int) -> int:
+            quotient = abs(left) // abs(right)
+            return -quotient if (left < 0) != (right < 0) else quotient
+
+        def signed_remainder(left: int, right: int) -> int:
+            return left - signed_divide(left, right) * right
+
+        if result_bits is None:
+            signed_left = unsigned_left = tuple(left_values)
+            signed_right = unsigned_right = tuple(right_values)
+        else:
+            signed_left = tuple(self._signed_integer(value, result_bits) for value in left_values)
+            signed_right = tuple(self._signed_integer(value, result_bits) for value in right_values)
+            unsigned_left = tuple(self._unsigned_integer(value, result_bits) for value in left_values)
+            unsigned_right = tuple(self._unsigned_integer(value, result_bits) for value in right_values)
+        if name in {"arith.divsi", "arith.remsi", "arith.maxsi", "arith.minsi"}:
+            evaluated_left, evaluated_right = signed_left, signed_right
+        elif name == "arith.divui":
+            evaluated_left, evaluated_right = unsigned_left, unsigned_right
+        else:
+            evaluated_left, evaluated_right = left_values, right_values
+        if name in {"arith.divsi", "arith.divui", "arith.remsi"} and any(
+            value == 0 for value in evaluated_right
+        ):
+            return
+        if result_bits is not None and name == "arith.divsi" and any(
+            left == -(1 << (result_bits - 1)) and right == -1
+            for left, right in zip(evaluated_left, evaluated_right)
+        ):
             return
         functions = {
             "arith.addi": lambda a, b: a + b,
             "arith.andi": lambda a, b: a & b,
+            "arith.divsi": signed_divide,
+            "arith.divui": lambda a, b: a // b,
             "arith.maxsi": max,
             "arith.minsi": min,
             "arith.muli": lambda a, b: a * b,
             "arith.ori": lambda a, b: a | b,
-            "arith.remsi": lambda a, b: a % b,
+            "arith.remsi": signed_remainder,
             "arith.subi": lambda a, b: a - b,
             "arith.xori": lambda a, b: a ^ b,
         }
         function = functions.get(name)
-        if function is None or (name == "arith.remsi" and any(value == 0 for value in right_values)):
+        if function is None:
             return
-        values = tuple(function(a, b) for a, b in zip(left_values, right_values))
+        values = tuple(
+            function(a, b) if result_bits is None else self._signed_integer(function(a, b), result_bits)
+            for a, b in zip(evaluated_left, evaluated_right)
+        )
         self.static_values[result.id()] = values[0] if scalar_result else values
 
     def _execute_block(self, block_id: int, path: tuple[Any, ...]) -> list[Any]:
@@ -1532,7 +1967,7 @@ class TritonCapture:
             name = operation.get_name()
             if name in {"scf.yield", "scf.condition", "ttg.warp_yield", "ttg.warp_return"}:
                 return [
-                    self._constant(operation.get_operand(position), f"{name} operand")
+                    self.static_values.get(operation.get_operand(position).id())
                     for position in range(operation.get_num_operands())
                 ]
             if name == "tt.return":
@@ -1580,10 +2015,8 @@ class TritonCapture:
             self._execute_operation(operation, index)
         return []
 
-    def _forward_value(self, source: Any, target: Any) -> None:
-        source_id = source.id()
-        target_id = target.id()
-        for mapping in (
+    def _value_fact_maps(self) -> tuple[dict[int, Any], ...]:
+        return (
             self.static_values,
             self.scalar_pointer_arguments,
             self.pointer_values,
@@ -1594,7 +2027,17 @@ class TritonCapture:
             self.barrier_arguments,
             self.register_regions,
             self.wgmma_results,
-        ):
+        )
+
+    def _clear_value_facts(self, value_id: int) -> None:
+        for mapping in self._value_fact_maps():
+            mapping.pop(value_id, None)
+
+    def _forward_value(self, source: Any, target: Any) -> None:
+        source_id = source.id()
+        target_id = target.id()
+        self._clear_value_facts(target_id)
+        for mapping in self._value_fact_maps():
             if source_id in mapping:
                 mapping[target_id] = mapping[source_id]
 
@@ -1725,7 +2168,7 @@ class TritonCapture:
         block_id = self._region_block(operation.get_region(0), index)
         block = self.blocks[block_id]
         carried = [
-            self._constant(operation.get_operand(position), "scf.for initial value")
+            self.static_values.get(operation.get_operand(position).id())
             for position in range(3, operation.get_num_operands())
         ]
         arguments = [block.get_argument(position) for position in range(block.get_num_arguments())]
@@ -1735,11 +2178,35 @@ class TritonCapture:
                 "scf.for block arguments do not match loop-carried values",
                 {"operation_index": index},
             )
+        carried_sources = [
+            operation.get_operand(position)
+            for position in range(3, operation.get_num_operands())
+        ]
+        yield_operations = [
+            self.operations[operation_index]
+            for operation_index in self.block_operations.get(block_id, [])
+            if self.operations[operation_index].get_name() == "scf.yield"
+        ]
+        if len(yield_operations) != 1:
+            raise CaptureError(
+                "TRITON_CONTROL_FLOW_UNRESOLVED",
+                "scf.for body must contain one yield terminator",
+                {"operation_index": index, "yields": len(yield_operations)},
+            )
+        yield_operation = yield_operations[0]
         for iteration, induction in enumerate(range(lower, upper, step)):
             self.static_expansions += 1
             self.static_values[arguments[0].id()] = induction
-            for argument, value in zip(arguments[1:], carried):
+            for argument, value, source in zip(arguments[1:], carried, carried_sources):
                 self.static_values[argument.id()] = value
+                self._forward_value(source, argument)
+                type_text = str(argument.get_type())
+                if (
+                    "tensor<" in type_text
+                    and "!tt.ptr<" not in type_text
+                    and argument.id() not in self.register_regions
+                ):
+                    self.register_regions[argument.id()] = self._register_region(source)
             yielded = self._execute_block(block_id, (*path, "for", index, iteration, induction))
             if len(yielded) != len(carried):
                 raise CaptureError(
@@ -1747,6 +2214,12 @@ class TritonCapture:
                     "scf.for yield count does not match loop-carried values",
                     {"operation_index": index},
                 )
+            carried_sources = [
+                yield_operation.get_operand(position)
+                for position in range(yield_operation.get_num_operands())
+            ]
+            for source, argument in zip(carried_sources, arguments[1:]):
+                self._forward_value(source, argument)
             carried = yielded
         if operation.get_num_results() != len(carried):
             raise CaptureError(
@@ -1755,7 +2228,9 @@ class TritonCapture:
                 {"operation_index": index},
             )
         for position, value in enumerate(carried):
-            self.static_values[operation.get_result(position).id()] = value
+            result = operation.get_result(position)
+            self.static_values[result.id()] = value
+            self._forward_value(carried_sources[position], result)
 
     def _execute_scf_if(
         self,
@@ -1879,6 +2354,14 @@ class TritonCapture:
         name = operation.get_name()
         if name in self._CONTAINERS:
             return
+        if name not in {
+            "arith.constant",
+            "tt.make_range",
+            "ttg.global_scratch_alloc",
+            "ttg.local_alloc",
+        }:
+            for position in range(operation.get_num_results()):
+                self._clear_value_facts(operation.get_result(position).id())
         self.executable_nodes_seen += 1
         self.classified_nodes += 1
         before = len(self.output_operations)
@@ -1920,6 +2403,31 @@ class TritonCapture:
                 "TTGIR operation has no sound capture rule",
                 {"operation": name, "operation_index": index},
             )
+        if name in {
+            "ttng.tensormap_create",
+            "ttng.tensormap_fenceproxy_acquire",
+            "ttng.reinterpret_tensor_descriptor",
+        }:
+            self._capture_tensormap(operation, index)
+            self.elided_nodes += 1
+            return
+        if name == "ttg.local_dealloc":
+            if (
+                operation.get_num_operands() != 1
+                or operation.get_num_results() != 0
+                or operation.get_operand(0).id() not in self.memdesc_regions
+            ):
+                raise CaptureError(
+                    "TRITON_MEMDESC_PROVENANCE_UNRESOLVED",
+                    "ttg.local_dealloc requires one exact memdesc allocation",
+                    {"operation_index": index},
+                )
+            self.elided_nodes += 1
+            return
+        if name == "ttg.barrier":
+            self._capture_collective_barrier(operation, index)
+            self.emitting_nodes += 1
+            return
         if name in {"ttng.async_tma_copy_local_to_global", "ttng.async_tma_store_wait"}:
             self._capture_tma_store(operation, index)
             if len(self.output_operations) > before:
@@ -1999,22 +2507,58 @@ class TritonCapture:
                 )
                 self.barrier_lifecycle[resource] = lifecycle + 1
             elif name == "ttng.arrive_barrier":
+                attributes = self.unit_attributes.get(index, set())
+                implicit_wait = "implicit_wgmma_wait_group_0" in attributes
+                if attributes - {"implicit_wgmma_wait_group_0"}:
+                    raise CaptureError(
+                        "TRITON_BINDING_EVIDENCE_INVALID",
+                        "barrier arrival binding evidence contains unknown unit attributes",
+                        {"operation_index": index, "attributes": sorted(attributes)},
+                    )
+                if self.current_actor in self.pending_wgmma_owners:
+                    if not implicit_wait:
+                        raise CaptureError(
+                            "TRITON_BINDING_EVIDENCE_REQUIRED",
+                            "barrier arrival after WGMMA requires final-lowering wait evidence",
+                            {"operation_index": index},
+                        )
+                    wgmma_resource = self._wgmma_resource()
+                    for completion_kind in ("OPERANDS_RELEASED", "RESULT_READY"):
+                        self._emit(
+                            "triton.wgmma.wait_group",
+                            index,
+                            resource=wgmma_resource,
+                            group_owner=self.current_actor,
+                            wait_group_count=0,
+                            completion_kind=completion_kind,
+                        )
+                    self.pending_wgmma_owners.discard(self.current_actor)
+                elif implicit_wait:
+                    raise CaptureError(
+                        "TRITON_BINDING_EVIDENCE_INVALID",
+                        "implicit WGMMA wait evidence has no pending WGMMA group",
+                        {"operation_index": index},
+                    )
                 count = operation.get_int_attr("count")
-                if count is None or int(count) <= 0 or operation.get_num_operands() != 2:
+                operand_count = operation.get_num_operands()
+                if count is None or int(count) <= 0 or operand_count not in {1, 2}:
                     raise CaptureError(
                         "TRITON_MBARRIER_ARRIVE_UNRESOLVED",
-                        "ttng.arrive_barrier requires static count and predicate",
+                        "ttng.arrive_barrier requires static count and an optional predicate",
                     )
-                predicate_operand = operation.get_operand(1)
-                predicate_value = self._constant(predicate_operand, "arrive predicate")
-                if str(predicate_operand.get_type()) != "i1" or predicate_value not in {0, 1, -1}:
-                    raise CaptureError(
-                        "TRITON_PREDICATE_UNRESOLVED",
-                        "ttng.arrive_barrier predicate must be a scalar i1 constant",
-                        {"value": str(predicate_value), "type": str(predicate_operand.get_type())},
-                    )
+                predicate_value: Any = True
+                if operand_count == 2:
+                    predicate_operand = operation.get_operand(1)
+                    predicate_value = self._constant(predicate_operand, "arrive predicate")
+                    if str(predicate_operand.get_type()) != "i1" or predicate_value not in {0, 1, -1}:
+                        raise CaptureError(
+                            "TRITON_PREDICATE_UNRESOLVED",
+                            "ttng.arrive_barrier predicate must be a scalar i1 constant",
+                            {"value": str(predicate_value), "type": str(predicate_operand.get_type())},
+                        )
                 generation = self.arrival_rank.get(barrier_key, 0)
-                self.arrival_rank[barrier_key] = generation + 1
+                if predicate_value:
+                    self.arrival_rank[barrier_key] = generation + 1
                 self._emit(
                     "triton.mbarrier.arrive",
                     index,
@@ -2037,25 +2581,34 @@ class TritonCapture:
                         "ttng.wait_barrier phase must be a scalar integer constant",
                         {"value": str(parity)},
                     )
-                generation = self.wait_rank.get(barrier_key, 0)
-                if parity != generation % 2:
+                parity_bit = parity & 1
+                wait_key = (resource, lifecycle, self.current_actor)
+                generation = self.wait_rank.get(wait_key, 0)
+                priming_wait = (
+                    generation == 0
+                    and parity_bit == 1
+                    and self.arrival_rank.get(barrier_key, 0) == 0
+                    and self.tma_expect_rank.get(barrier_key, 0) == 0
+                )
+                if parity_bit != generation % 2 and not priming_wait:
                     raise CaptureError(
                         "TRITON_PARITY_UNRESOLVED",
                         "wait phase SSA disagrees with the recovered gap-free stream rank",
-                        {"resource": resource, "rank": generation, "parity": parity},
+                        {"resource": resource, "rank": generation, "parity": parity_bit},
                     )
-                self.wait_rank[barrier_key] = generation + 1
-                self._emit(
-                    "triton.mbarrier.wait_parity",
-                    index,
-                    resource=resource,
-                    lifecycle_epoch=lifecycle,
-                    generation=generation,
-                    raw_parity=parity,
-                    logical_stream_id=f"{self.current_actor}:{resource}",
-                    stream_rank=generation,
-                    polling_coalesced=True,
-                )
+                if not priming_wait:
+                    self.wait_rank[wait_key] = generation + 1
+                    self._emit(
+                        "triton.mbarrier.wait_parity",
+                        index,
+                        resource=resource,
+                        lifecycle_epoch=lifecycle,
+                        generation=generation,
+                        raw_parity=parity_bit,
+                        logical_stream_id=f"{self.current_actor}:{resource}",
+                        stream_rank=generation,
+                        polling_coalesced=True,
+                    )
         if len(self.output_operations) > before:
             self.emitting_nodes += 1
         else:
@@ -2115,7 +2668,11 @@ class TritonCapture:
                 "elided_nodes": self.elided_nodes,
                 "events_emitted": len(self.output_operations),
                 "allocation_identity_evidence": "ttgir-ssa-definition-identity-v1",
-                "alias_evidence": "single-external-base-v1",
+                "alias_evidence": (
+                    "source-bound-pointer-allocations-v1"
+                    if self.pointer_argument_allocations
+                    else "single-external-base-v1"
+                ),
                 "participant_evidence": (
                     "ttgir-sha-bound-warp-partitions-plus-selected-grid-v1"
                     if len(self.actor_specs) > 1
@@ -2228,23 +2785,45 @@ def capture_file(
                 "Triton binding evidence could not be read",
                 {"path": str(binding_evidence_path), "error": str(error)},
             ) from error
+        required_evidence = {
+            "evidence_version",
+            "source_ir_sha256",
+            "unit_attributes",
+            "array_attributes",
+        }
+        allowed_evidence = required_evidence | {"pointer_allocations", "scalar_values"}
+        pointer_allocations = evidence.get("pointer_allocations", {}) if isinstance(evidence, dict) else {}
+        scalar_values = evidence.get("scalar_values", {}) if isinstance(evidence, dict) else {}
         if (
             not isinstance(evidence, dict)
-            or set(evidence) != {
-                "evidence_version",
-                "source_ir_sha256",
-                "unit_attributes",
-                "array_attributes",
-            }
+            or not required_evidence <= set(evidence) <= allowed_evidence
             or evidence.get("evidence_version") != "triton-binding-evidence-v1"
             or evidence.get("source_ir_sha256") != source_digest
             or not isinstance(evidence.get("unit_attributes"), dict)
             or not isinstance(evidence.get("array_attributes"), dict)
+            or not isinstance(pointer_allocations, dict)
+            or not isinstance(scalar_values, dict)
+            or any(
+                not str(index).isdigit()
+                or not isinstance(value, int)
+                or isinstance(value, bool)
+                for index, value in scalar_values.items()
+            )
+            or any(
+                not str(index).isdigit()
+                or not isinstance(allocation, str)
+                or not allocation
+                for index, allocation in pointer_allocations.items()
+            )
             or any(
                 not str(index).isdigit()
                 or not isinstance(attributes, list)
                 or any(not isinstance(attribute, str) for attribute in attributes)
                 for index, attributes in evidence.get("unit_attributes", {}).items()
+            )
+            or any(
+                not str(index).isdigit() or not isinstance(attributes, dict)
+                for index, attributes in evidence.get("array_attributes", {}).items()
             )
         ):
             raise CaptureError(
