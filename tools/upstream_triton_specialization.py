@@ -16,6 +16,7 @@ class TritonArgumentBinding:
     signature: dict[str, str]
     constexprs: dict[str, Any]
     attrs: dict[str, list[list[Any]]]
+    static_values: dict[str, Any]
 
 
 _TYPE_NAMES = {
@@ -292,6 +293,7 @@ def bind_triton_arguments(
     signature: dict[str, str] = {}
     constexprs: dict[str, Any] = {}
     attrs: dict[str, list[list[Any]]] = {}
+    static_values: dict[str, Any] = {}
     for index, parameter in enumerate(parameters):
         pair = bound.get(parameter.arg)
         if pair is None:
@@ -307,6 +309,7 @@ def bind_triton_arguments(
                 return None, "CONSTEXPR_BINDING_UNKNOWN"
             signature[parameter.arg] = "constexpr"
             constexprs[parameter.arg] = value
+            static_values[parameter.arg] = value
             continue
         annotation = _normalized_annotation(parameter.annotation, aliases)
         if parameter.annotation is not None and annotation is None:
@@ -325,6 +328,7 @@ def bind_triton_arguments(
                 value = literal_value(node, environment)
             except ValueError:
                 return None, "RUNTIME_VALUE_UNKNOWN"
+            static_values[parameter.arg] = value
             specialized = _specialize_scalar(
                 value,
                 annotation,
@@ -339,4 +343,4 @@ def bind_triton_arguments(
             constexprs[parameter.arg] = constant
         elif argument_attrs is not None:
             attrs[parameter.arg] = argument_attrs
-    return TritonArgumentBinding(signature, constexprs, attrs), "ACCEPTED"
+    return TritonArgumentBinding(signature, constexprs, attrs, static_values), "ACCEPTED"

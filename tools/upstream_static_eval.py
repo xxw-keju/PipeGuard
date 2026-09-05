@@ -143,3 +143,119 @@ def keyword_nodes(call: ast.Call, environment: dict[str, Any]) -> dict[str, ast.
                 return None
             result[name] = value
     return result
+
+
+def closed_value(
+    node: ast.AST,
+    environment: dict[str, Any],
+    call_evaluator: Any = None,
+    _seen: set[str] | None = None,
+) -> Any:
+    """Evaluate a closed expression with no Python execution capability."""
+
+    seen = set() if _seen is None else _seen
+    if isinstance(node, ast.Name):
+        if node.id in seen:
+            raise ValueError("cyclic closed binding")
+        value = environment.get(node.id, _MISSING)
+        if value is _MISSING or value is AMBIGUOUS:
+            raise ValueError("unresolved closed binding")
+        if isinstance(value, ast.AST):
+            return closed_value(value, environment, call_evaluator, seen | {node.id})
+        return _copy_literal(value)
+    if isinstance(node, ast.Constant) and isinstance(node.value, _LITERAL_SCALARS):
+        return node.value
+    if isinstance(node, (ast.List, ast.Tuple)):
+        values = [closed_value(item, environment, call_evaluator, seen) for item in node.elts]
+        return values if isinstance(node, ast.List) else tuple(values)
+    if isinstance(node, ast.Dict):
+        result: dict[Any, Any] = {}
+        for key, value in zip(node.keys, node.values):
+            if key is None:
+                raise ValueError("closed dictionary splat is unsupported")
+            try:
+                result[closed_value(key, environment, call_evaluator, seen)] = closed_value(
+                    value, environment, call_evaluator, seen
+                )
+            except TypeError as error:
+                raise ValueError("closed dictionary key is not hashable") from error
+        return result
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub, ast.Not)):
+        value = closed_value(node.operand, environment, call_evaluator, seen)
+        if isinstance(node.op, ast.Not):
+            return not value
+        if not isinstance(value, (int, float)) or isinstance(value, bool):
+            raise ValueError("closed unary operand is not numeric")
+        return +value if isinstance(node.op, ast.UAdd) else -value
+    if isinstance(node, ast.BinOp) and isinstance(
+        node.op, (ast.Add, ast.Sub, ast.Mult, ast.FloorDiv, ast.Mod)
+    ):
+        left = closed_value(node.left, environment, call_evaluator, seen)
+        right = closed_value(node.right, environment, call_evaluator, seen)
+        if not isinstance(left, int) or isinstance(left, bool) or not isinstance(right, int) or isinstance(right, bool):
+            raise ValueError("closed binary operands are not integers")
+        if isinstance(node.op, (ast.FloorDiv, ast.Mod)) and right == 0:
+            raise ValueError("closed division by zero")
+        if isinstance(node.op, ast.Add):
+            return left + right
+        if isinstance(node.op, ast.Sub):
+            return left - right
+        if isinstance(node.op, ast.Mult):
+            return left * right
+        if isinstance(node.op, ast.FloorDiv):
+            return left // right
+        return left % right
+    if isinstance(node, ast.BoolOp) and isinstance(node.op, (ast.And, ast.Or)):
+        result: Any = None
+        for value in node.values:
+            result = closed_value(value, environment, call_evaluator, seen)
+            if isinstance(node.op, ast.And) and not result:
+                return result
+            if isinstance(node.op, ast.Or) and result:
+                return result
+        return result
+    if isinstance(node, ast.Compare) and len(node.ops) == len(node.comparators) == 1:
+        left = closed_value(node.left, environment, call_evaluator, seen)
+        right = closed_value(node.comparators[0], environment, call_evaluator, seen)
+        operation = node.ops[0]
+        try:
+            if isinstance(operation, ast.Eq):
+                return left == right
+            if isinstance(operation, ast.NotEq):
+                return left != right
+            if isinstance(operation, ast.Lt):
+                return left < right
+            if isinstance(operation, ast.LtE):
+                return left <= right
+            if isinstance(operation, ast.Gt):
+                return left > right
+            if isinstance(operation, ast.GtE):
+                return left >= right
+        except TypeError as error:
+            raise ValueError("closed comparison operands are incompatible") from error
+        raise ValueError("closed comparison is unsupported")
+    if isinstance(node, ast.IfExp):
+        condition = closed_value(node.test, environment, call_evaluator, seen)
+        branch = node.body if condition else node.orelse
+        return closed_value(branch, environment, call_evaluator, seen)
+    if isinstance(node, ast.Subscript):
+        value = closed_value(node.value, environment, call_evaluator, seen)
+        index = closed_value(node.slice, environment, call_evaluator, seen)
+        if not isinstance(value, (tuple, list, dict)):
+            raise ValueError("closed subscript base is unsupported")
+        try:
+            return _copy_literal(value[index])
+        except (KeyError, IndexError, TypeError) as error:
+            raise ValueError("closed subscript is unresolved") from error
+    if isinstance(node, ast.Call) and call_evaluator is not None:
+        if any(isinstance(value, ast.Starred) for value in node.args) or any(
+            keyword.arg is None for keyword in node.keywords
+        ):
+            raise ValueError("closed call splat is unsupported")
+        arguments = [closed_value(value, environment, call_evaluator, seen) for value in node.args]
+        keywords = {
+            keyword.arg: closed_value(keyword.value, environment, call_evaluator, seen)
+            for keyword in node.keywords
+        }
+        return _copy_literal(call_evaluator(node.func, arguments, keywords))
+    raise ValueError("expression is outside the closed-expression whitelist")

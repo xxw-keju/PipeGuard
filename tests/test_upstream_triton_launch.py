@@ -149,12 +149,184 @@ def test_invalid():
 ''') == []
 
 
-def test_launch_rejects_autotuned_candidate_without_static_winner():
+def test_launch_expands_all_literal_autotune_configs_without_claiming_winner():
+    recipes = _recipes("""
+import triton
+import triton.language as tl
+
+@triton.autotune(configs=[
+    triton.Config({"BLOCK": 32}, num_warps=4),
+    triton.Config({"BLOCK": 64}, num_warps=8),
+], key=[])
+@triton.jit
+def kernel(BLOCK: tl.constexpr):
+    pass
+
+kernel[(1,)]()
+""")
+    assert len(recipes) == 2
+    assert {recipe["compiler"]["constexprs"]["BLOCK"] for recipe in recipes} == {32, 64}
+    assert {recipe["compiler"]["options"]["num_warps"] for recipe in recipes} == {4, 8}
+    assert all(
+        recipe["origin"].startswith("profile-sm90-autotune-expansion:")
+        for recipe in recipes
+    )
+    assert all("winner" not in recipe["origin"] for recipe in recipes)
+
+
+def test_launch_rejects_autotune_pruning_and_config_hooks():
     assert _recipes("""
 import triton
 import triton.language as tl
 
-@triton.autotune(configs=[triton.Config({"BLOCK": 32})], key=[])
+@triton.autotune(
+    configs=[triton.Config({"BLOCK": 32})],
+    key=[],
+    prune_configs_by={"early_config_prune": prune},
+)
+@triton.jit
+def kernel(BLOCK: tl.constexpr):
+    pass
+
+kernel[(1,)]()
+""") == []
+    assert _recipes("""
+import triton
+import triton.language as tl
+
+@triton.autotune(
+    configs=[triton.Config({"BLOCK": 32}, pre_hook=hook)],
+    key=[],
+)
+@triton.jit
+def kernel(BLOCK: tl.constexpr):
+    pass
+
+kernel[(1,)]()
+""") == []
+
+
+def test_launch_evaluates_closed_callable_grid_with_static_metadata():
+    recipes = _recipes('''
+import triton
+import triton.language as tl
+
+@triton.jit
+def kernel(size, BLOCK: tl.constexpr):
+    pass
+
+grid = lambda meta: (triton.cdiv(meta["size"], meta["BLOCK"]),)
+kernel[grid](1, BLOCK=32)
+''')
+    assert len(recipes) == 1
+    assert recipes[0]["compiler"]["signature"] == {
+        "size": "constexpr",
+        "BLOCK": "constexpr",
+    }
+    assert recipes[0]["compiler"]["constexprs"] == {"size": 1, "BLOCK": 32}
+
+
+def test_launch_evaluates_closed_grid_function_and_rejects_multi_cta_result():
+    accepted = _recipes('''
+import triton
+import triton.language as tl
+
+@triton.jit
+def kernel(size, BLOCK: tl.constexpr):
+    pass
+
+def grid(meta):
+    return (triton.cdiv(meta["size"], meta["BLOCK"]), 1)
+
+kernel[grid](16, BLOCK=32)
+''')
+    assert len(accepted) == 1
+    rejected = _recipes('''
+import triton
+import triton.language as tl
+
+@triton.jit
+def kernel(size, BLOCK: tl.constexpr):
+    pass
+
+grid = lambda meta: (triton.cdiv(meta["size"], meta["BLOCK"]),)
+kernel[grid](33, BLOCK=32)
+''')
+    assert rejected == []
+
+
+def test_launch_rejects_callable_grid_with_unknown_or_executable_effects():
+    assert _recipes('''
+import triton
+import triton.language as tl
+
+@triton.jit
+def kernel(BLOCK: tl.constexpr):
+    pass
+
+grid = lambda meta: factory(meta["BLOCK"])
+kernel[grid](BLOCK=32)
+''') == []
+
+
+def test_launch_evaluates_pure_heuristics_in_wrapper_order():
+    recipes = _recipes('''
+import triton
+import triton.language as tl
+
+@triton.heuristics({"BLOCK": lambda args: triton.next_power_of_2(args["N"])})
+@triton.heuristics({"EVEN": lambda args: args["BLOCK"] % 2 == 0})
+@triton.jit
+def kernel(N, BLOCK: tl.constexpr, EVEN: tl.constexpr):
+    pass
+
+kernel[(1,)](17, BLOCK=999)
+''')
+    assert len(recipes) == 1
+    compiler = recipes[0]["compiler"]
+    assert compiler["signature"] == {
+        "N": "i32",
+        "BLOCK": "constexpr",
+        "EVEN": "constexpr",
+    }
+    assert compiler["constexprs"] == {"BLOCK": 32, "EVEN": True}
+    assert compiler["attrs"] == {"N": []}
+
+
+def test_launch_rejects_heuristic_that_reads_unknown_runtime_object():
+    assert _recipes('''
+import triton
+import triton.language as tl
+
+@triton.heuristics({"EVEN": lambda args: args["pointer"].data_ptr() % 2 == 0})
+@triton.jit
+def kernel(pointer, EVEN: tl.constexpr):
+    pass
+
+kernel[(1,)](tensor)
+''') == []
+
+
+def test_launch_rejects_unknown_autotune_fields_and_duplicate_heuristics():
+    assert _recipes("""
+import triton
+import triton.language as tl
+
+@triton.autotune(configs=[triton.Config({"BLOCK": 32})], key=[], unknown=True)
+@triton.jit
+def kernel(BLOCK: tl.constexpr):
+    pass
+
+kernel[(1,)]()
+""") == []
+    assert _recipes("""
+import triton
+import triton.language as tl
+
+@triton.heuristics({
+    "BLOCK": lambda args: 32,
+    "BLOCK": lambda args: 64,
+})
 @triton.jit
 def kernel(BLOCK: tl.constexpr):
     pass

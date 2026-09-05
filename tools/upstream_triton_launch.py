@@ -4,8 +4,10 @@ import ast
 from dataclasses import dataclass
 from typing import Any, Protocol
 
-from upstream_static_eval import json_literal_value, keyword_nodes, literal_value, resolve_expression
+from upstream_static_eval import closed_value, json_literal_value, keyword_nodes, literal_value, resolve_expression
+from upstream_triton_autotune import literal_autotune_configs, literal_node
 from upstream_triton_decisions import TritonEvidenceDecision
+from upstream_triton_heuristics import apply_literal_heuristics
 from upstream_triton_specialization import bind_triton_arguments
 
 
@@ -23,23 +25,91 @@ class TritonLaunchEvidence:
 _COMPILE_OPTIONS = {"maxnreg", "num_ctas", "num_stages", "num_warps"}
 
 
-def _is_constexpr(annotation: ast.AST | None, aliases: AliasResolver) -> bool:
-    if annotation is None:
-        return False
-    if aliases.qualified(annotation) == "triton.language.constexpr":
-        return True
-    return isinstance(annotation, ast.Constant) and isinstance(annotation.value, str) and annotation.value in {
-        "constexpr",
-        "tl.constexpr",
-        "triton.language.constexpr",
-    }
+def _closed_grid_value(
+    node: ast.AST,
+    environment: dict[str, Any],
+    aliases: AliasResolver,
+    metadata: dict[str, Any],
+) -> Any:
+    def evaluate_call(function: ast.AST, arguments: list[Any], keywords: dict[str, Any]) -> Any:
+        name = aliases.qualified(function)
+        if keywords:
+            raise ValueError("closed grid call keywords are unsupported")
+        if name in {"triton.cdiv", "triton.language.cdiv"} and len(arguments) == 2:
+            numerator, denominator = arguments
+            if not all(isinstance(value, int) and not isinstance(value, bool) for value in arguments):
+                raise ValueError("triton.cdiv arguments are not integers")
+            if denominator <= 0:
+                raise ValueError("triton.cdiv denominator is not positive")
+            return (numerator + denominator - 1) // denominator
+        if name == "triton.next_power_of_2" and len(arguments) == 1:
+            value = arguments[0]
+            if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
+                raise ValueError("next_power_of_2 argument is not positive")
+            return 1 << (value - 1).bit_length()
+        if name in {"min", "max"} and arguments:
+            if not all(isinstance(value, int) and not isinstance(value, bool) for value in arguments):
+                raise ValueError("closed min/max arguments are not integers")
+            return min(arguments) if name == "min" else max(arguments)
+        raise ValueError("closed grid call is not whitelisted")
+
+    resolved = resolve_expression(node, environment) or node
+    if isinstance(resolved, ast.Lambda):
+        arguments = resolved.args
+        parameters = (*arguments.posonlyargs, *arguments.args)
+        if (
+            len(parameters) != 1
+            or arguments.vararg is not None
+            or arguments.kwarg is not None
+            or arguments.kwonlyargs
+            or arguments.defaults
+        ):
+            raise ValueError("closed grid lambda signature is unsupported")
+        child = dict(environment)
+        child[parameters[0].arg] = metadata
+        return closed_value(resolved.body, child, evaluate_call)
+    if isinstance(resolved, (ast.FunctionDef, ast.AsyncFunctionDef)):
+        arguments = resolved.args
+        parameters = (*arguments.posonlyargs, *arguments.args)
+        body = [
+            statement
+            for statement in resolved.body
+            if not (
+                isinstance(statement, ast.Expr)
+                and isinstance(statement.value, ast.Constant)
+                and isinstance(statement.value.value, str)
+            )
+        ]
+        if (
+            len(parameters) != 1
+            or arguments.vararg is not None
+            or arguments.kwarg is not None
+            or arguments.kwonlyargs
+            or arguments.defaults
+            or len(body) != 1
+            or not isinstance(body[0], ast.Return)
+            or body[0].value is None
+        ):
+            raise ValueError("closed grid function is unsupported")
+        child = dict(environment)
+        child[parameters[0].arg] = metadata
+        return closed_value(body[0].value, child, evaluate_call)
+    return closed_value(resolved, environment, evaluate_call)
 
 
-def _single_cta_grid(node: ast.AST, environment: dict[str, Any]) -> list[int] | None:
+def _single_cta_grid(
+    node: ast.AST,
+    environment: dict[str, Any],
+    aliases: AliasResolver,
+    metadata: dict[str, Any],
+) -> list[int] | None:
     try:
         value = literal_value(node, environment)
     except ValueError:
-        return None
+        try:
+            value = _closed_grid_value(node, environment, aliases, metadata)
+        except ValueError:
+            return None
     if value == 1 and not isinstance(value, bool):
         return [1]
     if (
@@ -59,24 +129,7 @@ def _candidate_from_expression(
     resolved = resolve_expression(node, environment)
     if not isinstance(resolved, (ast.FunctionDef, ast.AsyncFunctionDef)):
         return None
-    candidate = candidates_by_node.get(id(resolved))
-    if candidate is None or candidate.kind != "JIT_ENTRY":
-        return None
-    return candidate
-
-
-def _parameter_defaults(arguments: ast.arguments) -> dict[str, ast.AST]:
-    positional = (*arguments.posonlyargs, *arguments.args)
-    defaults = {
-        parameter.arg: value
-        for parameter, value in zip(positional[-len(arguments.defaults):], arguments.defaults)
-    } if arguments.defaults else {}
-    defaults.update({
-        parameter.arg: value
-        for parameter, value in zip(arguments.kwonlyargs, arguments.kw_defaults)
-        if value is not None
-    })
-    return defaults
+    return candidates_by_node.get(id(resolved))
 
 
 def _compiler_options(nodes: dict[str, ast.AST], environment: dict[str, Any]) -> dict[str, Any] | None:
@@ -106,54 +159,12 @@ def _compiler_options(nodes: dict[str, ast.AST], environment: dict[str, Any]) ->
     return options
 
 
-def _bind_constexpr_arguments(
-    candidate: Any,
-    call: ast.Call,
-    environment: dict[str, Any],
-    aliases: AliasResolver,
-    ignored_keywords: set[str],
-) -> tuple[dict[str, str], dict[str, Any]] | None:
-    arguments = candidate.node.args
-    if arguments.vararg is not None or arguments.kwarg is not None:
-        return None
-    positional = (*arguments.posonlyargs, *arguments.args)
-    parameters = (*positional, *arguments.kwonlyargs)
-    if any(not _is_constexpr(parameter.annotation, aliases) for parameter in parameters):
-        return None
-    if any(isinstance(value, ast.Starred) for value in call.args) or len(call.args) > len(positional):
-        return None
-    bound: dict[str, ast.AST] = {
-        parameter.arg: value for parameter, value in zip(positional, call.args)
-    }
-    for keyword in call.keywords:
-        if keyword.arg is None:
-            return None
-        if keyword.arg in ignored_keywords:
-            continue
-        if keyword.arg not in {parameter.arg for parameter in parameters} or keyword.arg in bound:
-            return None
-        if keyword.arg in {parameter.arg for parameter in arguments.posonlyargs}:
-            return None
-        bound[keyword.arg] = keyword.value
-    defaults = _parameter_defaults(arguments)
-    try:
-        constexprs = {
-            parameter.arg: json_literal_value(bound.get(parameter.arg, defaults[parameter.arg]), environment)
-            for parameter in parameters
-        }
-    except (KeyError, ValueError):
-        return None
-    return ({parameter.arg: "constexpr" for parameter in parameters}, constexprs)
-
-
-def triton_launch_evidence(
+def triton_launch_evidences(
     call: ast.Call,
     environment: dict[str, Any],
     aliases: AliasResolver,
     candidates_by_node: dict[int, Any],
-) -> TritonLaunchEvidence | None:
-    """Infer compile inputs only for profile-targeted, all-constexpr single-CTA calls."""
-
+) -> tuple[list[TritonLaunchEvidence] | None, str]:
     warmup = isinstance(call.func, ast.Attribute) and call.func.attr == "warmup"
     if warmup:
         candidate_node = call.func.value
@@ -162,52 +173,102 @@ def triton_launch_evidence(
         candidate_node = call.func.value
         grid_node = call.func.slice
     else:
-        return None
+        return None, "NOT_APPLICABLE"
     candidate = _candidate_from_expression(candidate_node, environment, candidates_by_node)
     if candidate is None:
-        return None
+        return None, "NOT_APPLICABLE"
     keywords = keyword_nodes(call, environment)
     if keywords is None:
-        return None
+        return None, "BINDING_UNKNOWN"
     if warmup:
         grid_node = keywords.get("grid")
         if grid_node is None:
-            return None
+            return None, "GRID_UNKNOWN"
     elif "grid" in keywords:
-        return None
+        return None, "GRID_ARGUMENT_CONFLICT"
     assert grid_node is not None
-    grid = _single_cta_grid(grid_node, environment)
-    if grid is None:
-        return None
-    option_nodes = {name: node for name, node in keywords.items() if name in _COMPILE_OPTIONS}
-    options = _compiler_options(option_nodes, environment)
-    if options is None:
-        return None
-    ignored = set(option_nodes)
-    if warmup:
-        ignored.add("grid")
-    binding, _code = bind_triton_arguments(
-        candidate,
-        call,
-        environment,
-        aliases,
-        keywords,
-        ignored,
-        warmup=warmup,
+    if candidate.kind == "AUTOTUNE_JIT":
+        configs, code = literal_autotune_configs(candidate, environment, aliases)
+        if configs is None:
+            return None, code
+    elif candidate.kind in {"JIT_ENTRY", "HEURISTICS_JIT"}:
+        configs = [None]
+    else:
+        return None, "CANDIDATE_UNSUPPORTED"
+    result: list[TritonLaunchEvidence] = []
+    for config in configs:
+        merged_keywords = dict(keywords)
+        if config is not None:
+            if set(config.arguments) & set(merged_keywords):
+                return None, "AUTOTUNE_ARGUMENT_CONFLICT"
+            if _COMPILE_OPTIONS & set(merged_keywords):
+                return None, "AUTOTUNE_OPTION_CONFLICT"
+            merged_keywords.update(config.arguments)
+            option_nodes = {
+                name: literal_node(value) for name, value in config.options.items()
+            }
+        else:
+            option_nodes = {
+                name: node for name, node in merged_keywords.items() if name in _COMPILE_OPTIONS
+            }
+        options = _compiler_options(option_nodes, environment)
+        if options is None:
+            return None, "OPTIONS_UNSUPPORTED_OR_UNKNOWN"
+        ignored = set(option_nodes)
+        if warmup:
+            ignored.add("grid")
+        merged_keywords, code = apply_literal_heuristics(
+            candidate,
+            call,
+            merged_keywords,
+            ignored,
+            environment,
+            aliases,
+        )
+        if merged_keywords is None:
+            return None, code
+        binding, code = bind_triton_arguments(
+            candidate,
+            call,
+            environment,
+            aliases,
+            merged_keywords,
+            ignored,
+            warmup=warmup,
+        )
+        if binding is None:
+            return None, code
+        grid = _single_cta_grid(grid_node, environment, aliases, binding.static_values)
+        if grid is None:
+            return None, "GRID_UNKNOWN_OR_MULTI_CTA"
+        result.append(TritonLaunchEvidence(
+            candidate=candidate,
+            compiler={
+                "signature": binding.signature,
+                "constexprs": binding.constexprs,
+                "attrs": binding.attrs,
+                "options": options,
+                "grid_ctas": 1,
+                "binding_evidence": None,
+            },
+            origin_kind=(
+                "profile-sm90-autotune-expansion"
+                if config is not None else "profile-sm90-launch-inference"
+            ),
+        ))
+    return result, "ACCEPTED"
+
+
+def triton_launch_evidence(
+    call: ast.Call,
+    environment: dict[str, Any],
+    aliases: AliasResolver,
+    candidates_by_node: dict[int, Any],
+) -> TritonLaunchEvidence | None:
+    evidence, _code = triton_launch_evidences(
+        call, environment, aliases, candidates_by_node
     )
-    if binding is None:
-        return None
-    return TritonLaunchEvidence(
-        candidate=candidate,
-        compiler={
-            "signature": binding.signature,
-            "constexprs": binding.constexprs,
-            "attrs": binding.attrs,
-            "options": options,
-            "grid_ctas": 1,
-            "binding_evidence": None,
-        },
-    )
+    return evidence[0] if evidence else None
 
 
 def _resolved_launch_candidate(
@@ -239,11 +300,16 @@ def analyze_triton_launch(
     if candidate is None:
         return TritonEvidenceDecision.not_applicable(mechanism)
     candidate_id = candidate.candidate_id
+    accepted, evidence_code = triton_launch_evidences(
+        call, environment, aliases, candidates_by_node
+    )
+    if accepted is not None:
+        return TritonEvidenceDecision.accepted_many(mechanism, accepted)
     if candidate.kind == "AUTOTUNE_JIT":
         return TritonEvidenceDecision.rejected(
-            mechanism, "AUTOTUNE_WINNER_UNKNOWN", candidate_id=candidate_id
+            mechanism, evidence_code, candidate_id=candidate_id
         )
-    if candidate.kind != "JIT_ENTRY":
+    if candidate.kind not in {"JIT_ENTRY", "HEURISTICS_JIT"}:
         return TritonEvidenceDecision.rejected(
             mechanism, "CANDIDATE_UNSUPPORTED", candidate_id=candidate_id
         )
@@ -262,7 +328,7 @@ def analyze_triton_launch(
             mechanism, "GRID_ARGUMENT_CONFLICT", candidate_id=candidate_id
         )
     assert grid_node is not None
-    grid = _single_cta_grid(grid_node, environment)
+    grid = _single_cta_grid(grid_node, environment, aliases, {})
     if grid is None:
         try:
             literal_value(grid_node, environment)

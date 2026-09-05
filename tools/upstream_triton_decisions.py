@@ -12,6 +12,7 @@ class TritonEvidenceDecision:
     status: str
     code: str
     evidence: Any | None = None
+    additional_evidence: tuple[Any, ...] = ()
     candidate_id: str | None = None
 
     @classmethod
@@ -36,4 +37,18 @@ class TritonEvidenceDecision:
             "ACCEPTED",
             evidence=evidence,
             candidate_id=evidence.candidate.candidate_id,
+        )
+
+    @classmethod
+    def accepted_many(
+        cls, mechanism: str, evidence: list[Any]
+    ) -> "TritonEvidenceDecision":
+        assert evidence
+        return cls(
+            mechanism,
+            "ACCEPTED",
+            "ACCEPTED",
+            evidence=evidence[0],
+            additional_evidence=tuple(evidence[1:]),
+            candidate_id=evidence[0].candidate.candidate_id,
         )

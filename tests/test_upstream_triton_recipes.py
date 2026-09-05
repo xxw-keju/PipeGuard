@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 from upstream_extract import AliasTable, CandidateVisitor, candidate_roles, infer_triton_recipes  # noqa: E402
 from upstream_triton_recipes import analyze_triton_recipes, promote_inferred_root_roles  # noqa: E402
 from upstream_pytest_params import pytest_parameter_environments  # noqa: E402
-from upstream_static_eval import json_literal_value, literal_value  # noqa: E402
+from upstream_static_eval import closed_value, json_literal_value, literal_value  # noqa: E402
 
 
 def _discover(source: str):
@@ -238,12 +238,16 @@ def runtime_kernel(pointer, K: tl.constexpr):
 def grid_kernel(K: tl.constexpr):
     pass
 
-@triton.autotune(configs=[triton.Config({"BLOCK": 32})], key=[])
+@triton.autotune(
+    configs=[triton.Config({"BLOCK": 32})],
+    key=[],
+    prune_configs_by={"early_config_prune": prune},
+)
 @triton.jit
 def tuned_kernel(BLOCK: tl.constexpr):
     pass
 
-grid = lambda meta: (1,)
+grid = lambda meta: (meta["MISSING"],)
 runtime_kernel[(1,)](tensor, K=1)
 grid_kernel[grid](K=1)
 tuned_kernel[(1,)]()
@@ -254,7 +258,7 @@ tuned_kernel[(1,)]()
     assert [attempt["code"] for attempt in analysis.attempts] == [
         "RUNTIME_VALUE_UNKNOWN",
         "GRID_UNKNOWN",
-        "AUTOTUNE_WINNER_UNKNOWN",
+        "AUTOTUNE_DYNAMIC_EFFECT",
     ]
     assert all(attempt["status"] == "REJECTED" for attempt in analysis.attempts)
 
@@ -299,3 +303,12 @@ object.warmup(grid=(1,))
     analysis = analyze_triton_recipes(candidates, tree, aliases, "case.py")
     assert analysis.recipes == {}
     assert analysis.attempts == ()
+
+
+def test_closed_evaluator_preserves_operand_semantics_and_fails_closed():
+    assert closed_value(ast.parse("0 or 7", mode="eval").body, {}) == 7
+    assert closed_value(ast.parse("3 and 5", mode="eval").body, {}) == 5
+    with pytest.raises(ValueError):
+        closed_value(ast.parse("{[]: 1}", mode="eval").body, {})
+    with pytest.raises(ValueError):
+        closed_value(ast.parse("1 < 'x'", mode="eval").body, {})

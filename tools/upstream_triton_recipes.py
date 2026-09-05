@@ -182,9 +182,12 @@ def analyze_triton_recipes(
             "code": decision.code,
             "candidate_id": decision.candidate_id,
         })
-        if decision.evidence is not None:
-            recipes[decision.evidence.candidate.candidate_id].append(
-                _make_recipe(decision.evidence, call, relative_path)
+        for evidence in (
+            (decision.evidence, *decision.additional_evidence)
+            if decision.evidence is not None else ()
+        ):
+            recipes[evidence.candidate.candidate_id].append(
+                _make_recipe(evidence, call, relative_path)
             )
 
     def scan_block(
