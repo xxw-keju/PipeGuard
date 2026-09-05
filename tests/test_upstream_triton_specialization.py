@@ -10,7 +10,7 @@ ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 from upstream_extract import AliasTable, CandidateVisitor, infer_triton_recipes  # noqa: E402
-from upstream_worker import _triton_attrs  # noqa: E402
+from upstream_worker import _triton_attrs, _triton_resolver_kwargs  # noqa: E402
 
 
 def _recipes(source: str) -> list[dict]:
@@ -162,3 +162,22 @@ def test_worker_rehydrates_parameter_attrs_to_native_paths():
         _triton_attrs(function, {"missing": []})
     with pytest.raises(TypeError, match="invalid Triton attributes"):
         _triton_attrs(function, {"left": ["tt.divisibility", 16]})
+
+
+def test_worker_materializes_explicit_triton_constexpr_resolver_values():
+    constructor = lambda value: ("constexpr", value)
+    assert _triton_resolver_kwargs({
+        "plain": 7,
+        "closed": {"__pipeguard_triton_constexpr__": 42},
+    }, constructor) == {
+        "plain": 7,
+        "closed": ("constexpr", 42),
+    }
+    with pytest.raises(ValueError, match="malformed Triton constexpr"):
+        _triton_resolver_kwargs({
+            "closed": {"__pipeguard_triton_constexpr__": 42, "extra": True},
+        }, constructor)
+    with pytest.raises(TypeError, match="unsupported Triton constexpr"):
+        _triton_resolver_kwargs({
+            "closed": {"__pipeguard_triton_constexpr__": [42]},
+        }, constructor)

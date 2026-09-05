@@ -166,12 +166,39 @@ def _normalize_triton_ir(text: str) -> str:
     return "\n".join(lines).strip() + "\n"
 
 
+_TRITON_CONSTEXPR_MARKER = "__pipeguard_triton_constexpr__"
+
+
+def _triton_resolver_kwargs(values: Any, constexpr_constructor: Any) -> dict[str, Any]:
+    if not isinstance(values, dict):
+        raise TypeError("Triton resolver kwargs must be an object")
+    result: dict[str, Any] = {}
+    for name, value in values.items():
+        if not isinstance(name, str):
+            raise TypeError("Triton resolver kwarg names must be strings")
+        if isinstance(value, dict) and _TRITON_CONSTEXPR_MARKER in value:
+            if set(value) != {_TRITON_CONSTEXPR_MARKER}:
+                raise ValueError(f"malformed Triton constexpr resolver value for {name}")
+            payload = value[_TRITON_CONSTEXPR_MARKER]
+            if not isinstance(payload, (bool, int, float, str)) and payload is not None:
+                raise TypeError(f"unsupported Triton constexpr resolver value for {name}")
+            value = constexpr_constructor(payload)
+        result[name] = value
+    return result
+
+
 def _materialize_triton(module: Any, recipe: dict[str, Any], *, resolution: str) -> Any:
     if resolution == "original":
         value = _resolve_qualname(module, recipe["manifest_qualname"])
     else:
+        import triton.language as tl
+
         materialization = recipe.get("materialization") or {}
-        value = module.pipeguard_resolve(**materialization.get("resolver_kwargs", {}))
+        resolver_kwargs = _triton_resolver_kwargs(
+            materialization.get("resolver_kwargs", {}),
+            tl.constexpr,
+        )
+        value = module.pipeguard_resolve(**resolver_kwargs)
     while not hasattr(value, "src") and hasattr(value, "fn"):
         value = value.fn
     return value
