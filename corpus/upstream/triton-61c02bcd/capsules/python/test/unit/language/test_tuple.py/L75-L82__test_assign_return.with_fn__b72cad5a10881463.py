@@ -12,8 +12,6 @@ def _tuple_ret(a, b):
         a * b
 
 def pipeguard_resolve(**pipeguard_bindings):
-    a = pipeguard_bindings['a']
-    b = pipeguard_bindings['b']
     @triton.jit
     def with_fn(X, Y, A, B, C):
         x = tl.load(X)

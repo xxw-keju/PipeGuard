@@ -9,8 +9,6 @@ def do_bench(kernel_call, quantiles, use_cuda_graph=False):
     return triton.testing.do_bench(kernel_call, quantiles=quantiles, warmup=1, rep=1)
 
 def pipeguard_resolve(**pipeguard_bindings):
-    kernel_call = pipeguard_bindings['kernel_call']
-    quantiles = pipeguard_bindings['quantiles']
     @triton.autotune(configs=[triton.Config({"BLOCK_SIZE": 32})], key=["N"], do_bench=do_bench)
     @triton.jit
     def _kernel(dst, src, N, BLOCK_SIZE: tl.constexpr):

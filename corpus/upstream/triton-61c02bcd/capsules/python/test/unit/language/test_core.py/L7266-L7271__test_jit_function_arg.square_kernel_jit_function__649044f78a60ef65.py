@@ -14,9 +14,6 @@ def apply_binary_op(x, combine_op):
     return combine_op(x, x)
 
 def pipeguard_resolve(**pipeguard_bindings):
-    combine_op = pipeguard_bindings['combine_op']
-    x = pipeguard_bindings['x']
-    y = pipeguard_bindings['y']
     @triton.jit
     def square_kernel_jit_function(in_ptr, out_ptr, BLOCK_SIZE: tl.constexpr):
         offsets = tl.arange(0, BLOCK_SIZE)

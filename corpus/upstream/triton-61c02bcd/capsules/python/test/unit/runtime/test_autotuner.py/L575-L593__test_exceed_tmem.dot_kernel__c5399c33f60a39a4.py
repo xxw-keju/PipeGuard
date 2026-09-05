@@ -13,9 +13,6 @@ def do_bench(kernel_call, quantiles, use_cuda_graph=False):
 def pipeguard_resolve(**pipeguard_bindings):
     _post_hook = pipeguard_bindings['_post_hook']
     configs = pipeguard_bindings['configs']
-    kernel_call = pipeguard_bindings['kernel_call']
-    quantiles = pipeguard_bindings['quantiles']
-    use_cuda_graph = pipeguard_bindings['use_cuda_graph']
     @triton.autotune(configs=configs, key=['N'], do_bench=do_bench, pre_hook=None, post_hook=_post_hook)
     @triton.jit
     def dot_kernel(dst, BLOCK_SIZE: tl.constexpr):

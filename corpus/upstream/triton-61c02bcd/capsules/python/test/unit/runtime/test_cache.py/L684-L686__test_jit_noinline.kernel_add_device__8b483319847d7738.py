@@ -11,11 +11,6 @@ def add_fn(a, b, o, N: tl.constexpr):
     tl.store(o + idx, tl.load(a + idx) + tl.load(b + idx))
 
 def pipeguard_resolve(**pipeguard_bindings):
-    N = pipeguard_bindings['N']
-    a = pipeguard_bindings['a']
-    b = pipeguard_bindings['b']
-    idx = pipeguard_bindings['idx']
-    o = pipeguard_bindings['o']
     @triton.jit
     def kernel_add_device(a, b, o, N: tl.constexpr):
         add_fn(a, b, o, N)

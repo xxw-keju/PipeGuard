@@ -10,7 +10,6 @@ def _impl(value=10):
     return value
 
 def pipeguard_resolve(**pipeguard_bindings):
-    value = pipeguard_bindings['value']
     @triton.jit
     def _kernel(ret0, ret1, value=3):
         tl.store(ret0, _impl())

@@ -15,7 +15,6 @@ class TrivialTuple(NamedTuple):
     foo: tl.constexpr
 
 def pipeguard_resolve(**pipeguard_bindings):
-    x = pipeguard_bindings['x']
     @triton.jit
     def kernel():
         tl.static_assert(passthrough_constexpr(TrivialTuple(0)).foo == 0)

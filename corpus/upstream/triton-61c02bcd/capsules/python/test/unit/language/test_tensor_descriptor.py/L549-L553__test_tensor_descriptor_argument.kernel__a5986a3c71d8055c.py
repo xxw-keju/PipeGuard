@@ -13,13 +13,6 @@ def tensor_descriptor_arg_helper(in_desc, out_desc, M_BLOCK: tl.constexpr, N_BLO
     out_desc.store([moffset, noffset], value.abs())
 
 def pipeguard_resolve(**pipeguard_bindings):
-    M_BLOCK = pipeguard_bindings['M_BLOCK']
-    N_BLOCK = pipeguard_bindings['N_BLOCK']
-    in_desc = pipeguard_bindings['in_desc']
-    moffset = pipeguard_bindings['moffset']
-    noffset = pipeguard_bindings['noffset']
-    out_desc = pipeguard_bindings['out_desc']
-    value = pipeguard_bindings['value']
     @triton.jit
     def kernel(out_ptr, a_ptr, M, N, M_BLOCK: tl.constexpr, N_BLOCK: tl.constexpr):
         out_desc = tl.make_tensor_descriptor(out_ptr, shape=[M, N], strides=[N, 1], block_shape=[M_BLOCK, N_BLOCK])

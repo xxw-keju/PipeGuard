@@ -27,15 +27,6 @@ def vecmul_kernel(ptr, n_elements, rep, type: tl.constexpr):
     tl.store(ptr + offsets, vec, mask=mask)
 
 def pipeguard_resolve(**pipeguard_bindings):
-    i = pipeguard_bindings['i']
-    mask = pipeguard_bindings['mask']
-    n_elements = pipeguard_bindings['n_elements']
-    offsets = pipeguard_bindings['offsets']
-    pid = pipeguard_bindings['pid']
-    ptr = pipeguard_bindings['ptr']
-    rep = pipeguard_bindings['rep']
-    val = pipeguard_bindings['val']
-    vec = pipeguard_bindings['vec']
     @triton.jit
     def kernel(ptr, n_elements, num1, num2, type: tl.constexpr):
         vecmul_kernel(ptr, n_elements, num1, type)

@@ -10,7 +10,6 @@ def tuple_arg_identity(xs):
     return xs
 
 def pipeguard_resolve(**pipeguard_bindings):
-    xs = pipeguard_bindings['xs']
     @triton.jit
     def kernel():
         x0 = tl.program_id(0)

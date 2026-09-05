@@ -12,8 +12,6 @@ def return_poison(x):
         return x
 
 def pipeguard_resolve(**pipeguard_bindings):
-    a = pipeguard_bindings['a']
-    x = pipeguard_bindings['x']
     @triton.jit
     def kernel(Out):
         zero = 0

@@ -10,7 +10,6 @@ def constexpr_function(x):
     return x + 1
 
 def pipeguard_resolve(**pipeguard_bindings):
-    x = pipeguard_bindings['x']
     @triton.jit
     def kernel():
         x: tl.constexpr

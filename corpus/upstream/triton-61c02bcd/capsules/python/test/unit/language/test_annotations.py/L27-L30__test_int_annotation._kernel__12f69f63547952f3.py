@@ -19,10 +19,6 @@ def annotated_function(return_type=None, **arg_types):
     return decorator
 
 def pipeguard_resolve(**pipeguard_bindings):
-    arg_types = pipeguard_bindings['arg_types']
-    decorator = pipeguard_bindings['decorator']
-    func = pipeguard_bindings['func']
-    return_type = pipeguard_bindings['return_type']
     signed = pipeguard_bindings['signed']
     width = pipeguard_bindings['width']
     @triton.jit

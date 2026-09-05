@@ -17,17 +17,6 @@ def _triton_cummax_helper_fn(arg0_0, arg0_1, arg1_0, arg1_1):
     return tmp5, tmp6
 
 def pipeguard_resolve(**pipeguard_bindings):
-    arg0_0 = pipeguard_bindings['arg0_0']
-    arg0_1 = pipeguard_bindings['arg0_1']
-    arg1_0 = pipeguard_bindings['arg1_0']
-    arg1_1 = pipeguard_bindings['arg1_1']
-    tmp0 = pipeguard_bindings['tmp0']
-    tmp1 = pipeguard_bindings['tmp1']
-    tmp2 = pipeguard_bindings['tmp2']
-    tmp3 = pipeguard_bindings['tmp3']
-    tmp4 = pipeguard_bindings['tmp4']
-    tmp5 = pipeguard_bindings['tmp5']
-    tmp6 = pipeguard_bindings['tmp6']
     @triton.jit
     def triton_(in_ptr0, out_ptr0, out_ptr1, XBLOCK: tl.constexpr):
         offset = tl.arange(0, XBLOCK)

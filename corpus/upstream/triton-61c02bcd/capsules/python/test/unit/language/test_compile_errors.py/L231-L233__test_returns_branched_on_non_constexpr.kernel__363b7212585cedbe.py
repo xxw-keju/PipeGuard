@@ -13,7 +13,6 @@ def returns_branched_on_non_constexpr(N: int):
         return tl.arange(0, 8)
 
 def pipeguard_resolve(**pipeguard_bindings):
-    N = pipeguard_bindings['N']
     @triton.jit
     def kernel(N: int):
         returns_branched_on_non_constexpr(N)

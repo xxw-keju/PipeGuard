@@ -14,9 +14,6 @@ def pipeguard_resolve(**pipeguard_bindings):
     _post_hook = pipeguard_bindings['_post_hook']
     _pre_hook = pipeguard_bindings['_pre_hook']
     configs = pipeguard_bindings['configs']
-    kernel_call = pipeguard_bindings['kernel_call']
-    quantiles = pipeguard_bindings['quantiles']
-    use_cuda_graph = pipeguard_bindings['use_cuda_graph']
     @triton.autotune(configs=configs, key=['N'], do_bench=do_bench, pre_hook=_pre_hook, post_hook=_post_hook)
     @triton.heuristics({"N_STAGES": lambda nargs: 64 if nargs['N'] == 4096 else 4})
     @triton.jit

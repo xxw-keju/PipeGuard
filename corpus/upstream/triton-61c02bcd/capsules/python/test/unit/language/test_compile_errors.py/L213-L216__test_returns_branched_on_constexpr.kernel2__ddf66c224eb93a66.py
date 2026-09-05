@@ -15,7 +15,6 @@ def returns_branched_on_constexpr(N: tl.constexpr):
         return tl.arange(0, 8)
 
 def pipeguard_resolve(**pipeguard_bindings):
-    N = pipeguard_bindings['N']
     @triton.jit
     def kernel2(N: tl.constexpr):
         a = returns_branched_on_constexpr(N)

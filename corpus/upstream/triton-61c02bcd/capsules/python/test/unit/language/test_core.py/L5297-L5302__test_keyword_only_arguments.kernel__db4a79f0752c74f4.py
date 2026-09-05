@@ -14,13 +14,6 @@ def _keyword_only_varargs(value, *values, scale: tl.constexpr = 2):
     return value + values[0] + values[1] * scale
 
 def pipeguard_resolve(**pipeguard_bindings):
-    OPTIONAL = pipeguard_bindings['OPTIONAL']
-    REQUIRED = pipeguard_bindings['REQUIRED']
-    optional = pipeguard_bindings['optional']
-    required = pipeguard_bindings['required']
-    scale = pipeguard_bindings['scale']
-    value = pipeguard_bindings['value']
-    values = pipeguard_bindings['values']
     @triton.jit
     def kernel(value=3, *, output, required, optional=5, REQUIRED: tl.constexpr, OPTIONAL: tl.constexpr = 2):
         tl.store(output, _keyword_only_impl(required=required, REQUIRED=REQUIRED))

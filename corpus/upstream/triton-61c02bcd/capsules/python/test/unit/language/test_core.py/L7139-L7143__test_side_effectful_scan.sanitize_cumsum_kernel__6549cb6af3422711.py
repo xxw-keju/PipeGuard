@@ -14,11 +14,6 @@ def sanitize_add(a, b):
     return a + b
 
 def pipeguard_resolve(**pipeguard_bindings):
-    a = pipeguard_bindings['a']
-    a64 = pipeguard_bindings['a64']
-    b = pipeguard_bindings['b']
-    b64 = pipeguard_bindings['b64']
-    r64 = pipeguard_bindings['r64']
     @triton.jit(debug=True)
     def sanitize_cumsum_kernel(Z, X, BLOCK: tl.constexpr):
         vals = tl.load(X + tl.arange(0, BLOCK))

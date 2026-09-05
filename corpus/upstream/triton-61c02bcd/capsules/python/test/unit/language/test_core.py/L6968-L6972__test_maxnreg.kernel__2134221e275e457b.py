@@ -14,7 +14,6 @@ def maxnreg_noinline2(X):
     tl.store(X, 0)
 
 def pipeguard_resolve(**pipeguard_bindings):
-    X = pipeguard_bindings['X']
     @triton.jit
     def kernel(X):
         maxnreg_noinline1(X)

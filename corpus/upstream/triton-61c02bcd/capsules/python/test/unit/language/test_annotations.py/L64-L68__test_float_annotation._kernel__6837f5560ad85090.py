@@ -17,11 +17,7 @@ def annotated_function(return_type=None, **arg_types):
     return decorator
 
 def pipeguard_resolve(**pipeguard_bindings):
-    arg_types = pipeguard_bindings['arg_types']
-    decorator = pipeguard_bindings['decorator']
     dtype = pipeguard_bindings['dtype']
-    func = pipeguard_bindings['func']
-    return_type = pipeguard_bindings['return_type']
     @triton.jit
     @annotated_function(val=dtype)
     def _kernel(ptr, val):

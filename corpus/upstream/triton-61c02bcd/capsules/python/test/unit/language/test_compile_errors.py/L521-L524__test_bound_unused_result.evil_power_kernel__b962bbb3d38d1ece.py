@@ -24,8 +24,6 @@ class Square:
         return self.x * self.x
 
 def pipeguard_resolve(**pipeguard_bindings):
-    self = pipeguard_bindings['self']
-    x = pipeguard_bindings['x']
     @triton.jit
     def evil_power_kernel():
         a = Square(tl.full((64, 64), 0.0, tl.float32))

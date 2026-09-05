@@ -5,15 +5,11 @@ import triton
 
 import triton.language as tl
 
-from triton._C.libtriton import ir
-
 from triton.language.core import builtin
 
 import builtins
 
 from triton.compiler.code_generator import flatten_values_to_ir
-
-builder: ir.builder
 
 def _unwrap_if_constexpr(o):
     if isinstance(o, list):

@@ -11,9 +11,6 @@ def noinline_load_block_fn(ptr, BLOCK_SIZE: tl.constexpr):
     return tl.load(ptr + offsets)
 
 def pipeguard_resolve(**pipeguard_bindings):
-    BLOCK_SIZE = pipeguard_bindings['BLOCK_SIZE']
-    offsets = pipeguard_bindings['offsets']
-    ptr = pipeguard_bindings['ptr']
     @triton.jit
     def kernel(X, Y, Z, BLOCK_SIZE: tl.constexpr):
         x = noinline_load_block_fn(X, BLOCK_SIZE)

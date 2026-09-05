@@ -13,7 +13,6 @@ def cube(x):
     return x * x * x
 
 def pipeguard_resolve(**pipeguard_bindings):
-    x = pipeguard_bindings['x']
     @triton.jit
     def evil_cube_kernel():
         a = tl.full((64, 64), 0.0, tl.float32)

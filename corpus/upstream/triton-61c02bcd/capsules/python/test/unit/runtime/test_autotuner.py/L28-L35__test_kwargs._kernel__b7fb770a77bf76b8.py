@@ -12,8 +12,6 @@ def do_bench(kernel_call, quantiles, use_cuda_graph=False):
 
 def pipeguard_resolve(**pipeguard_bindings):
     configs = pipeguard_bindings['configs']
-    kernel_call = pipeguard_bindings['kernel_call']
-    quantiles = pipeguard_bindings['quantiles']
     use_cuda_graph = pipeguard_bindings['use_cuda_graph']
     @triton.autotune(configs=configs, key=["M"],
                      do_bench=lambda kernel, quantiles: do_bench(kernel, quantiles, use_cuda_graph))

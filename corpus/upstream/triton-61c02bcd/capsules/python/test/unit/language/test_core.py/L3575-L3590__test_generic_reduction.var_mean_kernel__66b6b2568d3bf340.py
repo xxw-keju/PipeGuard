@@ -21,17 +21,6 @@ def _sum_combine(a, b):
     return a + b
 
 def pipeguard_resolve(**pipeguard_bindings):
-    a = pipeguard_bindings['a']
-    b = pipeguard_bindings['b']
-    delta = pipeguard_bindings['delta']
-    m2_1 = pipeguard_bindings['m2_1']
-    m2_2 = pipeguard_bindings['m2_2']
-    mean_1 = pipeguard_bindings['mean_1']
-    mean_2 = pipeguard_bindings['mean_2']
-    new_weight = pipeguard_bindings['new_weight']
-    w2_over_w = pipeguard_bindings['w2_over_w']
-    weight_1 = pipeguard_bindings['weight_1']
-    weight_2 = pipeguard_bindings['weight_2']
     @triton.jit
     def var_mean_kernel(X, out_mean, out_var, out_sum0, out_sum1, BLOCK: tl.constexpr):
         xindex = tl.arange(0, BLOCK)

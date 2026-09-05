@@ -32,10 +32,6 @@ def add_fn_static_cond(x, cond: tl.constexpr):
         return x + 1
 
 def pipeguard_resolve(**pipeguard_bindings):
-    Out = pipeguard_bindings['Out']
-    cond = pipeguard_bindings['cond']
-    pid = pipeguard_bindings['pid']
-    x = pipeguard_bindings['x']
     @triton.jit
     def kernel(Out, call_type: tl.constexpr):
         pid = tl.program_id(0)
