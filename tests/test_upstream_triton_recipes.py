@@ -11,7 +11,7 @@ ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 from upstream_extract import AliasTable, CandidateVisitor, candidate_roles, infer_triton_recipes  # noqa: E402
-from upstream_triton_recipes import promote_inferred_root_roles  # noqa: E402
+from upstream_triton_recipes import analyze_triton_recipes, promote_inferred_root_roles  # noqa: E402
 from upstream_pytest_params import pytest_parameter_environments  # noqa: E402
 from upstream_static_eval import json_literal_value, literal_value  # noqa: E402
 
@@ -222,3 +222,80 @@ def test_tracked_topk_recipe_ids_and_values():
     concrete = {path.name: json.loads(path.read_text()) for path in recipe_root.glob("*.json") if path.name != "unresolved.json"}
     assert set(concrete) == set(expected)
     assert {name: recipe["compiler"]["constexprs"] for name, recipe in concrete.items()} == expected
+
+
+
+def test_recipe_analysis_classifies_relevant_rejection_gates():
+    source = """\
+import triton
+import triton.language as tl
+
+@triton.jit
+def runtime_kernel(pointer, K: tl.constexpr):
+    pass
+
+@triton.jit
+def grid_kernel(K: tl.constexpr):
+    pass
+
+@triton.autotune(configs=[triton.Config({"BLOCK": 32})], key=[])
+@triton.jit
+def tuned_kernel(BLOCK: tl.constexpr):
+    pass
+
+grid = lambda meta: (1,)
+runtime_kernel[(1,)](0, K=1)
+grid_kernel[grid](K=1)
+tuned_kernel[(1,)]()
+"""
+    tree, aliases, candidates = _discover(source)
+    analysis = analyze_triton_recipes(candidates, tree, aliases, "case.py")
+    assert analysis.recipes == {}
+    assert [attempt["code"] for attempt in analysis.attempts] == [
+        "RUNTIME_SPECIALIZATION_UNKNOWN",
+        "GRID_UNKNOWN",
+        "AUTOTUNE_WINNER_UNKNOWN",
+    ]
+    assert all(attempt["status"] == "REJECTED" for attempt in analysis.attempts)
+
+
+def test_recipe_analysis_preserves_accepted_launch_and_target_rejection():
+    source = """\
+import triton
+import triton.language as tl
+from triton.backends.compiler import GPUTarget
+from triton.compiler import ASTSource
+
+@triton.jit
+def kernel(K: tl.constexpr = 4):
+    pass
+
+kernel[(1,)](K=1)
+src = ASTSource(fn=kernel, signature={"K": "constexpr"}, constexprs={"K": 1})
+triton.compile(src, target=GPUTarget("cuda", 80, 32))
+"""
+    tree, aliases, candidates = _discover(source)
+    analysis = analyze_triton_recipes(candidates, tree, aliases, "case.py")
+    assert len(analysis.recipes[candidates[0].candidate_id]) == 1
+    assert [(attempt["status"], attempt["code"]) for attempt in analysis.attempts] == [
+        ("ACCEPTED", "ACCEPTED"),
+        ("REJECTED", "TARGET_UNSUPPORTED_OR_UNKNOWN"),
+    ]
+
+
+
+def test_recipe_analysis_ignores_unrelated_subscript_and_warmup_calls():
+    source = """\
+import triton
+
+@triton.jit
+def kernel():
+    pass
+
+factory[0]()
+object.warmup(grid=(1,))
+"""
+    tree, aliases, candidates = _discover(source)
+    analysis = analyze_triton_recipes(candidates, tree, aliases, "case.py")
+    assert analysis.recipes == {}
+    assert analysis.attempts == ()

@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Any, Protocol
 
 from upstream_static_eval import json_literal_value, keyword_nodes, literal_value, resolve_expression
+from upstream_triton_decisions import TritonEvidenceDecision
 
 
 class AliasResolver(Protocol):
@@ -131,3 +132,57 @@ def triton_compile_evidence(
             "binding_evidence": None,
         },
     )
+
+
+def analyze_triton_compile(
+    call: ast.Call,
+    environment: dict[str, Any],
+    aliases: AliasResolver,
+    candidates_by_node: dict[int, Any],
+) -> TritonEvidenceDecision:
+    """Classify one explicit compile call without changing evidence acceptance."""
+
+    mechanism = "compile"
+    if aliases.qualified(call.func) != "triton.compile":
+        return TritonEvidenceDecision.not_applicable(mechanism)
+    keywords = keyword_nodes(call, environment)
+    if keywords is None:
+        return TritonEvidenceDecision.rejected(mechanism, "BINDING_UNKNOWN")
+    if not set(keywords) <= {"src", "target", "options"}:
+        return TritonEvidenceDecision.rejected(mechanism, "COMPILE_ARGUMENTS_UNSUPPORTED")
+    if len(call.args) > 1 or (call.args and "src" in keywords):
+        return TritonEvidenceDecision.rejected(mechanism, "COMPILE_ARGUMENTS_UNSUPPORTED")
+    source_node = call.args[0] if call.args else keywords.get("src")
+    target_node = keywords.get("target")
+    if source_node is None:
+        return TritonEvidenceDecision.rejected(mechanism, "SPECIALIZATION_UNKNOWN")
+    if target_node is None:
+        return TritonEvidenceDecision.rejected(mechanism, "TARGET_UNKNOWN")
+    if not _is_exact_sm90_target(target_node, environment, aliases):
+        return TritonEvidenceDecision.rejected(mechanism, "TARGET_UNSUPPORTED_OR_UNKNOWN")
+    source = _ast_source_payload(source_node, environment, aliases, candidates_by_node)
+    if source is None:
+        return TritonEvidenceDecision.rejected(mechanism, "SPECIALIZATION_UNKNOWN")
+    candidate, _payload = source
+    if "options" in keywords:
+        try:
+            options = json_literal_value(keywords["options"], environment)
+        except ValueError:
+            return TritonEvidenceDecision.rejected(
+                mechanism, "OPTIONS_UNKNOWN", candidate_id=candidate.candidate_id
+            )
+        if not isinstance(options, dict) or not all(isinstance(key, str) for key in options):
+            return TritonEvidenceDecision.rejected(
+                mechanism, "OPTIONS_UNSUPPORTED", candidate_id=candidate.candidate_id
+            )
+        grid_ctas = options.get("num_ctas", 1)
+        if not isinstance(grid_ctas, int) or isinstance(grid_ctas, bool) or grid_ctas < 1:
+            return TritonEvidenceDecision.rejected(
+                mechanism, "OPTIONS_UNSUPPORTED", candidate_id=candidate.candidate_id
+            )
+    evidence = triton_compile_evidence(call, environment, aliases, candidates_by_node)
+    if evidence is None:
+        return TritonEvidenceDecision.rejected(
+            mechanism, "SPECIALIZATION_UNKNOWN", candidate_id=candidate.candidate_id
+        )
+    return TritonEvidenceDecision.accepted(mechanism, evidence)

@@ -28,7 +28,12 @@ from upstream_common import (
     stable_id,
 )
 from upstream_tilelang_recipes import classify_tilelang_recipe, tilelang_parent_map
-from upstream_triton_recipes import infer_triton_recipes, promote_inferred_root_roles
+from upstream_triton_recipes import (
+    analyze_triton_recipes,
+    infer_triton_recipes,
+    classify_triton_candidate,
+    promote_inferred_root_roles,
+)
 
 
 DEFAULT_INCLUDE = {
@@ -401,7 +406,14 @@ def make_capsule(
     return "\n".join(header) + "\n".join(chunks).rstrip() + "\n"
 
 
-def extract_dsl(dsl: str, source_root: Path, output_root: Path, *, allow_commit_mismatch: bool) -> dict[str, Any]:
+def extract_dsl(
+    dsl: str,
+    source_root: Path,
+    output_root: Path,
+    *,
+    allow_commit_mismatch: bool,
+    triton_rejection_report: Path | None = None,
+) -> dict[str, Any]:
     actual_commit = require_locked_checkout(dsl, source_root, allow_commit_mismatch=allow_commit_mismatch)
     corpus_name = f"{dsl}-{DSL_LOCKS[dsl]['commit'][:8]}"
     corpus_root = output_root / corpus_name
@@ -418,6 +430,8 @@ def extract_dsl(dsl: str, source_root: Path, output_root: Path, *, allow_commit_
             overlays_by_candidate[overlay.get("candidate_id", "")].append(overlay)
     all_records: list[dict[str, Any]] = []
     totals = Counter()
+    triton_attempts: list[dict[str, Any]] = []
+    triton_candidates: list[dict[str, Any]] = []
     for path in tracked_python_files(source_root, dsl):
         relative = path.relative_to(source_root).as_posix()
         source = path.read_text(encoding="utf-8")
@@ -427,11 +441,13 @@ def extract_dsl(dsl: str, source_root: Path, output_root: Path, *, allow_commit_
         visitor.visit(tree)
         candidates = visitor.candidates
         roles, kernel_dependencies = candidate_roles(candidates, tree)
-        inferred_triton_recipes = (
-            infer_triton_recipes(candidates, tree, aliases, relative)
-            if dsl == "triton" else {}
+        triton_analysis = (
+            analyze_triton_recipes(candidates, tree, aliases, relative)
+            if dsl == "triton" else None
         )
-        if dsl == "triton":
+        inferred_triton_recipes = triton_analysis.recipes if triton_analysis is not None else {}
+        if triton_analysis is not None:
+            triton_attempts.extend({"relative_path": relative, **attempt} for attempt in triton_analysis.attempts)
             roles = promote_inferred_root_roles(roles, inferred_triton_recipes)
         tilelang_parents = tilelang_parent_map(tree) if dsl == "tilelang" else {}
         source_lines = source.splitlines(keepends=True)
@@ -553,6 +569,23 @@ def extract_dsl(dsl: str, source_root: Path, output_root: Path, *, allow_commit_
             atomic_write(unresolved_recipe_path, pretty_json(recipe))
             for curated_path, curated in zip(recipe_paths[1:], curated_recipes):
                 atomic_write(curated_path, pretty_json(curated))
+            lowerable_recipe_count = sum(1 for item in curated_recipes if item.get("lowerable"))
+            if dsl == "triton":
+                triton_candidates.append({
+                    "candidate_id": candidate.candidate_id,
+                    "relative_path": relative,
+                    "qualname": candidate.qualname,
+                    "kind": candidate.kind,
+                    "role": roles[candidate.candidate_id],
+                    "bucket": classify_triton_candidate(
+                        candidate,
+                        roles[candidate.candidate_id],
+                        lowerable_recipe_count,
+                        aliases,
+                    ),
+                    "lowerable_recipes": lowerable_recipe_count,
+                    "unresolved_bindings": sorted(unresolved),
+                })
             record = {
                 "candidate_id": candidate.candidate_id,
                 "relative_path": relative,
@@ -564,7 +597,7 @@ def extract_dsl(dsl: str, source_root: Path, output_root: Path, *, allow_commit_
                 "capsule_path": capsule_relative,
                 "manifest_path": manifest_relative,
                 "recipe_paths": recipe_relatives,
-                "lowerable_recipes": sum(1 for item in curated_recipes if item.get("lowerable")),
+                "lowerable_recipes": lowerable_recipe_count,
             }
             all_records.append(record)
             totals[f"kind:{candidate.kind}"] += 1
@@ -590,6 +623,34 @@ def extract_dsl(dsl: str, source_root: Path, output_root: Path, *, allow_commit_
         "candidates": all_records,
     }
     atomic_write(corpus_root / "source-index.json", pretty_json(index))
+    if dsl == "triton" and triton_rejection_report is not None:
+        structural_counts = Counter(item["bucket"] for item in triton_candidates)
+        attempt_counts = Counter(item["code"] for item in triton_attempts)
+        rejected_counts = Counter(
+            item["code"] for item in triton_attempts if item["status"] == "REJECTED"
+        )
+        report = {
+            "schema_version": "pipeguard-triton-rejection-report-v1",
+            "upstream_commit": actual_commit,
+            "counts": {
+                "structural_buckets": dict(sorted(structural_counts.items())),
+                "attempt_codes": dict(sorted(attempt_counts.items())),
+                "rejection_codes": dict(sorted(rejected_counts.items())),
+            },
+            "candidates": sorted(
+                triton_candidates,
+                key=lambda item: (
+                    item["relative_path"], item["qualname"], item["candidate_id"]
+                ),
+            ),
+            "attempts": sorted(
+                triton_attempts,
+                key=lambda item: (
+                    item["relative_path"], item["line"], item["end_line"], item["mechanism"]
+                ),
+            ),
+        }
+        atomic_write(triton_rejection_report, pretty_json(report))
     return index
 
 
@@ -600,6 +661,7 @@ def parse_arguments(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--triton-root", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--allow-commit-mismatch", action="store_true")
+    parser.add_argument("--triton-rejection-report", type=Path)
     return parser.parse_args(argv)
 
 
@@ -617,6 +679,9 @@ def main(argv: list[str] | None = None) -> int:
             root,
             arguments.output,
             allow_commit_mismatch=arguments.allow_commit_mismatch,
+            triton_rejection_report=(
+                arguments.triton_rejection_report if dsl == "triton" else None
+            ),
         )
         summaries[dsl] = index["counts"]
     print(canonical_json({"extracted": summaries, "tool_version": TOOL_VERSION}))

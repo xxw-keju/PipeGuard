@@ -2,17 +2,24 @@ from __future__ import annotations
 
 import ast
 from collections import defaultdict
+from dataclasses import dataclass
 from typing import Any, Protocol
 
 from upstream_common import RECIPE_VERSION, canonical_json, stable_id
 from upstream_pytest_params import is_pytest_raises_block, pytest_parameter_environments
 from upstream_static_eval import AMBIGUOUS, bind_once
-from upstream_triton_compile import triton_compile_evidence
-from upstream_triton_launch import triton_launch_evidence
+from upstream_triton_compile import analyze_triton_compile
+from upstream_triton_launch import analyze_triton_launch
 
 
 class AliasResolver(Protocol):
     def qualified(self, node: ast.AST) -> str | None: ...
+
+
+@dataclass(frozen=True)
+class TritonRecipeAnalysis:
+    recipes: dict[str, list[dict[str, Any]]]
+    attempts: tuple[dict[str, Any], ...]
 
 
 def _mutation_root(node: ast.AST) -> str | None:
@@ -149,24 +156,35 @@ def promote_inferred_root_roles(
     return promoted
 
 
-def infer_triton_recipes(
+def analyze_triton_recipes(
     candidates: list[Any],
     tree: ast.Module,
     aliases: AliasResolver,
     relative_path: str,
-) -> dict[str, list[dict[str, Any]]]:
-    """Scan conservative static environments for literal SM90 compile recipes."""
+) -> TritonRecipeAnalysis:
+    """Scan static environments and retain accepted and rejected call evidence."""
 
     candidates_by_node = {id(candidate.node): candidate for candidate in candidates}
     recipes: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    attempts: list[dict[str, Any]] = []
 
     def inspect_call(call: ast.Call, environment: dict[str, Any]) -> None:
-        evidence = triton_compile_evidence(call, environment, aliases, candidates_by_node)
-        if evidence is None:
-            evidence = triton_launch_evidence(call, environment, aliases, candidates_by_node)
-        if evidence is not None:
-            recipes[evidence.candidate.candidate_id].append(
-                _make_recipe(evidence, call, relative_path)
+        decision = analyze_triton_compile(call, environment, aliases, candidates_by_node)
+        if decision.status == "NOT_APPLICABLE":
+            decision = analyze_triton_launch(call, environment, aliases, candidates_by_node)
+        if decision.status == "NOT_APPLICABLE":
+            return
+        attempts.append({
+            "line": call.lineno,
+            "end_line": call.end_lineno or call.lineno,
+            "mechanism": decision.mechanism,
+            "status": decision.status,
+            "code": decision.code,
+            "candidate_id": decision.candidate_id,
+        })
+        if decision.evidence is not None:
+            recipes[decision.evidence.candidate.candidate_id].append(
+                _make_recipe(decision.evidence, call, relative_path)
             )
 
     def scan_block(
@@ -238,4 +256,49 @@ def infer_triton_recipes(
     for candidate_id in sorted(recipes):
         unique = {recipe["recipe_id"]: recipe for recipe in recipes[candidate_id]}
         result[candidate_id] = [unique[key] for key in sorted(unique)]
-    return result
+    return TritonRecipeAnalysis(result, tuple(attempts))
+
+
+def infer_triton_recipes(
+    candidates: list[Any],
+    tree: ast.Module,
+    aliases: AliasResolver,
+    relative_path: str,
+) -> dict[str, list[dict[str, Any]]]:
+    return analyze_triton_recipes(candidates, tree, aliases, relative_path).recipes
+
+
+def classify_triton_candidate(
+    candidate: Any,
+    role: str,
+    lowerable_recipes: int,
+    aliases: AliasResolver,
+) -> str:
+    if lowerable_recipes:
+        return "WITH_RECIPE"
+    if role in {"HELPER", "ROOT_HELPER"}:
+        return "HELPER"
+    if role == "UNCLASSIFIED":
+        return "UNCLASSIFIED"
+    if candidate.kind == "AUTOTUNE_JIT":
+        return "AUTOTUNE_ROOT"
+    arguments = candidate.node.args
+    parameters = (*arguments.posonlyargs, *arguments.args, *arguments.kwonlyargs)
+    if not parameters and arguments.vararg is None and arguments.kwarg is None:
+        return "ZERO_ARGUMENT_ROOT"
+    constexpr_names = {
+        "constexpr",
+        "tl.constexpr",
+        "triton.language.constexpr",
+    }
+    if parameters and all(
+        aliases.qualified(parameter.annotation) == "triton.language.constexpr"
+        or (
+            isinstance(parameter.annotation, ast.Constant)
+            and isinstance(parameter.annotation.value, str)
+            and parameter.annotation.value in constexpr_names
+        )
+        for parameter in parameters
+    ) and arguments.vararg is None and arguments.kwarg is None:
+        return "ALL_CONSTEXPR_ROOT"
+    return "RUNTIME_PARAMETER_ROOT"

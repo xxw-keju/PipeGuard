@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Any, Protocol
 
 from upstream_static_eval import json_literal_value, keyword_nodes, literal_value, resolve_expression
+from upstream_triton_decisions import TritonEvidenceDecision
 
 
 class AliasResolver(Protocol):
@@ -199,3 +200,102 @@ def triton_launch_evidence(
             "binding_evidence": None,
         },
     )
+
+
+def _resolved_launch_candidate(
+    node: ast.AST,
+    environment: dict[str, Any],
+    candidates_by_node: dict[int, Any],
+) -> Any | None:
+    resolved = resolve_expression(node, environment)
+    if not isinstance(resolved, (ast.FunctionDef, ast.AsyncFunctionDef)):
+        return None
+    return candidates_by_node.get(id(resolved))
+
+
+def analyze_triton_launch(
+    call: ast.Call,
+    environment: dict[str, Any],
+    aliases: AliasResolver,
+    candidates_by_node: dict[int, Any],
+) -> TritonEvidenceDecision:
+    """Classify one launch/warmup call without changing evidence acceptance."""
+
+    warmup = isinstance(call.func, ast.Attribute) and call.func.attr == "warmup"
+    bracket = isinstance(call.func, ast.Subscript)
+    mechanism = "warmup" if warmup else "launch"
+    if not warmup and not bracket:
+        return TritonEvidenceDecision.not_applicable(mechanism)
+    candidate_node = call.func.value
+    candidate = _resolved_launch_candidate(candidate_node, environment, candidates_by_node)
+    if candidate is None:
+        return TritonEvidenceDecision.not_applicable(mechanism)
+    candidate_id = candidate.candidate_id
+    if candidate.kind == "AUTOTUNE_JIT":
+        return TritonEvidenceDecision.rejected(
+            mechanism, "AUTOTUNE_WINNER_UNKNOWN", candidate_id=candidate_id
+        )
+    if candidate.kind != "JIT_ENTRY":
+        return TritonEvidenceDecision.rejected(
+            mechanism, "CANDIDATE_UNSUPPORTED", candidate_id=candidate_id
+        )
+    keywords = keyword_nodes(call, environment)
+    if keywords is None:
+        return TritonEvidenceDecision.rejected(
+            mechanism, "BINDING_UNKNOWN", candidate_id=candidate_id
+        )
+    grid_node = keywords.get("grid") if warmup else call.func.slice
+    if warmup and grid_node is None:
+        return TritonEvidenceDecision.rejected(
+            mechanism, "GRID_UNKNOWN", candidate_id=candidate_id
+        )
+    if not warmup and "grid" in keywords:
+        return TritonEvidenceDecision.rejected(
+            mechanism, "GRID_ARGUMENT_CONFLICT", candidate_id=candidate_id
+        )
+    assert grid_node is not None
+    grid = _single_cta_grid(grid_node, environment)
+    if grid is None:
+        try:
+            literal_value(grid_node, environment)
+        except ValueError:
+            code = "GRID_UNKNOWN"
+        else:
+            code = "GRID_MULTI_CTA_OR_UNSUPPORTED"
+        return TritonEvidenceDecision.rejected(mechanism, code, candidate_id=candidate_id)
+    option_nodes = {name: node for name, node in keywords.items() if name in _COMPILE_OPTIONS}
+    if option_nodes:
+        try:
+            for node in option_nodes.values():
+                json_literal_value(node, environment)
+        except ValueError:
+            return TritonEvidenceDecision.rejected(
+                mechanism, "OPTIONS_UNKNOWN", candidate_id=candidate_id
+            )
+    if _compiler_options(option_nodes, environment) is None:
+        return TritonEvidenceDecision.rejected(
+            mechanism, "OPTIONS_UNSUPPORTED", candidate_id=candidate_id
+        )
+    arguments = candidate.node.args
+    if arguments.vararg is not None or arguments.kwarg is not None:
+        return TritonEvidenceDecision.rejected(
+            mechanism, "VARARGS_UNSUPPORTED", candidate_id=candidate_id
+        )
+    parameters = (*arguments.posonlyargs, *arguments.args, *arguments.kwonlyargs)
+    if any(not _is_constexpr(parameter.annotation, aliases) for parameter in parameters):
+        return TritonEvidenceDecision.rejected(
+            mechanism, "RUNTIME_SPECIALIZATION_UNKNOWN", candidate_id=candidate_id
+        )
+    ignored = set(option_nodes)
+    if warmup:
+        ignored.add("grid")
+    if _bind_constexpr_arguments(candidate, call, environment, aliases, ignored) is None:
+        return TritonEvidenceDecision.rejected(
+            mechanism, "CONSTEXPR_BINDING_UNKNOWN", candidate_id=candidate_id
+        )
+    evidence = triton_launch_evidence(call, environment, aliases, candidates_by_node)
+    if evidence is None:
+        return TritonEvidenceDecision.rejected(
+            mechanism, "SPECIALIZATION_UNKNOWN", candidate_id=candidate_id
+        )
+    return TritonEvidenceDecision.accepted(mechanism, evidence)
