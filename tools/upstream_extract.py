@@ -154,6 +154,22 @@ class CandidateVisitor(ast.NodeVisitor):
         self.scope.pop()
 
 
+def syntax_qualified_name(node: ast.AST) -> str | None:
+    if isinstance(node, ast.Call):
+        return syntax_qualified_name(node.func)
+    if isinstance(node, ast.Name):
+        return node.id
+    if isinstance(node, ast.Attribute):
+        parent = syntax_qualified_name(node.value)
+        return f"{parent}.{node.attr}" if parent else None
+    return None
+
+
+def is_pytest_decorator(node: ast.AST) -> bool:
+    name = syntax_qualified_name(node)
+    return name == "pytest" or bool(name and name.startswith("pytest."))
+
+
 class NameUseVisitor(ast.NodeVisitor):
     def __init__(self):
         self.loaded: set[str] = set()
@@ -173,7 +189,8 @@ class NameUseVisitor(ast.NodeVisitor):
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
         self.bound.add(node.name)
         for decorator in node.decorator_list:
-            self.visit(decorator)
+            if not is_pytest_decorator(decorator):
+                self.visit(decorator)
         for default in (*node.args.defaults, *node.args.kw_defaults):
             if default:
                 self.visit(default)
@@ -194,7 +211,8 @@ class NameUseVisitor(ast.NodeVisitor):
 def function_free_names(node: ast.FunctionDef | ast.AsyncFunctionDef) -> set[str]:
     visitor = NameUseVisitor()
     for decorator in node.decorator_list:
-        visitor.visit(decorator)
+        if not is_pytest_decorator(decorator):
+            visitor.visit(decorator)
     for default in (*node.args.defaults, *node.args.kw_defaults):
         if default:
             visitor.visit(default)
@@ -333,12 +351,19 @@ def dependency_nodes(candidate: Candidate, tree: ast.Module) -> tuple[list[ast.s
 
 def source_for_node(source_lines: list[str], node: ast.AST) -> str:
     start = getattr(node, "lineno", 1)
+    skipped_lines: set[int] = set()
     if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
         decorators = getattr(node, "decorator_list", ())
         if decorators:
             start = min(start, *(decorator.lineno for decorator in decorators))
+        for decorator in decorators:
+            if is_pytest_decorator(decorator):
+                skipped_lines.update(range(decorator.lineno, (decorator.end_lineno or decorator.lineno) + 1))
     end = getattr(node, "end_lineno", start)
-    return "".join(source_lines[start - 1:end])
+    return "".join(
+        source_lines[line - 1] for line in range(start, end + 1)
+        if line not in skipped_lines
+    )
 
 
 def candidate_roles(candidates: list[Candidate], tree: ast.Module) -> tuple[dict[str, str], dict[str, list[str]]]:
@@ -398,7 +423,7 @@ def make_capsule(
         text = source_for_node(source_lines, node)
         if text.strip():
             chunks.append(text.rstrip() + "\n")
-    candidate_text = textwrap.dedent(candidate.source_text).rstrip() + "\n"
+    candidate_text = textwrap.dedent(source_for_node(source_lines, candidate.node)).rstrip() + "\n"
     if candidate.lexical_parents:
         assignments = "".join(
             f"    {name} = pipeguard_bindings[{name!r}]\n" for name in sorted(unresolved)

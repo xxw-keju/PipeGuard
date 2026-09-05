@@ -109,6 +109,25 @@ def test_case(value):
     assert "pipeguard_bindings['scale']" in capsule
 
 
+def test_capsule_strips_pytest_metadata_decorators():
+    source = """\
+import pytest
+import triton
+
+@pytest.mark.parametrize(None, [None])
+@triton.jit
+def kernel():
+    pass
+"""
+    tree, candidates = _discover("triton", source)
+    candidate = candidates[0]
+    dependencies, unresolved = dependency_nodes(candidate, tree)
+    capsule = make_capsule(candidate, dependencies, unresolved, source.splitlines(keepends=True))
+    assert "import pytest" not in capsule
+    assert "@pytest" not in capsule
+    assert "@triton.jit" in capsule
+
+
 def test_dependency_nodes_exclude_helper_and_class_parameters():
     source = """import triton
 import triton.language as tl
