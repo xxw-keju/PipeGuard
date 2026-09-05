@@ -430,6 +430,11 @@ class Executor:
             event = self._frontier_event(state, actor)
             if event is None or event.id == hold or not set(event.depends_on).issubset(state.executed):
                 continue
+            if (
+                event.type == "MBarrierInvalidate"
+                and self._phase_transition(event.resource, state.barriers[event.resource]) is not None
+            ):
+                continue
             if event.type == "MBarrierWaitParity" and self._wait_status(event, state.barriers[event.resource]) == "BLOCKED":
                 continue
             if event.type == "BarrierObserve" and self._collective_observe_status(
@@ -1362,11 +1367,20 @@ class Executor:
             in_flight = any(op.resource == event.resource for op in state.pending_completions.values())
             completed_target = barrier.generation - 1
             outstanding = state.remaining.get((event.resource, barrier.lifecycle_epoch, completed_target), set()) if completed_target >= 0 else set()
-            if not barrier.can_invalidate or barrier.generation_started or in_flight or outstanding:
+            phase_incomplete = barrier.generation_started and not (
+                barrier.pending == 0
+                and barrier.completed_tx == barrier.expected_tx
+            )
+            if phase_incomplete or in_flight or outstanding:
                 snapshot = barrier.snapshot()
                 if outstanding:
                     snapshot["remaining_logical_waits"] = sorted(outstanding)
-                raise ProtocolError("INVALIDATE_INCOMPLETE", "cannot invalidate before an observed completed phase or with in-flight work", event.id, snapshot)
+                raise ProtocolError(
+                    "INVALIDATE_INCOMPLETE",
+                    "cannot invalidate with a started phase, in-flight work, or outstanding wait users",
+                    event.id,
+                    snapshot,
+                )
             barrier.lifecycle = "INVALIDATED"
             barrier.can_invalidate = False
             barrier.publications.clear()

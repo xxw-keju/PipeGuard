@@ -474,6 +474,15 @@ def test_invalidate_after_completed_phase_is_legal():
     assert result["verdict"] == "SAFE"
 
 
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_invalidate_after_phase_conditions_reach_zero_needs_no_wait(engine):
+    result = check_module(
+        lifecycle_module("MBarrierInit", "MBarrierArrive", "MBarrierInvalidate"),
+        engine=engine,
+    )
+    assert result["verdict"] == "SAFE"
+
+
 def test_use_after_invalidate_and_live_reinit_are_rejected():
     use_after = check_module(lifecycle_module("MBarrierInit", "MBarrierArrive", "MBarrierWaitParity", "MBarrierInvalidate", "MBarrierArrive"))
     assert use_after["diagnostics"][0]["code"] == "USE_AFTER_INVALIDATE"
@@ -572,10 +581,13 @@ def test_extraction_evidence_and_lane_bounds_are_required():
     assert lane.value.code == "PARTICIPANT_OUT_OF_RANGE"
 
 
-def test_init_cannot_be_invalidated_before_a_completed_phase():
-    result = check_module(lifecycle_module("MBarrierInit", "MBarrierInvalidate"))
-    assert result["verdict"] == "SYNC_HAZARD"
-    assert result["diagnostics"][0]["code"] == "INVALIDATE_INCOMPLETE"
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_unused_initialized_barrier_can_be_invalidated_without_a_completed_phase(engine):
+    result = check_module(
+        lifecycle_module("MBarrierInit", "MBarrierInvalidate"),
+        engine=engine,
+    )
+    assert result["verdict"] == "SAFE"
 
 
 def test_integral_float_and_missing_per_wait_evidence_fail_closed():
@@ -607,6 +619,19 @@ def test_event_type_specific_fields_and_false_arrive_expect_tx():
         {"id": "wait", "type": "MBarrierWaitParity", "actor": "b", "seq": 0, "resource": "bar", "lifecycle_epoch": 0, "generation": 0, "raw_parity": 0, "parity_evidence": {"derivation_kind": "BARRIER_HISTORY", "logical_stream_id": "false-arrive-test", "lifecycle_epoch": 0, "stream_rank": 0, "polling_coalesced": True}, "depends_on": ["init"]},
     ]
     assert check_module(module_from_dict(raw))["verdict"] == "SAFE"
+
+    raw["events"].insert(3, {
+        "id": "false_next", "type": "MBarrierArriveExpectTx",
+        "actor": "a", "seq": 3, "resource": "bar", "lifecycle_epoch": 0,
+        "count": 1, "bytes": 8, "generation": 1, "predicate": False,
+    })
+    module = module_from_dict(raw)
+    result = check_module(module, engine="maximal")
+    assert result["verdict"] == "SAFE"
+    assert not any(
+        "mbarrier-phase" in anchor and "g00000001" in anchor
+        for anchor in _anchor_ids(module)
+    )
 
 
 
@@ -1259,17 +1284,17 @@ def test_incremental_statistics_certificate_is_deterministic():
 
 
 @pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
-def test_never_spawned_synthetic_phase_anchor_is_unreachable_not_stuck(engine):
+def test_predicated_false_arrival_creates_no_synthetic_phase_anchor(engine):
     module = lifecycle_module("MBarrierInit", "MBarrierArrive")
     raw = json.loads(json.dumps(module.raw))
     raw["events"][1]["predicate"] = False
-    result = check_module(module_from_dict(raw), engine=engine)
-    assert result["verdict"] == "INCONCLUSIVE"
+    module = module_from_dict(raw)
+    assert not any("mbarrier-phase" in anchor for anchor in _anchor_ids(module))
+    result = check_module(module, engine=engine)
+    assert result["verdict"] == "SAFE"
     if engine == "crosscheck":
-        assert result["artifacts"]["crosscheck"]["maximal"]["verdict"] == "INCONCLUSIVE"
-        assert result["artifacts"]["crosscheck"]["exhaustive"]["verdict"] == "INCONCLUSIVE"
-    else:
-        assert result["diagnostics"][0]["code"] == "ANCHOR_NOT_REACHED"
+        assert result["artifacts"]["crosscheck"]["maximal"]["verdict"] == "SAFE"
+        assert result["artifacts"]["crosscheck"]["exhaustive"]["verdict"] == "SAFE"
 
 
 def test_crosscheck_retains_maximal_incremental_certificate():
@@ -2285,6 +2310,147 @@ def test_channel_handoff_and_two_sided_reuse_are_safe(engine):
 def test_control_only_channel_orders_execution_but_not_shared_visibility():
     result = check_module(channel_module(control_only=True), engine="crosscheck")
     assert result["verdict"] == "DATA_HAZARD"
+
+
+def gsan_cross_sm_reduced_module(producer_sem: str, consumer_sem: str, scope: str):
+    raw = cluster_dsmem_module(cluster_ctas=2)
+    raw["actors"] = [
+        {"id": "producer", "kind": "PARTITION", "participants": [0], "cta_rank": 0},
+        {"id": "consumer", "kind": "PARTITION", "participants": [0], "cta_rank": 1},
+    ]
+    raw["regions"] = [{
+        "id": "payload", "allocation_id": "global:payload",
+        "address_space": "GLOBAL", "offset": 0, "extent": 4,
+    }]
+    synchronizes = (
+        producer_sem in {"release", "acq_rel"}
+        and consumer_sem in {"acquire", "acq_rel"}
+        and scope in {"gpu", "sys"}
+    )
+    if not synchronizes:
+        raw["resources"] = []
+        raw["events"] = [
+            {"id": "payload_write", "type": "MemWrite", "actor": "producer", "seq": 0, "region": "payload"},
+            {"id": "payload_read", "type": "MemRead", "actor": "consumer", "seq": 0, "region": "payload"},
+        ]
+        return module_from_dict(raw)
+    mask = {name: False for name in full_visibility_mask()}
+    mask.update({"dsmem": False, "global_read": True, "global_write": True})
+    raw["resources"] = [{
+        "id": "atomic_flag", "kind": "channel",
+        "participants": ["producer", "consumer"],
+        "capacity": 1, "scope": "GPU", "visibility_mask": mask,
+    }]
+    raw["events"] = [
+        {"id": "flag_create", "type": "ChannelCreate", "actor": "producer", "seq": 0, "resource": "atomic_flag"},
+        {"id": "flag_acquire_slot", "type": "ProducerAcquire", "actor": "producer", "seq": 1, "resource": "atomic_flag", "slot": 0, "logical_phase": 0},
+        {"id": "payload_write", "type": "MemWrite", "actor": "producer", "seq": 2, "region": "payload"},
+        {"id": "flag_release", "type": "ProducerCommit", "actor": "producer", "seq": 3, "resource": "atomic_flag", "slot": 0, "logical_phase": 0},
+        {"id": "flag_poll", "type": "ConsumerWait", "actor": "consumer", "seq": 0, "resource": "atomic_flag", "slot": 0, "logical_phase": 0},
+        {"id": "payload_read", "type": "MemRead", "actor": "consumer", "seq": 1, "region": "payload"},
+        {"id": "flag_done", "type": "ConsumerRelease", "actor": "consumer", "seq": 2, "resource": "atomic_flag", "slot": 0, "logical_phase": 0},
+    ]
+    return module_from_dict(raw)
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_gsan_release_acquire_cross_sm_reduced_case_is_safe(engine):
+    result = check_module(
+        gsan_cross_sm_reduced_module("release", "acquire", "gpu"),
+        engine=engine,
+    )
+    assert result["verdict"] == "SAFE"
+    assert any(edge["kind"] == "CHANNEL_HANDOFF" for edge in result["artifacts"]["pdg"]["edges"])
+
+
+def test_gpu_channel_does_not_publish_dsmem():
+    raw = cluster_dsmem_module(control_only=True)
+    mask = {name: False for name in full_visibility_mask()}
+    mask.update({"dsmem": False, "global_read": True, "global_write": True})
+    raw["resources"].append({
+        "id": "atomic_flag", "kind": "channel",
+        "participants": ["a0", "a1"],
+        "capacity": 1, "scope": "GPU", "visibility_mask": mask,
+    })
+    additions = {
+        "a0": [
+            {"id": "flag_create", "type": "ChannelCreate", "resource": "atomic_flag"},
+            {"id": "flag_acquire", "type": "ProducerAcquire", "resource": "atomic_flag", "slot": 0, "logical_phase": 0},
+            {"id": "flag_commit", "type": "ProducerCommit", "resource": "atomic_flag", "slot": 0, "logical_phase": 0},
+        ],
+        "a1": [
+            {"id": "flag_wait", "type": "ConsumerWait", "resource": "atomic_flag", "slot": 0, "logical_phase": 0},
+            {"id": "flag_release", "type": "ConsumerRelease", "resource": "atomic_flag", "slot": 0, "logical_phase": 0},
+        ],
+    }
+    reordered = []
+    for actor in ("a0", "a1"):
+        events = [event for event in raw["events"] if event["actor"] == actor]
+        memory_index = next(
+            index for index, event in enumerate(events)
+            if event["type"] in {"MemRead", "MemWrite"}
+        )
+        before, after = additions[actor][:-1], additions[actor][-1:]
+        events[memory_index:memory_index] = before
+        events[memory_index + len(before) + 1:memory_index + len(before) + 1] = after
+        for seq, event in enumerate(events):
+            event.update({"actor": actor, "seq": seq})
+        reordered.extend(events)
+    raw["events"] = reordered
+    result = check_module(module_from_dict(raw), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+    assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
+
+
+@pytest.mark.parametrize(
+    ("producer_sem", "consumer_sem", "scope"),
+    [
+        ("relaxed", "acquire", "gpu"),
+        ("relaxed", "acquire", "sys"),
+        ("release", "relaxed", "gpu"),
+        ("release", "relaxed", "sys"),
+        ("release", "acquire", "cta"),
+        ("release", "acq_rel", "cta"),
+        ("acq_rel", "acquire", "cta"),
+        ("acq_rel", "acq_rel", "cta"),
+    ],
+)
+def test_gsan_cross_sm_semantic_and_scope_mismatch_reduced_cases_report_race(
+    producer_sem,
+    consumer_sem,
+    scope,
+):
+    result = check_module(
+        gsan_cross_sm_reduced_module(producer_sem, consumer_sem, scope),
+        engine="crosscheck",
+    )
+    assert result["verdict"] == "DATA_HAZARD"
+    assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
+
+
+@pytest.mark.parametrize(
+    ("left", "right"),
+    [("MemWrite", "MemRead"), ("MemRead", "MemWrite"), ("MemWrite", "MemWrite")],
+    ids=["raw", "war", "waw"],
+)
+def test_gsan_basic_cross_sm_race_reduced_cases_crosscheck(left, right):
+    raw = cluster_dsmem_module(cluster_ctas=2)
+    raw["actors"] = [
+        {"id": "cta0", "kind": "PARTITION", "participants": [0], "cta_rank": 0},
+        {"id": "cta1", "kind": "PARTITION", "participants": [0], "cta_rank": 1},
+    ]
+    raw["resources"] = []
+    raw["regions"] = [{
+        "id": "target", "allocation_id": "global:target",
+        "address_space": "GLOBAL", "offset": 0, "extent": 4,
+    }]
+    raw["events"] = [
+        {"id": "left", "type": left, "actor": "cta0", "seq": 0, "region": "target"},
+        {"id": "right", "type": right, "actor": "cta1", "seq": 0, "region": "target"},
+    ]
+    result = check_module(module_from_dict(raw), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+    assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
 
 
 def test_channel_missing_commit_and_release_have_structured_witnesses():

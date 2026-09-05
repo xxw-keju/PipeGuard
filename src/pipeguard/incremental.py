@@ -254,7 +254,15 @@ def build_anchor_streams(module: Module, anchor_ids: list[str]) -> tuple[AnchorS
         resource.id: {} for resource in module.resources
     }
     for event in module.events:
-        if event.resource is None or event.generation is None or event.lifecycle_epoch is None:
+        if (
+            event.resource is None
+            or event.generation is None
+            or event.lifecycle_epoch is None
+            or (
+                event.type in {"MBarrierArrive", "MBarrierArriveExpectTx"}
+                and not event.predicate
+            )
+        ):
             continue
         identifier = stable_phase_id(event.resource, event.lifecycle_epoch, event.generation)
         phases[event.resource][identifier] = (event.lifecycle_epoch, event.generation, identifier)
@@ -533,6 +541,15 @@ class ReadyIndex:
         if event.resource is not None:
             self.actor_resource[actor] = event.resource
             self.resource_followers.setdefault(event.resource, set()).add(actor)
+        if (
+            event.type == "MBarrierInvalidate"
+            and self.executor._phase_transition(
+                event.resource,
+                self.state.barriers[event.resource],
+            ) is not None
+        ):
+            self.future_phase_followers.setdefault(event.resource, set()).add(actor)
+            return
         if event.type == "MBarrierWaitParity":
             status = self.executor._wait_status(event, self.state.barriers[event.resource])
             if status == "BLOCKED":

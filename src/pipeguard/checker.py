@@ -354,7 +354,14 @@ def _anchor_ids(module: Module) -> list[str]:
             identifiers.update(wgmma_commits[event.id][1].values())
         if event.type == "TmaStoreCommitGroup" and tma_store_commits[event.id][2]:
             identifiers.update(tma_store_commits[event.id][1].values())
-        if event.resource is not None and event.generation is not None:
+        if (
+            event.resource is not None
+            and event.generation is not None
+            and not (
+                event.type in {"MBarrierArrive", "MBarrierArriveExpectTx"}
+                and not event.predicate
+            )
+        ):
             identifiers.add(stable_phase_id(event.resource, event.lifecycle_epoch, event.generation))
     return sorted(identifiers)
 
@@ -551,6 +558,8 @@ def _channel_visibility(module: Module, graph: PDG, source: Effect, target: Effe
             continue
         if region.address_space == "SHARED" and not mask.shared:
             continue
+        if region.address_space == "DSMEM" and not mask.dsmem:
+            continue
         if region.address_space == "GLOBAL" and not (
             (source.mode == "READ" and mask.global_read)
             or (source.mode == "WRITE" and mask.global_write)
@@ -709,6 +718,26 @@ def _completion_observed(module: Module, graph: PDG, window: Effect, point: Effe
     return False
 
 
+def _ordered_wgmma_accumulations(module: Module, left: Effect, right: Effect) -> bool:
+    if left.mode != "WRITE" or right.mode != "WRITE" or left.region != right.region:
+        return False
+    region = module.region_map[left.region]
+    left_issue = module.event_map[left.begin]
+    right_issue = module.event_map[right.begin]
+    return (
+        region.address_space == "REGISTER"
+        and left_issue.type == "WgmmaIssue"
+        and right_issue.type == "WgmmaIssue"
+        and left_issue.resource == right_issue.resource
+        and left_issue.group_owner == right_issue.group_owner
+        and left_issue.engine_id is not None
+        and left_issue.engine_id == right_issue.engine_id
+        and left_issue.engine_seq is not None
+        and right_issue.engine_seq is not None
+        and left_issue.engine_seq != right_issue.engine_seq
+    )
+
+
 def _data_hazard(module: Module, graph: PDG) -> dict[str, Any] | None:
     effects = _effects(module)
     for left, right in _overlapping_effect_pairs(module, effects):
@@ -732,8 +761,12 @@ def _data_hazard(module: Module, graph: PDG) -> dict[str, Any] | None:
                 )
             query = "point conflict requires same-actor order or a typed mbarrier/collective/channel visibility transfer"
         elif left.async_window and right.async_window:
-            safe = graph.reachable(left.end, right.begin) or graph.reachable(right.end, left.begin)
-            query = "async windows must be non-overlapping"
+            safe = (
+                graph.reachable(left.end, right.begin)
+                or graph.reachable(right.end, left.begin)
+                or _ordered_wgmma_accumulations(module, left, right)
+            )
+            query = "async windows must be non-overlapping, except ordered WGMMA updates to one register accumulator"
         else:
             window, point = (left, right) if left.async_window else (right, left)
             if window.mode == "READ":

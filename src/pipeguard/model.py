@@ -490,16 +490,23 @@ def _semantic_validate(module: Module) -> None:
             raise PGIRError("KNOWN_RESOURCE_UNSUPPORTED", "resource kind is not implemented yet", {"resource": resource.id, "kind": resource.kind})
         if schema_version == "pgir-v2" and resource.kind != "cluster_barrier":
             participant_ranks = {actors[actor].cta_rank for actor in resource.participants}
-            if len(participant_ranks) != 1:
+            gpu_channel = resource.kind == "channel" and resource.scope == "GPU"
+            if len(participant_ranks) != 1 and not gpu_channel:
                 raise PGIRError(
                     "CROSS_CTA_LOCAL_RESOURCE",
-                    "non-cluster resources cannot span multiple CTAs",
+                    "only GPU-scope channels may span multiple CTAs",
                     {"resource": resource.id, "cta_ranks": sorted(participant_ranks)},
                 )
             if resource.scope == "CLUSTER":
                 raise PGIRError(
                     "RESOURCE_SCOPE_MISMATCH",
                     "only cluster barriers may use CLUSTER scope in the supported PGIR v2 subset",
+                    {"resource": resource.id, "kind": resource.kind},
+                )
+            if resource.scope == "GPU" and resource.kind != "channel":
+                raise PGIRError(
+                    "RESOURCE_SCOPE_MISMATCH",
+                    "GPU scope is supported only for channels",
                     {"resource": resource.id, "kind": resource.kind},
                 )
             if resource.visibility_mask is not None and resource.visibility_mask.dsmem:
@@ -638,6 +645,12 @@ def _semantic_validate(module: Module) -> None:
                 raise PGIRError(
                     "INVALID_VISIBILITY_MASK",
                     "channel must select either control-only or at least one data visibility domain",
+                    {"resource": resource.id, "visibility_mask": mask.artifact()},
+                )
+            if resource.scope == "GPU" and (mask.shared or mask.dsmem or mask.tensor_read or mask.tensor_write):
+                raise PGIRError(
+                    "UNSUPPORTED_GPU_VISIBILITY",
+                    "GPU-scope channels are limited to global-memory visibility",
                     {"resource": resource.id, "visibility_mask": mask.artifact()},
                 )
         else:
