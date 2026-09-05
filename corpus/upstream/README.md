@@ -141,6 +141,24 @@ The eleventh batch expands two complete, finite pytest matrices from `test_core.
 
 All 116 recipes pass native source/capsule TTGIR parity in the persisted run `corpus/upstream/generated/triton-test-core-b11/run/9da54157795da9ca`. Strict capture rejects all of them explicitly: 96 descriptor-based transpose variants contain unsupported `ttg.global_scratch_alloc`, while the 20 multidimensional dot variants require unresolved alias relations among three external pointer bases. These are frontend/profile gaps after successful native lowering, not missing specialization parameters or parser crashes.
 
+## Triton selected-CTA capture and fresh full run
+
+Triton capture now keeps the source example's complete launch grid while selecting one CTA for analysis. The default coordinate is `(0, 0, 0)`: `tt.get_program_id(axis)` evaluates to that coordinate and `tt.get_num_programs(axis)` evaluates to the corresponding real grid extent. The snapshot and PGIR record both `launch_grid` and `selected_cta`, and the checker manifest scopes `SAFE` to that selected CTA rather than the whole launch. This does not modify runtime signatures, constexprs, compiler options, or launch sizes. Triton CTA clusters with `ttg.num-ctas > 1` remain fail closed.
+
+A fresh six-worker run over all 313 concrete Triton recipes completed in 1000.2 seconds with 105 `CAPTURED` and 208 `UNSUPPORTED`; there are no `PROFILE_SKIPPED`, lowering errors, import errors, or timeouts. All 313 establish native source/capsule TTGIR parity. The 105 captured specializations comprise 101 unit-grid launches, three real 97-CTA launches, and one real `(1, 3, 2)` launch. The 208 capture rejections are explicit: 105 unsupported operations, 88 unresolved alias obligations, nine unresolved predicates, five unresolved SSA values, and one multi-function module. After adding exact dimensions for the two existing multidimensional reviewed grids `(1, 2)` and `(1, 3, 2)`, an immediate repeat SHA-resumed 311/313 artifacts and recomputed only those two recipes in 4.3 seconds with unchanged totals. Generated artifacts remain ignored under `corpus/upstream/generated/triton-selected-cta-full/`.
+
+Five nonempty captured kernels were checked with the maximal engine for 500 repetitions each. All return `SAFE`; all satisfy `scheduler_work_units <= 12 * n_ext * t_eff`, `pdg_edges <= n_ext * (t_eff + 4)`, and one insertion per unique PDG edge.
+
+| Source kernel | Events | PDG build median | Race scan median | Maximal total median |
+| --- | ---: | ---: | ---: | ---: |
+| `test_keyword_only_arguments.kernel` | 3 | 10.233 us | 20.007 us | 244.625 us |
+| `test_compilation_listener.cumsum_kernel` | 2 | 9.140 us | 17.177 us | 217.758 us |
+| `test_pre_run_hooks.add_kernel` | 2 | 9.345 us | 17.262 us | 220.032 us |
+| `test_static_range.loop_kernel` | 1 | 7.109 us | 12.089 us | 186.185 us |
+| `test_cumsum_dtype.kernel` | 1 | 7.243 us | 12.133 us | 193.198 us |
+
+A controlled scale-up of the real `cumsum_kernel` read/write event pattern confirms linear PDG construction and scheduler counters: from 64 to 256 events, PDG edges grow from 63 to 255, scheduler work from 256 to 1024, and median PDG construction from 73.0 to 261.3 us. It also exposes a separate unresolved complexity gap in race detection: when every effect shares one overlapping region, the current pair iterator emits `E * (E - 1) / 2` pairs. The same 64-to-256 event scale therefore increases race scanning from 0.529 to 5.899 ms. The current evidence supports the `O(TN)` maximal scheduler and direct PDG construction bounds, but not an `O(TN)` bound for the complete race-conflict scan; that pair-enumeration path requires a separate bounded/indexed algorithm.
+
 ## Frontend-only full run
 
 Run the current concrete recipe set with a 150-second dual-DSL heartbeat:

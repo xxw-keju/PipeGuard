@@ -5,6 +5,7 @@ import os
 import subprocess
 import sys
 import types
+from math import prod
 from pathlib import Path
 
 import jsonschema
@@ -62,6 +63,9 @@ def test_curated_recipe_overlay_and_generated_recipes_validate():
     recipe_schema = json.loads((schema_root / "recipe-v1.schema.json").read_text())
     for recipe in overlay["recipes"]:
         jsonschema.validate(recipe, recipe_schema)
+        compiler = recipe.get("compiler", {})
+        if "grid" in compiler:
+            assert prod(compiler["grid"]) == compiler["grid_ctas"]
     indexes = [
         json.loads((CORPUS / "tilelang-2c31e071" / "source-index.json").read_text()),
         json.loads((CORPUS / "triton-61c02bcd" / "source-index.json").read_text()),
