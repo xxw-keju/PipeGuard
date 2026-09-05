@@ -10,7 +10,7 @@ ROOT = Path(__file__).parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 from upstream_extract import AliasTable, CandidateVisitor, infer_triton_recipes  # noqa: E402
-from upstream_worker import _triton_attrs, _triton_resolver_kwargs  # noqa: E402
+from upstream_worker import _triton_attrs, _triton_compiler_constexprs, _triton_resolver_kwargs  # noqa: E402
 
 
 def _recipes(source: str) -> list[dict]:
@@ -180,4 +180,23 @@ def test_worker_materializes_explicit_triton_constexpr_resolver_values():
     with pytest.raises(TypeError, match="unsupported Triton constexpr"):
         _triton_resolver_kwargs({
             "closed": {"__pipeguard_triton_constexpr__": [42]},
+        }, constructor)
+
+
+def test_worker_materializes_explicit_triton_dtype_constexpr_values():
+    constructor = lambda value: ("dtype", value)
+    assert _triton_compiler_constexprs({
+        "plain": 7,
+        "dtype": {"__pipeguard_triton_dtype__": "int32"},
+    }, constructor) == {
+        "plain": 7,
+        "dtype": ("dtype", "int32"),
+    }
+    with pytest.raises(ValueError, match="malformed Triton dtype"):
+        _triton_compiler_constexprs({
+            "dtype": {"__pipeguard_triton_dtype__": "int32", "extra": True},
+        }, constructor)
+    with pytest.raises(TypeError, match="unsupported Triton dtype"):
+        _triton_compiler_constexprs({
+            "dtype": {"__pipeguard_triton_dtype__": 32},
         }, constructor)

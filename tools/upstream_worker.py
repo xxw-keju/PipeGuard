@@ -167,6 +167,7 @@ def _normalize_triton_ir(text: str) -> str:
 
 
 _TRITON_CONSTEXPR_MARKER = "__pipeguard_triton_constexpr__"
+_TRITON_DTYPE_MARKER = "__pipeguard_triton_dtype__"
 
 
 def _triton_resolver_kwargs(values: Any, constexpr_constructor: Any) -> dict[str, Any]:
@@ -183,6 +184,24 @@ def _triton_resolver_kwargs(values: Any, constexpr_constructor: Any) -> dict[str
             if not isinstance(payload, (bool, int, float, str)) and payload is not None:
                 raise TypeError(f"unsupported Triton constexpr resolver value for {name}")
             value = constexpr_constructor(payload)
+        result[name] = value
+    return result
+
+
+def _triton_compiler_constexprs(values: Any, dtype_constructor: Any) -> dict[str, Any]:
+    if not isinstance(values, dict):
+        raise TypeError("Triton compiler constexprs must be an object")
+    result: dict[str, Any] = {}
+    for name, value in values.items():
+        if not isinstance(name, str):
+            raise TypeError("Triton compiler constexpr names must be strings")
+        if isinstance(value, dict) and _TRITON_DTYPE_MARKER in value:
+            if set(value) != {_TRITON_DTYPE_MARKER}:
+                raise ValueError(f"malformed Triton dtype constexpr value for {name}")
+            payload = value[_TRITON_DTYPE_MARKER]
+            if not isinstance(payload, str) or not payload:
+                raise TypeError(f"unsupported Triton dtype constexpr value for {name}")
+            value = dtype_constructor(payload)
         result[name] = value
     return result
 
@@ -228,6 +247,7 @@ def _triton_attrs(function: Any, attrs: Any) -> dict[tuple[int, ...], list[list[
 
 def _lower_triton(module: Any, recipe: dict[str, Any], *, resolution: str) -> str:
     import triton
+    import triton.language as tl
     from triton.backends.compiler import GPUTarget
     from triton.compiler import ASTSource
 
@@ -236,7 +256,7 @@ def _lower_triton(module: Any, recipe: dict[str, Any], *, resolution: str) -> st
     source = ASTSource(
         fn=function,
         signature=compiler["signature"],
-        constexprs=compiler.get("constexprs", {}),
+        constexprs=_triton_compiler_constexprs(compiler.get("constexprs", {}), tl.dtype),
         attrs=_triton_attrs(function, compiler.get("attrs", {})),
     )
     target = GPUTarget("cuda", 90, recipe["target"].get("warp_size", 32))
