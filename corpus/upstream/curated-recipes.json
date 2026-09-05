@@ -643,6 +643,162 @@
         "warp_size": 32
       },
       "unresolved": []
+    },
+    {
+      "bindings": {},
+      "candidate_id": "a95b1f963a57abf3",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {
+          "GLOBAL": 1
+        },
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {
+          "GLOBAL": "constexpr"
+        }
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/runtime/test_cache.py:442;equivalent-repeat:444",
+      "recipe_id": "a95b1f963a57abf3-sm90-L442-27771cb2",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {},
+      "candidate_id": "fb3d6ce48249ceb8",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {},
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {}
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/runtime/test_cache.py:537;valid-before-global-mutation",
+      "recipe_id": "fb3d6ce48249ceb8-sm90-L537-51bc4c84",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {},
+      "candidate_id": "1b0367d8bf00d994",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {},
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {}
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {}
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/runtime/test_cache.py:612",
+      "recipe_id": "1b0367d8bf00d994-sm90-L612-2f4a5b9b",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
+    },
+    {
+      "bindings": {
+        "cst": {
+          "__pipeguard_triton_constexpr__": 42
+        }
+      },
+      "candidate_id": "de1342393bd70d5e",
+      "compiler": {
+        "attrs": {},
+        "binding_evidence": null,
+        "constexprs": {},
+        "grid_ctas": 1,
+        "options": {
+          "num_ctas": 1,
+          "num_stages": 3,
+          "num_warps": 4
+        },
+        "signature": {}
+      },
+      "dsl": "triton",
+      "lowerable": true,
+      "materialization": {
+        "args": [],
+        "kwargs": {},
+        "mode": "direct",
+        "resolver_kwargs": {
+          "cst": {
+            "__pipeguard_triton_constexpr__": 42
+          }
+        }
+      },
+      "origin": "ai-reviewed-launch:python/test/unit/runtime/test_cache.py:559;closure-binding:cst=tl.constexpr(42)@556-557",
+      "recipe_id": "de1342393bd70d5e-sm90-L559-db7778fa",
+      "reference": {
+        "mode": "reference_replay"
+      },
+      "schema_version": "pipeguard-upstream-recipe-v1",
+      "target": {
+        "arch": "sm90",
+        "backend": "cuda",
+        "warp_size": 32
+      },
+      "unresolved": []
     }
   ],
   "schema_version": "pipeguard-upstream-curated-recipes-v1"
