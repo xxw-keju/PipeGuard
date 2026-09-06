@@ -6,7 +6,6 @@ from pipeguard.checker import check_module
 from pipeguard.model import load_module, module_from_dict
 from test_checker import (
     FIXTURES,
-    channel_module,
     cp_async_module,
     tma_load_proxy_module,
     tma_store_module,
@@ -98,17 +97,6 @@ def test_bounded_typed_completion_and_visibility_oracle():
         safe += expected == "SAFE"
         hazard += expected != "SAFE"
 
-    for phases, control_only in product((1, 2), (False, True)):
-        expected = "DATA_HAZARD" if control_only else "SAFE"
-        _assert_expected(
-            channel_module(phases=phases, control_only=control_only),
-            expected,
-            ("channel", phases, control_only),
-        )
-        checked += 1
-        safe += expected == "SAFE"
-        hazard += expected != "SAFE"
-
     for domain, fence_after_issue in product(
         ("TMA", "ASYNC_COPY", "TENSOR_CORE"),
         (False, True),
@@ -134,6 +122,6 @@ def test_bounded_typed_completion_and_visibility_oracle():
         safe += expected == "SAFE"
         hazard += expected != "SAFE"
 
-    assert checked == 65
+    assert checked == 61
     assert safe > 0
     assert hazard > 0

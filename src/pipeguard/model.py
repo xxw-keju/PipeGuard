@@ -14,7 +14,7 @@ import jsonschema
 
 from .protocols import RESOURCE_KINDS, VisibilityMask
 
-IMPLEMENTED_RESOURCE_KINDS = frozenset({"mbarrier", "cta_barrier", "named_barrier", "cluster_barrier", "async_group", "channel"})
+IMPLEMENTED_RESOURCE_KINDS = frozenset({"mbarrier", "cta_barrier", "named_barrier", "cluster_barrier", "async_group"})
 IMPLEMENTED_ASYNC_PROTOCOLS = frozenset({"CP_ASYNC", "WGMMA", "TMA_STORE"})
 
 IMPLEMENTED_EVENTS = frozenset({
@@ -24,7 +24,6 @@ IMPLEMENTED_EVENTS = frozenset({
     "CpAsyncIssue", "CpAsyncCommitGroup", "CpAsyncWaitGroup",
     "WgmmaFenceOperand", "WgmmaIssue", "WgmmaCommitGroup", "WgmmaWaitGroup",
     "TmaStoreIssue", "TmaStoreCommitGroup", "TmaStoreWaitGroup",
-    "ChannelCreate", "ProducerAcquire", "ProducerCommit", "ConsumerWait", "ConsumerRelease",
     "ProxyFence",
 })
 KNOWN_UNSUPPORTED_EVENTS = frozenset({
@@ -33,6 +32,7 @@ KNOWN_UNSUPPORTED_EVENTS = frozenset({
     "CpAsyncGroupComplete",
     "TmaLoadComplete", "TmaStoreSourceReleased", "TmaStoreGlobalComplete",
     "WgmmaResultReady", "WgmmaOperandsReleased",
+    "ChannelCreate", "ProducerAcquire", "ProducerCommit", "ConsumerWait", "ConsumerRelease",
 })
 
 

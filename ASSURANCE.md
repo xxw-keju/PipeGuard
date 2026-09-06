@@ -52,7 +52,7 @@ Let:
 
 ```text
 N_ext = program and finite synthetic transitions + explicit dependency references
-T_eff = nonempty program, phase, collective, group, channel, and engine streams
+T_eff = nonempty program, phase, collective, group, and engine streams
 ```
 
 The incremental scheduler performs one canonical pass and one stateful delayed-anchor pass per stream. Hash-table/set operations are expected-amortized constant time. Delta notifications touch indexed followers rather than scanning all transitions. The direct full-boundary graph has:
@@ -70,9 +70,9 @@ For the original core notation, where `T` is the actor count and `N` is the numb
 
 ## Extended SM90 protocols
 
-TMA transaction completion, lifecycle reuse, CTA/named/cluster barriers, cp.async groups, WGMMA and TMA-store typed endpoints, channels, proxy visibility, and explicit async-engine ordering use the same finite transition framework. They are covered by focused tests and maximal-versus-memoized-all-state crosschecks over the operational FSM.
+TMA transaction completion, lifecycle reuse, CTA/named/cluster barriers, cp.async groups, WGMMA and TMA-store typed endpoints, proxy visibility, and explicit async-engine ordering use the same finite transition framework. They are covered by focused tests and maximal-versus-memoized-all-state crosschecks over the operational FSM.
 
-They are not consequences of the Arrive/LogicalWait theorem. [`EXTENDED_ASSURANCE.md`](EXTENDED_ASSURANCE.md) gives the separate finite-product argument for completion fairness normalization, held-anchor trace absorption, full-boundary PDG exactness, and typed visibility-aware window separation in the validated exact domain. The 65-case independent endpoint/visibility enumeration checks each extension class against both execution engines.
+They are not consequences of the Arrive/LogicalWait theorem. [`EXTENDED_ASSURANCE.md`](EXTENDED_ASSURANCE.md) gives the separate finite-product argument for completion fairness normalization, held-anchor trace absorption, full-boundary PDG exactness, and typed visibility-aware window separation in the validated exact domain. The 61-case independent endpoint/visibility enumeration checks each extension class against both execution engines.
 
 ## Frontend obligation
 

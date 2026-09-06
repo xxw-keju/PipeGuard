@@ -32,7 +32,7 @@ there is no reachable protocol-invalid attempt and no reachable valid stuck stat
 
 ### Argument
 
-1. Every successful implementation step applies one declarative FSM rule and monotonically advances an actor, lifecycle, invocation, group endpoint, channel phase, or completion identity. Failure is checked before mutation; failure-atomic tests cover every synthetic transition class.
+1. Every successful implementation step applies one declarative FSM rule and monotonically advances an actor, lifecycle, invocation, group endpoint, or completion identity. Failure is checked before mutation; failure-atomic tests cover every synthetic transition class.
 2. Each finite trace therefore corresponds directly to an operational trace with the same stable identities. A reported protocol witness contains the valid prefix, candidate event, and pre-state, establishing report soundness.
 3. Guaranteed completions are finite and inflationary. Their prerequisites are explicit: TMA issue, commit group, TMA-store source release, full collective arrival, or producer commit. Under the declared fairness assumption, delaying a continuously enabled completion can be normalized by commuting it left across independent steps. Eager synthetic scheduling therefore does not remove a final, stuck, or invalid witness.
 4. For a held anchor, any valid trace that avoids the anchor is absorbed by maximal closure unless closure first finds another real risk. Program frontiers are monotone; same-resource steps that do not commute are ordered by generation, invocation, owner/group sequence, endpoint prerequisite, slot phase, or explicit engine predecessor. These are exactly the scheduler readiness predicates.
@@ -71,7 +71,7 @@ For exact aliases, a conflicting pair is safe exactly when one direction has bot
 1. PDG must-order separating the required endpoint from the other access; and
 2. the required typed visibility transfer or completion observation.
 
-The implemented transfer cases are exhaustive for the supported domain: mbarrier publication/observation, typed collective release/observe, channel commit/handoff/wait and release/reacquire, generic-to-async ProxyFence with matching direction/scope/region/mask, and async-to-generic typed completion observation. A ProxyFence normally publishes its issuing actor's writes; an elected issuer may additionally publish another actor's shared write only when a typed collective transfer first carries that write to the issuer. Mere dependency reachability or a control-only barrier is insufficient. Engine order alone is deliberately excluded from visibility.
+The implemented transfer cases are exhaustive for the supported domain: mbarrier publication/observation, typed collective release/observe, generic-to-async ProxyFence with matching direction/scope/region/mask, and async-to-generic typed completion observation. A ProxyFence normally publishes its issuing actor's writes; an elected issuer may additionally publish another actor's shared write only when a typed collective transfer first carries that write to the issuer. Mere dependency reachability or a control-only barrier is insufficient. Engine order alone is deliberately excluded from visibility.
 
 Therefore:
 
@@ -107,7 +107,6 @@ For the original actor/event notation this specializes to expected-amortized `O(
 - cp.async group count, wait count, and overwritten group;
 - WGMMA operand/result waits versus operand overwrite/accumulator read;
 - TMA-store source/global waits versus source overwrite/destination read;
-- channel phase count and typed versus control-only visibility;
 - TMA ProxyFence domain and placement;
 - TMA completion before/after arrival and transaction-byte mismatch.
 

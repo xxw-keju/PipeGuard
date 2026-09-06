@@ -29,7 +29,6 @@ from pipeguard.model import (
     _fast_schema_validator,
     load_module,
     module_from_dict,
-    stable_channel_handoff_id,
     stable_collective_release_id,
     stable_completion_id,
     stable_group_completion_id,
@@ -1343,17 +1342,21 @@ def test_proxy_protocol_fields_are_structured_and_validated():
     assert malformed.value.code == "SCHEMA_INVALID"
 
 
-def test_channel_and_mbarrier_resource_metadata_fail_closed():
+def test_channel_resource_and_events_are_known_but_unsupported():
     raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
-    raw["resources"][0].update({
-        "kind": "channel",
-        "capacity": 2,
-        "scope": "CTA",
-    })
-    with pytest.raises(PGIRError) as caught:
+    raw["resources"][0]["kind"] = "channel"
+    with pytest.raises(PGIRError) as resource:
         module_from_dict(raw)
-    assert caught.value.code == "RESOURCE_FIELDS_MISSING"
+    assert resource.value.code == "KNOWN_RESOURCE_UNSUPPORTED"
 
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["events"][0]["type"] = "ChannelCreate"
+    with pytest.raises(PGIRError) as event:
+        module_from_dict(raw)
+    assert event.value.code == "KNOWN_EVENT_UNSUPPORTED"
+
+
+def test_mbarrier_resource_metadata_fail_closed():
     raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
     raw["resources"][0]["capacity"] = 2
     with pytest.raises(PGIRError) as unexpected:
@@ -1368,9 +1371,8 @@ def test_protocol_synthetic_ids_are_stable_and_component_safe():
         stable_group_id("CP_ASYNC", "owner:a", 2),
         stable_group_id("CP_ASYNC", "owner", 2),
         stable_group_completion_id("WGMMA", "wg:0", 4, "RESULT_READY"),
-        stable_channel_handoff_id("channel:0", 1, 5),
     }
-    assert len(identifiers) == 6
+    assert len(identifiers) == 5
     assert stable_group_id("CP_ASYNC", "owner:a", 2) in identifiers
     assert all(identifier.startswith(("completion:", "group:")) for identifier in identifiers)
 
@@ -2289,56 +2291,6 @@ def test_tma_store_maximal_uses_two_delta_driven_endpoint_streams(monkeypatch):
     assert result["statistics"]["state_clones"] == 0
 
 
-def channel_module(phases: int = 1, control_only: bool = False):
-    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
-    raw["actors"] = [
-        {"id": "producer", "kind": "PARTITION", "participants": [0]},
-        {"id": "consumer", "kind": "PARTITION", "participants": [1]},
-    ]
-    raw["target"]["cta_threads"] = 2
-    mask = {name: False for name in full_visibility_mask()}
-    mask["control_only" if control_only else "shared"] = True
-    raw["resources"] = [{
-        "id": "pipe", "kind": "channel", "participants": ["producer", "consumer"],
-        "capacity": 1, "scope": "CTA", "visibility_mask": mask,
-    }]
-    raw["regions"] = [{"id": "tile", "allocation_id": "shared-tile", "address_space": "SHARED", "offset": 0, "extent": 64}]
-    producer_events = [{"id": "create", "type": "ChannelCreate", "actor": "producer", "seq": 0, "resource": "pipe"}]
-    consumer_events = []
-    for phase in range(phases):
-        producer_events.extend([
-            {"id": f"acquire{phase}", "type": "ProducerAcquire", "actor": "producer", "seq": 1 + 3 * phase, "resource": "pipe", "slot": 0, "logical_phase": phase},
-            {"id": f"produce{phase}", "type": "MemWrite", "actor": "producer", "seq": 2 + 3 * phase, "region": "tile"},
-            {"id": f"commit{phase}", "type": "ProducerCommit", "actor": "producer", "seq": 3 + 3 * phase, "resource": "pipe", "slot": 0, "logical_phase": phase},
-        ])
-        consumer_events.extend([
-            {"id": f"consume_wait{phase}", "type": "ConsumerWait", "actor": "consumer", "seq": 3 * phase, "resource": "pipe", "slot": 0, "logical_phase": phase},
-            {"id": f"consume{phase}", "type": "MemRead", "actor": "consumer", "seq": 1 + 3 * phase, "region": "tile"},
-            {"id": f"release{phase}", "type": "ConsumerRelease", "actor": "consumer", "seq": 2 + 3 * phase, "resource": "pipe", "slot": 0, "logical_phase": phase},
-        ])
-    raw["events"] = producer_events + consumer_events
-    return module_from_dict(raw)
-
-
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
-def test_channel_handoff_and_two_sided_reuse_are_safe(engine):
-    module = channel_module(phases=2)
-    result = check_module(module, engine=engine)
-    assert result["verdict"] == "SAFE"
-    handoffs = [stable_channel_handoff_id("pipe", 0, phase) for phase in range(2)]
-    anchors = {item["anchor"] for item in result["artifacts"]["boundaries"]}
-    assert set(handoffs).issubset(anchors)
-    edges = result["artifacts"]["pdg"]["edges"]
-    assert {"from": "commit0", "to": handoffs[0], "kind": "CHANNEL_COMMIT"} in edges
-    assert {"from": handoffs[0], "to": "consume_wait0", "kind": "CHANNEL_HANDOFF"} in edges
-    assert {"from": "release0", "to": "acquire1", "kind": "CHANNEL_RELEASE"} in edges
-
-
-def test_control_only_channel_orders_execution_but_not_shared_visibility():
-    result = check_module(channel_module(control_only=True), engine="crosscheck")
-    assert result["verdict"] == "DATA_HAZARD"
-
-
 def gsan_cross_sm_reduced_module(producer_sem: str, consumer_sem: str, scope: str):
     raw = cluster_dsmem_module(cluster_ctas=2)
     raw["actors"] = [
@@ -2380,53 +2332,10 @@ def gsan_cross_sm_reduced_module(producer_sem: str, consumer_sem: str, scope: st
     return module_from_dict(raw)
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
-def test_gsan_release_acquire_cross_sm_reduced_case_is_safe(engine):
-    result = check_module(
-        gsan_cross_sm_reduced_module("release", "acquire", "gpu"),
-        engine=engine,
-    )
-    assert result["verdict"] == "SAFE"
-    assert any(edge["kind"] == "CHANNEL_HANDOFF" for edge in result["artifacts"]["pdg"]["edges"])
-
-
-def test_gpu_channel_does_not_publish_dsmem():
-    raw = cluster_dsmem_module(control_only=True)
-    mask = {name: False for name in full_visibility_mask()}
-    mask.update({"dsmem": False, "global_read": True, "global_write": True})
-    raw["resources"].append({
-        "id": "atomic_flag", "kind": "channel",
-        "participants": ["a0", "a1"],
-        "capacity": 1, "scope": "GPU", "visibility_mask": mask,
-    })
-    additions = {
-        "a0": [
-            {"id": "flag_create", "type": "ChannelCreate", "resource": "atomic_flag"},
-            {"id": "flag_acquire", "type": "ProducerAcquire", "resource": "atomic_flag", "slot": 0, "logical_phase": 0},
-            {"id": "flag_commit", "type": "ProducerCommit", "resource": "atomic_flag", "slot": 0, "logical_phase": 0},
-        ],
-        "a1": [
-            {"id": "flag_wait", "type": "ConsumerWait", "resource": "atomic_flag", "slot": 0, "logical_phase": 0},
-            {"id": "flag_release", "type": "ConsumerRelease", "resource": "atomic_flag", "slot": 0, "logical_phase": 0},
-        ],
-    }
-    reordered = []
-    for actor in ("a0", "a1"):
-        events = [event for event in raw["events"] if event["actor"] == actor]
-        memory_index = next(
-            index for index, event in enumerate(events)
-            if event["type"] in {"MemRead", "MemWrite"}
-        )
-        before, after = additions[actor][:-1], additions[actor][-1:]
-        events[memory_index:memory_index] = before
-        events[memory_index + len(before) + 1:memory_index + len(before) + 1] = after
-        for seq, event in enumerate(events):
-            event.update({"actor": actor, "seq": seq})
-        reordered.extend(events)
-    raw["events"] = reordered
-    result = check_module(module_from_dict(raw), engine="crosscheck")
-    assert result["verdict"] == "DATA_HAZARD"
-    assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
+def test_gsan_release_acquire_cross_sm_reduced_case_is_unsupported_without_atomics():
+    with pytest.raises(PGIRError) as caught:
+        gsan_cross_sm_reduced_module("release", "acquire", "gpu")
+    assert caught.value.code == "KNOWN_RESOURCE_UNSUPPORTED"
 
 
 @pytest.mark.parametrize(
@@ -2478,81 +2387,6 @@ def test_gsan_basic_cross_sm_race_reduced_cases_crosscheck(left, right):
     result = check_module(module_from_dict(raw), engine="crosscheck")
     assert result["verdict"] == "DATA_HAZARD"
     assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
-
-
-def test_channel_missing_commit_and_release_have_structured_witnesses():
-    raw = json.loads(json.dumps(channel_module().raw))
-    raw["events"] = [event for event in raw["events"] if event["id"] != "commit0"]
-    for actor in ("producer", "consumer"):
-        actor_events = [event for event in raw["events"] if event["actor"] == actor]
-        for seq, event in enumerate(actor_events):
-            event["seq"] = seq
-    missing_commit = check_module(module_from_dict(raw))
-    assert missing_commit["verdict"] == "SYNC_HAZARD"
-    assert missing_commit["diagnostics"][0]["code"] == "MISSING_PRODUCER_COMMIT"
-
-    raw = json.loads(json.dumps(channel_module().raw))
-    raw["events"] = [event for event in raw["events"] if event["id"] != "release0"]
-    missing_release = check_module(module_from_dict(raw))
-    assert missing_release["verdict"] == "SYNC_HAZARD"
-    assert missing_release["diagnostics"][0]["code"] == "MISSING_CONSUMER_RELEASE"
-
-
-def test_channel_wrong_owner_and_slot_fail_closed():
-    raw = json.loads(json.dumps(channel_module().raw))
-    commit = next(event for event in raw["events"] if event["id"] == "commit0")
-    commit.update({"actor": "consumer", "seq": 0, "depends_on": ["produce0"]})
-    producer_events = [event for event in raw["events"] if event["actor"] == "producer"]
-    for seq, event in enumerate(producer_events):
-        event["seq"] = seq
-    consumer_events = [commit] + [
-        event for event in raw["events"]
-        if event["actor"] == "consumer" and event["id"] != "commit0"
-    ]
-    for seq, event in enumerate(consumer_events):
-        event["seq"] = seq
-    wrong_owner = check_module(module_from_dict(raw))
-    assert wrong_owner["verdict"] == "SYNC_HAZARD"
-    assert wrong_owner["diagnostics"][0]["code"] == "CHANNEL_PRODUCER_OWNERSHIP"
-
-    raw = json.loads(json.dumps(channel_module().raw))
-    next(event for event in raw["events"] if event["id"] == "acquire0")["slot"] = 1
-    with pytest.raises(PGIRError) as slot:
-        module_from_dict(raw)
-    assert slot.value.code == "CHANNEL_SLOT_OUT_OF_RANGE"
-
-
-def test_channel_handoff_replay_is_failure_atomic():
-    executor = Executor(channel_module())
-    state = executor.initial_state()
-    for identifier in ("create", "acquire0", "produce0", "commit0"):
-        executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
-    handoff = next(item for item in executor.enabled(state) if item.kind == "CHANNEL_HANDOFF")
-    executor.apply(state, handoff)
-    before = executor.fingerprint(state)
-    with pytest.raises(ProtocolError) as replay:
-        executor.apply(state, handoff)
-    assert replay.value.code == "INVALID_CHANNEL_HANDOFF_TRANSITION"
-    assert executor.fingerprint(state) == before
-
-
-def test_channel_maximal_uses_delta_driven_handoff_stream(monkeypatch):
-    module = channel_module(phases=2)
-    streams = [stream for stream in build_anchor_streams(module, _anchor_ids(module)) if stream.kind == "CHANNEL_HANDOFF"]
-    assert len(streams) == 1
-    assert streams[0].anchors == tuple(stable_channel_handoff_id("pipe", 0, phase) for phase in range(2))
-
-    def forbidden(*_args, **_kwargs):
-        raise AssertionError("reference scan/clone reached from channel maximal engine")
-
-    monkeypatch.setattr(Executor, "enabled", forbidden)
-    monkeypatch.setattr(ExecutionState, "clone", forbidden)
-    result = check_module(module, engine="maximal")
-    assert result["verdict"] == "SAFE"
-    assert result["statistics"]["channel_handoff_streams"] == 1
-    assert result["statistics"]["channel_notifications"] > 0
-    assert result["statistics"]["full_enabled_scans"] == 0
-    assert result["statistics"]["state_clones"] == 0
 
 
 def tma_load_proxy_module(to_domain: str = "TMA", fence_after_issue: bool = False, fence_region: str = "source"):

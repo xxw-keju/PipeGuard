@@ -87,11 +87,6 @@ CANONICAL_OPERATION_FIELDS = {
     "tma_store.wait_group": {
         "resource", "group_owner", "wait_group_count", "wait_mode",
     },
-    "channel.create": {"resource"},
-    "channel.producer_acquire": {"resource", "slot", "logical_phase"},
-    "channel.producer_commit": {"resource", "slot", "logical_phase"},
-    "channel.consumer_wait": {"resource", "slot", "logical_phase"},
-    "channel.consumer_release": {"resource", "slot", "logical_phase"},
     "proxy_fence": {"from_domain", "to_domain", "scope", "regions", "visibility_mask"},
 }
 CANONICAL_OPTIONAL_FIELDS = {
@@ -125,11 +120,6 @@ CANONICAL_EVENT_TYPES = {
     "tma_store.issue": "TmaStoreIssue",
     "tma_store.commit_group": "TmaStoreCommitGroup",
     "tma_store.wait_group": "TmaStoreWaitGroup",
-    "channel.create": "ChannelCreate",
-    "channel.producer_acquire": "ProducerAcquire",
-    "channel.producer_commit": "ProducerCommit",
-    "channel.consumer_wait": "ConsumerWait",
-    "channel.consumer_release": "ConsumerRelease",
     "proxy_fence": "ProxyFence",
 }
 

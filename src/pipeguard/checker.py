@@ -1072,9 +1072,9 @@ def _run_engine(module: Module, engine: Literal["maximal", "exhaustive"]) -> dic
                     "finite statically-resolved sm90 selected CTA "
                     f"{module.raw['target']['selected_cta']} from launch grid "
                     f"{module.raw['target']['launch_grid']} mbarrier/TMA-load/TMA-store/"
-                    "collective-barrier/cp.async/WGMMA/channel/proxy-visibility/explicit-engine-order core"
+                    "collective-barrier/cp.async/WGMMA/proxy-visibility/explicit-engine-order core"
                     if "selected_cta" in module.raw["target"]
-                    else "finite statically-resolved sm90 single_cta mbarrier/TMA-load/TMA-store/collective-barrier/cp.async/WGMMA/channel/proxy-visibility/explicit-engine-order core"
+                    else "finite statically-resolved sm90 single_cta mbarrier/TMA-load/TMA-store/collective-barrier/cp.async/WGMMA/proxy-visibility/explicit-engine-order core"
                 )
             ),
             "assumptions": dict(sorted(module.raw["assumptions"].items())), "producer": module.raw["producer"],

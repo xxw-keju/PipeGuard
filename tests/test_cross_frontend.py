@@ -314,9 +314,6 @@ def test_frontends_preserve_typed_async_fields_exactly():
             "resource": "store", "group_owner": "owner", "wait_group_count": 0,
             "wait_mode": "READ_ONLY",
         }),
-        ("channel.producer_acquire", "ProducerAcquire", {
-            "resource": "channel", "slot": 2, "logical_phase": 7,
-        }),
         ("proxy_fence", "ProxyFence", {
             "from_domain": "GENERIC", "to_domain": "TENSOR_CORE", "scope": "CTA",
             "regions": ["a", "b"], "visibility_mask": visibility_mask,
