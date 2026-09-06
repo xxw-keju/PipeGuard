@@ -4,9 +4,11 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
+import tempfile
 from itertools import product
 from pathlib import Path
 from typing import Any
@@ -55,8 +57,13 @@ class TritonCapture:
     _CONTAINERS = {"builtin.module", "tt.func", "tt.return", "scf.yield"}
     _VALUE_ONLY_PURE_OPERATIONS = {
         "llvm.intr.assume",
+        "tt.clampf",
         "tt.elementwise_inline_asm",
+        "tt.extern_elementwise",
+        "tt.fp_to_fp",
         "tt.join",
+        "tt.mulhiui",
+        "ttg.fp4_to_fp",
         "tt.split",
         "tt.unsplat",
     }
@@ -118,6 +125,22 @@ class TritonCapture:
         "ttng.reinterpret_tensor_descriptor",
     }
 
+    @staticmethod
+    def _block_assembly(block: Any) -> str:
+        saved_stderr = os.dup(2)
+        try:
+            with tempfile.TemporaryFile() as output:
+                os.dup2(output.fileno(), 2)
+                block.dump()
+                os.dup2(saved_stderr, 2)
+                output.seek(0)
+                return output.read().decode("utf-8", errors="replace")
+        finally:
+            try:
+                os.dup2(saved_stderr, 2)
+            finally:
+                os.close(saved_stderr)
+
     def __init__(
         self,
         triton: Any,
@@ -156,6 +179,12 @@ class TritonCapture:
         self.evidenced_external_allocations = set(self.pointer_argument_allocations.values())
         self.operations: list[Any] = []
         module.walk(self.operations.append)
+        self.wgmma_accumulator_inputs = {
+            operation.get_operand(2).id()
+            for operation in self.operations
+            if operation.get_name() == "ttng.warp_group_dot"
+            and operation.get_num_operands() >= 3
+        }
         invalid_operation_indices = sorted(
             index
             for index in {*self.unit_attributes, *self.array_attributes}
@@ -168,13 +197,18 @@ class TritonCapture:
                 {"indices": invalid_operation_indices, "operations": len(self.operations)},
             )
         functions = [operation for operation in self.operations if operation.get_name() == "tt.func"]
-        if len(functions) != 1:
+        public_functions = [
+            function
+            for function in functions
+            if function.get_str_attr("sym_visibility") == "public"
+        ]
+        if len(public_functions) != 1:
             raise CaptureError(
                 "TRITON_KERNEL_COUNT_UNSUPPORTED",
-                "capture requires exactly one TTGIR tt.func",
-                {"functions": len(functions)},
+                "capture requires exactly one public TTGIR tt.func entry",
+                {"functions": len(functions), "public_functions": len(public_functions)},
             )
-        self.function = functions[0]
+        self.function = public_functions[0]
         self.block_operations: dict[int, list[int]] = {}
         self.blocks: dict[int, Any] = {}
         self.region_blocks: dict[int, set[int]] = {}
@@ -188,14 +222,69 @@ class TritonCapture:
             self.block_operations.setdefault(block_id, []).append(index)
             self.region_blocks.setdefault(region_id, set()).add(block_id)
         function_region = self.function.get_region(0)
-        entry_blocks = sorted(self.region_blocks.get(function_region.id(), set()))
-        if len(entry_blocks) != 1:
-            raise CaptureError(
-                "TRITON_CONTROL_FLOW_UNRESOLVED",
-                "TTGIR function must expose one statically selected entry block",
-                {"blocks": len(entry_blocks)},
-            )
-        self.entry_block = entry_blocks[0]
+        function_blocks = sorted(self.region_blocks.get(function_region.id(), set()))
+        self.cfg_successors: dict[int, tuple[int, ...]] = {}
+        if len(function_blocks) == 1:
+            self.entry_block = function_blocks[0]
+        else:
+            labels: dict[str, int] = {}
+            successor_labels: dict[int, tuple[str, ...]] = {}
+            for block_id in function_blocks:
+                assembly = self._block_assembly(self.blocks[block_id])
+                label = re.search(r"(?m)^\^(bb\d+)", assembly)
+                if label is None or label.group(1) in labels:
+                    raise CaptureError(
+                        "TRITON_CONTROL_FLOW_UNRESOLVED",
+                        "finite CFG block labels are unavailable or ambiguous",
+                        {"blocks": len(function_blocks)},
+                    )
+                labels[label.group(1)] = block_id
+                branch = next(
+                    (
+                        line.strip()
+                        for line in assembly.splitlines()
+                        if line.strip().startswith(("cf.br ", "cf.cond_br "))
+                    ),
+                    None,
+                )
+                successor_labels[block_id] = (
+                    tuple(re.findall(r"\^(bb\d+)", branch)) if branch is not None else ()
+                )
+            if any(label not in labels for targets in successor_labels.values() for label in targets):
+                raise CaptureError(
+                    "TRITON_CONTROL_FLOW_UNRESOLVED",
+                    "finite CFG references an unavailable successor block",
+                )
+            self.cfg_successors = {
+                block_id: tuple(labels[label] for label in targets)
+                for block_id, targets in successor_labels.items()
+            }
+            targets = {target for successors in self.cfg_successors.values() for target in successors}
+            entries = [block_id for block_id in function_blocks if block_id not in targets]
+            if len(entries) != 1:
+                raise CaptureError(
+                    "TRITON_CONTROL_FLOW_UNRESOLVED",
+                    "finite CFG must expose one entry block",
+                    {"blocks": len(function_blocks), "entries": len(entries)},
+                )
+            self.entry_block = entries[0]
+        self.function_entry_blocks = {
+            self.function.get_str_attr("sym_name"): self.entry_block,
+        }
+        for function in functions:
+            if function is self.function:
+                continue
+            symbol = function.get_str_attr("sym_name")
+            blocks = sorted(self.region_blocks.get(function.get_region(0).id(), set()))
+            if symbol is None or len(blocks) != 1:
+                raise CaptureError(
+                    "TRITON_CONTROL_FLOW_UNRESOLVED",
+                    "private TTGIR callees must have one statically expandable block",
+                    {"symbol": symbol, "blocks": len(blocks)},
+                )
+            self.function_entry_blocks[symbol] = blocks[0]
+        self.active_cfg_blocks: set[int] = set()
+        self.active_function_calls: set[str] = set()
         entry = self.blocks[self.entry_block]
         self.num_ctas = self._integer_module_attr("ttg.num-ctas")
         self.num_warps = self._integer_module_attr("ttg.num-warps")
@@ -317,7 +406,8 @@ class TritonCapture:
             )
         return int(value)
 
-    def _value_extent(self, value: Any) -> tuple[int, int]:
+    @staticmethod
+    def _value_shape(value: Any) -> list[int]:
         type_text = str(value.get_type())
         try:
             raw_shape = value.get_shape()
@@ -328,6 +418,42 @@ class TritonCapture:
             shape_match = re.search(r"<((?:\d+x)+)", type_text)
             if shape_match is not None:
                 shape = [int(item) for item in shape_match.group(1).split("x") if item]
+        return shape
+
+    @staticmethod
+    def _broadcast_values(
+        values: tuple[int, ...],
+        source_shape: list[int],
+        result_shape: list[int],
+    ) -> tuple[int, ...]:
+        if not source_shape or not result_shape or len(source_shape) > len(result_shape):
+            raise ValueError("broadcast requires ranked tensor operands")
+        padded_source = [1] * (len(result_shape) - len(source_shape)) + source_shape
+        if any(source not in {1, result} for source, result in zip(padded_source, result_shape)):
+            raise ValueError("broadcast shapes are incompatible")
+        source_elements = 1
+        for dimension in source_shape:
+            source_elements *= dimension
+        if len(values) != source_elements:
+            raise ValueError("broadcast source value count does not match its shape")
+        strides: list[int] = []
+        stride = 1
+        for dimension in reversed(padded_source):
+            strides.append(stride)
+            stride *= dimension
+        strides.reverse()
+        broadcasted = []
+        for result_index in product(*(range(dimension) for dimension in result_shape)):
+            source_offset = sum(
+                (0 if dimension == 1 else item) * source_stride
+                for item, dimension, source_stride in zip(result_index, padded_source, strides)
+            )
+            broadcasted.append(values[source_offset])
+        return tuple(broadcasted)
+
+    def _value_extent(self, value: Any) -> tuple[int, int]:
+        type_text = str(value.get_type())
+        shape = self._value_shape(value)
         match = re.search(r"(?:^|[<!x])(?:i|ui|f|bf)(\d+)", type_text)
         if not shape or match is None:
             raise CaptureError(
@@ -653,7 +779,7 @@ class TritonCapture:
             "id": identifier,
             "kind": "async_group",
             "participants": [self.current_actor],
-            "capacity": 8,
+            "capacity": 16,
             "protocol": "CP_ASYNC",
             "scope": "CTA",
         })
@@ -761,9 +887,16 @@ class TritonCapture:
                 self.result_definitions[result.id()] = (index, result_index, result)
             if operation.get_name() == "arith.constant" and operation.get_num_results() == 1:
                 try:
+                    result = operation.get_result(0)
                     value = operation.get_constant_value()
-                    self.constants[operation.get_result(0).id()] = value
-                    self.static_values[operation.get_result(0).id()] = value
+                    shape = self._value_shape(result)
+                    if shape and value is not None and not isinstance(value, (tuple, list)):
+                        elements = 1
+                        for dimension in shape:
+                            elements *= dimension
+                        value = tuple(value for _ in range(elements))
+                    self.constants[result.id()] = value
+                    self.static_values[result.id()] = value
                 except RuntimeError:
                     pass
 
@@ -1028,13 +1161,6 @@ class TritonCapture:
                 {"operation_index": index},
             )
         ordered_coordinates = [coordinates[position] for position in order]
-        for coordinate, tile, dimension in zip(ordered_coordinates, tile_shape, shape):
-            if coordinate < 0 or coordinate + tile > dimension:
-                raise CaptureError(
-                    "TRITON_TMA_DESCRIPTOR_UNRESOLVED",
-                    "TMA tile lies outside the evidenced descriptor shape",
-                    {"operation_index": index, "coordinates": coordinates},
-                )
         elements = 1
         for dimension in tile_shape:
             elements *= dimension
@@ -1044,30 +1170,40 @@ class TritonCapture:
                 "TMA descriptor tile and shared counterpart extents differ",
                 {"operation_index": index},
             )
-        runs: list[list[int]] = []
+        runs: list[list[Any]] = []
         counterpart_offset = counterpart_region["offset"]
+        zero_fill_allocation = (
+            f"tma-zero-fill:op{index}" if is_load else f"tma-oob-sink:op{index}"
+        )
         for logical_index in product(*(range(dimension) for dimension in tile_shape)):
-            descriptor_element = sum(
-                (coordinate + item) * stride
-                for coordinate, item, stride in zip(
-                    ordered_coordinates,
-                    logical_index,
-                    strides,
-                )
+            descriptor_index = [
+                coordinate + item
+                for coordinate, item in zip(ordered_coordinates, logical_index)
+            ]
+            in_bounds = all(
+                0 <= item < dimension
+                for item, dimension in zip(descriptor_index, shape)
             )
-            descriptor_offset = descriptor_element * element_bytes
+            run_allocation = allocation if in_bounds else zero_fill_allocation
+            descriptor_element = (
+                sum(item * stride for item, stride in zip(descriptor_index, strides))
+                if in_bounds
+                else counterpart_offset - counterpart_region["offset"]
+            )
+            descriptor_offset = descriptor_element * element_bytes if in_bounds else descriptor_element
             if (
                 runs
-                and descriptor_offset == runs[-1][0] + runs[-1][2]
-                and counterpart_offset == runs[-1][1] + runs[-1][2]
+                and run_allocation == runs[-1][0]
+                and descriptor_offset == runs[-1][1] + runs[-1][3]
+                and counterpart_offset == runs[-1][2] + runs[-1][3]
             ):
-                runs[-1][2] += element_bytes
+                runs[-1][3] += element_bytes
             else:
-                runs.append([descriptor_offset, counterpart_offset, element_bytes])
+                runs.append([run_allocation, descriptor_offset, counterpart_offset, element_bytes])
             counterpart_offset += element_bytes
         result: list[tuple[str, str, int]] = []
-        for descriptor_offset, shared_offset, extent in runs:
-            global_region = self._region(allocation, "GLOBAL", descriptor_offset, extent)
+        for run_allocation, descriptor_offset, shared_offset, extent in runs:
+            global_region = self._region(run_allocation, "GLOBAL", descriptor_offset, extent)
             shared_region = self._region(
                 counterpart_region["allocation_id"],
                 "SHARED",
@@ -1449,21 +1585,26 @@ class TritonCapture:
             self.pending_wgmma_owners.add(owner)
             return
         wait_count = operation.get_int_attr("pendings")
+        has_known_result = any(
+            operation.get_operand(position).id() in self.wgmma_results
+            for position in range(operation.get_num_operands())
+        )
         if (
             wait_count is None
             or not 0 <= int(wait_count) <= 7
             or operation.get_num_operands() < 1
             or operation.get_num_results() != operation.get_num_operands()
-            or not any(
-                operation.get_operand(position).id() in self.wgmma_results
-                for position in range(operation.get_num_operands())
-            )
+            or (not has_known_result and self.current_actor in self.pending_wgmma_owners)
         ):
             raise CaptureError(
                 "TRITON_WGMMA_WAIT_UNRESOLVED",
-                "warp_group_dot_wait requires known dot results and static pendings",
+                "warp_group_dot_wait requires known dot results or an empty group stream and static pendings",
                 {"operation_index": index, "pendings": wait_count},
             )
+        if not has_known_result:
+            for position in range(operation.get_num_operands()):
+                self._forward_value(operation.get_operand(position), operation.get_result(position))
+            return
         for completion_kind in ("OPERANDS_RELEASED", "RESULT_READY"):
             self._emit(
                 "triton.wgmma.wait_group",
@@ -1604,20 +1745,32 @@ class TritonCapture:
                     predicate=True,
                 )
             else:
+                runs: list[list[int]] = []
                 for element, (offset, predicate) in enumerate(zip(offsets, predicates)):
                     if not predicate:
                         continue
+                    source_offset = offset * width
+                    destination_offset = destination_region["offset"] + element * width
+                    if (
+                        runs
+                        and source_offset == runs[-1][0] + runs[-1][2]
+                        and destination_offset == runs[-1][1] + runs[-1][2]
+                    ):
+                        runs[-1][2] += width
+                    else:
+                        runs.append([source_offset, destination_offset, width])
+                for source_offset, destination_offset, extent in runs:
                     source_element = self._region(
                         allocation,
                         "GLOBAL",
-                        offset * width,
-                        width,
+                        source_offset,
+                        extent,
                     )
                     destination_element = self._region(
                         destination_region["allocation_id"],
                         destination_region["address_space"],
-                        destination_region["offset"] + element * width,
-                        width,
+                        destination_offset,
+                        extent,
                     )
                     self._emit(
                         "triton.cp_async.issue",
@@ -1625,7 +1778,7 @@ class TritonCapture:
                         resource=resource,
                         source_region=source_element,
                         destination_region=destination_element,
-                        bytes=width,
+                        bytes=extent,
                         group_owner=self.current_actor,
                         predicate=True,
                     )
@@ -1658,17 +1811,26 @@ class TritonCapture:
                 operation.get_operand(operand).id()
                 for operand in range(operation.get_num_operands())
             ]
+            unresolved_tokens = [
+                position
+                for position, token in enumerate(tokens)
+                if token not in self.group_tokens
+            ]
             wait_count = operation.get_int_attr("num")
             if (
-                any(token not in self.group_tokens for token in tokens)
+                unresolved_tokens
                 or wait_count is None
-                or not 0 <= int(wait_count) <= 7
+                or not 0 <= int(wait_count) <= 15
                 or operation.get_num_results() != 1
             ):
                 raise CaptureError(
                     "TRITON_CP_ASYNC_WAIT_UNRESOLVED",
-                    "async wait requires committed SSA tokens and static num in [0, 7]",
-                    {"operation_index": index, "wait_group_count": wait_count},
+                    "async wait requires committed SSA tokens and static SM90 num in [0, 15]",
+                    {
+                        "operation_index": index,
+                        "unresolved_token_operands": unresolved_tokens,
+                        "wait_group_count": wait_count,
+                    },
                 )
             self._emit(
                 "triton.cp_async.wait_group",
@@ -1677,7 +1839,12 @@ class TritonCapture:
                 group_owner=self.current_actor,
                 wait_group_count=int(wait_count),
             )
-            self.wait_tokens.add(operation.get_result(0).id())
+            result_id = operation.get_result(0).id()
+            self.wait_tokens.add(result_id)
+            self.group_tokens[result_id] = max(
+                (self.group_tokens[token] for token in tokens),
+                default=self.cp_group_seq - 1,
+            )
             return
         if operation.get_num_operands() not in {1, 2}:
             raise CaptureError(
@@ -1861,8 +2028,66 @@ class TritonCapture:
             value = self.static_values.get(operand.id())
             if value is None:
                 return
-            elements, _width = self._value_extent(operation.get_result(0))
+            shape = self._value_shape(operation.get_result(0))
+            if not shape or any(dimension <= 0 for dimension in shape):
+                raise CaptureError(
+                    "TRITON_STATIC_VALUE_UNRESOLVED",
+                    "tt.splat result requires a positive static shape",
+                    {"operation_index": index, "shape": shape},
+                )
+            elements = 1
+            for dimension in shape:
+                elements *= dimension
             self.static_values[operation.get_result(0).id()] = tuple(value for _ in range(elements))
+
+    def _execute_bitcast(self, operation: Any, index: int) -> None:
+        if operation.get_num_operands() != 1 or operation.get_num_results() != 1:
+            raise CaptureError(
+                "TRITON_OPERATION_UNSUPPORTED",
+                "tt.bitcast requires one operand and one result",
+                {"operation_index": index},
+            )
+        operand = operation.get_operand(0)
+        result = operation.get_result(0)
+        operand_type = str(operand.get_type())
+        result_type = str(result.get_type())
+        address_markers = ("!tt.ptr<", "!ttg.memdesc<", "!tt.tensordesc<")
+        if not any(marker in operand_type or marker in result_type for marker in address_markers):
+            return
+        if "!tt.ptr<" not in operand_type or "!tt.ptr<" not in result_type:
+            raise CaptureError(
+                "TRITON_POINTER_PROVENANCE_UNRESOLVED",
+                "tt.bitcast cannot change between pointer and non-pointer address values",
+                {"operation_index": index, "operand_type": operand_type, "result_type": result_type},
+            )
+        pointer = self._ensure_pointer_value(operand.id())
+        if pointer is None:
+            return
+        allocation, source_width, offsets = pointer
+        result_width = (
+            self._scalar_pointer_width(result_type)
+            if result_type.startswith("!tt.ptr<")
+            else self._value_extent(result)[1]
+        )
+        if result_width is None or source_width != result_width:
+            raise CaptureError(
+                "TRITON_POINTER_PROVENANCE_UNRESOLVED",
+                "tt.bitcast changes pointer element width",
+                {
+                    "operation_index": index,
+                    "source_width": source_width,
+                    "result_width": result_width,
+                },
+            )
+        self._set_pointer_value(result.id(), allocation, result_width, offsets)
+
+    def _execute_poison(self, operation: Any, index: int) -> None:
+        if operation.get_num_operands() != 0 or operation.get_num_results() != 1:
+            raise CaptureError(
+                "TRITON_OPERATION_UNSUPPORTED",
+                "ub.poison requires no operands and one result",
+                {"operation_index": index},
+            )
 
     def _execute_value_only_pure(self, operation: Any, index: int) -> None:
         values = [
@@ -1920,6 +2145,19 @@ class TritonCapture:
             operand_id = operation.get_operand(0).id()
             if operand_id in self.pointer_values:
                 allocation, width, offsets = self.pointer_values[operand_id]
+                if name == "tt.broadcast":
+                    try:
+                        offsets = self._broadcast_values(
+                            offsets,
+                            self._value_shape(operation.get_operand(0)),
+                            self._value_shape(result),
+                        )
+                    except ValueError as error:
+                        raise CaptureError(
+                            "TRITON_POINTER_PROVENANCE_UNRESOLVED",
+                            "tt.broadcast pointer shape is unresolved",
+                            {"operation_index": index, "reason": str(error)},
+                        ) from error
                 self._set_pointer_value(result.id(), allocation, width, offsets)
             elif operand_id in self.scalar_pointer_arguments:
                 self.scalar_pointer_arguments[result.id()] = self.scalar_pointer_arguments[operand_id]
@@ -1945,7 +2183,21 @@ class TritonCapture:
             "tt.trans",
             "ttg.convert_layout",
         } and len(operands) == 1 and operands[0] is not None:
-            self.static_values[result.id()] = operands[0]
+            value = operands[0]
+            if name == "tt.broadcast" and isinstance(value, (tuple, list)):
+                try:
+                    value = self._broadcast_values(
+                        tuple(value),
+                        self._value_shape(operation.get_operand(0)),
+                        self._value_shape(result),
+                    )
+                except ValueError as error:
+                    raise CaptureError(
+                        "TRITON_STATIC_VALUE_UNRESOLVED",
+                        "tt.broadcast static shape is unresolved",
+                        {"operation_index": index, "reason": str(error)},
+                    ) from error
+            self.static_values[result.id()] = value
             return
         if name == "arith.index_cast" and len(operands) == 1 and operands[0] is not None:
             bits = self._integer_width(str(result.get_type()))
@@ -2118,6 +2370,47 @@ class TritonCapture:
         )
         self.static_values[result.id()] = values[0] if scalar_result else values
 
+    def _execute_call(self, operation: Any, index: int, path: tuple[Any, ...]) -> None:
+        symbol = operation.get_flat_symbol_ref_attr("callee")
+        block_id = self.function_entry_blocks.get(symbol)
+        if symbol is None or block_id is None:
+            raise CaptureError(
+                "TRITON_CONTROL_FLOW_UNRESOLVED",
+                "tt.call target is unavailable",
+                {"operation_index": index, "callee": symbol},
+            )
+        block = self.blocks[block_id]
+        if (
+            operation.get_num_operands() != block.get_num_arguments()
+            or operation.get_num_results() != 0
+        ):
+            raise CaptureError(
+                "TRITON_CONTROL_FLOW_UNRESOLVED",
+                "static tt.call requires matching operands and no return values",
+                {
+                    "operation_index": index,
+                    "callee": symbol,
+                    "operands": operation.get_num_operands(),
+                    "arguments": block.get_num_arguments(),
+                    "results": operation.get_num_results(),
+                },
+            )
+        if symbol in self.active_function_calls:
+            raise CaptureError(
+                "TRITON_DYNAMIC_CONTROL_FLOW_UNSUPPORTED",
+                "recursive tt.call is outside the finite static profile",
+                {"operation_index": index, "callee": symbol},
+            )
+        for position in range(operation.get_num_operands()):
+            self._forward_value(operation.get_operand(position), block.get_argument(position))
+        self.active_function_calls.add(symbol)
+        self.active_cfg_blocks.add(block_id)
+        try:
+            self._execute_block(block_id, (*path, "call", index, symbol))
+        finally:
+            self.active_cfg_blocks.remove(block_id)
+            self.active_function_calls.remove(symbol)
+
     def _execute_block(self, block_id: int, path: tuple[Any, ...]) -> list[Any]:
         for index in self.block_operations.get(block_id, []):
             operation = self.operations[index]
@@ -2127,6 +2420,58 @@ class TritonCapture:
                     self.static_values.get(operation.get_operand(position).id())
                     for position in range(operation.get_num_operands())
                 ]
+            if name == "tt.call":
+                self.executable_nodes_seen += 1
+                self.classified_nodes += 1
+                self.elided_nodes += 1
+                self.static_expansions += 1
+                self._execute_call(operation, index, path)
+                continue
+            if name in {"cf.br", "cf.cond_br"}:
+                self.executable_nodes_seen += 1
+                self.classified_nodes += 1
+                self.elided_nodes += 1
+                successors = self.cfg_successors.get(block_id, ())
+                if name == "cf.br":
+                    if operation.get_num_operands() != 0 or len(successors) != 1:
+                        raise CaptureError(
+                            "TRITON_CONTROL_FLOW_UNRESOLVED",
+                            "static cf.br with block arguments is unsupported",
+                            {"operation_index": index, "successors": len(successors)},
+                        )
+                    target = successors[0]
+                else:
+                    if operation.get_num_operands() != 1 or len(successors) != 2:
+                        raise CaptureError(
+                            "TRITON_CONTROL_FLOW_UNRESOLVED",
+                            "static cf.cond_br with block arguments is unsupported",
+                            {"operation_index": index, "successors": len(successors)},
+                        )
+                    condition = self._constant(operation.get_operand(0), "cf.cond_br condition")
+                    if condition not in {0, 1, -1, False, True}:
+                        raise CaptureError(
+                            "TRITON_DYNAMIC_CONTROL_FLOW_UNSUPPORTED",
+                            "cf.cond_br condition must be a static Boolean",
+                            {"operation_index": index, "condition": condition},
+                        )
+                    target = successors[0 if bool(condition) else 1]
+                if self.blocks[target].get_num_arguments() != 0:
+                    raise CaptureError(
+                        "TRITON_CONTROL_FLOW_UNRESOLVED",
+                        "static CFG successor block arguments are unsupported",
+                        {"operation_index": index},
+                    )
+                if target in self.active_cfg_blocks:
+                    raise CaptureError(
+                        "TRITON_DYNAMIC_CONTROL_FLOW_UNSUPPORTED",
+                        "cyclic cf control flow requires structured static lowering",
+                        {"operation_index": index},
+                    )
+                self.active_cfg_blocks.add(target)
+                try:
+                    return self._execute_block(target, (*path, "cf", index, target))
+                finally:
+                    self.active_cfg_blocks.remove(target)
             if name == "tt.return":
                 return []
             if name == "ttg.warp_specialize":
@@ -2181,6 +2526,7 @@ class TritonCapture:
             self.pointer_region_sets,
             self.memdesc_regions,
             self.descriptor_regions,
+            self.group_tokens,
             self.barrier_arguments,
             self.register_regions,
             self.wgmma_results,
@@ -2189,14 +2535,22 @@ class TritonCapture:
     def _clear_value_facts(self, value_id: int) -> None:
         for mapping in self._value_fact_maps():
             mapping.pop(value_id, None)
+        self.staged_tokens.discard(value_id)
+        self.wait_tokens.discard(value_id)
 
     def _forward_value(self, source: Any, target: Any) -> None:
         source_id = source.id()
         target_id = target.id()
+        if source_id == target_id:
+            return
         self._clear_value_facts(target_id)
         for mapping in self._value_fact_maps():
             if source_id in mapping:
                 mapping[target_id] = mapping[source_id]
+        if source_id in self.staged_tokens:
+            self.staged_tokens.add(target_id)
+        if source_id in self.wait_tokens:
+            self.wait_tokens.add(target_id)
 
     def _execute_warp_specialize(
         self,
@@ -2361,6 +2715,10 @@ class TritonCapture:
                 if (
                     "tensor<" in type_text
                     and "!tt.ptr<" not in type_text
+                    and (
+                        argument.id() in self.wgmma_accumulator_inputs
+                        or re.search(r"(?:^|x)f32(?:$|[,>])", type_text)
+                    )
                     and argument.id() not in self.register_regions
                 ):
                     self.register_regions[argument.id()] = self._register_region(source)
@@ -2410,6 +2768,7 @@ class TritonCapture:
             )
         branch = 0 if bool(condition) else 1
         yielded: list[Any] = []
+        yield_operation = None
         if branch < operation.get_num_regions():
             region = operation.get_region(branch)
             blocks = sorted(self.region_blocks.get(region.id(), set()))
@@ -2421,7 +2780,20 @@ class TritonCapture:
                     "selected scf.if region must contain one block unless it is an empty no-result branch",
                     {"operation_index": index, "blocks": len(blocks)},
                 )
-            yielded = self._execute_block(blocks[0], (*path, "if", index, int(bool(condition))))
+            block_id = blocks[0]
+            yield_operations = [
+                self.operations[operation_index]
+                for operation_index in self.block_operations.get(block_id, [])
+                if self.operations[operation_index].get_name() == "scf.yield"
+            ]
+            if len(yield_operations) != 1:
+                raise CaptureError(
+                    "TRITON_CONTROL_FLOW_UNRESOLVED",
+                    "selected scf.if block must contain one yield terminator",
+                    {"operation_index": index, "yields": len(yield_operations)},
+                )
+            yield_operation = yield_operations[0]
+            yielded = self._execute_block(block_id, (*path, "if", index, int(bool(condition))))
         if len(yielded) != operation.get_num_results():
             raise CaptureError(
                 "TRITON_CONTROL_FLOW_UNRESOLVED",
@@ -2429,7 +2801,10 @@ class TritonCapture:
                 {"operation_index": index},
             )
         for position, value in enumerate(yielded):
-            self.static_values[operation.get_result(position).id()] = value
+            result = operation.get_result(position)
+            if yield_operation is not None:
+                self._forward_value(yield_operation.get_operand(position), result)
+            self.static_values[result.id()] = value
 
     def _execute_scf_while(
         self,
@@ -2604,9 +2979,25 @@ class TritonCapture:
             else:
                 self.elided_nodes += 1
             return
-        if name in self._VALUE_ONLY_PURE_OPERATIONS:
-            self._execute_value_only_pure(operation, index)
+        if name == "tt.bitcast":
+            self._capture_wgmma_result_reads(operation, index)
+            self._execute_bitcast(operation, index)
+            if len(self.output_operations) > before:
+                self.emitting_nodes += 1
+            else:
+                self.elided_nodes += 1
+            return
+        if name == "ub.poison":
+            self._execute_poison(operation, index)
             self.elided_nodes += 1
+            return
+        if name in self._VALUE_ONLY_PURE_OPERATIONS:
+            self._capture_wgmma_result_reads(operation, index)
+            self._execute_value_only_pure(operation, index)
+            if len(self.output_operations) > before:
+                self.emitting_nodes += 1
+            else:
+                self.elided_nodes += 1
             return
         if name not in self._SUPPORTED:
             raise CaptureError(
@@ -2831,7 +3222,11 @@ class TritonCapture:
         self._record_function_arguments()
         self._record_definitions()
         self._require_resolved_external_aliases()
-        self._execute_block(self.entry_block, ("root",))
+        self.active_cfg_blocks.add(self.entry_block)
+        try:
+            self._execute_block(self.entry_block, ("root",))
+        finally:
+            self.active_cfg_blocks.remove(self.entry_block)
         self._require_resolved_external_aliases()
         if self.pending_proxy_fence is not None:
             raise CaptureError(

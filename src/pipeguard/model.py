@@ -676,7 +676,12 @@ def _semantic_validate(module: Module) -> None:
                     "async-group protocol is not implemented yet",
                     {"resource": resource.id, "protocol": resource.protocol},
                 )
-            if resource.protocol in {"CP_ASYNC", "WGMMA", "TMA_STORE"} and resource.capacity > 8:
+            capacity_limit = {
+                "CP_ASYNC": 16,
+                "WGMMA": 8,
+                "TMA_STORE": 8,
+            }.get(resource.protocol)
+            if capacity_limit is not None and resource.capacity > capacity_limit:
                 code = {
                     "CP_ASYNC": "CP_ASYNC_CAPACITY_UNSUPPORTED",
                     "WGMMA": "WGMMA_CAPACITY_UNSUPPORTED",
@@ -684,8 +689,8 @@ def _semantic_validate(module: Module) -> None:
                 }[resource.protocol]
                 raise PGIRError(
                     code,
-                    f"{resource.protocol.lower()} supports at most eight uncompleted committed groups",
-                    {"resource": resource.id, "capacity": resource.capacity},
+                    f"{resource.protocol.lower()} exceeds the supported committed-group capacity",
+                    {"resource": resource.id, "capacity": resource.capacity, "maximum": capacity_limit},
                 )
             if resource.protocol == "WGMMA":
                 participant_lanes = [

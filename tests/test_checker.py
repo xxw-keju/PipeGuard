@@ -1721,13 +1721,17 @@ def test_cp_async_group_validation_rejects_owner_sequence_and_capacity_ambiguity
     assert sequence.value.code == "COMMIT_GROUP_SEQUENCE_GAP"
 
     raw = json.loads(json.dumps(cp_async_module().raw))
-    raw["resources"][0]["capacity"] = 9
+    raw["resources"][0]["capacity"] = 17
     with pytest.raises(PGIRError) as capacity:
         module_from_dict(raw)
     assert capacity.value.code == "CP_ASYNC_CAPACITY_UNSUPPORTED"
 
     raw = json.loads(json.dumps(cp_async_module().raw))
-    raw["events"][-2]["wait_group_count"] = 8
+    raw["resources"][0]["capacity"] = 16
+    raw["events"][-2]["wait_group_count"] = 15
+    module_from_dict(raw)
+
+    raw["events"][-2]["wait_group_count"] = 16
     with pytest.raises(PGIRError) as wait_count:
         module_from_dict(raw)
     assert wait_count.value.code == "WAIT_GROUP_COUNT_OUT_OF_RANGE"

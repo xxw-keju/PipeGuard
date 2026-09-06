@@ -414,6 +414,28 @@ def test_triton_compiler_fenced_wgmma_maps_to_existing_typed_group_fsm():
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_empty_wgmma_wait_is_protocol_pure(tmp_path: Path):
+    fixture = tmp_path / "empty-wgmma-wait.ttgir.mlir"
+    fixture.write_text("""\
+#mma = #ttg.nvidia_mma<{versionMajor = 3, versionMinor = 0, warpsPerCTA = [4, 1], instrShape = [16, 64, 16]}>
+module attributes {"ttg.target" = "cuda:90", "ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, "ttg.threads-per-warp" = 32 : i32} {
+  tt.func public @empty_wgmma_wait() {
+    %acc = arith.constant dense<0.000000e+00> : tensor<128x64xf32, #mma>
+    %waited = ttng.warp_group_dot_wait %acc {pendings = 0 : i32} : tensor<128x64xf32, #mma>
+    tt.return
+  }
+}
+""")
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "empty-wgmma-wait",
+    )
+    assert snapshot["operations"] == []
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
 def test_triton_wgmma_accepts_uniform_multi_warpgroup_partition(tmp_path: Path):
     module = (FIXTURES / "triton_wgmma_fenced.ttgir.mlir").read_text()
     module = module.replace("warpsPerCTA = [4, 1]", "warpsPerCTA = [8, 1]")
@@ -575,6 +597,37 @@ def test_triton_sha_bound_final_lowering_wait_orders_wgmma_before_arrive(tmp_pat
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_expands_static_void_private_function_call(tmp_path: Path):
+    fixture = tmp_path / "static-private-call.ttgir.mlir"
+    fixture.write_text("""module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:90", "ttg.threads-per-warp" = 32 : i32} {
+  tt.func public @entry(%ptr: !tt.ptr<i32>) {
+    tt.call @helper(%ptr) : (!tt.ptr<i32>) -> ()
+    tt.return
+  }
+  tt.func private @helper(%ptr: !tt.ptr<i32>) {
+    %value = tt.load %ptr : !tt.ptr<i32>
+    %group = ttg.async_commit_group
+    %wait = ttg.async_wait {num = 0 : i32}
+    tt.return
+  }
+}
+""")
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "static-private-call",
+    )
+    assert [operation["op"] for operation in snapshot["operations"]] == [
+        "triton.mem.read",
+        "triton.cp_async.commit_group",
+        "triton.cp_async.wait_group",
+    ]
+    assert snapshot["extraction"]["static_expansions"] == 1
+    assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
 def test_triton_empty_commit_and_zero_token_wait_use_existing_group_fsm():
     _output, snapshot = _capture(
         TRITON_PYTHON,
@@ -590,7 +643,25 @@ def test_triton_empty_commit_and_zero_token_wait_use_existing_group_fsm():
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
-def test_triton_masked_cp_async_splits_into_existing_issue_events():
+def test_triton_cp_async_wait_12_preserves_threshold_and_leaves_one_group_pending(tmp_path: Path):
+    module = (FIXTURES / "triton_cp_async.ttgir.mlir").read_text()
+    fixture = tmp_path / "cp-async-wait-12.ttgir.mlir"
+    fixture.write_text(module.replace("{num = 0 : i32}", "{num = 12 : i32}"))
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "cp-async-wait-12",
+    )
+    wait = next(operation for operation in snapshot["operations"] if operation["op"] == "triton.cp_async.wait_group")
+    assert wait["wait_group_count"] == 12
+    result = check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+    assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_masked_cp_async_coalesces_contiguous_issue_segments():
     _output, snapshot = _capture(
         TRITON_PYTHON,
         "triton_capture.py",
@@ -598,14 +669,16 @@ def test_triton_masked_cp_async_splits_into_existing_issue_events():
         "live-triton-masked-cp-async",
     )
     operations = [operation["op"] for operation in snapshot["operations"]]
-    assert operations == ["triton.cp_async.issue"] * 8 + [
+    assert operations == [
+        "triton.cp_async.issue",
         "triton.cp_async.commit_group",
         "triton.cp_async.wait_group",
         "triton.mem.read",
     ]
-    for offset, operation in enumerate(snapshot["operations"][:8]):
-        assert operation["source_region"] == f"region:global:global-arg:0:{offset}:1"
-        assert operation["destination_region"] == f"region:shared:shared:ssa:6:0:{offset}:1"
+    issue = snapshot["operations"][0]
+    assert issue["source_region"] == "region:global:global-arg:0:0:8"
+    assert issue["destination_region"] == "region:shared:shared:ssa:6:0:0:8"
+    assert issue["bytes"] == 8
     assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
 
 
@@ -822,6 +895,212 @@ def test_triton_pure_kernel_emits_empty_protocol_graph_and_checks_safe(tmp_path:
     module = triton_snapshot_to_module(snapshot)
     assert check_module(module, engine="maximal")["verdict"] == "SAFE"
     assert check_module(module, engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_bitcast_and_poison_are_protocol_pure(tmp_path: Path):
+    fixture = _scalar_pointer_ttgir(
+        tmp_path,
+        "",
+        """    %poison = ub.poison : i32
+    %bits = arith.constant 1065353216 : i32
+    %high = tt.mulhiui %bits, %bits : i32
+    %value = tt.bitcast %bits : i32 -> f32
+    %external = tt.extern_elementwise %value {libname = "", libpath = "", pure = true, symbol = "__nv_asinf"} : (f32) -> f32
+    %converted = tt.fp_to_fp %external, rounding = rtne : f32 -> f16""",
+    )
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "bitcast-poison-pure",
+    )
+    assert snapshot["operations"] == []
+    assert snapshot["extraction"]["classified_nodes"] == snapshot["extraction"]["executable_nodes_seen"]
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_pointer_bitcast_preserves_equal_width_provenance(tmp_path: Path):
+    fixture = _scalar_pointer_ttgir(
+        tmp_path,
+        "%ptr: !tt.ptr<f32>",
+        """    %cast = tt.bitcast %ptr : !tt.ptr<f32> -> !tt.ptr<i32>
+    %value = tt.load %cast : !tt.ptr<i32>""",
+    )
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "pointer-bitcast",
+    )
+    assert [operation["op"] for operation in snapshot["operations"]] == ["triton.mem.read"]
+    region = snapshot["regions"][0]
+    assert region["allocation_id"] == "global-arg:0"
+    assert region["extent"] == 4
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_pointer_broadcast_expands_provenance_shape(tmp_path: Path):
+    fixture = tmp_path / "pointer-broadcast.ttgir.mlir"
+    fixture.write_text("""\
+#blocked = #ttg.blocked<{sizePerThread = [1, 8], threadsPerWarp = [32, 1], warpsPerCTA = [4, 1], order = [1, 0]}>
+module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:90", "ttg.threads-per-warp" = 32 : i32} {
+  tt.func public @pointer_broadcast(%ptr: !tt.ptr<i8>) {
+    %base = tt.splat %ptr : !tt.ptr<i8> -> tensor<128x1x!tt.ptr<i8>, #blocked>
+    %broadcast = tt.broadcast %base : tensor<128x1x!tt.ptr<i8>, #blocked> -> tensor<128x8x!tt.ptr<i8>, #blocked>
+    %value = tt.load %broadcast : tensor<128x8x!tt.ptr<i8>, #blocked>
+    tt.return
+  }
+}
+""")
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "pointer-broadcast",
+    )
+    assert [operation["op"] for operation in snapshot["operations"]] == ["triton.mem.read"]
+    assert snapshot["regions"][0]["extent"] == 1
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_static_if_preserves_selected_pointer_provenance(tmp_path: Path):
+    fixture = _scalar_pointer_ttgir(
+        tmp_path,
+        "%ptr: !tt.ptr<i32>",
+        """    %condition = arith.constant true
+    %selected = scf.if %condition -> (!tt.ptr<i32>) {
+      scf.yield %ptr : !tt.ptr<i32>
+    } else {
+      scf.yield %ptr : !tt.ptr<i32>
+    }
+    %value = tt.load %selected : !tt.ptr<i32>""",
+    )
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "static-if-pointer",
+    )
+    assert [operation["op"] for operation in snapshot["operations"]] == ["triton.mem.read"]
+    assert snapshot["regions"][0]["allocation_id"] == "global-arg:0"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_static_cf_selects_only_reachable_block(tmp_path: Path):
+    fixture = tmp_path / "static-cfg.ttgir.mlir"
+    fixture.write_text("""\
+module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:90", "ttg.threads-per-warp" = 32 : i32} {
+  tt.func public @static_cfg(%ptr: !tt.ptr<i32>, %limit: i32) {
+    %pid = tt.get_program_id x : i32
+    %done = arith.cmpi sge, %pid, %limit : i32
+    cf.cond_br %done, ^bb1, ^bb2
+  ^bb1:
+    tt.return
+  ^bb2:
+    %value = arith.constant 1 : i32
+    tt.store %ptr, %value : !tt.ptr<i32>
+    tt.return
+  }
+}
+""")
+    evidence = tmp_path / "static-cfg.binding.json"
+    evidence.write_text(json.dumps({
+        "evidence_version": "triton-binding-evidence-v1",
+        "source_ir_sha256": hashlib.sha256(fixture.read_bytes()).hexdigest(),
+        "pointer_allocations": {"0": "global:out"},
+        "scalar_values": {"1": 1},
+        "array_attributes": {},
+        "unit_attributes": {},
+    }))
+    _output, active = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "static-cfg-active",
+        grid_ctas=None,
+        launch_grid=(3, 1, 1),
+        binding_evidence=evidence,
+    )
+    assert [operation["op"] for operation in active["operations"]] == ["triton.mem.write"]
+    _output, exited = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "static-cfg-exit",
+        grid_ctas=None,
+        launch_grid=(3, 1, 1),
+        selected_cta=(2, 0, 0),
+        binding_evidence=evidence,
+    )
+    assert exited["operations"] == []
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_static_for_does_not_treat_predicate_tensor_as_register_storage(tmp_path: Path):
+    fixture = tmp_path / "predicate-loop-carried.ttgir.mlir"
+    fixture.write_text("""\
+#blocked = #ttg.blocked<{sizePerThread = [1], threadsPerWarp = [32], warpsPerCTA = [4], order = [0]}>
+module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:90", "ttg.threads-per-warp" = 32 : i32} {
+  tt.func public @predicate_loop_carried() {
+    %zero = arith.constant 0 : index
+    %one = arith.constant 1 : index
+    %true = arith.constant true
+    %mask = tt.splat %true : i1 -> tensor<128xi1, #blocked>
+    %result = scf.for %i = %zero to %one step %one iter_args(%carried = %mask) -> tensor<128xi1, #blocked> {
+      scf.yield %carried : tensor<128xi1, #blocked>
+    }
+    tt.return
+  }
+}
+""")
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "predicate-loop-carried",
+    )
+    assert snapshot["operations"] == []
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_static_for_preserves_cp_async_token_provenance(tmp_path: Path):
+    fixture = tmp_path / "cp-async-loop-carried.ttgir.mlir"
+    fixture.write_text("""\
+#blocked = #ttg.blocked<{sizePerThread = [1], threadsPerWarp = [32], warpsPerCTA = [4], order = [0]}>
+#shared = #ttg.swizzled_shared<{vec = 1, perPhase = 1, maxPhase = 1, order = [0]}>
+#smem = #ttg.shared_memory
+module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:90", "ttg.threads-per-warp" = 32 : i32} {
+  tt.func public @async_loop_carried(%base: !tt.ptr<i8>) {
+    %zero = arith.constant 0 : index
+    %one = arith.constant 1 : index
+    %range = tt.make_range {end = 16 : i32, start = 0 : i32} : tensor<16xi32, #blocked>
+    %base_vector = tt.splat %base : !tt.ptr<i8> -> tensor<16x!tt.ptr<i8>, #blocked>
+    %src = tt.addptr %base_vector, %range : tensor<16x!tt.ptr<i8>, #blocked>, tensor<16xi32, #blocked>
+    %dst = ttg.local_alloc : () -> !ttg.memdesc<16xi8, #shared, #smem, mutable>
+    %copy = ttg.async_copy_global_to_local %src, %dst : tensor<16x!tt.ptr<i8>, #blocked> -> <16xi8, #shared, #smem, mutable>
+    %group = ttg.async_commit_group tokens %copy
+    %carried = scf.for %i = %zero to %one step %one iter_args(%token = %group) -> (!ttg.async.token) {
+      scf.yield %token : !ttg.async.token
+    }
+    %wait = ttg.async_wait %carried {num = 0 : i32}
+    %loaded = ttg.local_load %dst token %wait : !ttg.memdesc<16xi8, #shared, #smem, mutable> -> tensor<16xi8, #blocked>
+    tt.return
+  }
+}
+""")
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "cp-async-loop-carried",
+    )
+    assert [operation["op"] for operation in snapshot["operations"]] == [
+        "triton.cp_async.issue",
+        "triton.cp_async.commit_group",
+        "triton.cp_async.wait_group",
+        "triton.mem.read",
+    ]
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
