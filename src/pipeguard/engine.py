@@ -969,7 +969,12 @@ class Executor:
             assert event.resource is not None and event.group_owner is not None
             group_state = state.groups[event.resource]
             covered = group_state.operand_fences.get(event.group_owner, set())
-            missing = sorted(set(event.regions) - covered)
+            shared_operands = {
+                region
+                for region in event.regions
+                if self.module.region_map[region].address_space == "SHARED"
+            }
+            missing = sorted(shared_operands - covered)
             if missing:
                 snapshot = group_state.snapshot(event.group_owner)
                 snapshot["missing_operand_fence_regions"] = missing

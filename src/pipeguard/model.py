@@ -702,15 +702,21 @@ def _semantic_validate(module: Module) -> None:
                 for owner in resource.participants:
                     actor = actors[owner]
                     lanes = tuple(sorted(actor.participants))
-                    if (
-                        actor.kind != "WARPGROUP"
-                        or len(lanes) != 128
-                        or lanes != tuple(range(lanes[0], lanes[0] + 128))
-                        or lanes[0] % 128 != 0
-                    ):
+                    aligned = (
+                        lanes
+                        and lanes == tuple(range(lanes[0], lanes[0] + len(lanes)))
+                        and lanes[0] % 128 == 0
+                    )
+                    complete_warpgroups = len(lanes) % 128 == 0
+                    supported_owner = (
+                        actor.kind == "WARPGROUP" and len(lanes) == 128
+                    ) or (
+                        actor.kind == "PARTITION" and len(lanes) >= 128
+                    )
+                    if not aligned or not complete_warpgroups or not supported_owner:
                         raise PGIRError(
                             "INVALID_WGMMA_PARTICIPANTS",
-                            "WGMMA owners must be complete aligned 128-lane warpgroups",
+                            "WGMMA owners must contain complete aligned 128-lane warpgroups",
                             {"resource": resource.id, "owner": owner, "lanes": list(lanes)},
                         )
 
@@ -908,12 +914,21 @@ def _semantic_validate(module: Module) -> None:
                     "WGMMA groups are owned by the issuing warpgroup actor",
                     {"event": event.id, "actor": event.actor, "group_owner": event.group_owner},
                 )
-            if event.type in {"WgmmaFenceOperand", "WgmmaIssue"} and any(
+            if event.type == "WgmmaFenceOperand" and any(
                 regions[region].address_space != "SHARED" for region in event.regions
             ):
                 raise PGIRError(
                     "UNSUPPORTED_WGMMA_OPERAND_REGION",
-                    "WGMMA operands must be explicit shared-memory regions",
+                    "WGMMA operand fences apply only to explicit shared-memory regions",
+                    {"event": event.id, "regions": list(event.regions)},
+                )
+            if event.type == "WgmmaIssue" and any(
+                regions[region].address_space not in {"SHARED", "REGISTER"}
+                for region in event.regions
+            ):
+                raise PGIRError(
+                    "UNSUPPORTED_WGMMA_OPERAND_REGION",
+                    "WGMMA operands must be explicit shared-memory or register regions",
                     {"event": event.id, "regions": list(event.regions)},
                 )
             if event.type == "WgmmaIssue" and regions[event.destination_region].address_space != "REGISTER":

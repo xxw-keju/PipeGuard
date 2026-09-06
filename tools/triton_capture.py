@@ -50,9 +50,12 @@ class TritonCapture:
         "ttg.global_scratch_alloc",
         "ttg.local_alloc",
         "ttg.memdesc_index",
+        "ttg.memdesc_subslice",
     }
     _CONTAINERS = {"builtin.module", "tt.func", "tt.return", "scf.yield"}
     _VALUE_ONLY_PURE_OPERATIONS = {
+        "llvm.intr.assume",
+        "tt.elementwise_inline_asm",
         "tt.join",
         "tt.split",
         "tt.unsplat",
@@ -98,6 +101,7 @@ class TritonCapture:
         "ttg.async_commit_group",
         "ttg.async_wait",
         "ttg.local_load",
+        "ttg.local_store",
         "ttg.local_dealloc",
         "ttg.barrier",
         "tt.load",
@@ -665,17 +669,61 @@ class TritonCapture:
         })
         return identifier
 
-    def _wgmma_resource(self) -> str:
-        participants = self.actor_specs[self.current_actor]["participants"]
+    def _wgmma_resource(self, operation: Any | None = None, index: int | None = None) -> str:
+        identifier = f"wgmma:{self.current_actor}"
+        if identifier in self.resources:
+            return identifier
+        if operation is None:
+            raise CaptureError(
+                "TRITON_WGMMA_PARTICIPANTS_UNRESOLVED",
+                "WGMMA resource use precedes its statically evidenced issue",
+                {"actor": self.current_actor, "operation_index": index},
+            )
+        actor = self.actor_specs[self.current_actor]
+        participants = actor["participants"]
+        aligned = (
+            participants
+            and participants == list(range(participants[0], participants[0] + len(participants)))
+            and participants[0] % 128 == 0
+        )
+        complete_warpgroups = len(participants) % 128 == 0
+        supported_owner = (
+            actor["kind"] == "WARPGROUP" and len(participants) == 128
+        ) or (
+            actor["kind"] == "PARTITION" and len(participants) >= 128
+        )
+        encoded_warps = None
+        values = [
+            operation.get_operand(position)
+            for position in range(operation.get_num_operands())
+        ] + [
+            operation.get_result(position)
+            for position in range(operation.get_num_results())
+        ]
+        for value in values:
+            match = re.search(r"warpsPerCTA\s*=\s*\[([^]]+)\]", str(value.get_type()))
+            if match is None:
+                continue
+            dimensions = [int(item.strip()) for item in match.group(1).split(",")]
+            encoded_warps = 1
+            for dimension in dimensions:
+                encoded_warps *= dimension
+            break
         if (
-            len(participants) != 128
-            or participants != list(range(participants[0], participants[0] + 128))
-            or participants[0] % 128
+            not aligned
+            or not complete_warpgroups
+            or not supported_owner
+            or (len(participants) > 128 and encoded_warps != len(participants) // 32)
         ):
             raise CaptureError(
                 "TRITON_WGMMA_PARTICIPANTS_UNRESOLVED",
-                "warp_group_dot owner must be one complete aligned 128-lane warpgroup",
-                {"actor": self.current_actor, "participants": participants},
+                "warp_group_dot owner must match complete aligned warpgroups in its MMA layout",
+                {
+                    "actor": self.current_actor,
+                    "participants": participants,
+                    "encoded_warps": encoded_warps,
+                    "operation_index": index,
+                },
             )
         identifier = f"wgmma:{self.current_actor}"
         self.resources.setdefault(identifier, {
@@ -1317,7 +1365,7 @@ class TritonCapture:
 
     def _capture_wgmma(self, operation: Any, index: int) -> None:
         name = operation.get_name()
-        resource = self._wgmma_resource()
+        resource = self._wgmma_resource(operation, index)
         if name == "ttng.warp_group_dot":
             if operation.get_num_operands() < 3 or operation.get_num_results() != 1:
                 raise CaptureError(
@@ -1325,14 +1373,27 @@ class TritonCapture:
                     "warp_group_dot requires two shared operands, accumulator, and one result",
                     {"operation_index": index},
                 )
-            regions = [
-                self.memdesc_regions.get(operation.get_operand(position).id())
-                for position in (0, 1)
-            ]
-            if any(region is None for region in regions):
+            operand_regions: list[str] = []
+            shared_regions: list[str] = []
+            for position in (0, 1):
+                operand = operation.get_operand(position)
+                region = self.memdesc_regions.get(operand.id())
+                if region is not None:
+                    shared_regions.append(region)
+                    operand_regions.append(region)
+                    continue
+                if "tensor<" in str(operand.get_type()):
+                    operand_regions.append(self._register_region(operand))
+                    continue
                 raise CaptureError(
                     "TRITON_WGMMA_UNRESOLVED",
-                    "warp_group_dot shared operand provenance is unresolved",
+                    "warp_group_dot operand provenance is unresolved",
+                    {"operation_index": index, "operand": position},
+                )
+            if not shared_regions:
+                raise CaptureError(
+                    "TRITON_WGMMA_UNRESOLVED",
+                    "SM90 warp_group_dot requires at least one shared-memory operand",
                     {"operation_index": index},
                 )
             if self.pending_proxy_fence is not None:
@@ -1342,7 +1403,7 @@ class TritonCapture:
                     from_domain="GENERIC",
                     to_domain="TENSOR_CORE",
                     scope="CTA",
-                    regions=regions,
+                    regions=shared_regions,
                     visibility_mask={
                         "shared": True,
                         "global_read": False,
@@ -1362,14 +1423,14 @@ class TritonCapture:
                 index,
                 resource=resource,
                 group_owner=owner,
-                regions=regions,
+                regions=shared_regions,
             )
             self._emit(
                 "triton.wgmma.issue",
                 index,
                 resource=resource,
                 group_owner=owner,
-                regions=regions,
+                regions=operand_regions,
                 destination_region=destination,
                 engine_id=engine,
                 engine_seq=sequence,
@@ -1423,6 +1484,24 @@ class TritonCapture:
                 self.wgmma_results[result.id()] = self.wgmma_results[operand.id()]
         if int(wait_count) == 0:
             self.pending_wgmma_owners.discard(self.current_actor)
+
+    def _capture_wgmma_result_reads(self, operation: Any, index: int) -> None:
+        if operation.get_name() == "arith.select" and operation.get_num_operands() == 3:
+            condition = self.static_values.get(operation.get_operand(0).id())
+            if condition in {0, 1, -1, False, True} and operation.get_num_results() == 1:
+                selected = operation.get_operand(1 if bool(condition) else 2)
+                self._forward_value(selected, operation.get_result(0))
+                return
+        regions = {
+            self.register_regions[operation.get_operand(position).id()]
+            for position in range(operation.get_num_operands())
+            if (
+                operation.get_operand(position).id() in self.wgmma_results
+                and operation.get_operand(position).id() in self.register_regions
+            )
+        }
+        for region in sorted(regions):
+            self._emit("triton.mem.read", index, region=region)
 
     def _capture_memory(self, operation: Any, index: int) -> None:
         name = operation.get_name()
@@ -1624,6 +1703,34 @@ class TritonCapture:
             )
         self._emit("triton.mem.read", index, region=region)
 
+    def _capture_local_store(self, operation: Any, index: int) -> None:
+        if operation.get_num_operands() != 2 or operation.get_num_results() != 0:
+            raise CaptureError(
+                "TRITON_LOCAL_STORE_UNRESOLVED",
+                "ttg.local_store requires one value and one direct memdesc",
+                {"operation_index": index},
+            )
+        value = operation.get_operand(0)
+        region = self.memdesc_regions.get(operation.get_operand(1).id())
+        if region is None:
+            raise CaptureError(
+                "TRITON_LOCAL_STORE_UNRESOLVED",
+                "local store memdesc provenance is unresolved",
+                {"operation_index": index},
+            )
+        elements, width = self._value_extent(value)
+        if elements * width != self.regions[region]["extent"]:
+            raise CaptureError(
+                "TRITON_LOCAL_STORE_UNRESOLVED",
+                "local store value and destination byte intervals differ",
+                {
+                    "operation_index": index,
+                    "source_extent": elements * width,
+                    "destination_extent": self.regions[region]["extent"],
+                },
+            )
+        self._emit("triton.mem.write", index, region=region)
+
     def _region_block(self, region: Any, operation_index: int) -> int:
         blocks = sorted(self.region_blocks.get(region.id(), set()))
         if len(blocks) != 1:
@@ -1636,6 +1743,55 @@ class TritonCapture:
 
     def _execute_declaration(self, operation: Any, index: int) -> None:
         name = operation.get_name()
+        if name == "ttg.memdesc_subslice":
+            if operation.get_num_operands() != 1 or operation.get_num_results() != 1:
+                raise CaptureError(
+                    "TRITON_MEMDESC_PROVENANCE_UNRESOLVED",
+                    "ttg.memdesc_subslice requires one base and one result",
+                    {"operation_index": index},
+                )
+            base_region_id = self.memdesc_regions.get(operation.get_operand(0).id())
+            attributes = self.array_attributes.get(index)
+            if base_region_id is None:
+                raise CaptureError(
+                    "TRITON_MEMDESC_PROVENANCE_UNRESOLVED",
+                    "ttg.memdesc_subslice base is not statically resolved",
+                    {"operation_index": index},
+                )
+            if not isinstance(attributes, dict) or set(attributes) != {"memdesc_byte_offset"}:
+                raise CaptureError(
+                    "TRITON_BINDING_EVIDENCE_REQUIRED",
+                    "ttg.memdesc_subslice requires a SHA-bound byte offset",
+                    {"operation_index": index},
+                )
+            byte_offset = attributes["memdesc_byte_offset"]
+            if not isinstance(byte_offset, int) or isinstance(byte_offset, bool) or byte_offset < 0:
+                raise CaptureError(
+                    "TRITON_BINDING_EVIDENCE_INVALID",
+                    "ttg.memdesc_subslice byte offset must be a nonnegative integer",
+                    {"operation_index": index, "byte_offset": byte_offset},
+                )
+            elements, width = self._value_extent(operation.get_result(0))
+            subview_extent = elements * width
+            base_region = self.regions[base_region_id]
+            offset = base_region["offset"] + byte_offset
+            if offset + subview_extent > base_region["offset"] + base_region["extent"]:
+                raise CaptureError(
+                    "TRITON_BINDING_EVIDENCE_INVALID",
+                    "ttg.memdesc_subslice is outside the static base allocation",
+                    {
+                        "operation_index": index,
+                        "byte_offset": byte_offset,
+                        "extent": subview_extent,
+                    },
+                )
+            self.memdesc_regions[operation.get_result(0).id()] = self._region(
+                base_region["allocation_id"],
+                base_region["address_space"],
+                offset,
+                subview_extent,
+            )
+            return
         if name == "ttg.memdesc_index":
             if operation.get_num_operands() != 2 or operation.get_num_results() != 1:
                 raise CaptureError(
@@ -1924,13 +2080,13 @@ class TritonCapture:
             signed_right = tuple(self._signed_integer(value, result_bits) for value in right_values)
             unsigned_left = tuple(self._unsigned_integer(value, result_bits) for value in left_values)
             unsigned_right = tuple(self._unsigned_integer(value, result_bits) for value in right_values)
-        if name in {"arith.divsi", "arith.remsi", "arith.maxsi", "arith.minsi"}:
+        if name in {"arith.ceildivsi", "arith.divsi", "arith.remsi", "arith.maxsi", "arith.minsi"}:
             evaluated_left, evaluated_right = signed_left, signed_right
         elif name == "arith.divui":
             evaluated_left, evaluated_right = unsigned_left, unsigned_right
         else:
             evaluated_left, evaluated_right = left_values, right_values
-        if name in {"arith.divsi", "arith.divui", "arith.remsi"} and any(
+        if name in {"arith.ceildivsi", "arith.divsi", "arith.divui", "arith.remsi"} and any(
             value == 0 for value in evaluated_right
         ):
             return
@@ -1942,6 +2098,7 @@ class TritonCapture:
         functions = {
             "arith.addi": lambda a, b: a + b,
             "arith.andi": lambda a, b: a & b,
+            "arith.ceildivsi": lambda a, b: -((-a) // b),
             "arith.divsi": signed_divide,
             "arith.divui": lambda a, b: a // b,
             "arith.maxsi": max,
@@ -2254,8 +2411,17 @@ class TritonCapture:
         branch = 0 if bool(condition) else 1
         yielded: list[Any] = []
         if branch < operation.get_num_regions():
-            block = self._region_block(operation.get_region(branch), index)
-            yielded = self._execute_block(block, (*path, "if", index, int(bool(condition))))
+            region = operation.get_region(branch)
+            blocks = sorted(self.region_blocks.get(region.id(), set()))
+            if not blocks and operation.get_num_results() == 0:
+                return
+            if len(blocks) != 1:
+                raise CaptureError(
+                    "TRITON_CONTROL_FLOW_UNRESOLVED",
+                    "selected scf.if region must contain one block unless it is an empty no-result branch",
+                    {"operation_index": index, "blocks": len(blocks)},
+                )
+            yielded = self._execute_block(blocks[0], (*path, "if", index, int(bool(condition))))
         if len(yielded) != operation.get_num_results():
             raise CaptureError(
                 "TRITON_CONTROL_FLOW_UNRESOLVED",
@@ -2277,10 +2443,11 @@ class TritonCapture:
                 "scf.while must contain before and after regions",
                 {"operation_index": index},
             )
-        carried = [
-            self._constant(operation.get_operand(position), "scf.while initial value")
+        carried_sources = [
+            operation.get_operand(position)
             for position in range(operation.get_num_operands())
         ]
+        carried = [self.static_values.get(source.id()) for source in carried_sources]
         before_block_id = self._region_block(operation.get_region(0), index)
         after_block_id = self._region_block(operation.get_region(1), index)
         before_block = self.blocks[before_block_id]
@@ -2294,10 +2461,32 @@ class TritonCapture:
                 "scf.while block arguments do not match carried values",
                 {"operation_index": index},
             )
+        condition_operations = [
+            self.operations[operation_index]
+            for operation_index in self.block_operations.get(before_block_id, [])
+            if self.operations[operation_index].get_name() == "scf.condition"
+        ]
+        yield_operations = [
+            self.operations[operation_index]
+            for operation_index in self.block_operations.get(after_block_id, [])
+            if self.operations[operation_index].get_name() == "scf.yield"
+        ]
+        if len(condition_operations) != 1 or len(yield_operations) != 1:
+            raise CaptureError(
+                "TRITON_CONTROL_FLOW_UNRESOLVED",
+                "scf.while regions must contain one condition and one yield terminator",
+                {
+                    "operation_index": index,
+                    "conditions": len(condition_operations),
+                    "yields": len(yield_operations),
+                },
+            )
+        condition_operation = condition_operations[0]
+        yield_operation = yield_operations[0]
         seen: set[tuple[Any, ...]] = set()
         iteration = 0
         while True:
-            fingerprint = tuple(carried)
+            fingerprint = tuple(repr(value) for value in carried)
             if fingerprint in seen:
                 raise CaptureError(
                     "TRITON_NONFINITE_CONTROL_FLOW",
@@ -2305,8 +2494,11 @@ class TritonCapture:
                     {"operation_index": index, "iteration": iteration},
                 )
             seen.add(fingerprint)
-            for position, value in enumerate(carried):
-                self.static_values[before_block.get_argument(position).id()] = value
+            for position, (value, source) in enumerate(zip(carried, carried_sources)):
+                argument = before_block.get_argument(position)
+                self._forward_value(source, argument)
+                if value is not None:
+                    self.static_values[argument.id()] = value
             condition_values = self._execute_block(
                 before_block_id,
                 (*path, "while", index, iteration, "before"),
@@ -2318,6 +2510,10 @@ class TritonCapture:
                     {"operation_index": index},
                 )
             condition, *forwarded = condition_values
+            forwarded_sources = [
+                condition_operation.get_operand(position)
+                for position in range(1, condition_operation.get_num_operands())
+            ]
             if condition not in {0, 1, -1, False, True}:
                 raise CaptureError(
                     "TRITON_DYNAMIC_CONTROL_FLOW_UNSUPPORTED",
@@ -2326,10 +2522,14 @@ class TritonCapture:
                 )
             if not bool(condition):
                 carried = forwarded
+                carried_sources = forwarded_sources
                 break
             self.static_expansions += 1
-            for position, value in enumerate(forwarded):
-                self.static_values[after_block.get_argument(position).id()] = value
+            for position, (value, source) in enumerate(zip(forwarded, forwarded_sources)):
+                argument = after_block.get_argument(position)
+                self._forward_value(source, argument)
+                if value is not None:
+                    self.static_values[argument.id()] = value
             carried = self._execute_block(
                 after_block_id,
                 (*path, "while", index, iteration, "after"),
@@ -2340,6 +2540,10 @@ class TritonCapture:
                     "scf.while after-region yield count is inconsistent",
                     {"operation_index": index},
                 )
+            carried_sources = [
+                yield_operation.get_operand(position)
+                for position in range(yield_operation.get_num_operands())
+            ]
             iteration += 1
         if operation.get_num_results() != len(carried):
             raise CaptureError(
@@ -2347,8 +2551,11 @@ class TritonCapture:
                 "scf.while result count does not match carried values",
                 {"operation_index": index},
             )
-        for position, value in enumerate(carried):
-            self.static_values[operation.get_result(position).id()] = value
+        for position, (value, source) in enumerate(zip(carried, carried_sources)):
+            result = operation.get_result(position)
+            self._forward_value(source, result)
+            if value is not None:
+                self.static_values[result.id()] = value
 
     def _execute_operation(self, operation: Any, index: int) -> None:
         name = operation.get_name()
@@ -2390,8 +2597,12 @@ class TritonCapture:
             self.elided_nodes += 1
             return
         if name.startswith(("arith.", "math.")) or name in self._PURE_OPERATIONS:
+            self._capture_wgmma_result_reads(operation, index)
             self._evaluate_pure(operation, index)
-            self.elided_nodes += 1
+            if len(self.output_operations) > before:
+                self.emitting_nodes += 1
+            else:
+                self.elided_nodes += 1
             return
         if name in self._VALUE_ONLY_PURE_OPERATIONS:
             self._execute_value_only_pure(operation, index)
@@ -2461,6 +2672,8 @@ class TritonCapture:
             self._capture_wgmma(operation, index)
         elif name in {"tt.load", "tt.store"}:
             self._capture_memory(operation, index)
+        elif name == "ttg.local_store":
+            self._capture_local_store(operation, index)
         elif name in {
             "ttg.async_copy_global_to_local",
             "ttg.async_commit_group",

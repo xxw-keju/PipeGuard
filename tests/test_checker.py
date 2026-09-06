@@ -2039,6 +2039,29 @@ def test_wgmma_requires_complete_warpgroup_and_typed_wait_endpoint():
     assert endpoint.value.code == "INVALID_WGMMA_WAIT_ENDPOINT"
 
 
+def test_wgmma_issue_accepts_register_operand_without_proxy_fencing_it():
+    raw = json.loads(json.dumps(wgmma_module().raw))
+    raw["regions"].append({
+        "id": "register_operand",
+        "allocation_id": "register-input",
+        "address_space": "REGISTER",
+        "offset": 0,
+        "extent": 64,
+    })
+    next(event for event in raw["events"] if event["id"] == "mma_issue")["regions"].append("register_operand")
+    assert check_module(module_from_dict(raw), engine="crosscheck")["verdict"] == "SAFE"
+
+
+def test_wgmma_accepts_aligned_multi_warpgroup_partition_owner():
+    raw = json.loads(json.dumps(wgmma_module().raw))
+    raw["target"]["cta_threads"] = 256
+    raw["actors"][0].update({
+        "kind": "PARTITION",
+        "participants": list(range(256)),
+    })
+    assert check_module(module_from_dict(raw), engine="crosscheck")["verdict"] == "SAFE"
+
+
 def test_wgmma_empty_group_is_fail_closed_without_ptx_contract():
     raw = json.loads(json.dumps(wgmma_module().raw))
     raw["events"] = [
