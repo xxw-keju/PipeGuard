@@ -23,6 +23,7 @@ class CoreState:
     pending: int
     generation_started: bool
     publications: frozenset[int]
+    last_successfully_observed_generation: int | None
     remaining: tuple[tuple[int, frozenset[str]], ...]
     executed: frozenset[str]
 
@@ -82,6 +83,7 @@ def _core_oracle(
         pending=capacity,
         generation_started=False,
         publications=frozenset(),
+        last_successfully_observed_generation=None,
         remaining=_remaining_tuple(required),
         executed=frozenset(),
     )
@@ -116,7 +118,14 @@ def _core_oracle(
                     invalid_risk = True
                 continue
             if event.generation == state.generation and state.pending > 0:
-                choices.append(("PROGRAM", actor))
+                if (
+                    state.generation > 0
+                    and state.last_successfully_observed_generation != state.generation - 1
+                ):
+                    invalid_here = True
+                    invalid_risk = True
+                else:
+                    choices.append(("PROGRAM", actor))
             elif event.generation == state.generation + 1 and state.pending == 0:
                 pass
             else:
@@ -126,12 +135,19 @@ def _core_oracle(
             all_program_events_finished = all(
                 pc == len(trace) for pc, trace in zip(state.pcs, traces)
             )
-            final = (
+            quiescent = (
                 all_program_events_finished
                 and not state.generation_started
                 and state.pending == capacity
             )
-            if not final and not invalid_here:
+            unobserved = (
+                state.generation > 0
+                and state.last_successfully_observed_generation != state.generation - 1
+            )
+            if quiescent and unobserved:
+                invalid_here = True
+                invalid_risk = True
+            elif not quiescent and not invalid_here:
                 stuck_risk = True
             continue
         for kind, actor in choices:
@@ -144,6 +160,7 @@ def _core_oracle(
                     pending=capacity,
                     generation_started=False,
                     publications=frozenset(publications),
+                    last_successfully_observed_generation=state.last_successfully_observed_generation,
                     remaining=state.remaining,
                     executed=state.executed,
                 ))
@@ -155,17 +172,20 @@ def _core_oracle(
             next_remaining = _remaining_map(state)
             pending = state.pending
             generation_started = state.generation_started
+            observed_generation = state.last_successfully_observed_generation
             if event.kind == "ARRIVE":
                 pending -= 1
                 generation_started = True
             else:
                 next_remaining.get(event.generation, set()).discard(event.id)
+                observed_generation = event.generation
             stack.append(CoreState(
                 pcs=tuple(pcs),
                 generation=state.generation,
                 pending=pending,
                 generation_started=generation_started,
                 publications=state.publications,
+                last_successfully_observed_generation=observed_generation,
                 remaining=_remaining_tuple(next_remaining),
                 executed=state.executed | {event.id},
             ))
@@ -190,6 +210,8 @@ def _abstract_program(
         prefix = "a" if kind == "ARRIVE" else "w"
         event = CoreEvent(f"{prefix}{generation}_{index}", actor, kind, generation)
         traces[actor].append(event)
+    wait_actor = assignment[capacity]
+    traces[wait_actor].append(CoreEvent("w1_0", wait_actor, "WAIT", 1))
     return tuple(tuple(trace) for trace in traces)
 
 
@@ -397,11 +419,40 @@ def test_bounded_raw_oracle_matches_checker_lts_and_safe_pdg():
                     report,
                 )
     assert checked == 460
-    assert safe == 92
-    assert risk == 368
+    assert safe == 64
+    assert risk == 396
     assert stuck == 22
-    assert lts_checked == 114
-    assert pdg_pairs == 2274
+    assert lts_checked == 86
+    assert pdg_pairs == 2102
+
+
+def _linear_observed_mbarrier(generations: int):
+    trace = []
+    for generation in range(generations):
+        trace.extend((
+            CoreEvent(f"arrive_{generation}", 0, "ARRIVE", generation),
+            CoreEvent(f"wait_{generation}", 0, "WAIT", generation),
+        ))
+    return _pgir_for_core((tuple(trace),), 1)
+
+
+def test_successful_wait_guard_preserves_t_eff_n_ext_bound():
+    reports = {
+        size: check_module(_linear_observed_mbarrier(size), engine="maximal")
+        for size in (16, 32)
+    }
+    for result in reports.values():
+        statistics = result["statistics"]
+        assert result["verdict"] == "SAFE"
+        assert statistics["scheduler_work_units"] <= 12 * statistics["t_eff"] * statistics["n_ext"]
+        assert statistics["pdg_edges"] <= 2 * statistics["n_ext"]
+        assert statistics["full_enabled_scans"] == 0
+        assert statistics["state_clones"] == 0
+        assert statistics["replayed_prefix_steps"] == 0
+    small = reports[16]["statistics"]
+    large = reports[32]["statistics"]
+    assert large["n_ext"] == 2 * small["n_ext"] - 1
+    assert large["scheduler_work_units"] <= 2 * small["scheduler_work_units"] + 32
 
 
 def _independent_reads(actor_count: int, events_per_actor: int):

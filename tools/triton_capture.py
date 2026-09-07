@@ -1487,17 +1487,22 @@ class TritonCapture:
                 destination,
                 is_load=True,
             )
-            for source_region, destination_region, byte_count in segments:
-                self._emit(
-                    "triton.tma_load.issue",
-                    index,
-                    resource=resource,
-                    source_region=source_region,
-                    destination_region=destination_region,
-                    bytes=byte_count,
-                    lifecycle_epoch=lifecycle,
-                    generation=self.tma_issue_generation[key],
-                )
+            self._emit(
+                "triton.tma_load.issue",
+                index,
+                resource=resource,
+                transfers=[
+                    {
+                        "source_region": source_region,
+                        "destination_region": destination_region,
+                        "bytes": byte_count,
+                    }
+                    for source_region, destination_region, byte_count in segments
+                ],
+                bytes=sum(byte_count for _source, _destination, byte_count in segments),
+                lifecycle_epoch=lifecycle,
+                generation=self.tma_issue_generation[key],
+            )
 
     def _capture_wgmma(self, operation: Any, index: int) -> None:
         name = operation.get_name()

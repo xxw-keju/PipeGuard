@@ -17,7 +17,6 @@ from .model import (
     normalize_module,
     stable_channel_handoff_id,
     stable_collective_release_id,
-    stable_completion_id,
     stable_digest,
     stable_group_completion_id,
     stable_group_id,
@@ -137,7 +136,7 @@ def _cp_async_relations(
             elif event.type == "CpAsyncWaitGroup":
                 groups = committed.get(event.resource, [])
                 cutoff = max(0, len(groups) - event.wait_group_count)
-                waits[event.id] = tuple(groups[:cutoff])
+                waits[event.id] = tuple(groups[cutoff - 1:cutoff])
     return commits, issues, waits
 
 
@@ -178,7 +177,7 @@ def _wgmma_relations(
             elif event.type == "WgmmaWaitGroup":
                 groups = committed.get((event.resource, event.completion_kind), [])
                 cutoff = max(0, len(groups) - event.wait_group_count)
-                waits[event.id] = tuple(groups[:cutoff])
+                waits[event.id] = tuple(groups[cutoff - 1:cutoff])
     return commits, issues, waits
 
 
@@ -224,7 +223,7 @@ def _tma_store_relations(
                 )
                 groups = committed.get((event.resource, kind), [])
                 cutoff = max(0, len(groups) - event.wait_group_count)
-                waits[event.id] = tuple(groups[:cutoff])
+                waits[event.id] = tuple(groups[cutoff - 1:cutoff])
     return commits, issues, waits
 
 
@@ -233,6 +232,7 @@ def _base_pdg(module: Module) -> PDG:
     cp_commits, _cp_issues, cp_waits = _cp_async_relations(module)
     wgmma_commits, _wgmma_issues, wgmma_waits = _wgmma_relations(module)
     tma_store_commits, _tma_store_issues, tma_store_waits = _tma_store_relations(module)
+    last_group_completion: dict[tuple[str, str, str, str], str] = {}
     graph.nodes.update(event.id for event in module.events)
     for actor in sorted(module.events_by_actor):
         trace = module.events_by_actor[actor]
@@ -279,6 +279,10 @@ def _base_pdg(module: Module) -> PDG:
             for issue in issues:
                 graph.add_edge(issue, group, "ISSUE_TO_GROUP")
             graph.add_edge(group, completion, "GROUP_TO_COMPLETION")
+            completion_key = ("CP_ASYNC", event.resource, event.group_owner, "GROUP_COMPLETE")
+            if previous := last_group_completion.get(completion_key):
+                graph.add_edge(previous, completion, "GROUP_COMPLETION_ORDER")
+            last_group_completion[completion_key] = completion
             continue
         if event.type == "CpAsyncWaitGroup":
             for completion in cp_waits[event.id]:
@@ -289,8 +293,12 @@ def _base_pdg(module: Module) -> PDG:
             graph.add_edge(event.id, group, "COMMIT_TO_GROUP")
             for issue in issues:
                 graph.add_edge(issue, group, "ISSUE_TO_GROUP")
-            for completion in completions.values():
+            for completion_kind, completion in completions.items():
                 graph.add_edge(group, completion, "GROUP_TO_COMPLETION")
+                completion_key = ("WGMMA", event.resource, event.group_owner, completion_kind)
+                if previous := last_group_completion.get(completion_key):
+                    graph.add_edge(previous, completion, "GROUP_COMPLETION_ORDER")
+                last_group_completion[completion_key] = completion
             continue
         if event.type == "WgmmaWaitGroup":
             for completion in wgmma_waits[event.id]:
@@ -301,8 +309,12 @@ def _base_pdg(module: Module) -> PDG:
             graph.add_edge(event.id, group, "COMMIT_TO_GROUP")
             for issue in issues:
                 graph.add_edge(issue, group, "ISSUE_TO_GROUP")
-            for completion in completions.values():
+            for completion_kind, completion in completions.items():
                 graph.add_edge(group, completion, "GROUP_TO_COMPLETION")
+                completion_key = ("TMA_STORE", event.resource, event.group_owner, completion_kind)
+                if previous := last_group_completion.get(completion_key):
+                    graph.add_edge(previous, completion, "GROUP_COMPLETION_ORDER")
+                last_group_completion[completion_key] = completion
             graph.add_edge(
                 completions["SOURCE_RELEASED"],
                 completions["GLOBAL_COMPLETE"],
@@ -326,9 +338,7 @@ def _base_pdg(module: Module) -> PDG:
         elif event.type == "MBarrierWaitParity":
             graph.add_edge(phase, event.id, "COMPLETION_TO_WAIT")
         elif event.type == "TmaLoadIssue":
-            completion = stable_completion_id(event.id, event.generation)
-            graph.add_edge(event.id, completion, "ISSUE_TO_COMPLETION")
-            graph.add_edge(completion, phase, "GROUP_TO_COMPLETION")
+            graph.add_edge(event.id, phase, "ISSUE_TO_PHASE")
     return graph
 
 
@@ -338,8 +348,6 @@ def _anchor_ids(module: Module) -> list[str]:
     tma_store_commits, _tma_store_issues, _tma_store_waits = _tma_store_relations(module)
     identifiers = {event.id for event in module.events}
     for event in module.events:
-        if event.type == "TmaLoadIssue":
-            identifiers.add(stable_completion_id(event.id, event.generation))
         if event.type in {"BarrierArrive", "BarrierObserve"}:
             identifiers.add(stable_collective_release_id(event.resource, event.invocation_id))
         if event.type == "CpAsyncCommitGroup" and cp_commits[event.id][2]:
@@ -375,11 +383,32 @@ def _effects(module: Module) -> list[Effect]:
         if event.type in {"MemRead", "MemWrite"}:
             result.append(Effect(event.id, event.actor, "READ" if event.type == "MemRead" else "WRITE", event.region, event.id, event.id, False))
         elif event.type == "TmaLoadIssue":
-            completion = stable_completion_id(event.id, event.generation)
-            result.extend((
-                Effect(f"effect:{event.id}:source", event.actor, "READ", event.source_region, event.id, completion, True),
-                Effect(f"effect:{event.id}:destination", event.actor, "WRITE", event.destination_region, event.id, completion, True),
-            ))
+            phase = stable_phase_id(
+                event.resource,
+                event.lifecycle_epoch,
+                event.generation,
+            )
+            for index, transfer in enumerate(event.tma_transfers):
+                result.extend((
+                    Effect(
+                        f"effect:{event.id}:transfer:{index}:source",
+                        event.actor,
+                        "READ",
+                        transfer.source_region,
+                        event.id,
+                        phase,
+                        True,
+                    ),
+                    Effect(
+                        f"effect:{event.id}:transfer:{index}:destination",
+                        event.actor,
+                        "WRITE",
+                        transfer.destination_region,
+                        event.id,
+                        phase,
+                        True,
+                    ),
+                ))
         elif event.type == "CpAsyncIssue" and event.predicate and event.id in cp_issues:
             _group, completion = cp_issues[event.id]
             result.extend((
@@ -686,36 +715,13 @@ def _completion_observed(module: Module, graph: PDG, window: Effect, point: Effe
             )
         return same_owner and graph.reachable(window.end, point.begin)
     point_event = module.event_map[point.begin]
-    streams = engine_completion_streams(module).values()
-
-    def orders(earlier: str, later: str) -> bool:
-        if earlier == later:
-            return True
-        return any(
-            earlier in endpoints
-            and later in endpoints
-            and endpoints.index(earlier) < endpoints.index(later)
-            for endpoints in streams
-        )
-
-    for wait in module.events:
-        if (
-            wait.type != "MBarrierWaitParity"
-            or wait.actor != point_event.actor
-            or not graph.reachable(wait.id, point.begin)
-        ):
-            continue
-        observed = (
-            stable_completion_id(candidate.id, candidate.generation)
-            for candidate in module.events
-            if candidate.type == "TmaLoadIssue"
-            and candidate.resource == wait.resource
-            and candidate.lifecycle_epoch == wait.lifecycle_epoch
-            and candidate.generation == wait.generation
-        )
-        if any(orders(window.end, completion) for completion in observed):
-            return True
-    return False
+    return any(
+        wait.type == "MBarrierWaitParity"
+        and wait.actor == point_event.actor
+        and graph.reachable(window.end, wait.id)
+        and graph.reachable(wait.id, point.begin)
+        for wait in module.events
+    )
 
 
 def _ordered_wgmma_accumulations(module: Module, left: Effect, right: Effect) -> bool:
@@ -811,7 +817,6 @@ def _finish_incremental_statistics(statistics: dict[str, Any], counters: Increme
     statistics["explored_steps"] = counters.successful_transitions
     statistics["program_streams"] = counters.program_streams
     statistics["phase_streams"] = counters.phase_streams
-    statistics["tma_completion_streams"] = counters.tma_completion_streams
     statistics["barrier_release_streams"] = counters.barrier_release_streams
     statistics["group_completion_streams"] = counters.group_completion_streams
     statistics["channel_handoff_streams"] = counters.channel_handoff_streams

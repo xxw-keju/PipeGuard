@@ -28,7 +28,7 @@ IMPLEMENTED_EVENTS = frozenset({
 })
 KNOWN_UNSUPPORTED_EVENTS = frozenset({
     "AtomicReadModifyWrite", "Fork", "Join", "BarrierRelease",
-    "MBarrierTxComplete", "MBarrierPhaseComplete",
+    "MBarrierArriveDrop", "MBarrierTxComplete", "MBarrierPhaseComplete",
     "CpAsyncGroupComplete",
     "TmaLoadComplete", "TmaStoreSourceReleased", "TmaStoreGlobalComplete",
     "WgmmaResultReady", "WgmmaOperandsReleased",
@@ -77,6 +77,13 @@ class Region:
 
 
 @dataclass(frozen=True, slots=True)
+class Transfer:
+    source_region: str
+    destination_region: str
+    bytes: int
+
+
+@dataclass(frozen=True, slots=True)
 class ParityEvidence:
     derivation_kind: str
     logical_stream_id: str
@@ -100,6 +107,7 @@ class Event:
     bytes: int | None = None
     lifecycle_epoch: int | None = None
     generation: int | None = None
+    layout: str | None = None
     raw_parity: int | None = None
     parity_evidence: ParityEvidence | None = None
     predicate: bool = True
@@ -117,7 +125,16 @@ class Event:
     to_domain: str | None = None
     scope: str | None = None
     regions: tuple[str, ...] = ()
+    transfers: tuple[Transfer, ...] = ()
     visibility_mask: VisibilityMask | None = None
+
+    @property
+    def tma_transfers(self) -> tuple[Transfer, ...]:
+        if self.transfers:
+            return self.transfers
+        if self.source_region is not None and self.destination_region is not None and self.bytes is not None:
+            return (Transfer(self.source_region, self.destination_region, self.bytes),)
+        return ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -193,10 +210,6 @@ def _schema(version: str) -> dict[str, Any]:
     return json.loads(files("pipeguard.specs").joinpath(f"{version}.schema.json").read_text())
 
 
-def stable_completion_id(issue_id: str, generation: int) -> str:
-    return f"completion:tma-load:{issue_id}:g{generation:08d}"
-
-
 def stable_phase_id(resource_id: str, lifecycle_epoch: int, generation: int) -> str:
     return f"completion:mbarrier-phase:{resource_id}:l{lifecycle_epoch:08d}:g{generation:08d}"
 
@@ -233,8 +246,14 @@ def engine_completion_streams(module: Module) -> dict[str, tuple[str, ...]]:
     terminal_by_issue: dict[str, str] = {}
     for event in module.events:
         if event.type == "TmaLoadIssue":
+            assert event.resource is not None
+            assert event.lifecycle_epoch is not None
             assert event.generation is not None
-            terminal_by_issue[event.id] = stable_completion_id(event.id, event.generation)
+            terminal_by_issue[event.id] = stable_phase_id(
+                event.resource,
+                event.lifecycle_epoch,
+                event.generation,
+            )
 
     terminal_kinds = {
         "CpAsyncCommitGroup": ("CP_ASYNC", "GROUP_COMPLETE"),
@@ -767,7 +786,7 @@ def _semantic_validate(module: Module) -> None:
         "MBarrierExpectTx": ("resource", "bytes", "lifecycle_epoch", "generation"),
         "MBarrierArriveExpectTx": ("resource", "count", "bytes", "lifecycle_epoch", "generation"),
         "MBarrierWaitParity": ("resource", "lifecycle_epoch", "generation", "raw_parity", "parity_evidence"),
-        "TmaLoadIssue": ("resource", "source_region", "destination_region", "bytes", "lifecycle_epoch", "generation"),
+        "TmaLoadIssue": ("resource", "bytes", "lifecycle_epoch", "generation"),
     }
     common = {"id", "type", "actor", "seq", "depends_on"}
     specific = {
@@ -803,13 +822,13 @@ def _semantic_validate(module: Module) -> None:
         "ConsumerWait": {"resource", "slot", "logical_phase"},
         "ConsumerRelease": {"resource", "slot", "logical_phase"},
         "ProxyFence": {"from_domain", "to_domain", "scope", "regions", "visibility_mask"},
-        "MBarrierInit": {"resource", "count", "lifecycle_epoch"}, "MBarrierInvalidate": {"resource", "lifecycle_epoch"},
+        "MBarrierInit": {"resource", "count", "lifecycle_epoch", "layout"}, "MBarrierInvalidate": {"resource", "lifecycle_epoch"},
         "MBarrierArrive": {"lifecycle_epoch", "resource", "count", "generation", "predicate"},
         "MBarrierExpectTx": {"lifecycle_epoch", "resource", "bytes", "generation"},
         "MBarrierArriveExpectTx": {"lifecycle_epoch", "resource", "count", "bytes", "generation", "predicate"},
         "MBarrierWaitParity": {"lifecycle_epoch", "resource", "generation", "raw_parity", "parity_evidence"},
         "TmaLoadIssue": {
-            "lifecycle_epoch", "resource", "source_region", "destination_region", "bytes",
+            "lifecycle_epoch", "resource", "source_region", "destination_region", "transfers", "bytes",
             "generation", "engine_id", "engine_seq",
         },
     }
@@ -822,6 +841,12 @@ def _semantic_validate(module: Module) -> None:
         if event.type not in IMPLEMENTED_EVENTS:
             code = "KNOWN_EVENT_UNSUPPORTED" if event.type in KNOWN_UNSUPPORTED_EVENTS else "UNKNOWN_EVENT"
             raise PGIRError(code, f"event type is unsupported: {event.type}", {"event": event.id, "type": event.type})
+        if event.type == "MBarrierInit" and event.layout != "V0":
+            raise PGIRError(
+                "UNSUPPORTED_MBARRIER_LAYOUT_V1",
+                "mbarrier layout V1 conditional-phase/report semantics are not supported",
+                {"event": event.id, "layout": event.layout},
+            )
         if event.type == "MBarrierWaitParity" and event.parity_evidence is None:
             raise PGIRError("INCONCLUSIVE_PARITY", "wait lacks per-event logical-generation resolution evidence", {"event": event.id})
         _require(event, *required_fields[event.type])
@@ -833,10 +858,53 @@ def _semantic_validate(module: Module) -> None:
         referenced_regions = [
             value for value in (event.region, event.source_region, event.destination_region)
             if value is not None
-        ] + list(event.regions)
+        ] + list(event.regions) + [
+            region
+            for transfer in event.transfers
+            for region in (transfer.source_region, transfer.destination_region)
+        ]
         dangling_regions = sorted(value for value in referenced_regions if value not in regions)
         if dangling_regions:
             raise PGIRError("DANGLING_REFERENCE", "event references unknown region", {"event": event.id, "regions": dangling_regions})
+        if event.type == "TmaLoadIssue":
+            raw_event = raw_events[event.id]
+            has_legacy_transfer = "source_region" in raw_event or "destination_region" in raw_event
+            has_grouped_transfers = "transfers" in raw_event
+            if has_legacy_transfer == has_grouped_transfers:
+                raise PGIRError(
+                    "TMA_TRANSFER_REPRESENTATION_INVALID",
+                    "TMA load must use exactly one legacy region pair or one nonempty transfers list",
+                    {"event": event.id},
+                )
+            if has_legacy_transfer and (
+                event.source_region is None or event.destination_region is None
+            ):
+                raise PGIRError(
+                    "TMA_TRANSFER_REPRESENTATION_INVALID",
+                    "legacy TMA load representation requires both source and destination regions",
+                    {"event": event.id},
+                )
+            transfers = event.tma_transfers
+            if not transfers or sum(transfer.bytes for transfer in transfers) != event.bytes:
+                raise PGIRError(
+                    "TMA_TRANSFER_BYTES_MISMATCH",
+                    "TMA load bytes must equal the sum of its transfer records",
+                    {
+                        "event": event.id,
+                        "bytes": event.bytes,
+                        "transfer_bytes": sum(transfer.bytes for transfer in transfers),
+                    },
+                )
+            if event.transfers and any(
+                transfer.bytes != regions[transfer.source_region].extent
+                or transfer.bytes != regions[transfer.destination_region].extent
+                for transfer in transfers
+            ):
+                raise PGIRError(
+                    "TMA_TRANSFER_REGION_SIZE_MISMATCH",
+                    "each grouped TMA transfer must name exact byte-sized source and destination regions",
+                    {"event": event.id},
+                )
         dangling_dependencies = _dangling_dependencies(event.depends_on, events)
         if dangling_dependencies:
             raise PGIRError("DANGLING_REFERENCE", "event has dangling dependencies", {"event": event.id, "depends_on": dangling_dependencies})
@@ -1072,11 +1140,16 @@ def _semantic_validate(module: Module) -> None:
                     "explicit engine ordering must reference an ASYNC_ENGINE actor",
                     {"event": event.id, "engine": event.engine_id},
                 )
-        if event.type == "TmaLoadIssue" and (
-            regions[event.source_region].address_space != "GLOBAL"
-            or regions[event.destination_region].address_space != "SHARED"
+        if event.type == "TmaLoadIssue" and any(
+            regions[transfer.source_region].address_space != "GLOBAL"
+            or regions[transfer.destination_region].address_space != "SHARED"
+            for transfer in event.tma_transfers
         ):
-            raise PGIRError("UNSUPPORTED_TMA_REGION", "TMA load requires an explicit global source and shared destination", {"event": event.id})
+            raise PGIRError(
+                "UNSUPPORTED_TMA_REGION",
+                "TMA load requires explicit global-source/shared-destination transfers",
+                {"event": event.id},
+            )
 
     engine_streams: dict[str, list[Event]] = {}
     for event in module.events:
@@ -1167,33 +1240,6 @@ def _semantic_validate(module: Module) -> None:
         if [event.id for event in ranked] != [event.id for event in program_order]:
             raise PGIRError("LOGICAL_WAIT_ORDER_MISMATCH", "logical stream rank disagrees with actor program order", {"stream": stream})
 
-    # The current static lift is complete only for fresh, gap-free lifecycles.
-    # A represented generation k can retire target k-1 only when every earlier
-    # generation has a statically complete arrival count. Such a covered
-    # boundary needs a nonempty LogicalWait group; absence is a support-domain
-    # failure, not a hardware synchronization hazard.
-    required = module.required_logical_waits
-    init_counts: dict[tuple[str, int], int] = {}
-    arrival_counts: dict[tuple[str, int, int], int] = {}
-    for event in module.events:
-        if event.type == "MBarrierInit":
-            assert event.resource is not None and event.lifecycle_epoch is not None and event.count is not None
-            init_counts.setdefault((event.resource, event.lifecycle_epoch), event.count)
-        elif event.type in {"MBarrierArrive", "MBarrierArriveExpectTx"} and event.predicate:
-            assert event.resource is not None and event.lifecycle_epoch is not None and event.generation is not None and event.count is not None
-            key = (event.resource, event.lifecycle_epoch, event.generation)
-            arrival_counts[key] = arrival_counts.get(key, 0) + event.count
-    for (resource, lifecycle_epoch), capacity in sorted(init_counts.items()):
-        generation = 0
-        while arrival_counts.get((resource, lifecycle_epoch, generation), 0) == capacity:
-            if generation > 0 and not required.get((resource, lifecycle_epoch, generation - 1)):
-                raise PGIRError(
-                    "UNSUPPORTED_MISSING_OBSERVE_GROUP",
-                    "covered phase completion lacks a required LogicalWait observe group",
-                    {"resource": resource, "lifecycle_epoch": lifecycle_epoch, "target_generation": generation - 1},
-                )
-            generation += 1
-
     if schema_version == "pgir-v2":
         cluster_resources = {
             resource.id
@@ -1265,9 +1311,6 @@ def _semantic_validate(module: Module) -> None:
                     )
 
     synthetic_ids = {
-        stable_completion_id(event.id, event.generation)
-        for event in module.events if event.type == "TmaLoadIssue"
-    } | {
         stable_phase_id(event.resource, event.lifecycle_epoch, event.generation)
         for event in module.events if event.resource is not None and event.generation is not None
     } | {
@@ -1336,7 +1379,8 @@ def module_from_dict(data: dict[str, Any]) -> Module:
         id=item["id"], type=item["type"], actor=item["actor"], seq=item["seq"],
         depends_on=tuple(sorted(item.get("depends_on", []))), resource=item.get("resource"),
         region=item.get("region"), source_region=item.get("source_region"), destination_region=item.get("destination_region"),
-        count=item.get("count"), bytes=item.get("bytes"), lifecycle_epoch=item.get("lifecycle_epoch"), generation=item.get("generation"), raw_parity=item.get("raw_parity"),
+        count=item.get("count"), bytes=item.get("bytes"), lifecycle_epoch=item.get("lifecycle_epoch"), generation=item.get("generation"),
+        layout=item.get("layout", "V0") if item["type"] == "MBarrierInit" else item.get("layout"), raw_parity=item.get("raw_parity"),
         parity_evidence=ParityEvidence(**item["parity_evidence"]) if "parity_evidence" in item else None,
         predicate=item.get("predicate", True), invocation_id=item.get("invocation_id"),
         group_owner=item.get("group_owner"), group_seq=item.get("group_seq"),
@@ -1345,6 +1389,14 @@ def module_from_dict(data: dict[str, Any]) -> Module:
         slot=item.get("slot"), logical_phase=item.get("logical_phase"),
         from_domain=item.get("from_domain"), to_domain=item.get("to_domain"), scope=item.get("scope"),
         regions=tuple(sorted(item.get("regions", []))),
+        transfers=tuple(
+            Transfer(
+                transfer["source_region"],
+                transfer["destination_region"],
+                transfer["bytes"],
+            )
+            for transfer in item.get("transfers", [])
+        ),
         visibility_mask=VisibilityMask.from_mapping(item["visibility_mask"]) if "visibility_mask" in item else None,
     ) for item in data["events"])
     grouped = _bucket_events_by_actor(actors, events)
@@ -1387,6 +1439,21 @@ def normalize_module(module: Module) -> dict[str, Any]:
     for event in normalized["events"]:
         if "depends_on" in event:
             event["depends_on"] = sorted(event["depends_on"])
+        if event["type"] == "TmaLoadIssue" and "transfers" not in event:
+            event["transfers"] = [{
+                "source_region": event.pop("source_region"),
+                "destination_region": event.pop("destination_region"),
+                "bytes": event["bytes"],
+            }]
+        if "transfers" in event:
+            event["transfers"] = sorted(
+                event["transfers"],
+                key=lambda transfer: (
+                    transfer["source_region"],
+                    transfer["destination_region"],
+                    transfer["bytes"],
+                ),
+            )
         if "regions" in event:
             event["regions"] = sorted(event["regions"])
     normalized["unsupported_constructs"] = sorted(normalized["unsupported_constructs"])

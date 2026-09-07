@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+import json
 from itertools import product
 
+import pytest
+
 from pipeguard.checker import check_module
-from pipeguard.model import load_module, module_from_dict
+from pipeguard.model import PGIRError, load_module, module_from_dict
 from test_checker import (
     FIXTURES,
+    collective_handoff_module,
     cp_async_module,
     tma_load_proxy_module,
     tma_store_module,
@@ -125,3 +129,165 @@ def test_bounded_typed_completion_and_visibility_oracle():
     assert checked == 61
     assert safe > 0
     assert hazard > 0
+
+
+SM90_RULE_DISPOSITION = {
+    "BAR-01": "validation",
+    "BAR-02": "validation",
+    "BAR-03": "partial-fail-closed",
+    "BAR-04": "bounded",
+    "MB-01": "validation",
+    "MB-02": "partial-fail-closed",
+    "MB-03": "validation",
+    "MB-04": "partial-fail-closed",
+    "MB-05": "unsupported",
+    "MB-06": "partial-fail-closed",
+    "MB-07": "bounded",
+    "MB-08": "bounded",
+    "MB-09": "bounded",
+    "MB-10": "bounded",
+    "CP-01": "bounded",
+    "CP-02": "bounded",
+    "CP-03": "bounded",
+    "CP-04": "bounded",
+    "TMA-01": "partial-fail-closed",
+    "TMA-02": "partial-fail-closed",
+    "TMA-03": "bounded",
+    "TMA-04": "bounded",
+    "TMA-05": "bounded",
+    "TMA-06": "bounded",
+    "WG-01": "partial-fail-closed",
+    "WG-02": "validation",
+    "WG-03": "bounded",
+    "WG-04": "bounded",
+    "WG-05": "partial-fail-closed",
+    "WG-06": "bounded",
+    "WG-07": "bounded",
+    "WG-08": "bounded",
+    "MEM-01": "bounded",
+    "MEM-02": "partial-fail-closed",
+    "MEM-03": "partial-fail-closed",
+    "MEM-04": "bounded",
+}
+
+
+def test_every_sm90_rule_has_an_explicit_validation_disposition():
+    expected = {
+        *(f"BAR-{index:02d}" for index in range(1, 5)),
+        *(f"MB-{index:02d}" for index in range(1, 11)),
+        *(f"CP-{index:02d}" for index in range(1, 5)),
+        *(f"TMA-{index:02d}" for index in range(1, 7)),
+        *(f"WG-{index:02d}" for index in range(1, 9)),
+        *(f"MEM-{index:02d}" for index in range(1, 5)),
+    }
+    assert set(SM90_RULE_DISPOSITION) == expected
+    assert set(SM90_RULE_DISPOSITION.values()) == {
+        "bounded",
+        "validation",
+        "partial-fail-closed",
+        "unsupported",
+    }
+
+
+def _collective_module(arrive_mask: tuple[bool, bool], observe_mask: tuple[bool, bool]):
+    raw = json.loads(json.dumps(collective_handoff_module().raw))
+    raw["regions"] = []
+    raw["resources"][0]["visibility_mask"] = {
+        "shared": False,
+        "global_read": False,
+        "global_write": False,
+        "tensor_read": False,
+        "tensor_write": False,
+        "control_only": True,
+    }
+    events = []
+    for index, actor in enumerate(("a_writer", "b_reader")):
+        sequence = 0
+        if arrive_mask[index]:
+            events.append({
+                "id": f"arrive_{index}", "type": "BarrierArrive", "actor": actor,
+                "seq": sequence, "resource": "sync", "count": 1, "invocation_id": 0,
+            })
+            sequence += 1
+        if observe_mask[index]:
+            events.append({
+                "id": f"observe_{index}", "type": "BarrierObserve", "actor": actor,
+                "seq": sequence, "resource": "sync", "invocation_id": 0,
+            })
+    raw["events"] = events
+    return module_from_dict(raw)
+
+
+def test_bounded_cta_barrier_oracle():
+    checked = 0
+    for arrive_mask in product((False, True), repeat=2):
+        for observe_mask in product((False, True), repeat=2):
+            any_event = any(arrive_mask) or any(observe_mask)
+            expected = "SAFE" if all(arrive_mask) or not any_event else "SYNC_HAZARD"
+            _assert_expected(
+                _collective_module(arrive_mask, observe_mask),
+                expected,
+                ("cta_barrier", arrive_mask, observe_mask),
+            )
+            checked += 1
+    assert checked == 16
+
+
+def _point_conflict_module(
+    left_offset: int,
+    right_offset: int,
+    left_write: bool,
+    right_write: bool,
+):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["actors"] = [
+        {"id": "left", "kind": "LANE", "participants": [0]},
+        {"id": "right", "kind": "LANE", "participants": [1]},
+    ]
+    raw["target"]["cta_threads"] = 2
+    raw["resources"] = []
+    raw["regions"] = [
+        {"id": "left_region", "allocation_id": "shared", "address_space": "SHARED", "offset": left_offset, "extent": 4},
+        {"id": "right_region", "allocation_id": "shared", "address_space": "SHARED", "offset": right_offset, "extent": 4},
+    ]
+    raw["events"] = [
+        {"id": "left_access", "type": "MemWrite" if left_write else "MemRead", "actor": "left", "seq": 0, "region": "left_region"},
+        {"id": "right_access", "type": "MemWrite" if right_write else "MemRead", "actor": "right", "seq": 0, "region": "right_region"},
+    ]
+    return module_from_dict(raw)
+
+
+def test_bounded_point_conflict_oracle():
+    checked = 0
+    for left_offset, right_offset, left_write, right_write in product(
+        (0, 4, 8),
+        (0, 4, 8),
+        (False, True),
+        (False, True),
+    ):
+        overlap = max(left_offset, right_offset) < min(left_offset + 4, right_offset + 4)
+        expected = "DATA_HAZARD" if overlap and (left_write or right_write) else "SAFE"
+        _assert_expected(
+            _point_conflict_module(left_offset, right_offset, left_write, right_write),
+            expected,
+            ("point_conflict", left_offset, right_offset, left_write, right_write),
+        )
+        checked += 1
+    assert checked == 36
+
+
+@pytest.mark.parametrize(
+    ("event_type", "rule_id"),
+    [
+        ("MBarrierArriveDrop", "MB-05"),
+        ("MBarrierTxComplete", "MB-06"),
+    ],
+)
+def test_unimplemented_mbarrier_events_fail_closed(event_type: str, rule_id: str):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["events"] = [{
+        "id": "unsupported", "type": event_type, "actor": "a_producer", "seq": 0,
+    }]
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+    assert caught.value.code == "KNOWN_EVENT_UNSUPPORTED", rule_id

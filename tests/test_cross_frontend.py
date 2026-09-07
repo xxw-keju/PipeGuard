@@ -289,7 +289,10 @@ def test_frontends_preserve_typed_async_fields_exactly():
             "count": 4, "bytes": 128, "predicate": True,
         }),
         ("tma_load.issue", "TmaLoadIssue", {
-            "resource": "bar", "source_region": "global", "destination_region": "shared",
+            "resource": "bar",
+            "transfers": [{
+                "source_region": "global", "destination_region": "shared", "bytes": 128,
+            }],
             "bytes": 128, "lifecycle_epoch": 0, "generation": 2,
             "engine_id": "dma", "engine_seq": 3,
         }),
@@ -417,8 +420,14 @@ def test_equivalent_missing_wait_frontends_have_same_hazard_witness_shape():
         check_module(tilelang, engine="crosscheck"),
         check_module(triton, engine="crosscheck"),
     ]
-    assert [report["verdict"] for report in reports] == ["DATA_HAZARD", "DATA_HAZARD"]
-    assert _witness_shape(reports[0]) == _witness_shape(reports[1])
+    assert [report["verdict"] for report in reports] == ["SYNC_HAZARD", "SYNC_HAZARD"]
+    assert [report["diagnostics"][0]["code"] for report in reports] == [
+        "INVALID_MBARRIER_UNOBSERVED_PHASE",
+        "INVALID_MBARRIER_UNOBSERVED_PHASE",
+    ]
+    for report in reports:
+        assert report["witness"]["category"] == "INVALID_MBARRIER_UNOBSERVED_PHASE"
+        assert report["witness"]["protocol_state"]["required_observed_generation"] == 0
 
 
 def test_compare_cli_reports_cross_dsl_equivalence():

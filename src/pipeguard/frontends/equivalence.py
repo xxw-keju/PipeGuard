@@ -132,18 +132,54 @@ def semantic_signature(module: Module) -> dict[str, Any]:
         for key, value in raw.items():
             if key in {"id", "type", "actor", "seq", "parity_evidence"}:
                 continue
+            if event.type == "TmaLoadIssue" and key in {
+                "source_region", "destination_region", "transfers",
+            }:
+                continue
             if key == "resource":
                 normalized[key] = resource_ids[value]
             elif key in {"region", "source_region", "destination_region"}:
                 normalized[key] = region_ids[value]
             elif key == "regions":
                 normalized[key] = sorted(region_ids[item] for item in value)
+            elif key == "transfers":
+                normalized[key] = sorted(
+                    (
+                        {
+                            "source_region": region_ids[item["source_region"]],
+                            "destination_region": region_ids[item["destination_region"]],
+                            "bytes": item["bytes"],
+                        }
+                        for item in value
+                    ),
+                    key=lambda item: (
+                        item["source_region"],
+                        item["destination_region"],
+                        item["bytes"],
+                    ),
+                )
             elif key in {"group_owner", "engine_id"}:
                 normalized[key] = actor_ids[value]
             elif key == "depends_on":
                 normalized[key] = sorted(event_ids[item] for item in value)
             else:
                 normalized[key] = value
+        if event.type == "TmaLoadIssue":
+            normalized["transfers"] = sorted(
+                (
+                    {
+                        "source_region": region_ids[transfer.source_region],
+                        "destination_region": region_ids[transfer.destination_region],
+                        "bytes": transfer.bytes,
+                    }
+                    for transfer in event.tma_transfers
+                ),
+                key=lambda item: (
+                    item["source_region"],
+                    item["destination_region"],
+                    item["bytes"],
+                ),
+            )
         if event.parity_evidence is not None:
             normalized["logical_wait_evidence"] = {
                 "lifecycle_epoch": event.parity_evidence.lifecycle_epoch,

@@ -1536,21 +1536,27 @@ class LaneWalker:
                     {"coordinates": [str(argument) for argument in expression.args[3:]]},
                 )
             generation = self.arrival_rank.get(resource, 0)
-            for source, destination_segment, byte_count in self.capture.tma_segments(
+            segments = self.capture.tma_segments(
                 descriptor,
                 [int(value) for value in coordinates],
                 destination,
-            ):
-                self.emit(
-                    "tilelang.tma_load.issue",
-                    path,
-                    resource=resource,
-                    source_region=source,
-                    destination_region=destination_segment,
-                    bytes=byte_count,
-                    lifecycle_epoch=0,
-                    generation=generation,
-                )
+            )
+            self.emit(
+                "tilelang.tma_load.issue",
+                path,
+                resource=resource,
+                transfers=[
+                    {
+                        "source_region": source,
+                        "destination_region": destination_segment,
+                        "bytes": byte_count,
+                    }
+                    for source, destination_segment, byte_count in segments
+                ],
+                bytes=sum(byte_count for _source, _destination, byte_count in segments),
+                lifecycle_epoch=0,
+                generation=generation,
+            )
             return
         if name == "tl.tma_store":
             if len(expression.args) != 5:

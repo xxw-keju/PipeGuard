@@ -66,8 +66,7 @@ CANONICAL_OPERATION_FIELDS = {
         "logical_stream_id", "stream_rank", "polling_coalesced",
     },
     "tma_load.issue": {
-        "resource", "source_region", "destination_region", "bytes",
-        "lifecycle_epoch", "generation",
+        "resource", "bytes", "lifecycle_epoch", "generation",
     },
     "cp_async.issue": {
         "resource", "source_region", "destination_region", "bytes", "group_owner",
@@ -93,7 +92,7 @@ CANONICAL_OPTIONAL_FIELDS = {
     "barrier.arrive": {"predicate"},
     "mbarrier.arrive": {"predicate"},
     "mbarrier.arrive_expect_tx": {"predicate"},
-    "tma_load.issue": {"engine_id", "engine_seq"},
+    "tma_load.issue": {"source_region", "destination_region", "transfers", "engine_id", "engine_seq"},
     "cp_async.issue": {"engine_id", "engine_seq", "predicate"},
     "wgmma.issue": {"engine_id", "engine_seq"},
     "tma_store.issue": {"engine_id", "engine_seq"},
@@ -418,6 +417,60 @@ def operation_to_event(
         required = required | {"evidence"}
     optional = OPTIONAL_OPERATION_FIELDS | optional_by_operation.get(op, set())
     require_exact_keys(operation, required, optional, f"/operations/{index}")
+    if op == f"{prefix}.tma_load.issue":
+        has_legacy_transfer = "source_region" in operation or "destination_region" in operation
+        has_grouped_transfers = "transfers" in operation
+        if has_legacy_transfer == has_grouped_transfers:
+            raise FrontendError(
+                "FRONTEND_TMA_TRANSFER_REPRESENTATION_INVALID",
+                "TMA load must use exactly one legacy region pair or one nonempty transfers list",
+                {"location": f"/operations/{index}"},
+            )
+        if has_legacy_transfer and (
+            "source_region" not in operation or "destination_region" not in operation
+        ):
+            raise FrontendError(
+                "FRONTEND_TMA_TRANSFER_REPRESENTATION_INVALID",
+                "legacy TMA load representation requires both source and destination regions",
+                {"location": f"/operations/{index}"},
+            )
+        if has_grouped_transfers:
+            transfers = operation["transfers"]
+            if not isinstance(transfers, list) or not transfers:
+                raise FrontendError(
+                    "FRONTEND_TMA_TRANSFER_REPRESENTATION_INVALID",
+                    "TMA load transfers must be a nonempty list",
+                    {"location": f"/operations/{index}/transfers"},
+                )
+            transfer_bytes = 0
+            for transfer_index, transfer in enumerate(transfers):
+                location = f"/operations/{index}/transfers/{transfer_index}"
+                require_exact_keys(
+                    transfer,
+                    {"source_region", "destination_region", "bytes"},
+                    set(),
+                    location,
+                )
+                _require_nonempty_string(transfer["source_region"], f"{location}/source_region")
+                _require_nonempty_string(transfer["destination_region"], f"{location}/destination_region")
+                byte_count = _require_nonnegative_integer(transfer["bytes"], f"{location}/bytes")
+                if byte_count == 0:
+                    raise FrontendError(
+                        "FRONTEND_FIELD_TYPE",
+                        "TMA transfer byte count must be positive",
+                        {"location": f"{location}/bytes"},
+                    )
+                transfer_bytes += byte_count
+            if transfer_bytes != operation["bytes"]:
+                raise FrontendError(
+                    "FRONTEND_TMA_TRANSFER_BYTES_MISMATCH",
+                    "TMA load bytes must equal the sum of its transfer records",
+                    {
+                        "location": f"/operations/{index}",
+                        "bytes": operation["bytes"],
+                        "transfer_bytes": transfer_bytes,
+                    },
+                )
     evidence = operation.get("evidence")
     if evidence is not None:
         require_exact_keys(evidence, _EVIDENCE_FIELDS, set(), f"/operations/{index}/evidence")

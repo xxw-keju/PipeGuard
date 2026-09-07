@@ -310,6 +310,9 @@ def test_triton_tma_load_maps_expect_issue_wait_to_existing_barrier_fsm(tmp_path
     ]
     assert snapshot["operations"][1]["bytes"] == 16384
     assert snapshot["operations"][2]["bytes"] == 16384
+    assert snapshot["operations"][2]["transfers"]
+    assert "source_region" not in snapshot["operations"][2]
+    assert "destination_region" not in snapshot["operations"][2]
     assert check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")["verdict"] == "SAFE"
 
 
@@ -326,10 +329,12 @@ def test_triton_nonzero_tma_coordinates_use_exact_descriptor_segments():
         operation for operation in snapshot["operations"]
         if operation["op"] == "triton.tma_load.issue"
     ]
-    assert len(issues) == 64
-    assert sum(issue["bytes"] for issue in issues) == 16384
-    assert issues[0]["source_region"] == "region:global:global:tma:256:256"
-    assert issues[-1]["source_region"] == "region:global:global:tma:32512:256"
+    assert len(issues) == 1
+    assert issues[0]["bytes"] == 16384
+    assert len(issues[0]["transfers"]) == 64
+    assert sum(transfer["bytes"] for transfer in issues[0]["transfers"]) == 16384
+    assert issues[0]["transfers"][0]["source_region"] == "region:global:global:tma:256:256"
+    assert issues[0]["transfers"][-1]["source_region"] == "region:global:global:tma:32512:256"
     result = check_module(triton_snapshot_to_module(snapshot), engine="maximal")
     assert result["verdict"] == "SAFE"
     assert result["statistics"]["full_enabled_scans"] == 0
@@ -534,10 +539,12 @@ def test_triton_sha_bound_final_lowering_wait_orders_wgmma_before_arrive(tmp_pat
         "  tt.func public @wgmma_roundtrip() {",
         """  tt.func public @wgmma_roundtrip() {
     %bar = ttg.local_alloc : () -> !ttg.memdesc<1xi64, #barrier, #smem, mutable>
+    %phase = arith.constant 0 : i32
     ttng.init_barrier %bar, 1 : !ttg.memdesc<1xi64, #barrier, #smem, mutable>""",
     ).replace(
         "    %3 = ttng.warp_group_dot_wait %2 {pendings = 0 : i32} : tensor<128x64xf32, #mma>",
-        "    ttng.arrive_barrier %bar, 1 : !ttg.memdesc<1xi64, #barrier, #smem, mutable>",
+        """    ttng.arrive_barrier %bar, 1 : !ttg.memdesc<1xi64, #barrier, #smem, mutable>
+    ttng.wait_barrier %bar, %phase : !ttg.memdesc<1xi64, #barrier, #smem, mutable>""",
     )
     fixture = tmp_path / "implicit-wgmma-wait.ttgir.mlir"
     fixture.write_text(module)
@@ -1857,6 +1864,17 @@ def test_real_tilelang_warp_specialized_tma_wgmma_capture_is_complete():
         "tilelang.wgmma.wait_group",
     } <= operation_types
     assert {actor["kind"] for actor in snapshot["actors"]} == {"LANE", "WARPGROUP"}
+    tma_issues = [
+        operation for operation in snapshot["operations"]
+        if operation["op"] == "tilelang.tma_load.issue"
+    ]
+    assert tma_issues
+    assert all(issue["transfers"] for issue in tma_issues)
+    assert all("source_region" not in issue and "destination_region" not in issue for issue in tma_issues)
+    assert all(
+        issue["bytes"] == sum(transfer["bytes"] for transfer in issue["transfers"])
+        for issue in tma_issues
+    )
     regions = {region["id"]: region for region in snapshot["regions"]}
     issue = next(operation for operation in snapshot["operations"]
                  if operation["op"] == "tilelang.wgmma.issue")

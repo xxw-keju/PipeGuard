@@ -10,7 +10,6 @@ from .model import (
     engine_completion_streams,
     stable_channel_handoff_id,
     stable_collective_release_id,
-    stable_completion_id,
     stable_group_completion_id,
     stable_group_id,
     stable_phase_id,
@@ -46,18 +45,6 @@ class ExplorationLimit(Exception):
 
 
 @dataclass(slots=True)
-class AsyncOp:
-    completion_id: str
-    issue_id: str
-    actor: str
-    resource: str
-    destination_region: str
-    lifecycle_epoch: int
-    generation: int
-    bytes: int
-
-
-@dataclass(slots=True)
 class BarrierState:
     lifecycle: Literal["UNINITIALIZED", "LIVE", "INVALIDATED"] = "UNINITIALIZED"
     lifecycle_epoch: int = -1
@@ -66,10 +53,11 @@ class BarrierState:
     base_count: int = 0
     pending: int = 0
     expected_tx: int = 0
-    completed_tx: int = 0
+    issued_tx: int = 0
     generation_started: bool = False
     can_invalidate: bool = False
     publications: set[int] = field(default_factory=set)
+    last_successfully_observed_generation: int | None = None
 
     def snapshot(self) -> dict[str, Any]:
         return {
@@ -79,16 +67,17 @@ class BarrierState:
             "hardware_parity": self.parity,
             "pending_arrivals_current": self.pending,
             "expected_tx_bytes_current": self.expected_tx,
-            "completed_tx_bytes_current": self.completed_tx,
+            "issued_tx_bytes_current": self.issued_tx,
             "can_invalidate": self.can_invalidate,
             "publications": sorted(self.publications),
+            "last_successfully_observed_generation": self.last_successfully_observed_generation,
         }
 
 
 @dataclass(frozen=True, slots=True)
 class Transition:
     id: str
-    kind: Literal["PROGRAM", "TMA_COMPLETION", "PHASE_COMPLETION", "BARRIER_RELEASE", "GROUP_COMPLETION", "CHANNEL_HANDOFF"]
+    kind: Literal["PROGRAM", "PHASE_COMPLETION", "BARRIER_RELEASE", "GROUP_COMPLETION", "CHANNEL_HANDOFF"]
     event: Event | None = None
     resource: str | None = None
     owner: str | None = None
@@ -112,14 +101,13 @@ class TransitionDelta:
     """
 
     transition_id: str
-    kind: Literal["PROGRAM", "TMA_COMPLETION", "PHASE_COMPLETION", "BARRIER_RELEASE", "GROUP_COMPLETION", "CHANNEL_HANDOFF"]
+    kind: Literal["PROGRAM", "PHASE_COMPLETION", "BARRIER_RELEASE", "GROUP_COMPLETION", "CHANNEL_HANDOFF"]
     advanced_actor: str | None = None
     executed_event: str | None = None
     changed_resources: frozenset[str] = frozenset()
     changed_collectives: frozenset[str] = frozenset()
     changed_groups: frozenset[tuple[str, str]] = frozenset()
     changed_channels: frozenset[tuple[str, int]] = frozenset()
-    spawned_completions: tuple[str, ...] = ()
     retired_completions: tuple[str, ...] = ()
     consumed_waits: tuple[str, ...] = ()
     dynamic_edges: tuple[tuple[str, str, str], ...] = ()
@@ -136,7 +124,6 @@ class ExecutionState:
     visibility_transfers: list[VisibilityTransfer] = field(default_factory=list)
     remaining: dict[tuple[str, int, int], set[str]] = field(default_factory=dict)
     observed: set[str] = field(default_factory=set)
-    pending_completions: dict[str, AsyncOp] = field(default_factory=dict)
     completed_transitions: set[str] = field(default_factory=set)
     trace: list[dict[str, Any]] = field(default_factory=list)
     dynamic_edges: set[tuple[str, str, str]] = field(default_factory=set)
@@ -167,7 +154,8 @@ class Executor:
 
     Deterministic maximal execution always selects the minimum stable
     transition. ``explore_all`` remains a finite small-model oracle.
-    Synthetic TMA and phase completions remain independent transitions.
+    TMA loads contribute transfer bytes to one synthetic completion per
+    mbarrier lifecycle/generation; no per-transfer completion is exposed.
     """
 
     MAX_STATES = 100_000
@@ -176,6 +164,21 @@ class Executor:
         self.module = module
         self.events = module.event_map
         self.required_logical_waits = module.required_logical_waits
+        self.tma_issues_by_phase: dict[tuple[str, int, int], tuple[Event, ...]] = {}
+        issue_buckets: dict[tuple[str, int, int], list[Event]] = {}
+        for event in module.events:
+            if event.type == "TmaLoadIssue":
+                assert event.resource is not None
+                assert event.lifecycle_epoch is not None
+                assert event.generation is not None
+                issue_buckets.setdefault(
+                    (event.resource, event.lifecycle_epoch, event.generation),
+                    [],
+                ).append(event)
+        self.tma_issues_by_phase = {
+            key: tuple(sorted(events, key=lambda event: event.id))
+            for key, events in issue_buckets.items()
+        }
         self.engine_streams = engine_completion_streams(module)
         self.engine_predecessors: dict[str, str] = {}
         self.engine_successors: dict[str, tuple[str, ...]] = {}
@@ -246,10 +249,20 @@ class Executor:
         trace = self.module.events_by_actor[actor]
         return trace[index] if index < len(trace) else None
 
-    def _phase_transition(self, resource_id: str, barrier: BarrierState) -> Transition | None:
-        if barrier.lifecycle == "LIVE" and barrier.generation_started and barrier.pending == 0 and barrier.completed_tx == barrier.expected_tx:
-            return Transition(stable_phase_id(resource_id, barrier.lifecycle_epoch, barrier.generation), "PHASE_COMPLETION", resource=resource_id)
-        return None
+    def _phase_transition(
+        self,
+        resource_id: str,
+        barrier: BarrierState,
+        state: ExecutionState,
+    ) -> Transition | None:
+        if barrier.lifecycle != "LIVE" or not barrier.generation_started or barrier.pending != 0:
+            return None
+        if barrier.issued_tx != barrier.expected_tx:
+            return None
+        identifier = stable_phase_id(resource_id, barrier.lifecycle_epoch, barrier.generation)
+        if not self._engine_completion_ready(state, identifier):
+            return None
+        return Transition(identifier, "PHASE_COMPLETION", resource=resource_id)
 
     def _collective_transition(
         self,
@@ -395,11 +408,8 @@ class Executor:
 
     def enabled(self, state: ExecutionState, hold: str | None = None) -> list[Transition]:
         result: list[Transition] = []
-        for completion_id in sorted(state.pending_completions):
-            if completion_id != hold and self._engine_completion_ready(state, completion_id):
-                result.append(Transition(completion_id, "TMA_COMPLETION"))
         for resource_id in sorted(state.barriers):
-            transition = self._phase_transition(resource_id, state.barriers[resource_id])
+            transition = self._phase_transition(resource_id, state.barriers[resource_id], state)
             if transition is not None and transition.id != hold:
                 result.append(transition)
         for resource_id in sorted(state.collectives):
@@ -432,7 +442,7 @@ class Executor:
                 continue
             if (
                 event.type == "MBarrierInvalidate"
-                and self._phase_transition(event.resource, state.barriers[event.resource]) is not None
+                and self._phase_transition(event.resource, state.barriers[event.resource], state) is not None
             ):
                 continue
             if event.type == "MBarrierWaitParity" and self._wait_status(event, state.barriers[event.resource]) == "BLOCKED":
@@ -471,13 +481,12 @@ class Executor:
                 continue
             if event.resource is not None and event.generation is not None:
                 barrier = state.barriers[event.resource]
-                phase = self._phase_transition(event.resource, barrier)
-                if event.generation == barrier.generation + 1 and phase is not None:
-                    # A normalized future-generation event denotes an instruction
-                    # after the hardware phase flip. It cannot execute before an
-                    # already-enabled synthetic phase transition. A merely held tx
-                    # completion has not flipped the phase, so an independent early
-                    # Arrive must remain explorable and fail the pending-count check.
+                phase = self._phase_transition(event.resource, barrier, state)
+                if (
+                    event.generation == barrier.generation + 1
+                    and phase is not None
+                    and not (phase.id == hold and barrier.expected_tx > 0)
+                ):
                     continue
             result.append(Transition(event.id, "PROGRAM", event=event))
         return sorted(result, key=Transition.order_key)
@@ -510,7 +519,7 @@ class Executor:
             )
 
     def _validate_arrive(self, barrier: BarrierState, event: Event) -> None:
-        assert event.count is not None and event.generation is not None
+        assert event.count is not None and event.generation is not None and event.resource is not None
         if event.generation < barrier.generation or event.generation > barrier.generation + 1:
             self._require_current_generation(barrier, event)
         if barrier.pending == 0:
@@ -521,6 +530,18 @@ class Executor:
                 barrier.snapshot(),
             )
         self._require_current_generation(barrier, event)
+        if (
+            barrier.generation > 0
+            and barrier.last_successfully_observed_generation != barrier.generation - 1
+        ):
+            snapshot = barrier.snapshot()
+            snapshot["required_observed_generation"] = barrier.generation - 1
+            raise ProtocolError(
+                "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE",
+                "subsequent-phase arrive-on requires a successful wait on the preceding phase",
+                event.id,
+                snapshot,
+            )
         if event.count > barrier.pending:
             snapshot = barrier.snapshot()
             snapshot["arrival_count"] = event.count
@@ -553,48 +574,6 @@ class Executor:
         })
 
     def apply(self, state: ExecutionState, transition: Transition) -> TransitionDelta:
-        if transition.kind == "TMA_COMPLETION":
-            op = state.pending_completions.get(transition.id)
-            if op is None:
-                raise ProtocolError(
-                    "INVALID_TMA_COMPLETION_TRANSITION",
-                    "TMA completion is not pending in the current execution state",
-                    transition.id,
-                )
-            if not self._engine_completion_ready(state, transition.id):
-                raise ProtocolError(
-                    "ENGINE_ORDER_VIOLATION",
-                    "async completion occurred before its explicit engine predecessor",
-                    transition.id,
-                    self._engine_order_state(state, transition.id),
-                )
-            barrier = state.barriers[op.resource]
-            if op.lifecycle_epoch != barrier.lifecycle_epoch:
-                raise ProtocolError("STALE_COMPLETION", "transaction completed outside its mbarrier lifecycle", op.issue_id, barrier.snapshot())
-            if op.generation < barrier.generation:
-                raise ProtocolError("STALE_COMPLETION", "transaction completed after its generation retired", op.issue_id, barrier.snapshot())
-            if op.generation > barrier.generation:
-                raise ProtocolError("EARLY_NEXT_GENERATION", "transaction completed before its generation became current", op.issue_id, barrier.snapshot())
-            completed_tx = barrier.completed_tx + op.bytes
-            if completed_tx > barrier.expected_tx:
-                snapshot = barrier.snapshot()
-                snapshot["completion_bytes"] = op.bytes
-                snapshot["completed_tx_bytes_after"] = completed_tx
-                raise ProtocolError("TX_BYTES_EXCEED_EXPECTED", "completed transaction bytes exceed expected bytes", op.issue_id, snapshot)
-            edge = (op.issue_id, transition.id, "ISSUE_TO_COMPLETION")
-            state.pending_completions.pop(transition.id)
-            barrier.completed_tx = completed_tx
-            state.completed_transitions.add(transition.id)
-            state.dynamic_edges.add(edge)
-            self._record(state, transition)
-            return TransitionDelta(
-                transition.id,
-                transition.kind,
-                changed_resources=frozenset({op.resource}),
-                retired_completions=(transition.id,),
-                dynamic_edges=(edge,),
-            )
-
         if transition.kind == "GROUP_COMPLETION":
             if (
                 transition.resource is None
@@ -735,8 +714,15 @@ class Executor:
 
         if transition.kind == "PHASE_COMPLETION":
             assert transition.resource is not None
+            if not self._engine_completion_ready(state, transition.id):
+                raise ProtocolError(
+                    "ENGINE_ORDER_VIOLATION",
+                    "mbarrier phase completed before its explicit engine predecessor",
+                    transition.id,
+                    self._engine_order_state(state, transition.id),
+                )
             barrier = state.barriers[transition.resource]
-            enabled_transition = self._phase_transition(transition.resource, barrier)
+            enabled_transition = self._phase_transition(transition.resource, barrier, state)
             if enabled_transition is None or enabled_transition.id != transition.id:
                 snapshot = barrier.snapshot()
                 snapshot["expected_phase_completion"] = enabled_transition.id if enabled_transition is not None else None
@@ -747,8 +733,9 @@ class Executor:
                     snapshot,
                 )
             generation = barrier.generation
+            lifecycle_epoch = barrier.lifecycle_epoch
             if generation > 0:
-                key = (transition.resource, barrier.lifecycle_epoch, generation - 1)
+                key = (transition.resource, lifecycle_epoch, generation - 1)
                 outstanding = state.remaining.get(key, set())
                 if outstanding:
                     snapshot = barrier.snapshot()
@@ -760,21 +747,36 @@ class Executor:
                         transition.id,
                         snapshot,
                     )
+            issues = tuple(
+                issue
+                for issue in self.tma_issues_by_phase.get(
+                    (transition.resource, lifecycle_epoch, generation),
+                    (),
+                )
+                if issue.id in state.executed
+            )
+            edges = tuple(
+                (issue.id, transition.id, "ISSUE_TO_PHASE")
+                for issue in issues
+            )
             barrier.publications.add(generation)
             barrier.publications = {item for item in barrier.publications if item >= generation - 1}
             barrier.generation += 1
             barrier.parity = barrier.generation % 2
             barrier.pending = barrier.base_count
             barrier.expected_tx = 0
-            barrier.completed_tx = 0
+            barrier.issued_tx = 0
             barrier.generation_started = False
             barrier.can_invalidate = True
             state.completed_transitions.add(transition.id)
+            state.dynamic_edges.update(edges)
             self._record(state, transition)
             return TransitionDelta(
                 transition.id,
                 transition.kind,
                 changed_resources=frozenset({transition.resource}),
+                retired_completions=(transition.id,),
+                dynamic_edges=edges,
             )
 
         event = transition.event
@@ -783,7 +785,6 @@ class Executor:
         changed_collectives: set[str] = set()
         changed_groups: set[tuple[str, str]] = set()
         changed_channels: set[tuple[str, int]] = set()
-        spawned_completions: tuple[str, ...] = ()
         consumed_waits: tuple[str, ...] = ()
         added_edges: tuple[tuple[str, str, str], ...] = ()
         if event.type == "BarrierArrive":
@@ -948,9 +949,10 @@ class Executor:
                 completion_kind,
             )
             newly_observed = [group for group in required if group.sequence > old_frontier]
+            frontier = newly_observed[-1:]
             edges = tuple(
                 (group.completion_id(completion_kind), event.id, "COMPLETION_TO_WAIT")
-                for group in newly_observed
+                for group in frontier
             )
             if required:
                 group_state.set_observed_frontier(
@@ -1087,9 +1089,10 @@ class Executor:
                 completion_kind,
             )
             newly_observed = [group for group in required if group.sequence > old_frontier]
+            frontier = newly_observed[-1:]
             edges = tuple(
                 (group.completion_id(completion_kind), event.id, "COMPLETION_TO_WAIT")
-                for group in newly_observed
+                for group in frontier
             )
             if required:
                 group_state.set_observed_frontier(
@@ -1198,9 +1201,10 @@ class Executor:
                 completion_kind,
             )
             newly_observed = [group for group in required if group.sequence > old_frontier]
+            frontier = newly_observed[-1:]
             edges = tuple(
                 (group.completion_id(completion_kind), event.id, "COMPLETION_TO_WAIT")
-                for group in newly_observed
+                for group in frontier
             )
             if required:
                 group_state.set_observed_frontier(
@@ -1347,6 +1351,13 @@ class Executor:
             ))
         elif event.type == "MBarrierInit":
             barrier = state.barriers[event.resource]
+            if event.layout != "V0":
+                raise ProtocolError(
+                    "UNSUPPORTED_MBARRIER_LAYOUT_V1",
+                    "mbarrier layout V1 conditional-phase/report semantics are not supported",
+                    event.id,
+                    {"layout": event.layout},
+                )
             if barrier.lifecycle == "LIVE":
                 raise ProtocolError("REINIT_LIVE", "live mbarrier cannot be reinitialized", event.id, barrier.snapshot())
             assert event.count is not None
@@ -1362,21 +1373,32 @@ class Executor:
             barrier.lifecycle_epoch = event.lifecycle_epoch
             barrier.generation = barrier.parity = 0
             barrier.base_count = barrier.pending = event.count
-            barrier.expected_tx = barrier.completed_tx = 0
+            barrier.expected_tx = barrier.issued_tx = 0
             barrier.generation_started = False
             barrier.can_invalidate = False
             barrier.publications.clear()
+            barrier.last_successfully_observed_generation = None
             changed_resources.add(event.resource)
         elif event.type == "MBarrierInvalidate":
             barrier = self._barrier(state, event)
-            in_flight = any(op.resource == event.resource for op in state.pending_completions.values())
             completed_target = barrier.generation - 1
             outstanding = state.remaining.get((event.resource, barrier.lifecycle_epoch, completed_target), set()) if completed_target >= 0 else set()
-            phase_incomplete = barrier.generation_started and not (
-                barrier.pending == 0
-                and barrier.completed_tx == barrier.expected_tx
+            phase_incomplete = barrier.generation_started and (
+                self._phase_transition(event.resource, barrier, state) is None
             )
-            if phase_incomplete or in_flight or outstanding:
+            if (
+                completed_target >= 0
+                and barrier.last_successfully_observed_generation != completed_target
+            ):
+                snapshot = barrier.snapshot()
+                snapshot["required_observed_generation"] = completed_target
+                raise ProtocolError(
+                    "INVALID_MBARRIER_UNOBSERVED_PHASE",
+                    "mbarrier invalidation requires a successful wait on the completed phase",
+                    event.id,
+                    snapshot,
+                )
+            if phase_incomplete or outstanding:
                 snapshot = barrier.snapshot()
                 if outstanding:
                     snapshot["remaining_logical_waits"] = sorted(outstanding)
@@ -1389,6 +1411,7 @@ class Executor:
             barrier.lifecycle = "INVALIDATED"
             barrier.can_invalidate = False
             barrier.publications.clear()
+            barrier.last_successfully_observed_generation = None
             changed_resources.add(event.resource)
         elif event.type == "MBarrierArrive":
             self._arrive(state, self._barrier(state, event), event)
@@ -1430,6 +1453,7 @@ class Executor:
             if not bucket:
                 state.remaining.pop(key)
             state.observed.add(event.id)
+            barrier.last_successfully_observed_generation = event.generation
             edge = (stable_phase_id(event.resource, event.lifecycle_epoch, event.generation), event.id, "COMPLETION_TO_WAIT")
             state.dynamic_edges.add(edge)
             consumed_waits = (event.id,)
@@ -1437,14 +1461,11 @@ class Executor:
         elif event.type == "TmaLoadIssue":
             barrier = self._barrier(state, event)
             self._require_current_generation(barrier, event)
-            completion_id = stable_completion_id(event.id, event.generation)
-            if completion_id in state.pending_completions or completion_id in state.completed_transitions:
-                raise ProtocolError("DUPLICATE_COMPLETION", "completion identity is not unique", event.id)
+            assert event.bytes is not None
             barrier.can_invalidate = False
             barrier.generation_started = True
-            state.pending_completions[completion_id] = AsyncOp(completion_id, event.id, event.actor, event.resource, event.destination_region, event.lifecycle_epoch, event.generation, event.bytes)
+            barrier.issued_tx += event.bytes
             changed_resources.add(event.resource)
-            spawned_completions = (completion_id,)
         self._advance_program(state, event)
         self._record(state, transition)
         return TransitionDelta(
@@ -1456,7 +1477,6 @@ class Executor:
             changed_collectives=frozenset(changed_collectives),
             changed_groups=frozenset(changed_groups),
             changed_channels=frozenset(changed_channels),
-            spawned_completions=spawned_completions,
             consumed_waits=consumed_waits,
             dynamic_edges=added_edges,
         )
@@ -1465,9 +1485,9 @@ class Executor:
         return tuple(event.id for actor in sorted(state.frontiers) if (event := self._frontier_event(state, actor)) is not None)
 
     def unfinished(self, state: ExecutionState) -> bool:
-        if any(self._frontier_event(state, actor) is not None for actor in state.frontiers) or state.pending_completions:
+        if any(self._frontier_event(state, actor) is not None for actor in state.frontiers):
             return True
-        if any(self._phase_transition(resource, barrier) is not None for resource, barrier in state.barriers.items()):
+        if any(self._phase_transition(resource, barrier, state) is not None for resource, barrier in state.barriers.items()):
             return True
         if any(
             collective.arrivals or self._collective_transition(resource, collective) is not None
@@ -1490,12 +1510,21 @@ class Executor:
             for channel in state.channels.values()
         ):
             return True
-        return any(barrier.generation_started for barrier in state.barriers.values() if barrier.lifecycle == "LIVE")
+        return any(
+            barrier.generation_started
+            or (
+                barrier.generation > 0
+                and barrier.last_successfully_observed_generation != barrier.generation - 1
+            )
+            for barrier in state.barriers.values()
+            if barrier.lifecycle == "LIVE"
+        )
 
     def fingerprint(self, state: ExecutionState) -> tuple[Any, ...]:
         barriers = tuple((resource, barrier.lifecycle, barrier.lifecycle_epoch, barrier.generation, barrier.parity, barrier.base_count, barrier.pending,
-                          barrier.expected_tx, barrier.completed_tx, barrier.generation_started, barrier.can_invalidate,
-                          tuple(sorted(barrier.publications))) for resource, barrier in sorted(state.barriers.items()))
+                          barrier.expected_tx, barrier.issued_tx, barrier.generation_started, barrier.can_invalidate,
+                          tuple(sorted(barrier.publications)), barrier.last_successfully_observed_generation)
+                         for resource, barrier in sorted(state.barriers.items()))
         collectives = tuple(
             (
                 resource,
@@ -1583,10 +1612,8 @@ class Executor:
             for transfer in sorted(state.visibility_transfers, key=lambda item: item.event)
         )
         remaining = tuple((key, tuple(sorted(event_ids))) for key, event_ids in sorted(state.remaining.items()))
-        pending = tuple((key, op.issue_id, op.actor, op.resource, op.destination_region, op.lifecycle_epoch, op.generation, op.bytes)
-                        for key, op in sorted(state.pending_completions.items()))
         return (tuple(sorted(state.frontiers.items())), tuple(sorted(state.executed)), barriers, collectives, groups, channels, transfers, remaining,
-                tuple(sorted(state.observed)), pending, tuple(sorted(state.completed_transitions)))
+                tuple(sorted(state.observed)), tuple(sorted(state.completed_transitions)))
 
     def explore(self, hold: str | None = None) -> ExplorationResult:
         state = self.initial_state()
@@ -1646,9 +1673,22 @@ class Executor:
             if barrier.generation_started:
                 if barrier.pending > 0:
                     return {"code": "MISSING_ARRIVAL", "message": "mbarrier phase cannot complete: arrivals are missing", "resource": resource_id, "protocol_state": barrier.snapshot()}
-                pending_bytes = sum(op.bytes for op in state.pending_completions.values() if op.resource == resource_id and op.generation == barrier.generation)
-                if barrier.completed_tx + pending_bytes != barrier.expected_tx:
-                    return {"code": "TX_BYTES_MISMATCH", "message": "mbarrier expected/completable transaction bytes do not match", "resource": resource_id, "protocol_state": barrier.snapshot()}
+                if barrier.issued_tx != barrier.expected_tx:
+                    return {"code": "TX_BYTES_MISMATCH", "message": "mbarrier expected and issued transaction bytes do not match", "resource": resource_id, "protocol_state": barrier.snapshot()}
+            completed_target = barrier.generation - 1
+            if (
+                barrier.lifecycle == "LIVE"
+                and completed_target >= 0
+                and barrier.last_successfully_observed_generation != completed_target
+            ):
+                snapshot = barrier.snapshot()
+                snapshot["required_observed_generation"] = completed_target
+                return {
+                    "code": "INVALID_MBARRIER_UNOBSERVED_PHASE",
+                    "message": "completed mbarrier phase lacks a successful wait",
+                    "resource": resource_id,
+                    "protocol_state": snapshot,
+                }
         for resource_id in sorted(state.collectives):
             collective = state.collectives[resource_id]
             if collective.arrivals:

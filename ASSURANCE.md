@@ -4,7 +4,7 @@ PipeGuard separates three claims that must not be conflated: the NVIDIA-valid mb
 
 ## NVIDIA-valid core
 
-The exact claim applies to finite, statically ranked, freshly initialized Arrive/LogicalWait programs with fixed participants and capacity, coalesced polling, resolved gap-free logical wait streams, and exact event identities. A logical wait targets physical generation `g`; it may complete only while `g` is the immediately preceding completed generation. Partial arrivals in generation `g + 1` remain legal. The checker rejects the phase-completing transition from `g + 1` to `g + 2` when a required observer of `g` remains.
+The exact claim applies to finite, statically ranked, freshly initialized `.layout::v0` Arrive/LogicalWait programs with fixed participants and capacity, coalesced polling, resolved gap-free logical wait streams, and exact event identities. A logical wait targets physical generation `g`; it may complete only while `g` is the immediately preceding completed generation. At least one successful wait for `g` must occur before the first arrive-on in generation `g + 1`; partial next-generation arrivals before that observation are invalid. Any additional wait targeting `g` must still execute before completion of generation `g + 1`, after which it would be stale. Explicit `.layout::v1` is rejected as unsupported.
 
 Within this domain:
 
@@ -23,26 +23,28 @@ This is not a claim about arbitrary bit-only parity programs, dynamic barrier id
 `tests/test_bounded_core_oracle.py` implements a declarative oracle independent of `Executor.enabled`, `Executor.apply`, state fingerprints, held-anchor scheduling, and checker PDG construction. Its state is only:
 
 ```text
-(actor PCs, current generation, pending count, generation-started bit,
- publications, Required/Remaining identities, executed identities)
+(actor PCs, current primary generation, pending count, generation-started bit,
+ publications, last-successfully-observed generation,
+ Required/Remaining identities, executed identities)
 ```
 
-The test exhaustively enumerates 460 static programs over capacities 1–3 and two or three actors:
+The core test exhaustively enumerates 460 static programs over capacities 1–3 and two or three actors:
 
 | Class | Programs |
 |---|---:|
-| SAFE | 92 |
-| Risk | 368 |
-| └ phase/role-invalid | 346 |
+| SAFE | 64 |
+| Risk | 396 |
 | └ valid underfill stuck | 22 |
 
 It checks all of the following:
 
 1. maximal and memoized all-state checker results crosscheck, and their `SAFE`/`SYNC_HAZARD` verdict agrees with the independent raw oracle;
-2. for all 114 programs with no reachable invalid attempt, raw and exact reachable state sets are equal;
-3. for SAFE programs, all 2,274 ordered pairs of distinct program events agree between oracle must-order and checker PDG reachability;
-4. capacities 1, 2, and 3 include the NVIDIA-valid partial-next-generation boundary and the final phase-completing guard;
+2. for all 86 programs with no reachable invalid attempt, raw and exact reachable state sets are equal;
+3. for SAFE programs, all 2,102 ordered pairs of distinct program events agree between oracle must-order and checker PDG reachability;
+4. capacities 1, 2, and 3 exercise the NVIDIA-invalid first-next-arrive-before-successful-wait boundary and final-phase observation obligation;
 5. underfilled barriers exercise stuck completeness separately from invalid-attempt completeness.
+
+Additional bounded enumeration covers 61 typed cp.async/WGMMA/TMA/proxy combinations, 16 CTA-barrier participation/observation combinations, and 36 ordinary-memory overlap/mode combinations, for 573 enumerated semantic cases in total. A rule-disposition manifest accounts for all 36 operational rules and distinguishes supported bounded checks from validation-only and fail-closed boundaries.
 
 Finite enumeration is regression evidence for the implementation; it does not replace the quantified core proof or extend its domain.
 
@@ -70,9 +72,9 @@ For the original core notation, where `T` is the actor count and `N` is the numb
 
 ## Extended SM90 protocols
 
-TMA transaction completion, lifecycle reuse, CTA/named/cluster barriers, cp.async groups, WGMMA and TMA-store typed endpoints, proxy visibility, and explicit async-engine ordering use the same finite transition framework. They are covered by focused tests and maximal-versus-memoized-all-state crosschecks over the operational FSM.
+Generation-level TMA phase completion, lifecycle reuse, CTA/named/cluster barriers, cp.async groups, WGMMA and TMA-store typed endpoints, proxy visibility, and explicit async-engine ordering use the same finite transition framework. They are covered by focused tests and maximal-versus-memoized-all-state crosschecks over the operational FSM.
 
-They are not consequences of the Arrive/LogicalWait theorem. [`EXTENDED_ASSURANCE.md`](EXTENDED_ASSURANCE.md) gives the separate finite-product argument for completion fairness normalization, held-anchor trace absorption, full-boundary PDG exactness, and typed visibility-aware window separation in the validated exact domain. The 61-case independent endpoint/visibility enumeration checks each extension class against both execution engines.
+They are not consequences of the Arrive/LogicalWait theorem. [`EXTENDED_ASSURANCE.md`](EXTENDED_ASSURANCE.md) gives the separate finite-product argument for completion fairness normalization, held-anchor trace absorption, full-boundary PDG exactness, and typed visibility-aware window separation in the validated exact domain. The additional 113-case bounded enumeration covers typed endpoint/visibility, CTA-barrier participation/observation, and ordinary-memory overlap/mode combinations against both execution engines.
 
 ## Frontend obligation
 
