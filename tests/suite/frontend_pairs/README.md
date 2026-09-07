@@ -49,3 +49,34 @@ For every label:
 
 Unsupported native lowering or capture is reported separately and is never
 counted as SAFE or as a semantic match.
+
+## Persistent local artifacts
+
+Native outputs are written under the repository-local, ignored directory:
+
+```text
+.artifacts/frontend-pairs/
+```
+
+Run the two persistent compiler processes with:
+
+```text
+triton-pg/bin/python tests/suite/frontend_pairs/runners/run_triton_batch.py \
+  --output .artifacts/frontend-pairs
+
+tl-pg/bin/python tests/suite/frontend_pairs/runners/run_tilelang_batch.py \
+  --output .artifacts/frontend-pairs
+```
+
+The runners update results incrementally and accept repeated `--family` and
+`--variant` filters. They never launch a GPU kernel. Analyze captured snapshots
+with:
+
+```text
+/usr/bin/python3 tests/suite/frontend_pairs/runners/analyze_captures.py \
+  --artifacts .artifacts/frontend-pairs
+```
+
+Suite 2 uses the production `maximal` checker because even small TileLang source
+kernels may materialize dozens of lane events. Exhaustive crosscheck remains in
+Suite 1, whose direct reference cases are intentionally tiny.

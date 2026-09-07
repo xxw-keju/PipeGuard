@@ -20,16 +20,23 @@ def _memory_case(family: str, variant: int, buggy: bool):
     def kernel(A: T.Tensor((size,), T.int32), Out: T.Tensor((1,), T.int32)):
         with T.Kernel(1, threads=threads):
             tx = T.get_thread_binding()
-            if tx == 0:
-                A[0] = 1
-            if family == "CTA-HANDOFF" and not buggy:
-                T.sync_threads()
-            if tx == 1:
-                index = 0 if buggy or family == "CTA-HANDOFF" else elements
-                if family == "MEM-WAW":
-                    A[index] = 2
-                else:
-                    Out[0] = A[index]
+            shared = T.decl_buffer((1,), T.int32, scope="shared.dyn")
+            if family == "CTA-HANDOFF":
+                if tx == 0:
+                    shared[0] = 1
+                if not buggy:
+                    T.sync_threads()
+                if tx == 1:
+                    Out[0] = shared[0]
+            else:
+                if tx == 0:
+                    A[0] = 1
+                if tx == 1:
+                    index = 0 if buggy else elements
+                    if family == "MEM-WAW":
+                        A[index] = 2
+                    else:
+                        Out[0] = A[index]
 
     return kernel
 
@@ -224,7 +231,11 @@ def lower_tilelang_case(family: str, variant: int, polarity: str):
         "thread_warp_size": 32,
         "max_num_threads": 1024,
     })
-    with target, tvm.transform.PassContext(opt_level=3):
+    pass_config = (
+        {"tl.disable_thread_storage_sync": True}
+        if family == "CTA-HANDOFF" else {}
+    )
+    with target, tvm.transform.PassContext(opt_level=3, config=pass_config):
         return tilelang.lower(
             function,
             target=target,

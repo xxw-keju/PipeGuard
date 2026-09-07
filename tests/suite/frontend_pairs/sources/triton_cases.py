@@ -150,9 +150,10 @@ def _wgmma_kernel():
                 num_outstanding=1 if BUGGY else 0,
                 deps=[acc],
             )
-            rows = ttgl.arange(0, block)[:, None]
-            cols = ttgl.arange(0, block)[None, :]
-            ttgl.store(output + rows * block + cols, acc)
+            result = ttgl.convert_layout(acc, blocked)
+            rows = ttgl.arange(0, block, ttgl.SliceLayout(1, blocked))[:, None]
+            cols = ttgl.arange(0, block, ttgl.SliceLayout(0, blocked))[None, :]
+            ttgl.store(output + rows * block + cols, result)
 
     return kernel
 

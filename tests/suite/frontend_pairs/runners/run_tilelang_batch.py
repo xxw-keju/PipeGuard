@@ -21,17 +21,25 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", required=True)
     parser.add_argument("--variant", action="append", type=int)
+    parser.add_argument("--family", action="append")
     args = parser.parse_args()
 
     output = Path(args.output)
     raw_root = output / "raw" / "tilelang"
     snapshot_root = output / "snapshots" / "tilelang"
+    result_path = output / "tilelang-results.json"
     raw_root.mkdir(parents=True, exist_ok=True)
     snapshot_root.mkdir(parents=True, exist_ok=True)
-    selected = set(args.variant or range(12))
-    records = []
+    selected_variants = set(args.variant or range(12))
+    selected_families = set(args.family or (case.family for case in PAIRS))
+    records_by_label = {
+        record["label"]: record
+        for record in (json.loads(result_path.read_text()) if result_path.exists() else [])
+    }
+
+    processed = 0
     for case in PAIRS:
-        if case.variant not in selected:
+        if case.variant not in selected_variants or case.family not in selected_families:
             continue
         raw_path = raw_root / f"{case.label}.tvm.json"
         snapshot_path = snapshot_root / f"{case.label}.json"
@@ -70,12 +78,23 @@ def main() -> int:
                 "diagnostic": diagnostic,
                 "raw_path": str(raw_path.relative_to(output)) if raw_path.exists() else None,
             })
-        records.append(record)
-        (output / "tilelang-results.json").write_text(json.dumps(records, indent=2, sort_keys=True))
+        records_by_label[case.label] = record
+        processed += 1
+        result_path.write_text(json.dumps(
+            sorted(records_by_label.values(), key=lambda item: item["label"]),
+            indent=2,
+            sort_keys=True,
+        ))
+
     counts = {}
-    for record in records:
+    for record in records_by_label.values():
         counts[record["status"]] = counts.get(record["status"], 0) + 1
-    print(json.dumps({"dsl": "tilelang", "counts": counts, "cases": len(records)}, sort_keys=True))
+    print(json.dumps({
+        "dsl": "tilelang",
+        "processed": processed,
+        "recorded": len(records_by_label),
+        "counts": counts,
+    }, sort_keys=True))
     return 0
 
 
