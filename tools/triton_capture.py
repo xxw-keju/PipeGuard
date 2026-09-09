@@ -176,6 +176,13 @@ class TritonCapture:
             int(index): value
             for index, value in self.binding_evidence.get("scalar_values", {}).items()
         }
+        self.allocation_constant_values = {
+            allocation: evidence["value"]
+            for allocation, evidence in self.binding_evidence.get(
+                "allocation_values", {}
+            ).items()
+            if evidence.get("kind") == "CONSTANT"
+        }
         self.evidenced_external_allocations = set(self.pointer_argument_allocations.values())
         self.operations: list[Any] = []
         module.walk(self.operations.append)
@@ -2292,6 +2299,21 @@ class TritonCapture:
                     ),
                 },
             )
+        if name == "tt.load" and operation.get_num_results() == 1:
+            allocations = {
+                self.regions[region]["allocation_id"] for region in regions
+            }
+            if len(allocations) == 1:
+                value = self.allocation_constant_values.get(next(iter(allocations)))
+                mask_enabled = (
+                    mask is True
+                    or isinstance(mask, (tuple, list)) and all(bool(item) for item in mask)
+                )
+                if value is not None and mask_enabled:
+                    elements, _width = self._value_extent(operation.get_result(0))
+                    self.static_values[operation.get_result(0).id()] = (
+                        value if elements == 1 else tuple(value for _ in range(elements))
+                    )
 
     def _capture_async(self, operation: Any, index: int) -> None:
         name = operation.get_name()
@@ -4097,9 +4119,12 @@ def capture_file(
             "unit_attributes",
             "array_attributes",
         }
-        allowed_evidence = required_evidence | {"pointer_allocations", "scalar_values"}
+        allowed_evidence = required_evidence | {
+            "pointer_allocations", "scalar_values", "allocation_values"
+        }
         pointer_allocations = evidence.get("pointer_allocations", {}) if isinstance(evidence, dict) else {}
         scalar_values = evidence.get("scalar_values", {}) if isinstance(evidence, dict) else {}
+        allocation_values = evidence.get("allocation_values", {}) if isinstance(evidence, dict) else {}
         if (
             not isinstance(evidence, dict)
             or not required_evidence <= set(evidence) <= allowed_evidence
@@ -4109,6 +4134,7 @@ def capture_file(
             or not isinstance(evidence.get("array_attributes"), dict)
             or not isinstance(pointer_allocations, dict)
             or not isinstance(scalar_values, dict)
+            or not isinstance(allocation_values, dict)
             or any(
                 not str(index).isdigit()
                 or not isinstance(value, int)
@@ -4116,10 +4142,23 @@ def capture_file(
                 for index, value in scalar_values.items()
             )
             or any(
+                not isinstance(allocation, str)
+                or not allocation
+                or not isinstance(value, dict)
+                or set(value) != {"kind", "value"}
+                or value.get("kind") != "CONSTANT"
+                or not isinstance(value.get("value"), int)
+                or isinstance(value.get("value"), bool)
+                for allocation, value in allocation_values.items()
+            )
+            or any(
                 not str(index).isdigit()
                 or not isinstance(allocation, str)
                 or not allocation
                 for index, allocation in pointer_allocations.items()
+            )
+            or not set(allocation_values).issubset(
+                set(pointer_allocations.values())
             )
             or any(
                 not str(index).isdigit()

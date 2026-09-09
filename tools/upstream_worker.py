@@ -29,6 +29,7 @@ TERMINAL_STATUSES = {
 
 PROFILE_DIAGNOSTICS = {
     "TILELANG_MULTI_CTA_UNSUPPORTED",
+    "TILELANG_SELECTED_CTA_UNSUPPORTED",
     "TILELANG_TARGET_UNSUPPORTED",
     "TILELANG_THREAD_GEOMETRY_UNSUPPORTED",
     "TRITON_MULTI_CTA_UNSUPPORTED",
@@ -82,7 +83,7 @@ def _diagnostic(code: str, message: str, **details: Any) -> dict[str, Any]:
 
 
 def _base_result(request: dict[str, Any]) -> dict[str, Any]:
-    return {
+    result = {
         "schema_version": RUN_RESULT_VERSION,
         "fingerprint": request["fingerprint"],
         "dsl": request["dsl"],
@@ -94,6 +95,9 @@ def _base_result(request: dict[str, Any]) -> dict[str, Any]:
         "artifacts": {},
         "timings": {},
     }
+    if request.get("spec_id") is not None:
+        result["spec_id"] = request["spec_id"]
+    return result
 
 
 def _tilelang_target(tvm: Any, recipe: dict[str, Any]):
@@ -324,6 +328,7 @@ def _capture_tilelang(request: dict[str, Any], raw_path: Path, output: Path) -> 
     import tilelang_capture
 
     compiler = request["recipe"].get("compiler") or {}
+    selected_cta = tuple(compiler.get("selected_cta", (0, 0, 0)))
     evidence = compiler.get("descriptor_evidence")
     evidence_path = None
     if evidence is not None:
@@ -331,12 +336,36 @@ def _capture_tilelang(request: dict[str, Any], raw_path: Path, output: Path) -> 
         evidence["source_ir_sha256"] = sha256_text(raw_path.read_text())
         evidence_path = output / "descriptor-evidence.json"
         atomic_write(evidence_path, pretty_json(evidence))
+    binding = compiler.get("binding_evidence")
+    binding_path = None
+    if isinstance(binding, dict) and (
+        binding.get("scalar_values") or binding.get("pointer_table_allocations")
+    ):
+        binding_payload = {
+            "evidence_version": "tilelang-binding-evidence-v1",
+            "source_ir_sha256": sha256_text(raw_path.read_text()),
+            "scalar_values": binding.get("scalar_values", {}),
+            "pointer_table_allocations": binding.get(
+                "pointer_table_allocations", {}
+            ),
+            "provenance": {
+                key: value
+                for key, value in binding.items()
+                if key not in {"scalar_values", "pointer_table_allocations"}
+            },
+        }
+        binding_path = output / "binding-evidence.json"
+        atomic_write(binding_path, pretty_json(binding_payload))
     try:
         snapshot = tilelang_capture.capture_file(
             raw_path,
             source=f"upstream:{request['manifest']['upstream']['relative_path']}:{request['manifest']['upstream']['qualname']}",
             command=f"pipeguard-upstream:{request['fingerprint']}",
             descriptor_evidence_path=evidence_path,
+            binding_evidence_path=binding_path,
+            launch_grid=compiler.get("grid"),
+            grid_ctas=compiler.get("grid_ctas"),
+            selected_cta=selected_cta,
         )
         return snapshot, None
     except tilelang_capture.CaptureError as error:
@@ -347,6 +376,18 @@ def _capture_triton(request: dict[str, Any], raw_path: Path, output: Path) -> tu
     import triton_capture
 
     compiler = request["recipe"].get("compiler") or {}
+    selected_cta = tuple(compiler.get("selected_cta", (0, 0, 0)))
+    launch_grid = compiler.get("grid")
+    if launch_grid is None:
+        launch_grid = [compiler["grid_ctas"]]
+    normalized_grid = tuple(list(launch_grid) + [1] * (3 - len(launch_grid)))
+    if any(value >= bound for value, bound in zip(selected_cta, normalized_grid)):
+        return None, _diagnostic(
+            "UPSTREAM_SELECTED_CTA_OUT_OF_GRID",
+            "selected CTA lies outside the concrete launch grid",
+            selected_cta=list(selected_cta),
+            launch_grid=list(normalized_grid),
+        )
     evidence = compiler.get("binding_evidence")
     evidence_path = None
     if evidence is not None:
@@ -362,7 +403,7 @@ def _capture_triton(request: dict[str, Any], raw_path: Path, output: Path) -> tu
             grid_ctas=compiler["grid_ctas"],
             binding_evidence_path=evidence_path,
             launch_grid=compiler.get("grid"),
-            selected_cta=(0, 0, 0),
+            selected_cta=selected_cta,
         )
         return snapshot, None
     except triton_capture.CaptureError as error:

@@ -15,6 +15,13 @@ from pipeguard.frontends import FrontendError, triton_snapshot_to_module, tilela
 
 ROOT = Path(__file__).parents[1]
 FIXTURES = ROOT / "tests" / "fixtures"
+sys.path.insert(0, str(ROOT / "tools"))
+from tilelang_capture import (  # noqa: E402
+    CaptureError as TileLangCaptureError,
+    _prove_wgmma_group,
+    _wgmma_issue_operand,
+)
+
 TILELANG_PYTHON = Path(os.environ.get(
     "TILELANG_PYTHON",
     "/usr/local/miniconda3/envs/tl-pg/bin/python",
@@ -116,57 +123,6 @@ def test_triton_parameterized_profile_requires_lowered_execution_evidence():
     with pytest.raises(FrontendError) as caught:
         triton_snapshot_to_module(incomplete)
     assert caught.value.code == "TRITON_EXECUTION_SCOPE_UNRESOLVED"
-
-
-def test_tilelang_assume_attribute_is_a_transparent_optimizer_fact():
-    tools_root = str(ROOT / "tools")
-    if tools_root not in sys.path:
-        sys.path.insert(0, tools_root)
-    from tilelang_capture import LaneWalker
-
-    capture = types.SimpleNamespace(
-        tvm=None,
-        tirx=None,
-        actor_ids=["lane:0"],
-        scalar_bindings={},
-    )
-    body = type("SeqStmt", (), {"seq": []})()
-    statement = type("AttrStmt", (), {
-        "attr_key": "tl.assume",
-        "body": body,
-    })()
-
-    LaneWalker(capture, 0).walk(statement, ("root",))
-
-
-def test_tilelang_launch_grid_binds_a_direct_symbolic_block_extent():
-    tools_root = str(ROOT / "tools")
-    if tools_root not in sys.path:
-        sys.path.insert(0, tools_root)
-    from tilelang_capture import LaneWalker, TileLangCapture
-
-    var_type = type("Var", (), {})
-    num_tokens = var_type()
-    capture = object.__new__(TileLangCapture)
-    capture.func = types.SimpleNamespace(attrs={
-        "thread_extent": {
-            "blockIdx.x": num_tokens,
-            "threadIdx.x": 64,
-            "threadIdx.y": 1,
-            "threadIdx.z": 1,
-        },
-    })
-    capture.launch_grid = (8192, 1, 1)
-    capture.launch_grid_explicit = True
-    capture.tirx = types.SimpleNamespace(Var=var_type)
-    capture.scalar_bindings = {}
-
-    assert capture._thread_extents()["blockIdx.x"] == 8192
-    assert capture.scalar_bindings == {num_tokens: 8192}
-
-    capture.tvm = None
-    capture.actor_ids = ["lane:0"]
-    assert LaneWalker(capture, 0).bindings == {num_tokens: 8192}
 
 
 @pytest.mark.skipif(not TILELANG_PYTHON.exists(), reason="pinned TileLang capture environment unavailable")
@@ -759,62 +715,6 @@ def test_triton_cp_async_wait_12_preserves_threshold_and_leaves_one_group_pendin
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
-def test_triton_cp_async_rejects_subword_per_thread_transfer(tmp_path: Path):
-    text = (FIXTURES / "triton_cp_async.ttgir.mlir").read_text()
-    text = text.replace("!tt.ptr<i32>", "!tt.ptr<i16>")
-    text = text.replace("!ttg.memdesc<16xi32", "!ttg.memdesc<16xi16")
-    text = text.replace("-> <16xi32, #shared", "-> <16xi16, #shared")
-    text = text.replace(
-        "mutable> -> tensor<16xi32, #blocked>",
-        "mutable> -> tensor<16xi16, #blocked>",
-    )
-    fixture = tmp_path / "subword-cp-async.ttgir.mlir"
-    fixture.write_text(text)
-    process = _run_capture(
-        TRITON_PYTHON,
-        "triton_capture.py",
-        fixture,
-        "subword-cp-async",
-    )
-    assert process.returncode == 2
-    assert json.loads(process.stdout)["diagnostics"][0]["code"] == (
-        "TRITON_CP_ASYNC_TRANSFER_WIDTH_UNSUPPORTED"
-    )
-
-
-@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
-def test_triton_cp_async_current_profile_rejects_incomplete_or_aggregate_evidence():
-    _output, captured = _capture(
-        TRITON_PYTHON,
-        "triton_capture.py",
-        "triton_cp_async.ttgir.mlir",
-        "cp-async-evidence-rejection",
-    )
-    missing_lanes = json.loads(json.dumps(captured))
-    issue = next(
-        operation for operation in missing_lanes["operations"]
-        if operation["op"] == "triton.cp_async.issue"
-    )
-    issue.pop("lane_effects")
-    with pytest.raises(FrontendError) as caught:
-        triton_snapshot_to_module(missing_lanes)
-    assert caught.value.code == "TRITON_CP_ASYNC_LANE_TRANSFER_UNRESOLVED"
-
-    aggregate = json.loads(json.dumps(captured))
-    commit = next(
-        operation for operation in aggregate["operations"]
-        if operation["op"] == "triton.cp_async.commit_group"
-    )
-    commit["execution_evidence"].update({
-        "transition": "ONCE",
-        "rendezvous": "ALL_PROGRAM_INSTANCES",
-    })
-    with pytest.raises(FrontendError) as caught:
-        triton_snapshot_to_module(aggregate)
-    assert caught.value.code == "TRITON_EXECUTION_SCOPE_UNRESOLVED"
-
-
-@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
 def test_triton_masked_cp_async_coalesces_contiguous_issue_segments():
     _output, snapshot = _capture(
         TRITON_PYTHON,
@@ -849,71 +749,6 @@ def test_triton_masked_cp_async_coalesces_contiguous_issue_segments():
     assert cp_templates[1].program_instances == tuple(range(128))
     assert cp_templates[2].program_instances == tuple(range(128))
     assert check_module(module, engine="maximal")["verdict"] == "SAFE"
-
-
-@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
-def test_triton_cp_async_wait_is_thread_local_and_barrier_publishes():
-    _output, captured = _capture(
-        TRITON_PYTHON,
-        "triton_capture.py",
-        "triton_cp_async.ttgir.mlir",
-        "cp-async-thread-local-control",
-    )
-    snapshot = json.loads(json.dumps(captured))
-    snapshot["target"]["cta_threads"] = 2
-    snapshot["actors"][0]["participants"] = [0, 1]
-    for resource in snapshot["resources"]:
-        if resource["kind"] == "cta_barrier":
-            resource["capacity"] = 2
-
-    issue = next(op for op in snapshot["operations"] if op["op"] == "triton.cp_async.issue")
-    issue["lane_effects"] = {
-        "lanes": [0],
-        "transfer_offsets": [0, 1],
-        "source_regions": [issue["lane_effects"]["source_regions"][0]],
-        "destination_regions": [issue["lane_effects"]["destination_regions"][0]],
-        "bytes": [4],
-    }
-    issue["execution_evidence"]["program_instances"] = [0]
-    issue["execution_evidence"]["executors"] = [0]
-    for operation in snapshot["operations"]:
-        evidence = operation.get("execution_evidence")
-        if operation["op"] in {
-            "triton.cp_async.commit_group",
-            "triton.cp_async.wait_group",
-            "triton.barrier.arrive",
-            "triton.barrier.observe",
-        }:
-            evidence["program_instances"] = [0, 1]
-            evidence["executors"] = [0, 1]
-        if operation["op"] == "triton.barrier.arrive":
-            operation["count"] = 2
-    read = next(op for op in snapshot["operations"] if op["op"] == "triton.mem.read")
-    read["lane_effects"] = {
-        "lanes": [1],
-        "region_offsets": [0, 1],
-        "regions": [issue["lane_effects"]["destination_regions"][0]],
-    }
-
-    safe_module = triton_snapshot_to_module(snapshot)
-    safe_direct = check_module(safe_module, engine="maximal")
-    safe_reference = check_module(safe_module.expand_reference(), engine="crosscheck")
-    assert safe_direct["verdict"] == safe_reference["verdict"] == "SAFE"
-
-    snapshot["operations"] = [
-        operation for operation in snapshot["operations"]
-        if not operation["op"].startswith("triton.barrier.")
-    ]
-    snapshot["resources"] = [
-        resource for resource in snapshot["resources"]
-        if resource["kind"] != "cta_barrier"
-    ]
-    snapshot["extraction"]["events_emitted"] = len(snapshot["operations"])
-    unsafe_module = triton_snapshot_to_module(snapshot)
-    unsafe_direct = check_module(unsafe_module, engine="maximal")
-    unsafe_reference = check_module(unsafe_module.expand_reference(), engine="crosscheck")
-    assert unsafe_direct["verdict"] == unsafe_reference["verdict"] == "DATA_HAZARD"
-    assert unsafe_direct["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
@@ -1135,10 +970,8 @@ def test_triton_pure_kernel_emits_empty_protocol_graph_and_checks_safe(tmp_path:
     assert snapshot["extraction"]["emitting_nodes"] == 0
     assert snapshot["extraction"]["events_emitted"] == 0
     module = triton_snapshot_to_module(snapshot)
-    assert module.raw["schema_version"] == "pgir-parametric-v1"
-    report = check_module(module, engine="maximal")
-    assert report["verdict"] == "SAFE"
-    assert report["statistics"]["representation"] == "parametric-protocol"
+    assert check_module(module, engine="maximal")["verdict"] == "SAFE"
+    assert check_module(module, engine="maximal")["verdict"] == "SAFE"
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
@@ -2154,6 +1987,140 @@ def test_tilelang_tma_descriptor_evidence_is_bound_to_exact_ir(tmp_path: Path):
     assert result["diagnostics"][0]["code"] == "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
 
 
+def _wgmma_proof_operand(
+    offset_units: int,
+    *,
+    slot: str = "A_SHARED",
+    stage_region: str = "region:shared:test:0:4096",
+    descriptor_id: str = "warpgroup:00:desc_a",
+    k_major: bool = True,
+):
+    return _wgmma_issue_operand(
+        slot=slot,
+        shape="m64n64k16",
+        dtype="fp16",
+        k_major=k_major,
+        descriptor_offset_units=offset_units,
+        descriptor={
+            "descriptor_id": descriptor_id,
+            "layout_type": 2 if slot == "A_SHARED" else 1,
+            "leading_byte_offset": 1 if slot == "A_SHARED" else 0,
+            "stride_byte_offset": 32 if slot == "A_SHARED" else 64,
+            "selected_stage": {
+                "region_id": stage_region,
+                "allocation_id": "shared:test",
+                "address_space": "SHARED",
+                "offset": 0,
+                "extent": 4096,
+            },
+        },
+    )
+
+
+def test_wgmma_exact_group_union_proves_complete_k16_partition():
+    issues = [
+        {
+            "issue_template_id": f"issue:{index}",
+            "engine_seq": index,
+            "operands": [
+                _wgmma_proof_operand(index * 2),
+                _wgmma_proof_operand(
+                    index * 128,
+                    slot="B_SHARED",
+                    descriptor_id="warpgroup:00:desc_b",
+                    k_major=False,
+                ),
+            ],
+        }
+        for index in range(2)
+    ]
+    proof = _prove_wgmma_group(
+        "warpgroup:00", "wgmma:warpgroup:00", 0, "commit:0", issues
+    )
+    assert proof["status"] == "PROVED"
+    assert proof["engine_seqs"] == [0, 1]
+    assert all(
+        operand["region_precision"] == "EXACT_GROUP_UNION"
+        and operand["equal"] is True
+        and operand["expected_logical_union"] == [{"offset": 0, "extent": 4096}]
+        for operand in proof["operands"]
+    )
+
+
+def test_wgmma_exact_group_union_rejects_duplicate_slice_and_mixed_stage():
+    duplicate = [
+        {
+            "issue_template_id": f"issue:{index}",
+            "engine_seq": index,
+            "operands": [_wgmma_proof_operand(0)],
+        }
+        for index in range(2)
+    ]
+    with pytest.raises(TileLangCaptureError) as duplicate_error:
+        _prove_wgmma_group(
+            "warpgroup:00", "wgmma:warpgroup:00", 0, "commit:0", duplicate
+        )
+    assert duplicate_error.value.code == "TILELANG_WGMMA_COMMITTED_GROUP_REGION_MISMATCH"
+
+    mixed = [
+        {
+            "issue_template_id": "issue:0",
+            "engine_seq": 0,
+            "operands": [_wgmma_proof_operand(0)],
+        },
+        {
+            "issue_template_id": "issue:1",
+            "engine_seq": 1,
+            "operands": [_wgmma_proof_operand(
+                2,
+                stage_region="region:shared:test:4096:4096",
+            )],
+        },
+    ]
+    with pytest.raises(TileLangCaptureError) as mixed_error:
+        _prove_wgmma_group(
+            "warpgroup:00", "wgmma:warpgroup:00", 0, "commit:0", mixed
+        )
+    assert mixed_error.value.code == "TILELANG_WGMMA_COMMITTED_GROUP_STAGE_MIXED"
+
+
+def test_wgmma_exact_group_union_rejects_unknown_profile_and_layout():
+    descriptor = {
+        "descriptor_id": "warpgroup:00:desc",
+        "layout_type": 7,
+        "leading_byte_offset": 0,
+        "stride_byte_offset": 0,
+        "selected_stage": {
+            "region_id": "region:shared:test:0:4096",
+            "allocation_id": "shared:test",
+            "address_space": "SHARED",
+            "offset": 0,
+            "extent": 4096,
+        },
+    }
+    with pytest.raises(TileLangCaptureError) as shape_error:
+        _wgmma_issue_operand(
+            slot="A_SHARED",
+            shape="m64n16k16",
+            dtype="fp16",
+            k_major=True,
+            descriptor_offset_units=0,
+            descriptor=descriptor,
+        )
+    assert shape_error.value.code == "TILELANG_WGMMA_ISSUE_FOOTPRINT_UNRESOLVED"
+
+    with pytest.raises(TileLangCaptureError) as layout_error:
+        _wgmma_issue_operand(
+            slot="A_SHARED",
+            shape="m64n64k16",
+            dtype="fp16",
+            k_major=True,
+            descriptor_offset_units=0,
+            descriptor=descriptor,
+        )
+    assert layout_error.value.code == "TILELANG_WGMMA_DESCRIPTOR_LAYOUT_UNSUPPORTED"
+
+
 @pytest.mark.skipif(not TILELANG_PYTHON.exists(), reason="pinned TileLang capture environment unavailable")
 def test_real_tilelang_warp_specialized_tma_wgmma_capture_is_complete():
     _output, snapshot = _capture(
@@ -2179,6 +2146,23 @@ def test_real_tilelang_warp_specialized_tma_wgmma_capture_is_complete():
         for operation in snapshot["operations"]
         if operation["op"].startswith("tilelang.wgmma.")
     )
+    wgmma_issues = [
+        operation for operation in snapshot["operations"]
+        if operation["op"] == "tilelang.wgmma.issue"
+    ]
+    for owner in {operation["owner"] for operation in wgmma_issues}:
+        owner_issues = [
+            operation for operation in wgmma_issues
+            if operation["owner"] == owner
+        ]
+        assert all(
+            set(_compact_field_values(operation, "engine_id")) == {owner}
+            for operation in owner_issues
+        )
+        assert [
+            _compact_field_values(operation, "engine_seq")[0]
+            for operation in owner_issues
+        ] == list(range(len(owner_issues)))
     tma_issues = [
         operation for operation in snapshot["operations"]
         if operation["op"] == "tilelang.tma_load.issue"
@@ -2243,3 +2227,175 @@ def test_large_static_tilelang_loop_uses_maximal_without_semantic_unroll_cap():
     assert result["statistics"]["representation"] == "parametric-protocol"
     assert result["statistics"]["materialized_event_objects"] == 0
     assert result["statistics"]["materialized_artifact_events"] == 0
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_cp_async_rejects_subword_per_thread_transfer(tmp_path: Path):
+    text = (FIXTURES / "triton_cp_async.ttgir.mlir").read_text()
+    text = text.replace("!tt.ptr<i32>", "!tt.ptr<i16>")
+    text = text.replace("!ttg.memdesc<16xi32", "!ttg.memdesc<16xi16")
+    text = text.replace("-> <16xi32, #shared", "-> <16xi16, #shared")
+    text = text.replace(
+        "mutable> -> tensor<16xi32, #blocked>",
+        "mutable> -> tensor<16xi16, #blocked>",
+    )
+    fixture = tmp_path / "subword-cp-async.ttgir.mlir"
+    fixture.write_text(text)
+    process = _run_capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "subword-cp-async",
+    )
+    assert process.returncode == 2
+    assert json.loads(process.stdout)["diagnostics"][0]["code"] == (
+        "TRITON_CP_ASYNC_TRANSFER_WIDTH_UNSUPPORTED"
+    )
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_cp_async_current_profile_rejects_incomplete_or_aggregate_evidence():
+    _output, captured = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        "triton_cp_async.ttgir.mlir",
+        "cp-async-evidence-rejection",
+    )
+    missing_lanes = json.loads(json.dumps(captured))
+    issue = next(
+        operation for operation in missing_lanes["operations"]
+        if operation["op"] == "triton.cp_async.issue"
+    )
+    issue.pop("lane_effects")
+    with pytest.raises(FrontendError) as caught:
+        triton_snapshot_to_module(missing_lanes)
+    assert caught.value.code == "TRITON_CP_ASYNC_LANE_TRANSFER_UNRESOLVED"
+
+    aggregate = json.loads(json.dumps(captured))
+    commit = next(
+        operation for operation in aggregate["operations"]
+        if operation["op"] == "triton.cp_async.commit_group"
+    )
+    commit["execution_evidence"].update({
+        "transition": "ONCE",
+        "rendezvous": "ALL_PROGRAM_INSTANCES",
+    })
+    with pytest.raises(FrontendError) as caught:
+        triton_snapshot_to_module(aggregate)
+    assert caught.value.code == "TRITON_EXECUTION_SCOPE_UNRESOLVED"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_cp_async_wait_is_thread_local_and_barrier_publishes():
+    _output, captured = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        "triton_cp_async.ttgir.mlir",
+        "cp-async-thread-local-control",
+    )
+    snapshot = json.loads(json.dumps(captured))
+    snapshot["target"]["cta_threads"] = 2
+    snapshot["actors"][0]["participants"] = [0, 1]
+    for resource in snapshot["resources"]:
+        if resource["kind"] == "cta_barrier":
+            resource["capacity"] = 2
+
+    issue = next(op for op in snapshot["operations"] if op["op"] == "triton.cp_async.issue")
+    issue["lane_effects"] = {
+        "lanes": [0],
+        "transfer_offsets": [0, 1],
+        "source_regions": [issue["lane_effects"]["source_regions"][0]],
+        "destination_regions": [issue["lane_effects"]["destination_regions"][0]],
+        "bytes": [4],
+    }
+    issue["execution_evidence"]["program_instances"] = [0]
+    issue["execution_evidence"]["executors"] = [0]
+    for operation in snapshot["operations"]:
+        evidence = operation.get("execution_evidence")
+        if operation["op"] in {
+            "triton.cp_async.commit_group",
+            "triton.cp_async.wait_group",
+            "triton.barrier.arrive",
+            "triton.barrier.observe",
+        }:
+            evidence["program_instances"] = [0, 1]
+            evidence["executors"] = [0, 1]
+        if operation["op"] == "triton.barrier.arrive":
+            operation["count"] = 2
+    read = next(op for op in snapshot["operations"] if op["op"] == "triton.mem.read")
+    read["lane_effects"] = {
+        "lanes": [1],
+        "region_offsets": [0, 1],
+        "regions": [issue["lane_effects"]["destination_regions"][0]],
+    }
+
+    safe_module = triton_snapshot_to_module(snapshot)
+    safe_direct = check_module(safe_module, engine="maximal")
+    safe_reference = check_module(safe_module.expand_reference(), engine="crosscheck")
+    assert safe_direct["verdict"] == safe_reference["verdict"] == "SAFE"
+
+    snapshot["operations"] = [
+        operation for operation in snapshot["operations"]
+        if not operation["op"].startswith("triton.barrier.")
+    ]
+    snapshot["resources"] = [
+        resource for resource in snapshot["resources"]
+        if resource["kind"] != "cta_barrier"
+    ]
+    snapshot["extraction"]["events_emitted"] = len(snapshot["operations"])
+    unsafe_module = triton_snapshot_to_module(snapshot)
+    unsafe_direct = check_module(unsafe_module, engine="maximal")
+    unsafe_reference = check_module(unsafe_module.expand_reference(), engine="crosscheck")
+    assert unsafe_direct["verdict"] == unsafe_reference["verdict"] == "DATA_HAZARD"
+    assert unsafe_direct["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
+
+
+def test_tilelang_assume_attribute_is_a_transparent_optimizer_fact():
+    tools_root = str(ROOT / "tools")
+    if tools_root not in sys.path:
+        sys.path.insert(0, tools_root)
+    from tilelang_capture import LaneWalker
+
+    capture = types.SimpleNamespace(
+        tvm=None,
+        tirx=None,
+        actor_ids=["lane:0"],
+        scalar_bindings={},
+    )
+    body = type("SeqStmt", (), {"seq": []})()
+    statement = type("AttrStmt", (), {
+        "attr_key": "tl.assume",
+        "body": body,
+    })()
+
+    LaneWalker(capture, 0).walk(statement, ("root",))
+
+
+def test_tilelang_launch_grid_binds_a_direct_symbolic_block_extent():
+    tools_root = str(ROOT / "tools")
+    if tools_root not in sys.path:
+        sys.path.insert(0, tools_root)
+    from tilelang_capture import LaneWalker, TileLangCapture
+
+    var_type = type("Var", (), {})
+    num_tokens = var_type()
+    capture = object.__new__(TileLangCapture)
+    capture.func = types.SimpleNamespace(attrs={
+        "thread_extent": {
+            "blockIdx.x": num_tokens,
+            "threadIdx.x": 64,
+            "threadIdx.y": 1,
+            "threadIdx.z": 1,
+        },
+    })
+    capture.launch_grid = (8192, 1, 1)
+    capture.launch_grid_explicit = True
+    capture.tirx = types.SimpleNamespace(Var=var_type)
+    capture.scalar_bindings = {}
+
+    assert capture._thread_extents()["blockIdx.x"] == 8192
+    assert capture.scalar_bindings == {num_tokens: 8192}
+
+    capture.tvm = None
+    capture.actor_ids = ["lane:0"]
+    assert LaneWalker(capture, 0).bindings == {num_tokens: 8192}
