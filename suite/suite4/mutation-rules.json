@@ -1,0 +1,110 @@
+{
+  "rules": [
+    {
+      "computational_intent": "PRESERVE_OUTPUT",
+      "description": "Set the selected software-pipeline loop to one stage.",
+      "family": "PIPELINE_DEPTH",
+      "name": "M1 low pipeline depth",
+      "rule_id": "MUT-M1-PIPE-STAGE-LOW"
+    },
+    {
+      "computational_intent": "PRESERVE_OUTPUT",
+      "description": "Set the selected software-pipeline loop to a second non-original depth.",
+      "family": "PIPELINE_DEPTH",
+      "name": "M2 alternate pipeline depth",
+      "rule_id": "MUT-M2-PIPE-STAGE-ALT"
+    },
+    {
+      "computational_intent": "PRESERVE_OUTPUT",
+      "description": "Repeat or add an overwritten destination/accumulator initialization.",
+      "family": "BUFFER_INIT",
+      "name": "M3 duplicate destination initialization",
+      "rule_id": "MUT-M3-DEST-INIT-DUP"
+    },
+    {
+      "computational_intent": "PRESERVE_OUTPUT",
+      "description": "Initialize the first producer destination immediately before it is overwritten.",
+      "family": "BUFFER_INIT",
+      "name": "M4 initialize first producer buffer",
+      "rule_id": "MUT-M4-SOURCE-A-INIT"
+    },
+    {
+      "computational_intent": "PRESERVE_OUTPUT",
+      "description": "Initialize the second producer destination immediately before it is overwritten.",
+      "family": "BUFFER_INIT",
+      "name": "M5 initialize second producer buffer",
+      "rule_id": "MUT-M5-SOURCE-B-INIT"
+    },
+    {
+      "computational_intent": "PRESERVE_OUTPUT",
+      "description": "Repeat a selected source load or copy immediately before its consumer.",
+      "family": "ASYNC_PRODUCER",
+      "name": "M6 duplicate producer before compute",
+      "rule_id": "MUT-M6-PRODUCER-DUP-BEFORE"
+    },
+    {
+      "computational_intent": "PRESERVE_OUTPUT",
+      "description": "Repeat a selected source load or copy immediately after its consumer.",
+      "family": "ASYNC_PRODUCER",
+      "name": "M7 duplicate producer after compute",
+      "rule_id": "MUT-M7-PRODUCER-DUP-AFTER"
+    },
+    {
+      "computational_intent": "PRESERVE_OUTPUT",
+      "description": "Add an output-neutral global store/load round trip whose independent Coalesce layouts create a cross-thread RAW dependency without a CTA barrier.",
+      "family": "GLOBAL_MEMORY_ORDER",
+      "name": "M8 mixed-width global RAW round trip",
+      "rule_id": "MUT-M8-GLOBAL-RAW-ROUNDTRIP"
+    },
+    {
+      "computational_intent": "PRESERVE_OUTPUT",
+      "description": "Add an output-neutral global round trip with a runtime all-true mask on the producer store, forcing incompatible store/load layouts without changing source semantics.",
+      "family": "GLOBAL_MEMORY_ORDER",
+      "name": "M9 runtime-true masked producer",
+      "rule_id": "MUT-M9-GLOBAL-RAW-MASKED-STORE"
+    },
+    {
+      "computational_intent": "PRESERVE_OUTPUT",
+      "description": "Add an output-neutral global round trip with a runtime all-true mask on the consumer load, forcing incompatible store/load layouts without changing source semantics.",
+      "family": "GLOBAL_MEMORY_ORDER",
+      "name": "M10 runtime-true masked consumer",
+      "rule_id": "MUT-M10-GLOBAL-RAW-MASKED-LOAD"
+    },
+    {
+      "computational_intent": "PRESERVE_OUTPUT",
+      "description": "Add an output-neutral relaxed GPU-scope atomic exchange followed by an ordinary load of the same unique addresses.",
+      "family": "ATOMIC_MEMORY_ORDER",
+      "name": "M11 relaxed atomic producer followed by load",
+      "rule_id": "MUT-M11-RELAXED-ATOMIC-RAW"
+    },
+    {
+      "computational_intent": "PRESERVE_OUTPUT",
+      "description": "Add an output-neutral masked-load canary whose nonconstant other operand must contribute to AxisInfo constancy.",
+      "family": "COMPILER_ANALYSIS",
+      "name": "M12 masked-load nonconstant other",
+      "rule_id": "MUT-M12-MASKED-OTHER-CONSTANCY"
+    },
+    {
+      "computational_intent": "PRESERVE_OUTPUT",
+      "description": "Add an output-neutral zero-trip flattened-loop canary with an assumption in a mutually exclusive branch.",
+      "family": "CONTROL_FLOW_ANALYSIS",
+      "name": "M13 non-dominating assume in flattened loop",
+      "rule_id": "MUT-M13-NONDOMINATING-ASSUME"
+    },
+    {
+      "computational_intent": "PRESERVE_OUTPUT",
+      "description": "Store a complete scratch tile and reload the identical addresses through a +64 mod 256 column permutation, creating an exact cross-warp RAW dependency without a CTA barrier.",
+      "family": "GLOBAL_MEMORY_ORDER",
+      "name": "M14 cross-warp global RAW round trip",
+      "rule_id": "MUT-M14-GLOBAL-CROSS-WARP-RAW"
+    },
+    {
+      "computational_intent": "PRESERVE_OUTPUT",
+      "description": "Use the exact M14 address permutation with one CTA barrier between the producer store and consumer load.",
+      "family": "GLOBAL_MEMORY_ORDER",
+      "name": "M15 synchronized cross-warp global RAW control",
+      "rule_id": "MUT-M15-GLOBAL-CROSS-WARP-BARRIER-CONTROL"
+    }
+  ],
+  "schema_version": "pipeguard-mutation-rules-v1"
+}

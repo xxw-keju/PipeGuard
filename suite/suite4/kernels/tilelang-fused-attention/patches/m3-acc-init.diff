@@ -1,0 +1,10 @@
+--- original.py
++++ m3-acc-init.py
+@@ -50,6 +50,7 @@
+ 
+             T.copy(Q[bz, by, bx * block_M : (bx + 1) * block_M, :], Q_shared)
+             T.fill(acc_o, 0)
++            T.fill(acc_o, 0)
+             T.fill(logsum, 0)
+             T.fill(scores_max, -T.infinity(accum_dtype))
+ 

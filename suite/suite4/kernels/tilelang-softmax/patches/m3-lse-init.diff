@@ -1,0 +1,10 @@
+--- original.py
++++ m3-lse-init.py
+@@ -25,6 +25,7 @@
+         max_x = T.alloc_fragment([BLOCK_M], dtype)
+         exp_x = T.alloc_fragment([BLOCK_M, BLOCK_N], accum_dtype)
+         sum_exp_x = T.alloc_fragment([BLOCK_M], accum_dtype)
++        T.fill(lse, -T.infinity(accum_dtype))
+         T.fill(lse, -T.infinity(accum_dtype))
+ 
+         for i_n in T.Pipelined(T.ceildiv(N, BLOCK_N)):

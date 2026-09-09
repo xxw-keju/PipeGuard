@@ -1,0 +1,93 @@
+{
+  "bindings": {
+    "BLOCK_M": 64,
+    "BLOCK_N": 64,
+    "batch": 1,
+    "dim": 64,
+    "dtype": "float16",
+    "heads": 4,
+    "is_causal": false,
+    "seq_kv": 256,
+    "seq_q": 256
+  },
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "1": "global:m",
+        "4": "global:q",
+        "5": "global:k",
+        "6": "global:v",
+        "7": "global:o"
+      },
+      "scalar_values": {},
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "BLOCK_M": 64,
+      "BLOCK_N": 64,
+      "FP8_OUTPUT": false,
+      "HEAD_DIM": 64,
+      "IS_HOPPER": true,
+      "STAGE": 1,
+      "warp_specialize": false
+    },
+    "grid": [
+      4,
+      4,
+      1
+    ],
+    "grid_ctas": 16,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "BLOCK_M": "constexpr",
+      "BLOCK_N": "constexpr",
+      "FP8_OUTPUT": "constexpr",
+      "H": "i32",
+      "HEAD_DIM": "constexpr",
+      "IS_HOPPER": "constexpr",
+      "M": "*fp32",
+      "N_CTX": "i32",
+      "STAGE": "constexpr",
+      "Z": "i32",
+      "desc_k": "*fp16",
+      "desc_o": "*fp16",
+      "desc_q": "*fp16",
+      "desc_v": "*fp16",
+      "sm_scale": "fp32",
+      "warp_specialize": "constexpr"
+    }
+  },
+  "dsl": "triton",
+  "kernel_id": "triton-fused-attention",
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "resolver_kwargs": {}
+  },
+  "numeric": {
+    "atol": 0.03,
+    "oracle": "torch.scaled_dot_product_attention",
+    "rtol": 0.03,
+    "seed": 31,
+    "timeout_seconds": 60.0
+  },
+  "recipe_id": "triton-fused-attention-workload-boundary-3",
+  "schema_version": "pipeguard-mutation-workload-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  }
+}

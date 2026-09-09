@@ -1,0 +1,37 @@
+--- original.py
++++ m9-masked-store-roundtrip.py
+@@ -5,8 +5,22 @@
+ 
+ import triton.language as tl
+ 
++
+ @triton.jit
+-def softmax_kernel(output_ptr, input_ptr, input_row_stride, output_row_stride, n_rows, n_cols, BLOCK_SIZE: tl.constexpr,
++def _pipeguard_global_roundtrip_fault(pipeguard_scratch, pipeguard_wide, pipeguard_slot):
++    pipeguard_rows = tl.arange(0, 8)[:, None]
++    pipeguard_cols = tl.arange(0, 256)[None, :]
++    pipeguard_offsets = pipeguard_slot * 2048 + pipeguard_rows * 256 + pipeguard_cols
++    pipeguard_mask = tl.load(pipeguard_wide + pipeguard_offsets) != 0
++    pipeguard_aliases = pipeguard_scratch + pipeguard_offsets
++    pipeguard_zero = tl.zeros((8, 256), tl.float32)
++    tl.store(pipeguard_aliases, pipeguard_zero, mask=pipeguard_mask)
++    pipeguard_reloaded = tl.load(pipeguard_aliases)
++    return tl.max(tl.max(pipeguard_reloaded, axis=1), axis=0)
++
++
++@triton.jit
++def softmax_kernel(output_ptr, input_ptr, pipeguard_scratch, pipeguard_wide, input_row_stride, output_row_stride, n_rows, n_cols, BLOCK_SIZE: tl.constexpr,
+                    num_stages: tl.constexpr):
+     # starting row of the program
+     row_start = tl.program_id(0)
+@@ -27,6 +41,10 @@
+         numerator = tl.exp(row_minus_max)
+         denominator = tl.sum(numerator, axis=0)
+         softmax_output = numerator / denominator
++        pipeguard_fault = _pipeguard_global_roundtrip_fault(
++            pipeguard_scratch, pipeguard_wide, row_idx
++        )
++        softmax_output += pipeguard_fault
+         # Write back output to DRAM
+         output_row_start_ptr = output_ptr + row_idx * output_row_stride
+         output_ptrs = output_row_start_ptr + col_offsets

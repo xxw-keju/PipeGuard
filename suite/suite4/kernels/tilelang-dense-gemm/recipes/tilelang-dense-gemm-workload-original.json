@@ -1,0 +1,52 @@
+{
+  "bindings": {
+    "BLOCK_K": 32,
+    "BLOCK_M": 64,
+    "BLOCK_N": 64,
+    "K": 256,
+    "M": 512,
+    "N": 512,
+    "dtype": "float16"
+  },
+  "compiler": {
+    "grid": [
+      8,
+      8,
+      1
+    ],
+    "pass_configs": {},
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-dense-gemm",
+  "materialization": {
+    "args": [],
+    "kwargs": {
+      "K": 256,
+      "M": 512,
+      "N": 512,
+      "block_K": 32,
+      "block_M": 64,
+      "block_N": 64
+    },
+    "resolver_kwargs": {}
+  },
+  "numeric": {
+    "atol": 0.02,
+    "oracle": "torch.matmul",
+    "rtol": 0.02,
+    "seed": 19,
+    "timeout_seconds": 30.0
+  },
+  "recipe_id": "tilelang-dense-gemm-workload-original",
+  "schema_version": "pipeguard-mutation-workload-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  }
+}

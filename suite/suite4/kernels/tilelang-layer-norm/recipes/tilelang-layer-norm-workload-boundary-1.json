@@ -1,0 +1,52 @@
+{
+  "bindings": {
+    "BLOCK_M": 1,
+    "M": 128,
+    "N": 1024,
+    "dtype": "float16",
+    "eps": 1e-05
+  },
+  "compiler": {
+    "grid": [
+      128,
+      1,
+      1
+    ],
+    "pass_configs": {},
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-layer-norm",
+  "materialization": {
+    "args": [
+      128,
+      1024
+    ],
+    "kwargs": {
+      "blk_m": 1,
+      "eps": 1e-05,
+      "in_dtype": "float16",
+      "out_dtype": "float16",
+      "threads": 256
+    },
+    "resolver_kwargs": {}
+  },
+  "numeric": {
+    "atol": 0.03,
+    "oracle": "torch.nn.functional.layer_norm",
+    "rtol": 0.03,
+    "seed": 43,
+    "timeout_seconds": 30.0
+  },
+  "recipe_id": "tilelang-layer-norm-workload-boundary-1",
+  "schema_version": "pipeguard-mutation-workload-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  }
+}

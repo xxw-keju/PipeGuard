@@ -1,0 +1,56 @@
+--- original.py
++++ m13-nondominating-assume.py
+@@ -5,10 +5,36 @@
+ 
+ import triton.language as tl
+ 
++
++@triton.jit
++def _pipeguard_global_roundtrip_fault(pipeguard_scratch, pipeguard_wide, pipeguard_slot):
++    pipeguard_control = pipeguard_scratch + pipeguard_slot * 66
++    pipeguard_m = tl.load(pipeguard_control)
++    pipeguard_n = tl.load(pipeguard_control + 1)
++    pipeguard_input = pipeguard_control + 2
++    pipeguard_sink = pipeguard_wide + pipeguard_slot * 2048
++    pipeguard_offsets = tl.arange(0, 64)
++    pipeguard_acc = tl.zeros((64,), dtype=tl.float32)
++    if pipeguard_m == 0:
++        tl.assume(pipeguard_n > 0)
++        pipeguard_acc += tl.load(pipeguard_input + pipeguard_offsets)
++    else:
++        for pipeguard_i in tl.range(0, pipeguard_m, flatten=True):
++            for pipeguard_j in range(0, pipeguard_n):
++                pipeguard_acc += tl.load(pipeguard_input + pipeguard_j * 64 + pipeguard_offsets)
++                tl.store(
++                    pipeguard_sink + (pipeguard_i * 8 + pipeguard_j) * 64 + pipeguard_offsets,
++                    pipeguard_acc,
++                )
++    return tl.max(tl.abs(pipeguard_acc), axis=0)
++
++
+ @triton.jit
+ def _layer_norm_fwd_fused(
+     X,  # pointer to the input
+     Y,  # pointer to the output
++    pipeguard_scratch,
++    pipeguard_wide,
+     W,  # pointer to the weights
+     B,  # pointer to the biases
+     Mean,  # pointer to the mean
+@@ -42,6 +68,7 @@
+     # Write mean / rstd
+     tl.store(Mean + row, mean)
+     tl.store(Rstd + row, rstd)
++    pipeguard_fault = _pipeguard_global_roundtrip_fault(pipeguard_scratch, pipeguard_wide, row)
+     # Normalize and apply linear transformation
+     for off in range(0, N, BLOCK_SIZE):
+         cols = off + tl.arange(0, BLOCK_SIZE)
+@@ -50,7 +77,7 @@
+         b = tl.load(B + cols, mask=mask)
+         x = tl.load(X + cols, mask=mask, other=0.).to(tl.float32)
+         x_hat = (x - mean) * rstd
+-        y = x_hat * w + b
++        y = x_hat * w + b + pipeguard_fault
+         # Write output
+         tl.store(Y + cols, y, mask=mask)
+ 

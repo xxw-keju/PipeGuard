@@ -1,0 +1,97 @@
+{
+  "bindings": {
+    "BLOCK_K": 32,
+    "BLOCK_M": 64,
+    "BLOCK_N": 64,
+    "K": 256,
+    "M": 512,
+    "N": 256,
+    "dtype": "float16"
+  },
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:a",
+        "1": "global:b",
+        "2": "global:c"
+      },
+      "scalar_values": {},
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "ACTIVATION": "",
+      "BLOCK_SIZE_K": 32,
+      "BLOCK_SIZE_M": 64,
+      "BLOCK_SIZE_N": 64,
+      "GROUP_SIZE_M": 8,
+      "K": 256,
+      "M": 512,
+      "N": 256,
+      "stride_ak": 1,
+      "stride_am": 256,
+      "stride_bk": 256,
+      "stride_bn": 1,
+      "stride_cm": 256,
+      "stride_cn": 1
+    },
+    "grid": [
+      32,
+      1,
+      1
+    ],
+    "grid_ctas": 32,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "ACTIVATION": "constexpr",
+      "BLOCK_SIZE_K": "constexpr",
+      "BLOCK_SIZE_M": "constexpr",
+      "BLOCK_SIZE_N": "constexpr",
+      "GROUP_SIZE_M": "constexpr",
+      "K": "constexpr",
+      "M": "constexpr",
+      "N": "constexpr",
+      "a_ptr": "*fp16",
+      "b_ptr": "*fp16",
+      "c_ptr": "*fp16",
+      "stride_ak": "constexpr",
+      "stride_am": "constexpr",
+      "stride_bk": "constexpr",
+      "stride_bn": "constexpr",
+      "stride_cm": "constexpr",
+      "stride_cn": "constexpr"
+    }
+  },
+  "dsl": "triton",
+  "kernel_id": "triton-dense-gemm",
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "resolver_kwargs": {}
+  },
+  "numeric": {
+    "atol": 0.02,
+    "oracle": "torch.matmul",
+    "rtol": 0.02,
+    "seed": 17,
+    "timeout_seconds": 30.0
+  },
+  "recipe_id": "triton-dense-gemm-workload-boundary-2",
+  "schema_version": "pipeguard-mutation-workload-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  }
+}

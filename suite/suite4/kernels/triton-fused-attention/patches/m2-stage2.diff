@@ -1,0 +1,11 @@
+--- original.py
++++ m2-stage2.py
+@@ -32,7 +32,7 @@
+     else:
+         offsetv_y = offset_y + lo
+     # loop over k, v and update accumulator
+-    for start_n in tl.range(lo, hi, BLOCK_N, warp_specialize=warp_specialize):
++    for start_n in tl.range(lo, hi, BLOCK_N, num_stages=2, warp_specialize=warp_specialize):
+         start_n = tl.multiple_of(start_n, BLOCK_N)
+         # -- compute qk ----
+         k = desc_k.load([offsetk_y, 0]).T

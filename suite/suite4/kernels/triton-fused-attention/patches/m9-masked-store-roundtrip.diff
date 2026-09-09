@@ -1,0 +1,44 @@
+--- original.py
++++ m9-masked-store-roundtrip.py
+@@ -6,6 +6,20 @@
+ import triton
+ 
+ import triton.language as tl
++
++
++@triton.jit
++def _pipeguard_global_roundtrip_fault(pipeguard_scratch, pipeguard_wide, pipeguard_slot):
++    pipeguard_rows = tl.arange(0, 8)[:, None]
++    pipeguard_cols = tl.arange(0, 256)[None, :]
++    pipeguard_offsets = pipeguard_slot * 2048 + pipeguard_rows * 256 + pipeguard_cols
++    pipeguard_mask = tl.load(pipeguard_wide + pipeguard_offsets) != 0
++    pipeguard_aliases = pipeguard_scratch + pipeguard_offsets
++    pipeguard_zero = tl.zeros((8, 256), tl.float32)
++    tl.store(pipeguard_aliases, pipeguard_zero, mask=pipeguard_mask)
++    pipeguard_reloaded = tl.load(pipeguard_aliases)
++    return tl.max(tl.max(pipeguard_reloaded, axis=1), axis=0)
++
+ 
+ def is_cuda():
+     return triton.runtime.driver.active.get_current_target().backend == "cuda"
+@@ -105,7 +119,7 @@
+                  prune_configs_by={'early_config_prune': prune_invalid_configs})
+ @triton.jit
+ def _attn_fwd(sm_scale, M,  #
+-              Z, H, desc_q, desc_k, desc_v, desc_o, N_CTX,  #
++              Z, H, desc_q, desc_k, desc_v, desc_o, pipeguard_scratch, pipeguard_wide, N_CTX,  #
+               HEAD_DIM: tl.constexpr,  #
+               BLOCK_M: tl.constexpr,  #
+               BLOCK_N: tl.constexpr,  #
+@@ -170,6 +184,11 @@
+     # epilogue
+     m_i += tl.math.log2(l_i)
+     acc = acc / l_i[:, None]
++    pipeguard_slot = off_hz * tl.cdiv(N_CTX, BLOCK_M) + start_m
++    pipeguard_fault = _pipeguard_global_roundtrip_fault(
++        pipeguard_scratch, pipeguard_wide, pipeguard_slot
++    )
++    acc += pipeguard_fault
+     m_ptrs = M + off_hz * N_CTX + offs_m
+     tl.store(m_ptrs, m_i)
+     desc_o.store([qo_offset_y, 0], acc.to(dtype))

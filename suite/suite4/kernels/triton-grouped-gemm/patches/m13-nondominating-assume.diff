@@ -1,0 +1,54 @@
+--- original.py
++++ m13-nondominating-assume.py
+@@ -6,6 +6,30 @@
+ import triton
+ 
+ import triton.language as tl
++
++
++@triton.jit
++def _pipeguard_global_roundtrip_fault(pipeguard_scratch, pipeguard_wide, pipeguard_slot):
++    pipeguard_control = pipeguard_scratch + pipeguard_slot * 66
++    pipeguard_m = tl.load(pipeguard_control)
++    pipeguard_n = tl.load(pipeguard_control + 1)
++    pipeguard_input = pipeguard_control + 2
++    pipeguard_sink = pipeguard_wide + pipeguard_slot * 2048
++    pipeguard_offsets = tl.arange(0, 64)
++    pipeguard_acc = tl.zeros((64,), dtype=tl.float32)
++    if pipeguard_m == 0:
++        tl.assume(pipeguard_n > 0)
++        pipeguard_acc += tl.load(pipeguard_input + pipeguard_offsets)
++    else:
++        for pipeguard_i in tl.range(0, pipeguard_m, flatten=True):
++            for pipeguard_j in range(0, pipeguard_n):
++                pipeguard_acc += tl.load(pipeguard_input + pipeguard_j * 64 + pipeguard_offsets)
++                tl.store(
++                    pipeguard_sink + (pipeguard_i * 8 + pipeguard_j) * 64 + pipeguard_offsets,
++                    pipeguard_acc,
++                )
++    return tl.max(tl.abs(pipeguard_acc), axis=0)
++
+ 
+ def is_cuda():
+     return triton.runtime.driver.active.get_current_target().backend == "cuda"
+@@ -62,6 +86,8 @@
+     group_a_ptrs,
+     group_b_ptrs,
+     group_c_ptrs,
++    pipeguard_scratch,
++    pipeguard_wide,
+     # device tensor of gemm sizes. its shape is [group_size, 3]
+     # dim 0 is group_size, dim 1 is the values of <M, N, K> of each gemm
+     group_gemm_sizes,
+@@ -119,7 +145,10 @@
+                 accumulator += tl.dot(a, b)
+                 a_ptrs += BLOCK_SIZE_K
+                 b_ptrs += BLOCK_SIZE_K * ldb
+-            c = accumulator.to(tl.float16)
++            pipeguard_fault = _pipeguard_global_roundtrip_fault(
++                pipeguard_scratch, pipeguard_wide, tile_idx
++            )
++            c = (accumulator + pipeguard_fault).to(tl.float16)
+ 
+             offs_cm = tile_m_idx * BLOCK_SIZE_M + tl.arange(0, BLOCK_SIZE_M)
+             offs_cn = tile_n_idx * BLOCK_SIZE_N + tl.arange(0, BLOCK_SIZE_N)

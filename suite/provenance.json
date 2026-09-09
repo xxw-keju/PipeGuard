@@ -1,0 +1,34 @@
+{
+  "exclusions": [
+    ".artifacts",
+    "__pycache__",
+    "*.pyc",
+    "compiled binaries",
+    "runtime output"
+  ],
+  "schema_version": "pipeguard-root-suite-provenance-v1",
+  "suite2": {
+    "bytes": 8793819,
+    "files": 4507,
+    "files_sha256": "a1aac2de772e3bddf7f01e4c64e4d67879faf759975507225b4b72b870f20868",
+    "source_branch": "exp-dsl-tilelang",
+    "source_head": "1e12b7718db007d4109126efd8d016e16054b546",
+    "source_path": "corpus/suite2",
+    "source_worktree": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new"
+  },
+  "suite4": {
+    "bytes": 1382032,
+    "catalog_sha256": "127d7c6759d7da49dae1af2c65b9d48086ca5c34ac37609ce06c466388a89998",
+    "excluded_outside_frozen_catalog": [
+      "kernels/triton-dense-gemm/sources/m15-cross-warp-barrier-control.py",
+      "kernels/triton-dense-gemm/patches/m15-cross-warp-barrier-control.diff"
+    ],
+    "files": 234,
+    "files_sha256": "628eefee5d9c0d2c493ef265deb6f6e92e1d47f3cab483c61f6cd3000c4a4d13",
+    "lock_sha256": "74e27e3b8e2d3de1e23b3b9b6bc51cfc9a4c85940f8b0164ec5cbcf20bee6f54",
+    "source_branch": "exp-dsl-tilelang",
+    "source_head": "1e12b7718db007d4109126efd8d016e16054b546",
+    "source_path": "corpus/mutations/suite4",
+    "source_worktree": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new"
+  }
+}

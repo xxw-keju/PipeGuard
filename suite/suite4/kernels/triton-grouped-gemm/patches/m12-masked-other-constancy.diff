@@ -1,0 +1,50 @@
+--- original.py
++++ m12-masked-other-constancy.py
+@@ -6,6 +6,26 @@
+ import triton
+ 
+ import triton.language as tl
++
++
++@triton.jit
++def _pipeguard_global_roundtrip_fault(pipeguard_scratch, pipeguard_wide, pipeguard_slot):
++    pipeguard_offsets = tl.arange(0, 256)
++    pipeguard_groups = pipeguard_offsets // 16
++    pipeguard_outer_mask = (pipeguard_offsets % 16) < 8
++    pipeguard_varying_other = (pipeguard_offsets % 2) == 0
++    pipeguard_loaded_mask = tl.load(
++        pipeguard_scratch + pipeguard_slot * 16 + pipeguard_groups,
++        mask=pipeguard_outer_mask,
++        other=pipeguard_varying_other.to(tl.int32),
++    )
++    pipeguard_values = tl.load(
++        pipeguard_wide + pipeguard_slot * 256 + pipeguard_offsets,
++        mask=pipeguard_loaded_mask != 0,
++        other=0,
++    )
++    return tl.sum(pipeguard_values, axis=0) - 192
++
+ 
+ def is_cuda():
+     return triton.runtime.driver.active.get_current_target().backend == "cuda"
+@@ -62,6 +82,8 @@
+     group_a_ptrs,
+     group_b_ptrs,
+     group_c_ptrs,
++    pipeguard_scratch,
++    pipeguard_wide,
+     # device tensor of gemm sizes. its shape is [group_size, 3]
+     # dim 0 is group_size, dim 1 is the values of <M, N, K> of each gemm
+     group_gemm_sizes,
+@@ -119,7 +141,10 @@
+                 accumulator += tl.dot(a, b)
+                 a_ptrs += BLOCK_SIZE_K
+                 b_ptrs += BLOCK_SIZE_K * ldb
+-            c = accumulator.to(tl.float16)
++            pipeguard_fault = _pipeguard_global_roundtrip_fault(
++                pipeguard_scratch, pipeguard_wide, tile_idx
++            )
++            c = (accumulator + pipeguard_fault).to(tl.float16)
+ 
+             offs_cm = tile_m_idx * BLOCK_SIZE_M + tl.arange(0, BLOCK_SIZE_M)
+             offs_cn = tile_n_idx * BLOCK_SIZE_N + tl.arange(0, BLOCK_SIZE_N)

@@ -1,0 +1,73 @@
+{
+  "bindings": {
+    "BLOCK_M": 1,
+    "BLOCK_N": 1024,
+    "M": 128,
+    "N": 1024,
+    "dtype": "float16"
+  },
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:output",
+        "1": "global:input"
+      },
+      "scalar_values": {},
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "BLOCK_SIZE": 1024,
+      "num_stages": 2
+    },
+    "grid": [
+      128,
+      1,
+      1
+    ],
+    "grid_ctas": 128,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 2,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "BLOCK_SIZE": "constexpr",
+      "input_ptr": "*fp16",
+      "input_row_stride": "i32",
+      "n_cols": "i32",
+      "n_rows": "i32",
+      "num_stages": "constexpr",
+      "output_ptr": "*fp16",
+      "output_row_stride": "i32"
+    }
+  },
+  "dsl": "triton",
+  "kernel_id": "triton-softmax",
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "resolver_kwargs": {}
+  },
+  "numeric": {
+    "atol": 0.002,
+    "oracle": "torch.softmax",
+    "rtol": 0.002,
+    "seed": 47,
+    "timeout_seconds": 30.0
+  },
+  "recipe_id": "triton-softmax-workload-boundary-1",
+  "schema_version": "pipeguard-mutation-workload-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  }
+}

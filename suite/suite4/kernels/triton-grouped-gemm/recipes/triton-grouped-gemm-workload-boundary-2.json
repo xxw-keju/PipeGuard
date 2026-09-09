@@ -1,0 +1,85 @@
+{
+  "bindings": {
+    "BLOCK_K": 32,
+    "BLOCK_M": 64,
+    "BLOCK_N": 64,
+    "K": 256,
+    "N": 128,
+    "dtype": "float16",
+    "group_sizes": [
+      128,
+      256
+    ]
+  },
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:a_ptrs",
+        "1": "global:b_ptrs",
+        "2": "global:c_ptrs",
+        "3": "global:sizes",
+        "4": "global:lds"
+      },
+      "scalar_values": {},
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "BLOCK_SIZE_K": 32,
+      "BLOCK_SIZE_M": 64,
+      "BLOCK_SIZE_N": 64,
+      "NUM_SM": 8
+    },
+    "grid": [
+      8,
+      1,
+      1
+    ],
+    "grid_ctas": 8,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "BLOCK_SIZE_K": "constexpr",
+      "BLOCK_SIZE_M": "constexpr",
+      "BLOCK_SIZE_N": "constexpr",
+      "NUM_SM": "constexpr",
+      "g_lds": "*i32",
+      "group_a_ptrs": "*u64",
+      "group_b_ptrs": "*u64",
+      "group_c_ptrs": "*u64",
+      "group_gemm_sizes": "*i32",
+      "group_size": "i32"
+    }
+  },
+  "dsl": "triton",
+  "kernel_id": "triton-grouped-gemm",
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "resolver_kwargs": {}
+  },
+  "numeric": {
+    "atol": 0.03,
+    "oracle": "per-group torch.matmul",
+    "rtol": 0.03,
+    "seed": 23,
+    "timeout_seconds": 45.0
+  },
+  "recipe_id": "triton-grouped-gemm-workload-boundary-2",
+  "schema_version": "pipeguard-mutation-workload-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  }
+}

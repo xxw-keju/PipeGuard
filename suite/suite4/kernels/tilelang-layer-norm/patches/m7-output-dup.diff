@@ -1,0 +1,10 @@
+--- original.py
++++ m7-output-dup.py
+@@ -56,6 +56,7 @@
+                 )
+ 
+             T.copy(X_smem, Y[bx * blk_m, 0])
++            T.copy(X_smem, Y[bx * blk_m, 0])
+ 
+     return main
+ 

@@ -1,0 +1,50 @@
+{
+  "bindings": {
+    "BLOCK_M": 2,
+    "BLOCK_N": 512,
+    "M": 256,
+    "N": 1024,
+    "dtype": "float16"
+  },
+  "compiler": {
+    "grid": [
+      128,
+      1,
+      1
+    ],
+    "pass_configs": {},
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-softmax",
+  "materialization": {
+    "args": [],
+    "kwargs": {
+      "BLOCK_M": 2,
+      "BLOCK_N": 512,
+      "dtype": "float16"
+    },
+    "resolver_kwargs": {
+      "M": 256,
+      "N": 1024
+    }
+  },
+  "numeric": {
+    "atol": 0.003,
+    "oracle": "torch.softmax",
+    "rtol": 0.003,
+    "seed": 53,
+    "timeout_seconds": 45.0
+  },
+  "recipe_id": "tilelang-softmax-workload-boundary-3",
+  "schema_version": "pipeguard-mutation-workload-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  }
+}

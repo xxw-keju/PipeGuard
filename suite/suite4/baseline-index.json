@@ -1,0 +1,3953 @@
+{
+  "catalog_sha256": "127d7c6759d7da49dae1af2c65b9d48086ca5c34ac37609ce06c466388a89998",
+  "counts": {
+    "assessed_cases": 244,
+    "boundary_workloads": 30,
+    "captured_snapshot_cases": 20,
+    "cases": 376,
+    "checked_cases": 0,
+    "kernels": 10,
+    "lowered_cases": 244,
+    "mutant_variants": 84,
+    "numeric_compile_error_cases": 0,
+    "numeric_hang_cases": 0,
+    "numeric_mismatch_cases": 24,
+    "numeric_pass_cases": 220,
+    "original_variants": 10,
+    "original_workloads": 10,
+    "parsed_pgir_cases": 0
+  },
+  "results": [
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m1-stage1--tilelang-dense-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "2ee5ec8cc612c616aa890d8b7462d70c2c1b933ea23d117d259f5b37bfc1a423"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m1-stage1--tilelang-dense-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "bd08e00111181e0b8153ace94880def46d70bc0f9129c58e9f2e1d90081e7530"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m1-stage1--tilelang-dense-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "628135425fab572835eaade263a6e191e9b44bf89b45e27d202a733f581920bf"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m1-stage1--tilelang-dense-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "7576ba7537d7a3b59ffad891ae5712e0eb4be6b7a0111d2a2cb96853ab43d926"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m2-stage2--tilelang-dense-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "862d839d5792c9d2c5cb037b18cf74dd4577fde33a27955aa42d8a667cd38c62"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m2-stage2--tilelang-dense-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "4badfc2a7eec21cb761b85f816c7b97751c02f2b8ba11abb6487f18c4a20faf4"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m2-stage2--tilelang-dense-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "3e0134eab2c249e13775b980344b8a40cbd8e0d2a9b4b72d5381dc77161efee4"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m2-stage2--tilelang-dense-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "52dae37e96dda85d4f8ba549a967584766a9139259d97172b50ae2ca3194d545"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m3-acc-init--tilelang-dense-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "f0b09b2671c691cc6b6902345e503e4a2ccb2f850c7f8a8380e80147eef1b7c8"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m3-acc-init--tilelang-dense-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "550c9c1d6e46cab12457e560e60db26291ee9928cd63b90305ec239496d3d39b"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m3-acc-init--tilelang-dense-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "06f86d100a95702f94f7d40f253f9f1599d628cb72947d1e482ce84d4a25d133"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m3-acc-init--tilelang-dense-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "e184e6bfdf185cdba2f794dca9085cfe394e4c7adf20fcc313c44d088e19fd13"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m4-a-init--tilelang-dense-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "df85f3c1b3abc625ec405117e94daf1eea52b3ca6120b1673ff5618c341f935f"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m4-a-init--tilelang-dense-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "a0dbb339929f85c25236c912e421d8510a5c46bbe5a0741bd49b019f1bee83a8"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m4-a-init--tilelang-dense-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "2444fd373576565d19af74e58a058c887758f719732268d869a741de085782a3"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m4-a-init--tilelang-dense-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "61a077e5c62734102b0bbcc6c1621fac52b8c62dd644a506b291f571c09dc13d"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m5-b-init--tilelang-dense-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "b2a192aaa5f7a1c5208c09eb751885d4f65a26406d9bd92dc60b165141b26e56"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m5-b-init--tilelang-dense-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "cb68ece9ee1a542c48aa479dd974f1cd79ea118807065d57a3bbb18e53025c79"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m5-b-init--tilelang-dense-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "3f0006dd4660de5140a514a82f65e33f9a464fe427e537c543404c12317b9390"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m5-b-init--tilelang-dense-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "7ee3434585b5da4352979a61b55c9e4b9644f301b5adc3b3de4ab0e5b9ed6096"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m7-a-after--tilelang-dense-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "6b8de8e40ad37aa2d90f53d59445005e71d9686f37201e4e70b577af1c6f6c9d"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m7-a-after--tilelang-dense-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "e00a219b47d3f3f132961a9afa63f8d9f0bdf1646facc23c07c77aaca79a6b83"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m7-a-after--tilelang-dense-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "ecf49a6635f3c4ee0a20cd355a461857d078dc91ae2689f1f520f639e036d13b"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-m7-a-after--tilelang-dense-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "81824621d9ae345221a2db046d9ab19c5ba88ec3c1edc965921e3519943e8d08"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-original--tilelang-dense-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "659228e0b63996ef6abbe5e508eb33cb456b321b7492282b1f9c5e42665e5d70"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-original--tilelang-dense-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "80beb78e9d58e4f18eda1a2c8b69368e9c80f407f8e2cd4d9538640d0af4f374"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-original--tilelang-dense-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "fc4b6dab2e44333aa993fb020111f15472ec47879a8f6e3dda6a322a6a32b277"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-dense-gemm-source-original--tilelang-dense-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_TMA_DESCRIPTOR_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "1093574429efb6760ddb9aec4dea3531fd22fb540d4b8a06a88bb781060a8e70"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m1-stage1--tilelang-fused-attention-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "bcdb6d457fa065952f2bf9e0283fb194cf51a654df4411a0705e27f6a61f4458"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m1-stage1--tilelang-fused-attention-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "514349a1d1db2df44ac23089ac8d15b7fa9e0d981c1aeb22db457b6fa685b90e"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m1-stage1--tilelang-fused-attention-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "c4c5f8e444e08ddf7676491e419c6f48f15a740767445a6e9fa6ecaccf7ef37d"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m1-stage1--tilelang-fused-attention-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "1035e7dac4c386063e8fb65a1038524f746074ad01c03d8f7bdf147faf5fe1cf"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m2-stage3--tilelang-fused-attention-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "9ca70739431285d43f38a398be3243e6cc598dc89470d674e3f5b7e103abb04b"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m2-stage3--tilelang-fused-attention-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "9687f1181da8b838ae36d1d6db8e06187b367268469c179bf4108d8803b3e2b4"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m2-stage3--tilelang-fused-attention-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "899ae0d308ef82b8b4a370c96ef426372776add023fa27988082935c2ad917fd"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m2-stage3--tilelang-fused-attention-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "19cc4d645f892fc2a49ea5b4715124e2de5cf5bdc591d8cf991cfcbd5fd04931"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m3-acc-init--tilelang-fused-attention-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "5fd8a9e71d181701bdb6e64dcbdc38a723be03b4e431fd5a2f94fcaf671883d7"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m3-acc-init--tilelang-fused-attention-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "1b1aa59d295f3df96f33c4fbc94b9718162456b745e9aa9501ba58eda8af22ad"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m3-acc-init--tilelang-fused-attention-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "e6e95d1061299dff27b826fb17845f8f22faf557a8291a61730333fd5599528f"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m3-acc-init--tilelang-fused-attention-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "5324f11f1237a79d0515cf6f1f3fc944e37cc7fcc67a54e0aed997eaf88bcd4e"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m4-k-init--tilelang-fused-attention-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "b0e456d4051cec7d606cbfd0fda88ca12abfc5baafffd724cb3d00d263c3dc84"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m4-k-init--tilelang-fused-attention-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "c8e942231ecddbdea1a00c16f535aca8165ab68170705c886dd5e5c927310b2c"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m4-k-init--tilelang-fused-attention-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "add0ae5ea3a3c7a6d0533c28805f3cc70b368513263ff8f2b75650cfe6437ad7"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m4-k-init--tilelang-fused-attention-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "71a86b64b5dbfb53bded9456e243d324a278d484ab6d22fc2c406f4dd5d79eb2"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m5-v-init--tilelang-fused-attention-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "ca5651d17f885e44ffb99ab41ffef7dc21bc549a00f144b25a09cb8d4b0a415d"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m5-v-init--tilelang-fused-attention-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "11b97393c038f9ca57015eac35a56734530adfdf271edc995378e5743ae1b5fa"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m5-v-init--tilelang-fused-attention-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "f79bcbf877149d2de0a45980f4456b0be0c7dc66a9129e73e4e938bec10580f4"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m5-v-init--tilelang-fused-attention-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "eeae9c0208aec75f0057d05580c15fea2f42c529c875ef2296758bf9a06f845e"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m6-k-before--tilelang-fused-attention-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "32e4eb8937b490e43eeaf87ddd3bcdeb05cc4d8da6677e74618246ac62efaa0e"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m6-k-before--tilelang-fused-attention-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "b20562d53f8e6a83b5ae30469fbbbf33c957fd8f26d1f1472325e4c14d8e584e"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m6-k-before--tilelang-fused-attention-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "30e1ea489f1b1655b9ebba0b3ba9ad73a90a38ccca520c16636d73be625dd9e3"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m6-k-before--tilelang-fused-attention-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "69d7d9c6b918af457d1763a88cfdfb926dd7dcc5fc6b1064777a0ee42d992d9b"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m7-k-after--tilelang-fused-attention-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "eb72d686bb3466db2f35e918882f75e16d31d2b21c4aba48dfd8b0354ab963ec"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m7-k-after--tilelang-fused-attention-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "3630eef06e73937d97f8c67dd3aff4438b5feb12e4c638d0b51ccde0af411ad5"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m7-k-after--tilelang-fused-attention-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "ebfe2491bb3290783a05b5b9d56ca131171cb926232d94129de211319ce1e571"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-m7-k-after--tilelang-fused-attention-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "9a187d7898230188aa647e961bc8dda891dea9b665040096ea640fcb74f8fa0f"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-original--tilelang-fused-attention-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "f8ec3ab10ae7e3f8fbcbb72c91b907afbb6d11577a5071d05af1754b8c28b81b"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-original--tilelang-fused-attention-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "5d6309e6020b5ac7264307f52317557638fd986b67908ade4513851c1eb18a04"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-original--tilelang-fused-attention-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "8531ee361ec2bc84a6710fc89042fe5d5a45458fab9a9f17a392ff01be72bc4d"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-fused-attention-source-original--tilelang-fused-attention-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "ce2d961978e2014f047736c90d8f717f57f9a6f0aa8e15e34c52551de182bcde"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m1-stage1--tilelang-grouped-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "cc18317ad6936a6152c98cbfbfda18c9d0fe6b302b106de88e2d58f4b4b1be8d"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m1-stage1--tilelang-grouped-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "9dee12921d225b5eea9810e98b59321ac7504ab31c8c22de8569cf8a45cb128e"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m1-stage1--tilelang-grouped-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "d2ed05df92b0fd7d94581707a23c7aa6d17699ad875591639adcc67fb9a540cd"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m1-stage1--tilelang-grouped-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "5b44e32da8bdc67ce2e9e6d0e1054c01cdc7f9fcab9adf5d8bc52c0d7dbf8ee2"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m2-stage3--tilelang-grouped-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "52d7ddaa7df84c5708f44c0135f01021dd02b534a92acbc837ef930933c1b8d6"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m2-stage3--tilelang-grouped-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "9d91d03f2c9728442395151062b99596d272311deefb22a8383af40b9053de1a"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m2-stage3--tilelang-grouped-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "bcde0f43081bf6ae4af52ffc8edbe1687c054369ebd5608719c7f61c03d42b14"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m2-stage3--tilelang-grouped-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "bf85ae963a8e3e0a0965f1dbae6d3bfb6c9dc26ea6e49f036e2c68964ec3c05a"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m3-acc-init--tilelang-grouped-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "ea2f1c1c734516f30d227c87b143f9edbe12d6ec99146e98e832f1838fb74663"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m3-acc-init--tilelang-grouped-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "8f170447f03a0d61decdaec0afad54ca6e1bf1e8e69aa5ef1f94e5fa05b539ea"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m3-acc-init--tilelang-grouped-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "0374819ff38bffdbbf0fb7c730cddec5f085bc8352cdb6d749c4205458c7f6fe"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m3-acc-init--tilelang-grouped-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "5d7fb49f15ae1c1ff46e976f001b8fdbf9a473c999aa7ede94d7a0fd19b45e7e"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m4-a-init--tilelang-grouped-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "0628fd68a951fe55825b2db3233cc992c721d72fc9edfe3efe17b8921a1aebf5"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m4-a-init--tilelang-grouped-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "b0e9f022d350219cfa54122bccf43907ddaf9ab75fdd8068260d536545399222"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m4-a-init--tilelang-grouped-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "608fe260bf3e5eb476dff0efe77177db162d03fb5f3013aa70af66ed3736ea66"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m4-a-init--tilelang-grouped-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "98b8d26a3b1f15dd4b1de8985bcd26c7247f03d015ebbfe6d626fc2c374e6873"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m5-b-init--tilelang-grouped-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "49f8cef7b6cc4bfa557500cf031607b0e7d7ac72c7def5624e94112a5fe3ef6f"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m5-b-init--tilelang-grouped-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "bf72c943c64eda6393ccda3727e015893fa775f8efed8ae9682854d61aebaacd"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m5-b-init--tilelang-grouped-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "bd27574852084c49672590e385e1239b76a4921c298f73caa8e35b50302b6dac"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m5-b-init--tilelang-grouped-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_NUMERIC_MISMATCH",
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "NUMERIC_MISMATCH",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "8c5053618c66b330af63acad92112161cd090c13d9055028d1c164205d5413bc"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m6-a-before--tilelang-grouped-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "b38344086bc935e73b8ba6b3f530cf696d6e53a01c183ce6b4b40651923e0828"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m6-a-before--tilelang-grouped-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "8d8ef62de01ebfb65f5d458ee258b171047caeae0bca6f2e9fea5ac59007eb08"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m6-a-before--tilelang-grouped-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "d36c0f333f8e2b739c90d05c6e12244ad590ebbb6349fd1a3e304f55f382bc56"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m6-a-before--tilelang-grouped-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "b65a9e21f0e6b313be2a70b8ca8c507a0ea2935d1ee8f2eca994c5d70e0d32dd"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m7-a-after--tilelang-grouped-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "ed7941de154857d1dad890411ef19c561b6074e645666a066138248d2fec6ad7"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m7-a-after--tilelang-grouped-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "aa4c398ff96db342807825eb877ef994706728a3506b3b0ae7d67e226b8f5eec"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m7-a-after--tilelang-grouped-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "d48fa032125399fe1beefbfb5af68399ff0a82c3ec99bf3c9bbb100604cc35fc"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-m7-a-after--tilelang-grouped-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "d6713598bc83224366b71313fb900ff8b32f45952edb4df38535e3cf8ff671e5"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-original--tilelang-grouped-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "4b583bc431cf75fa788a646b79d7ee00e5662a64c45bb622873393862919250f"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-original--tilelang-grouped-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "45e8db06f94e3eb934cf0da8f914006edd399286b003dc01e9bc8524af5fb4a5"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-original--tilelang-grouped-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "6a16a02ba54b8137ad819aa928b6653e32b241ee37064fc3625de20ef2b30189"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-grouped-gemm-source-original--tilelang-grouped-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_STATIC_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "4fddd4c0b13fece5e7ffe30d552a06cd91ea54c864f3f2bae0dcec15db17dde3"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m3-output-init--tilelang-layer-norm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "422f67633560d261fadd3b54b1cfaf0a6d516981753b6fd70ffba6175cbd37a8"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m3-output-init--tilelang-layer-norm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "1d35fbf3246bbf2965ae4302255bd97302a149fe380ecad20342745f15622336"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m3-output-init--tilelang-layer-norm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "9ff242e3b6c780b1f3e74802b2707f95b9a845937c058883932dcea9ef88c90d"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m3-output-init--tilelang-layer-norm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "5cfc106f1b2aafe49abf9e1e90d77c4f5eeb9a7b6acc246f3f769c067a0af677"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m4-x-init--tilelang-layer-norm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "62cc476a5db0f520a66f4bd7d294c729e6ecd58f7a233da91060cee9b0472b83"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m4-x-init--tilelang-layer-norm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "07844b2be9db2e4ac9b58a1a7dbf83f9efc42e63b8a79f8c0c5c7803b9904ec6"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m4-x-init--tilelang-layer-norm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "4ee1c5fed814534e61953c0577d85b27dcf84496f570323849c90b8ae184781e"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m4-x-init--tilelang-layer-norm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "c0025f94e43bbb767040351d7813880b0460e93dde644211d0b9a4924124b270"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m5-gamma-init--tilelang-layer-norm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "be72b5f347a410276e7bc2cae4f92110a3dcb4de9a73fdfd63c23a46f934d0e1"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m5-gamma-init--tilelang-layer-norm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "195e91014aa75b4818aad7e09f89be049f91b2e5e17309a45873a355d0843614"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m5-gamma-init--tilelang-layer-norm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "e42e17617f175f1232b623070b307853764c2fedca743b0ce357d17416d1b62e"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m5-gamma-init--tilelang-layer-norm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "5d928e5ad27fe80118bc008f52046e9c53c9fd6fbf39378b5228f2952fd7afc8"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m6-x-before--tilelang-layer-norm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "0a91ecaaa018b17bf258546b1837ac25ed30f5fe534c67aade6bdde13530c296"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m6-x-before--tilelang-layer-norm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "61adcd22d5596d505b0eccc58828f633df9f0f2e3f355c00d11656f459ae2e83"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m6-x-before--tilelang-layer-norm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "e43f74fd5d7251c57aa803c259a6bb63aa650d3d685bfb119328801f0bc74d70"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m6-x-before--tilelang-layer-norm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "b6389652131cdd66919e15f14e29756781ff7d336ad40bc8729e9bf115fe34b7"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m7-output-dup--tilelang-layer-norm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "321eb5f1417100cf7dce44f51fd5e1262969d73e76ef312e0ac8502c4d6c3308"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m7-output-dup--tilelang-layer-norm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "f3c8537829cb31d5d308dc372a45a627b22767e43c11308437251b354fd8b283"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m7-output-dup--tilelang-layer-norm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "307fc588941e5034dd184f7926dc268952062b99922ccc2dfd9307ad4d3b482b"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m7-output-dup--tilelang-layer-norm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "1fea962c83118f14e5653312ea1125c15e1a460facd69ee5a7e2bdee12168069"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m7-x-after--tilelang-layer-norm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "dfd6a7058b8e1c01c102964e313916b25407e9e8361aef5964eaa2987efa372f"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m7-x-after--tilelang-layer-norm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "4cf4a59a401074b5ee1cff224ca50c03627f6dc98f1e3915ba476bdcbc83bc28"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m7-x-after--tilelang-layer-norm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "8103e0aebd3c7fc6e8189cad49145e96b1e27e5c2849520d1a70d94bdac595e3"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-m7-x-after--tilelang-layer-norm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "c68442f68f48ecfdf09ce2e5a1007f93ec3475fa5955c6a4349306e1517c3427"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-original--tilelang-layer-norm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "6966e2dd0f5ca2ca03a29785c0ab3c0d32c44b161a851dfcf0a9a1356489e3b3"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-original--tilelang-layer-norm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "31fe8771b4644a8e1da7bbe56e171a2f7142e6ff9253885acb60a24eb6a8a735"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-original--tilelang-layer-norm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "4c8038b31f93d7758a79b2fc7b024f184515977bba67acf0cfa6fe949b0c3040"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-layer-norm-source-original--tilelang-layer-norm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "a822d7ad177b2d2ee235ec3783576a239a128cdc5f9a2ec8ed1ea8017c1b25e0"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m3-lse-init--tilelang-softmax-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "e5309f2617d5a72f262630037d2fd435b536cfc42f7845526d3e269bf0e4bc48"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m3-lse-init--tilelang-softmax-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "51f9aad06b63c8236bb2b9697c81243c7e899f0337261868e3c577b938d84517"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m3-lse-init--tilelang-softmax-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "3c982cafc195c77043f01637edf6eb22dff213e30b696aab1748cd37a4f10a3e"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m3-lse-init--tilelang-softmax-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "9a6da825b101286d1b448e14ecf6e375f2a8b55daea4eb421dc5b08f85dfc6ac"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m4-x-init--tilelang-softmax-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "28b7e9fb41e261ee0be6c37affe803418065ac6d4978a4d2678e92860d02495c"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m4-x-init--tilelang-softmax-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "8300f92e826c7b101d284fe5047017af43f81d70e7a7daadb2e5a2a7e8b566e3"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m4-x-init--tilelang-softmax-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "e435606706c569071a511306662fbe56c92aeb58fdf3932b154295813b0d684c"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m4-x-init--tilelang-softmax-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "48265242f1abda908f3b2de35b05cb163683cd79ef7551878df17d260655cdb4"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m5-y-init--tilelang-softmax-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "3b92b9cfba87aa3e98e4440c72abee52cf6b1e0ca397eb5ec0204b966ab60c6b"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m5-y-init--tilelang-softmax-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "bee6782981143c6cfef5ad1129b6a2aeac7689be3da8c84b3cf4a50c9d17d2bb"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m5-y-init--tilelang-softmax-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "3b38e8e05222ff9d942b07802ab1d883333d4848f9d86ec5f0a7c164e8e85353"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m5-y-init--tilelang-softmax-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "404d17199523c8d9585519748fab7e29520d11dbfe0743e0cad9350319b6b289"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m6-x-before--tilelang-softmax-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "4366c367babe99dc63d60d1cb6f618d4b4771ec0b3d696cabc790da306ed4f23"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m6-x-before--tilelang-softmax-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "048fb25dd3728c1e92f51d7434090eb61930c254d9ff0e7b7b7967b18649ec3b"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m6-x-before--tilelang-softmax-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "668c8083427e42f72f49dd96b9fcc6d115926fdbfb145f9b2766c4e95ac1e27a"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m6-x-before--tilelang-softmax-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "0a14e5617df8fa332a6820a36bdb9ca8392a90ab1005f6553ec548394e957ebb"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m7-x-after--tilelang-softmax-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "ef44c5a39e652d60262b3d28e47539a968287b7a2a8fd322373cebb7f7c371e6"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m7-x-after--tilelang-softmax-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "b1b9206841882f908f6efa2786bce9b26a92b7fe061981e0af4d4b36b3f1eb96"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m7-x-after--tilelang-softmax-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "2e3ea351193d06c7b0a2844434988a616e1a7b774c4602fda05ed3bb7f457251"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-m7-x-after--tilelang-softmax-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "1e114752b140bc6f2c95aea5b7e2a81ab78d724112135e5f3a9a83bb01476901"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-original--tilelang-softmax-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "4280ebca85d3d71a10ed34572d0bc954764bc5497f5ec2ca69c1e1cd4e10cf49"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-original--tilelang-softmax-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "ca0ad031492f5a6f54cbd25c69f1bcf497734c47425fb8f4b30ba4e4398b2be4"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-original--tilelang-softmax-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "3a9662e395cfd68101e7ef7111c7765ed55e57f617f9691db7a4a4fa7aea9cdc"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "tilelang-softmax-source-original--tilelang-softmax-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TILELANG_EXPRESSION_EFFECT_UNSUPPORTED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "e1d876d002343d35dced71889c9d9f2cade30b29b667808f42600a581c396928"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-m1-stage1--triton-dense-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "a6e54f9077b8234331eea52d52cd77cd32f9ee87eb90642fec091adc73ed3374"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-m1-stage1--triton-dense-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "c9c4ad4609ed430d3df518caa14df71c9e1a40dc22678f0effe8b904f16629da"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-m1-stage1--triton-dense-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "cf2a9e8f8a9cb269056e3bd342f135d4237adac10c7326bb4e0fa8878e61cc40"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-m1-stage1--triton-dense-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "edfe2a4595e15d029086c468422139c1394bfef1c83fd34441a728bf53e643b7"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-m2-stage2--triton-dense-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "a638c2e1afd4fd8900ef53f05fe77af57676f4abc7b38fa24d8ba39246ae6ec9"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-m2-stage2--triton-dense-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "e04c009996f38cc66ef07903544dddc5472c79d228397ca25fecae62914bcca2"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-m2-stage2--triton-dense-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "db0f38523f9dbfbb357ecea03c1e16a43dc2670f1bb22216630373b7c8664d99"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-m2-stage2--triton-dense-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "4ce31eacddb6f644d5f3bd55bb1a33d91d3f2cd763a75bfb510f948374b0ac86"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-m3-output-init--triton-dense-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "9ad36bb910742ac3cc2378b0a130569843aebf16b69eb1e12a662a3afed74a69"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-m3-output-init--triton-dense-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "a2e3c8e5c8d8f510772cddebd459c1252ac2f060e6ad3cc2585b3f186af851b8"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-m3-output-init--triton-dense-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "11473486f007542d59586d5b176ec68f02cc00642172925ddd93d0236160f3a6"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-m3-output-init--triton-dense-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "97a6bc1e1629b0d37c64034f007cbd139d8c7ea0a4d8c90dfffa224977b74d6f"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-m4-output-dup--triton-dense-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "b2e828d46d321f13856ad0214c4f8ab6cb478f39b0526eca9ed22e53aec32814"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-m4-output-dup--triton-dense-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "da7c26f1e52b6f469854e623c74eac811e60db11620594a6300b80a236d3e5f2"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-m4-output-dup--triton-dense-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "caea4e728d4639e208ff99b9ae7314fd945b2d72162a9cbff71af8dbef56f66d"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-m4-output-dup--triton-dense-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "7d1cd83849fc9dee2a542ba194ad0d7aeef6a058905a7396628cf30b288dcd8a"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-original--triton-dense-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "df077a7b196e88c2ed9c286382aa0bd29185cb961cad01311b83119164f51770"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-original--triton-dense-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "7d570758fb73a9a946d339c100e7272ed61b8354632d05f21dda9772279767b9"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-original--triton-dense-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "70ffb661bd7cf9aaeacbf4ff6ad8a7286c6c1edc18dec251fd87a2c16811ca2d"
+      ]
+    },
+    {
+      "capture_status": "CAPTURED",
+      "case_id": "triton-dense-gemm-source-original--triton-dense-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "SUITE4_CAPTURE_OR_CHECK_FAILED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "c64f8d833623dfd4564757686fb3fceebf01f09906bd65a0d0b4d0a23d6fefc0"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-m1-stage1--triton-fused-attention-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "0bdee2cd423e7dbe554464882531ece21bb303f6a63e7d92f14a253862f40b85"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-m1-stage1--triton-fused-attention-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "e8df3c2499e08318cf4faff5eeba500e14886d78462ab19d7cb9b91795bc5cb8"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-m1-stage1--triton-fused-attention-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "e379bbdbdaf8c9e73e6103b72815d175a0e1bc4767637fb8e4687bbeb223be7a"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-m1-stage1--triton-fused-attention-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "eab2e892ceb95d0f52182d0f1d18272311e0eec669c838b34d2589bd1a272092"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-m2-stage2--triton-fused-attention-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "d8577ded27f180145534ffa1fbc585b2b603773961f63225e1d60f40eab9fc97"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-m2-stage2--triton-fused-attention-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "a623d43df1a04329240811f529f571c1cd409e4d96fc6e0323fe6dc711b444bc"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-m2-stage2--triton-fused-attention-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "c54844d578a7894fb5442c9aefc68dba6478c7b301ad4724de1f00d102cc85a4"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-m2-stage2--triton-fused-attention-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "5fb24cf09de7d810b7f7bd4ee3788895cc111b9645a69fedcdc56b4c9cb3227d"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-m3-output-init--triton-fused-attention-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "3e58f24bd2c45123c30be313a5f016e4d018bad029ad418335817b5fb0cc18cc"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-m3-output-init--triton-fused-attention-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "9a1f352f0a53b237bdcc1ff58729b69a0507330805ac3e6901f4e47446f579f4"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-m3-output-init--triton-fused-attention-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "cf5593a6dacd40c2825c5548360ce3b0ae46de7600af40b1aad2717eb7839767"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-m3-output-init--triton-fused-attention-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "e8d7f26f14a09b21a6757daf12c85983232a23997708b5027c3e4fcf37511d3d"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-m4-output-dup--triton-fused-attention-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "9652a553c6b310f36090257986238f1d8a90b0e701741ce30bee137d70579c29"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-m4-output-dup--triton-fused-attention-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "a01a25057b9f6e68198d81d834f39c29426c15a97a1c276b3cce733141091e16"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-m4-output-dup--triton-fused-attention-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "2bdcfba4d0c12c559266a6a50a02db28d19167a16b77a13b70bd0a4e7426c523"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-m4-output-dup--triton-fused-attention-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "ed8c065cda0031203fd4c8d22262f6e87d609b8f77e19158fc3fde7a166d57ce"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-original--triton-fused-attention-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "1b64c390a0c272257a15546f9af93cf3b028f3075cb8d6f1259accfd9d0c88e0"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-original--triton-fused-attention-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "eb382465d0aa910eacb1494e9d0293d28ce2473cc062d87150fba0c8c708c16d"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-original--triton-fused-attention-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "a5f3d3c387f20c9f9ba8ee16d56ba8d0bed8535e45ca5d6ec1e966deb19cf432"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-fused-attention-source-original--triton-fused-attention-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_TENSORMAP_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "4cf60354a631837a469181f13b1106b2950feb3bc25848932a4c3373cbf497cc"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-m1-stage1--triton-grouped-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "c9d7df75df286268255b4f5ca3a7c7919210ac00d4f73dd1a6ca6f7e7f1dc0ff"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-m1-stage1--triton-grouped-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "e35889271175305224e7f0eba8f5baa1b0deba45ded352864a50cfad8e13f050"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-m1-stage1--triton-grouped-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "319691cd64bcef484292b99dc693fde2312c6e843604384db71e724f8972f30c"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-m1-stage1--triton-grouped-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "34316b16193e6032f79f34cf31ee8fce70705dc9fd45c6f368699b3a45dd5d3c"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-m2-stage2--triton-grouped-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "b7055359ebddfb8935c5a42783d69203abf0d352bbbd3b30728e432144ffb830"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-m2-stage2--triton-grouped-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "d64da579cb55d5f793c6637ae4cfbece319d1cdea6b5ad51c7c2a18026785f6a"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-m2-stage2--triton-grouped-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "df0420be0486cddeb57eee3c3fd485e7ba9752be84d37cee68ea6b7c787e5c1d"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-m2-stage2--triton-grouped-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "188489bcd57b7aada713384629e066e18e37388d59852817b7eb225eb9ef213e"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-m3-output-init--triton-grouped-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "dcbbce7a5d91c434870842e6e7fba6c9c8a126b1c50bd26515645b402c431775"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-m3-output-init--triton-grouped-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "fb36726b2bc44b7af9efe32bcd5b5c6be7def03099243ba02712262eac07a29e"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-m3-output-init--triton-grouped-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "2f47a872fe93e781dcd237c6bc09320e94207f9c527cde27ecc9343108d36b76"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-m3-output-init--triton-grouped-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "a12c87bbd6af06acb8940340d799b86a89cf2213b492720d9425ebe09f0261a6"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-m4-output-dup--triton-grouped-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "41a6f5fbacb7e005266c9f635fb478b416b0820e93160963c69145f5d43af490"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-m4-output-dup--triton-grouped-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "320a027ef28690e066b44253ecd8ad9394603ee85c3f202add709de88f76f31d"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-m4-output-dup--triton-grouped-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "9b5c943a04acc89531572347193e655fcf384b650a09f43cc775ffa16bfe1a46"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-m4-output-dup--triton-grouped-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "1908cc760357d7009649811965af3483cd8996b79681940e82b5119b1e66c80c"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-original--triton-grouped-gemm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "e0fadaffcd2b9be167d21f64f0e10db1f7388bdad368cad00636bfc7e7454ec1"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-original--triton-grouped-gemm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "f595d834c93886d2d26a3e84960ef342aab17c011849bb8ea5b81c02168d3507"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-original--triton-grouped-gemm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "564080c58823a0a4de470e708bd86bf39de0afa30665b467156210172adf3dfe"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-grouped-gemm-source-original--triton-grouped-gemm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "b799f26ab13790b59422dbccf4887dd224e019e1123eb36184e9a222daf191ea"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-m1-stage1--triton-layer-norm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "f225edde3b3763f11716a945e38197fae7a8ccf3e5153ed79d272199d5fe6fb9"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-m1-stage1--triton-layer-norm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "1410d72ccd7e2bf8a95c0b367fb109bed161c7a2844ffda6e504c29735da86cf"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-m1-stage1--triton-layer-norm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "1fce08ee9428c19242a48fc09d78ebf4112649bb7b5736ab62334dd58e59f578"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-m1-stage1--triton-layer-norm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "5a36232e8d14703b636416faff0ebb84c75eed45fde0735b88b6d84c08fc431a"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-m2-stage2--triton-layer-norm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "0029071c91773daea282f2338f3f65492bd829d4b3a4e43c6133c9078973e26d"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-m2-stage2--triton-layer-norm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "c0868068fd39ee9af6ceaf30889fc3095e285e3891317d5e1fafbda5799725c3"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-m2-stage2--triton-layer-norm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "660a7e0a66fa7c373c00b240121fde2b978c321cb646b9bd2238aa228aafb29a"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-m2-stage2--triton-layer-norm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "3a9664ad890bb882311110745aa5900862d077e83f2f32dbfb665a628edb5a6b"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-m3-output-init--triton-layer-norm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "4d9b1f04784c6b4e955da291a8bab12a0828b479d49a353041fce82b2dc9780c"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-m3-output-init--triton-layer-norm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "7a3a2365cc73c9ac9a1c52e1bdab78162ca7b2f444189572c87d876f4ed43772"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-m3-output-init--triton-layer-norm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "c2cfa2de45adcb61b6380aed35a163e5f1ed9ef12a65360e35ccb813cd738c87"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-m3-output-init--triton-layer-norm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "97d2037d2031edd9b30d1b1b1106c9337e0a45d8efaf9fa0448195c74a23fdd5"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-m4-output-dup--triton-layer-norm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "294115f2fca2045725b1ab2c753b8d358094f5506e9e46d5e37a481fd2b0eab4"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-m4-output-dup--triton-layer-norm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "5c55ec5b267bb645db1f6e10075c82fa73c95932fc040212e33fe950613ede1b"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-m4-output-dup--triton-layer-norm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "1e4fafe4aeac6ef5cea142d2fcd9ed22d617aa3fe0bd7c403e058c5c76b8a06c"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-m4-output-dup--triton-layer-norm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "8929f5bfa38f0640ba1d6fe7641b7c7b138cb1089034d316418105cbf55a0204"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-original--triton-layer-norm-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "3933bfd07fba1c2e4b943e1c00d24b12ac690ac08a8d0accdf6abdb1c194e896"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-original--triton-layer-norm-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "bb615a56da6fb8ce930e73bcfb30f86dfe96909b5bb0282e61d084d9da0678b0"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-original--triton-layer-norm-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "fd6604c4d7ac7be8822147c4be9fe244e9c7afb40b9ff7b566ff11fee97ea1b2"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-layer-norm-source-original--triton-layer-norm-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "5b1123e23c2b3318ddfcc1bbf963507bb70cc436cb9f90b4f737100e9f71f239"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-m1-stage1--triton-softmax-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "f55d5a20164c75bea04c0e00899c6041939947a16f3947efba2fa5b31e6bb822"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-m1-stage1--triton-softmax-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "7b201062e27528b63980f050672329993dc53e56c64a9886d2ddd44ad727e002"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-m1-stage1--triton-softmax-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "f3c9d65542b0144ca51c8bf0b42eb4580a95b86b8f1d203b52cf0c547fc7580e"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-m1-stage1--triton-softmax-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "6b3e0dc5b8a280bbbadf857965585c5d30bb99cef1c9c6ccc06e96da275420f8"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-m2-stage3--triton-softmax-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "9a0429d493c60fa167e9364ff3e5a31458e2bc4bff31f1161d5fd51b9c221c78"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-m2-stage3--triton-softmax-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "df9a14bfbb2ca3708fe4f3a30ab01e85bddce0ccf9807a5b0f7ed05d9b893821"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-m2-stage3--triton-softmax-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "5b378b5c39368e6ac6a25b166043a0c2faa30ee11ee8b5f98d2a339bca1eb1ce"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-m2-stage3--triton-softmax-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "780d4a7b9f7eda1a8ae1f9f5b850c15d9b6b53ab4c9033ed1cfbfa9525fd17ba"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-m3-output-init--triton-softmax-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "c7e75dd1b870327c82858e910f8a20d4a19ce1822f8e0f1206e471aa3e032931"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-m3-output-init--triton-softmax-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "5210b9d936f01da4860c3f1156d0c5aef2268ca68fbfd395fd9dc18f2fb81850"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-m3-output-init--triton-softmax-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "646bdfe380e897fe082b797865633bb5cd4098e0631f9f7ca68a11b859923882"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-m3-output-init--triton-softmax-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "98a9c9878f3ac725bfcf028fb1d86e9cf4e810b332e73a7236605427f4a16b46"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-m4-output-dup--triton-softmax-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "9f14f2e71568d92f179eb96f3fbc6d1995fe681867db5b329a89626fef54fb1f"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-m4-output-dup--triton-softmax-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "5e59f4f9acf5308d1ed76e6ba972b6ab7d040c81a8d04265466da321594e2f4c"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-m4-output-dup--triton-softmax-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "6678f8449adb262a30083aab45f099ac4ef8de81fb2fb1ad7bbf86d272c10872"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-m4-output-dup--triton-softmax-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "e6016e9aa459982a07efd52443f2a733fddbfde61ac093b1200a6d86f358c037"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-original--triton-softmax-workload-boundary-1",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "3bfd7440d2f897a7c832161e611a42cc60f3be48e067366af775abe3893af848"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-original--triton-softmax-workload-boundary-2",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "ae9c45e4ee14cc9e171ef29fc6d1234f8723e97dc10fed0ae75f1a157fe60fde"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-original--triton-softmax-workload-boundary-3",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "48e8c17365870389dad47e30936cb877256fd4e7cd7496cc9c60faedb63d1103"
+      ]
+    },
+    {
+      "capture_status": "UNSUPPORTED",
+      "case_id": "triton-softmax-source-original--triton-softmax-workload-original",
+      "checker_status": "CAPTURE_NOT_AVAILABLE",
+      "checker_verdicts": [],
+      "diagnostic_codes": [
+        "TRITON_SSA_VALUE_UNRESOLVED"
+      ],
+      "lowering_status": "LOWERED",
+      "numeric_status": "PASS",
+      "pgir_status": "UNSUPPORTED",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "404ed299a2934e169b0920c208b5ae5bb771f3e0565b54edf1aaf3e4e0ed61c3"
+      ]
+    }
+  ],
+  "schema_version": "pipeguard-mutation-baseline-index-v1",
+  "suite_id": "pipeguard-matched-official-mutations-sm90-v2",
+  "suite_lock_sha256": "74e27e3b8e2d3de1e23b3b9b6bc51cfc9a4c85940f8b0164ec5cbcf20bee6f54"
+}

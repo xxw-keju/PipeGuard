@@ -1,0 +1,504 @@
+{
+  "kernel": {
+    "candidate_id": "f0f61ca3e2f347dc",
+    "capsule_sha256": "4d3acaa23ae1f5e77091b8fa076a8f1df8fe2ee1e4b2a1431dbef74b5f9e59df",
+    "dsl": "triton",
+    "family": "GROUPED_GEMM",
+    "features": [
+      "PIPELINED",
+      "PERSISTENT",
+      "MMA",
+      "IRREGULAR_GRID"
+    ],
+    "kernel_id": "triton-grouped-gemm",
+    "operator_family": "GROUPED_GEMM",
+    "path": "python/tutorials/08-grouped-gemm.py",
+    "project": "Triton",
+    "qualname": "grouped_matmul_kernel",
+    "selected_source_sha256": "73293017ea2b2f2371ed277d8ce8800f4aea5ad28b5f4c974aa18ff79f3181bc",
+    "source_id": "triton-61c02bcd",
+    "source_sha256": "0b474fc69d34dfde591454ca735d10abdc72bcc03d6b42530390aceaa2844c3b",
+    "variant_ids": [
+      "triton-grouped-gemm-source-original",
+      "triton-grouped-gemm-source-m1-stage1",
+      "triton-grouped-gemm-source-m2-stage2",
+      "triton-grouped-gemm-source-m3-output-init",
+      "triton-grouped-gemm-source-m4-output-dup",
+      "triton-grouped-gemm-source-m8-global-roundtrip",
+      "triton-grouped-gemm-source-m9-masked-store-roundtrip",
+      "triton-grouped-gemm-source-m10-masked-load-roundtrip",
+      "triton-grouped-gemm-source-m11-relaxed-atomic-roundtrip",
+      "triton-grouped-gemm-source-m12-masked-other-constancy",
+      "triton-grouped-gemm-source-m13-nondominating-assume"
+    ],
+    "workload_spec_ids": [
+      "triton-grouped-gemm-workload-original",
+      "triton-grouped-gemm-workload-boundary-1",
+      "triton-grouped-gemm-workload-boundary-2",
+      "triton-grouped-gemm-workload-boundary-3"
+    ]
+  },
+  "variants": [
+    {
+      "adapter_sha256": "a0a1ff6cfb68aa4c1a4b1b9cacf7c9227d97fa9fdf245e1195f34cbf79bcadaa",
+      "adjudication": {
+        "class": "CORRECT",
+        "method": "REFERENCE_ORACLE",
+        "rationale": "Pinned official source replayed successfully against its independent PyTorch reference on the original and all three boundary workloads.",
+        "status": "CONFIRMED"
+      },
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-grouped-gemm",
+      "role": "ORIGINAL",
+      "selected_ast_sha256": "031ef477ddd297762a8121412ca18401386c7e4bb023120b6191786b77d7c521",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/sources/original.py",
+        "sha256": "4d3acaa23ae1f5e77091b8fa076a8f1df8fe2ee1e4b2a1431dbef74b5f9e59df"
+      },
+      "variant_id": "triton-grouped-gemm-source-original"
+    },
+    {
+      "adapter_sha256": "a0a1ff6cfb68aa4c1a4b1b9cacf7c9227d97fa9fdf245e1195f34cbf79bcadaa",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "a68a1e70c481880e4915c0d6ee89da1fb4646d03055397bf438f8efd74a6f219",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-grouped-gemm",
+      "mutation_family": "PIPELINE_DEPTH",
+      "mutation_rule_id": "MUT-M1-PIPE-STAGE-LOW",
+      "occurrence": 1,
+      "operation": "replace",
+      "parent_variant_id": "triton-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/patches/m1-stage1.diff",
+        "sha256": "e29d621cab8bb68dcddecda0ffc79669bd7e259d7b68cb0084b02c07f4c53ce3"
+      },
+      "replacement_sha256": "354bd2fcc5e4d3bc8cfd595ba087e3483cbb0a24301af9c90b730b27765df9e9",
+      "role": "MUTANT",
+      "selected_ast_sha256": "8d15d192ba1ba058819e977633a1dec839778c54f5f32506d6d343f6a919c474",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/sources/m1-stage1.py",
+        "sha256": "4fad367ea2e43d425f5ac85a13a6051db4ea83c3f3db304fa1ec75b91846e027"
+      },
+      "variant_id": "triton-grouped-gemm-source-m1-stage1"
+    },
+    {
+      "adapter_sha256": "a0a1ff6cfb68aa4c1a4b1b9cacf7c9227d97fa9fdf245e1195f34cbf79bcadaa",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "a68a1e70c481880e4915c0d6ee89da1fb4646d03055397bf438f8efd74a6f219",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-grouped-gemm",
+      "mutation_family": "PIPELINE_DEPTH",
+      "mutation_rule_id": "MUT-M2-PIPE-STAGE-ALT",
+      "occurrence": 1,
+      "operation": "replace",
+      "parent_variant_id": "triton-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/patches/m2-stage2.diff",
+        "sha256": "4717bc77e1b2a6c5618c57ce2d85f3ba1ad2866cd631ccb91f76cd91a73ea429"
+      },
+      "replacement_sha256": "dc1c95a4fd62fec1f2acf9366538c4f3da7f12ee4772d0f4a1b52b398d03dedd",
+      "role": "MUTANT",
+      "selected_ast_sha256": "a1e4ceb792e4a468e4552add83ac53cfa8dafc470db6f12333f0c41a88a55d6e",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/sources/m2-stage2.py",
+        "sha256": "07a029c347e2073e380791b69b89b1d39f3f8af04e8ebf8a1c0464c204c78ae3"
+      },
+      "variant_id": "triton-grouped-gemm-source-m2-stage2"
+    },
+    {
+      "adapter_sha256": "a0a1ff6cfb68aa4c1a4b1b9cacf7c9227d97fa9fdf245e1195f34cbf79bcadaa",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "d288488699442051470bce9cc34884d4dfdeb6add1e3582bd2857618f050fd2d",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-grouped-gemm",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M3-DEST-INIT-DUP",
+      "occurrence": 1,
+      "operation": "insert_before",
+      "parent_variant_id": "triton-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/patches/m3-output-init.diff",
+        "sha256": "2f040bbefdd965035737f9857de5481aa9f6512d44edf219990ac31dc01e5ff1"
+      },
+      "replacement_sha256": "f18526db84edc56624f9843065526ed2708a7cd796ce24aa2fa73d6860c9ede4",
+      "role": "MUTANT",
+      "selected_ast_sha256": "b14271179e763d452153a3f12f9755587e4c4b4a4a85d55aa6c22d083bf4a135",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/sources/m3-output-init.py",
+        "sha256": "96daf936d8bf7b28a203bd1e62b4fec43cf4c72b2ebab88658c222eb23e4ab6c"
+      },
+      "variant_id": "triton-grouped-gemm-source-m3-output-init"
+    },
+    {
+      "adapter_sha256": "a0a1ff6cfb68aa4c1a4b1b9cacf7c9227d97fa9fdf245e1195f34cbf79bcadaa",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "d288488699442051470bce9cc34884d4dfdeb6add1e3582bd2857618f050fd2d",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-grouped-gemm",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M4-SOURCE-A-INIT",
+      "occurrence": 1,
+      "operation": "duplicate",
+      "parent_variant_id": "triton-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/patches/m4-output-dup.diff",
+        "sha256": "bc2119c2d8f70e267e21120c75e184b8299109856207f0c596712f839a18c4a6"
+      },
+      "replacement_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "MUTANT",
+      "selected_ast_sha256": "81662e6525d7ebf513eb5818ed7a19c13cd1e9da5b3002d2315c400adfe03333",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/sources/m4-output-dup.py",
+        "sha256": "ddfc2e648ebd13aa8542032172e10fac906a8d8f5a656891dcbdfc1b159e0420"
+      },
+      "variant_id": "triton-grouped-gemm-source-m4-output-dup"
+    },
+    {
+      "adapter_sha256": "a0a1ff6cfb68aa4c1a4b1b9cacf7c9227d97fa9fdf245e1195f34cbf79bcadaa",
+      "adjudication": {
+        "class": "DATA_HAZARD",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "The store and reload use the same unique logical addresses, but Coalesce assigns different thread layouts. Eleven of twenty workloads mismatch; inserting tl.debug_barrier between the operations restores all twenty. PipeGuard reports DATA_HAZARD/UNORDERED_CONFLICT.",
+        "status": "CONFIRMED"
+      },
+      "anchor_sha256": "4d3acaa23ae1f5e77091b8fa076a8f1df8fe2ee1e4b2a1431dbef74b5f9e59df",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-grouped-gemm",
+      "mutation_family": "GLOBAL_MEMORY_ORDER",
+      "mutation_rule_id": "MUT-M8-GLOBAL-RAW-ROUNDTRIP",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/patches/m8-global-roundtrip.diff",
+        "sha256": "c7d25204210eae76faaec8f5cc55bdcf7870689296bb4ea5ec6a5f814587e4a0"
+      },
+      "replacement_sha256": "63ca05f3d7e211f30082e32bc8cf3d3bf6f5688aed6874e4375f0f59b10d95ad",
+      "role": "MUTANT",
+      "selected_ast_sha256": "dbbf4db7ec3f9475630621c7a5bc8858044ef90c8c3cb2bab024efb70387c835",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/sources/m8-global-roundtrip.py",
+        "sha256": "63ca05f3d7e211f30082e32bc8cf3d3bf6f5688aed6874e4375f0f59b10d95ad"
+      },
+      "variant_id": "triton-grouped-gemm-source-m8-global-roundtrip"
+    },
+    {
+      "adapter_sha256": "a0a1ff6cfb68aa4c1a4b1b9cacf7c9227d97fa9fdf245e1195f34cbf79bcadaa",
+      "adjudication": {
+        "class": "DATA_HAZARD",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "The runtime mask buffer is all true, so every unique address is overwritten with zero before it is reloaded. All twenty workloads mismatch without a barrier and pass with a barrier.",
+        "status": "CONFIRMED"
+      },
+      "anchor_sha256": "4d3acaa23ae1f5e77091b8fa076a8f1df8fe2ee1e4b2a1431dbef74b5f9e59df",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-grouped-gemm",
+      "mutation_family": "GLOBAL_MEMORY_ORDER",
+      "mutation_rule_id": "MUT-M9-GLOBAL-RAW-MASKED-STORE",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/patches/m9-masked-store-roundtrip.diff",
+        "sha256": "cce95c770f96651f256b3960a2945b66c55c7bc0797e80537fc693e88ca059cf"
+      },
+      "replacement_sha256": "40f6c184f13a61033f2d66e61baa4ae9787a42bf1910ccade604fd47bdfbb809",
+      "role": "MUTANT",
+      "selected_ast_sha256": "f51a21810243554c33abddbc9484d41b5ece0b710782f99538b59058ffa9ca91",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/sources/m9-masked-store-roundtrip.py",
+        "sha256": "40f6c184f13a61033f2d66e61baa4ae9787a42bf1910ccade604fd47bdfbb809"
+      },
+      "variant_id": "triton-grouped-gemm-source-m9-masked-store-roundtrip"
+    },
+    {
+      "adapter_sha256": "a0a1ff6cfb68aa4c1a4b1b9cacf7c9227d97fa9fdf245e1195f34cbf79bcadaa",
+      "adjudication": {
+        "class": "DATA_HAZARD",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "The runtime mask buffer is all true, so the masked load is semantically an ordinary reload. Eight of twenty workloads mismatch without a barrier and all twenty pass with a barrier.",
+        "status": "CONFIRMED"
+      },
+      "anchor_sha256": "4d3acaa23ae1f5e77091b8fa076a8f1df8fe2ee1e4b2a1431dbef74b5f9e59df",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-grouped-gemm",
+      "mutation_family": "GLOBAL_MEMORY_ORDER",
+      "mutation_rule_id": "MUT-M10-GLOBAL-RAW-MASKED-LOAD",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/patches/m10-masked-load-roundtrip.diff",
+        "sha256": "9ee915cf16f5068d4c1145e00944d75e7e154b34982535000d7b76e7060a4125"
+      },
+      "replacement_sha256": "cdf0e6ec2783423d38ae9e7d7066f06784ed85de36d508a8aaed68f36c7d9916",
+      "role": "MUTANT",
+      "selected_ast_sha256": "8572a92948b3b0ce5378c993edbf84996b0395ab774f62056d75182348b53cb5",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/sources/m10-masked-load-roundtrip.py",
+        "sha256": "cdf0e6ec2783423d38ae9e7d7066f06784ed85de36d508a8aaed68f36c7d9916"
+      },
+      "variant_id": "triton-grouped-gemm-source-m10-masked-load-roundtrip"
+    },
+    {
+      "adapter_sha256": "a0a1ff6cfb68aa4c1a4b1b9cacf7c9227d97fa9fdf245e1195f34cbf79bcadaa",
+      "adjudication": {
+        "class": "DATA_HAZARD",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "Seven of twenty workloads mismatch and all twenty pass after a CTA barrier. The result is kept provisional because the precise Triton/PTX guarantee for relaxed atomic-to-non-atomic ordering must be stated before treating it as a strongest semantics-preserving positive.",
+        "status": "PROVISIONAL"
+      },
+      "anchor_sha256": "4d3acaa23ae1f5e77091b8fa076a8f1df8fe2ee1e4b2a1431dbef74b5f9e59df",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-grouped-gemm",
+      "mutation_family": "ATOMIC_MEMORY_ORDER",
+      "mutation_rule_id": "MUT-M11-RELAXED-ATOMIC-RAW",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/patches/m11-relaxed-atomic-roundtrip.diff",
+        "sha256": "79f1cdfd5cf2fbe11d8294bc22e2181bdaf12d03c818a880adc5c0471d699ee0"
+      },
+      "replacement_sha256": "5ecc042e9a8c445a1ed95a2f6fe840aa2ab0400d1c8594f70cd1c1ecf92653dd",
+      "role": "MUTANT",
+      "selected_ast_sha256": "5a6e1cf2a4c625b0714c1d3dffa29beeba687ba339134c772fc8e549aa93db3f",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/sources/m11-relaxed-atomic-roundtrip.py",
+        "sha256": "5ecc042e9a8c445a1ed95a2f6fe840aa2ab0400d1c8594f70cd1c1ecf92653dd"
+      },
+      "variant_id": "triton-grouped-gemm-source-m11-relaxed-atomic-roundtrip"
+    },
+    {
+      "adapter_sha256": "a0a1ff6cfb68aa4c1a4b1b9cacf7c9227d97fa9fdf245e1195f34cbf79bcadaa",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "REFERENCE_ORACLE",
+        "rationale": "All twenty workloads mismatch on the pinned compiler. An equivalent explicit tl.where control passes all twenty. This is compiler wrong-code fixed upstream by commit 36cb2499e0 and is outside PipeGuard's synchronization scope.",
+        "status": "CONFIRMED"
+      },
+      "anchor_sha256": "4d3acaa23ae1f5e77091b8fa076a8f1df8fe2ee1e4b2a1431dbef74b5f9e59df",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-grouped-gemm",
+      "mutation_family": "COMPILER_ANALYSIS",
+      "mutation_rule_id": "MUT-M12-MASKED-OTHER-CONSTANCY",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/patches/m12-masked-other-constancy.diff",
+        "sha256": "96270769d86ac523237f80efdb2bc3b6956daca2552032b4d47dcf6d6c1ad570"
+      },
+      "replacement_sha256": "b92db67aaa5ae1921e5913ccc68454bb81e5a97d02721b3e1fbea785b75e4dad",
+      "role": "MUTANT",
+      "selected_ast_sha256": "44a06d0af5b4dcc714a5733e95730a78d40d283a496c18169889a6156e9dbe78",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/sources/m12-masked-other-constancy.py",
+        "sha256": "b92db67aaa5ae1921e5913ccc68454bb81e5a97d02721b3e1fbea785b75e4dad"
+      },
+      "variant_id": "triton-grouped-gemm-source-m12-masked-other-constancy"
+    },
+    {
+      "adapter_sha256": "a0a1ff6cfb68aa4c1a4b1b9cacf7c9227d97fa9fdf245e1195f34cbf79bcadaa",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "REFERENCE_ORACLE",
+        "rationale": "At runtime m=4 and n=0, so the loop must execute zero iterations and the canary must be zero. All twenty workloads mismatch with flatten=True; the flatten=False control passes all twenty. This compiler control-flow defect is outside PipeGuard's synchronization scope.",
+        "status": "CONFIRMED"
+      },
+      "anchor_sha256": "4d3acaa23ae1f5e77091b8fa076a8f1df8fe2ee1e4b2a1431dbef74b5f9e59df",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-grouped-gemm",
+      "mutation_family": "CONTROL_FLOW_ANALYSIS",
+      "mutation_rule_id": "MUT-M13-NONDOMINATING-ASSUME",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/patches/m13-nondominating-assume.diff",
+        "sha256": "46d9cda67874095aeb079b7b62fba3f517c260ee70b9753fda30f3a779197a65"
+      },
+      "replacement_sha256": "03918a6361691af11d20874c5dd02cda443817e7e5aa6a61793d16afea9c2a9c",
+      "role": "MUTANT",
+      "selected_ast_sha256": "49e995b223ae1960af453fd60b94d1709e9c49e2175135f7bfd8e1169eed1c92",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/sources/m13-nondominating-assume.py",
+        "sha256": "03918a6361691af11d20874c5dd02cda443817e7e5aa6a61793d16afea9c2a9c"
+      },
+      "variant_id": "triton-grouped-gemm-source-m13-nondominating-assume"
+    }
+  ],
+  "workloads": [
+    {
+      "bindings": {
+        "BLOCK_K": 32,
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "K": 256,
+        "N": 256,
+        "dtype": "float16",
+        "group_sizes": [
+          128,
+          256
+        ]
+      },
+      "boundary_dimensions": [],
+      "delta": [],
+      "evidence": {
+        "kind": "UPSTREAM_TEST",
+        "path": "python/tutorials/08-grouped-gemm.py",
+        "rationale": "Pinned official example kernel with an independent PyTorch oracle.",
+        "sha256": "0b474fc69d34dfde591454ca735d10abdc72bcc03d6b42530390aceaa2844c3b"
+      },
+      "kernel_id": "triton-grouped-gemm",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/recipes/triton-grouped-gemm-workload-original.json",
+        "sha256": "facf7b31b0dffd00bfd093786c848bca39470a80f6fb6179e2508c39d5b33ffd"
+      },
+      "role": "ORIGINAL",
+      "spec_id": "triton-grouped-gemm-workload-original"
+    },
+    {
+      "bindings": {
+        "BLOCK_K": 32,
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "K": 256,
+        "N": 256,
+        "dtype": "float16",
+        "group_sizes": [
+          64,
+          128,
+          256
+        ]
+      },
+      "boundary_dimensions": [
+        "group_sizes"
+      ],
+      "delta": [
+        {
+          "after": [
+            64,
+            128,
+            256
+          ],
+          "before": [
+            128,
+            256
+          ],
+          "path": "/bindings/group_sizes"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "python/tutorials/08-grouped-gemm.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "0b474fc69d34dfde591454ca735d10abdc72bcc03d6b42530390aceaa2844c3b"
+      },
+      "kernel_id": "triton-grouped-gemm",
+      "parent_spec_id": "triton-grouped-gemm-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/recipes/triton-grouped-gemm-workload-boundary-1.json",
+        "sha256": "cb9fd1af55f70de954e5cac1497f39a1c2ee394af0b02d3fbaf84be064d6c615"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "triton-grouped-gemm-workload-boundary-1"
+    },
+    {
+      "bindings": {
+        "BLOCK_K": 32,
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "K": 256,
+        "N": 128,
+        "dtype": "float16",
+        "group_sizes": [
+          128,
+          256
+        ]
+      },
+      "boundary_dimensions": [
+        "N"
+      ],
+      "delta": [
+        {
+          "after": 128,
+          "before": 256,
+          "path": "/bindings/N"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "python/tutorials/08-grouped-gemm.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "0b474fc69d34dfde591454ca735d10abdc72bcc03d6b42530390aceaa2844c3b"
+      },
+      "kernel_id": "triton-grouped-gemm",
+      "parent_spec_id": "triton-grouped-gemm-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/recipes/triton-grouped-gemm-workload-boundary-2.json",
+        "sha256": "3681a71ab4e7bfea2eab7b9035f142a7bf747d1805124ae2c0eb2d0577d32d7d"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "triton-grouped-gemm-workload-boundary-2"
+    },
+    {
+      "bindings": {
+        "BLOCK_K": 32,
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "K": 512,
+        "N": 256,
+        "dtype": "float16",
+        "group_sizes": [
+          128,
+          256
+        ]
+      },
+      "boundary_dimensions": [
+        "K"
+      ],
+      "delta": [
+        {
+          "after": 512,
+          "before": 256,
+          "path": "/bindings/K"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "python/tutorials/08-grouped-gemm.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "0b474fc69d34dfde591454ca735d10abdc72bcc03d6b42530390aceaa2844c3b"
+      },
+      "kernel_id": "triton-grouped-gemm",
+      "parent_spec_id": "triton-grouped-gemm-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/triton-grouped-gemm/recipes/triton-grouped-gemm-workload-boundary-3.json",
+        "sha256": "57aab11038ad2980b081e991ca86c6549d1f1ac8a5287a5d8487ab67490a414e"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "triton-grouped-gemm-workload-boundary-3"
+    }
+  ]
+}

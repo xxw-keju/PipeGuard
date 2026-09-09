@@ -1,0 +1,83 @@
+{
+  "mutation_rules": {
+    "path": "corpus/mutations/suite4/mutation-rules.json",
+    "sha256": "27e6e2d22eb986c07045a31df0708bb45c8158f78b6815950e70ee6e37df0926"
+  },
+  "policy": {
+    "boundary_workloads": 3,
+    "implementations_per_family": 2,
+    "kernel_count": 10,
+    "minimum_boundary_dimensions": 2,
+    "minimum_mutants": 4,
+    "minimum_mutation_families": 2,
+    "operator_family_count": 5,
+    "original_workloads": 1
+  },
+  "repositories": [
+    {
+      "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+      "dsl": "tilelang",
+      "project": "TileLang",
+      "source_id": "tilelang-2c31e071",
+      "source_index": {
+        "path": "corpus/upstream/tilelang-2c31e071/source-index.json",
+        "sha256": "aaaa5f2c13334bbf710be3ddc34839b221e8879a21e8c10691ee51c3d70879e2"
+      }
+    },
+    {
+      "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+      "dsl": "triton",
+      "project": "Triton",
+      "source_id": "triton-61c02bcd",
+      "source_index": {
+        "path": "corpus/upstream/triton-61c02bcd/source-index.json",
+        "sha256": "12506c64b688a5241eec30747acd28be2d957d07603a0a618140337c20bb9df9"
+      }
+    }
+  ],
+  "schema_version": "pipeguard-mutation-suite-lock-v1",
+  "suite3": {
+    "catalog": {
+      "path": "corpus/upstream/suite3/catalog.json",
+      "sha256": "38d6cdff8af0b612eafcf055d129325cdd4fae30169aa09c463e8af5294ad460"
+    },
+    "lock": {
+      "path": "corpus/upstream/suite3/lock.json",
+      "sha256": "6cfbbb6e851606456fb1cd0230f14bcbd2af3a7d0d225f019c4165b71da2f1f6"
+    }
+  },
+  "suite_id": "pipeguard-matched-official-mutations-sm90-v2",
+  "suite_revision": 2,
+  "target": {
+    "architecture": "sm90",
+    "backend": "cuda",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "warp_size": 32
+  },
+  "toolchains": [
+    {
+      "adapter_version": "tilelang-pgir-v2",
+      "backend_commit": "907a88c8791ccf33b9874821bc875e7abf624367",
+      "compiler_target": "sm_90a",
+      "dsl": "tilelang",
+      "environment": "tl-pg",
+      "frontend_commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+      "frontend_source_id": "tilelang-2c31e071",
+      "toolchain_id": "tilelang-sm90a-2c31e071"
+    },
+    {
+      "adapter_version": "triton-pgir-v2",
+      "backend_commit": null,
+      "compiler_target": "sm90",
+      "dsl": "triton",
+      "environment": "triton-pg",
+      "frontend_commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+      "frontend_source_id": "triton-61c02bcd",
+      "toolchain_id": "triton-sm90-61c02bcd"
+    }
+  ]
+}

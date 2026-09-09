@@ -1,0 +1,4776 @@
+{
+  "cases": [
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-safe-proxy-00",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 1,
+        "protocol_depth": 2,
+        "proxy_repeats": 1,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 0,
+        "stages": 2,
+        "threads": 32,
+        "tilelang_tma_bytes": 16,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 1,
+        "wgmma_repeats": 1,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1801,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-00.py",
+        "sha256": "99ef38c123a7ea41eef20e1ff697c192da7f6ad7595fb7d4a55e2a2e8a61d1e2"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-00.json",
+      "template_family": "TMA-PROXY",
+      "variant": 0
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-safe-proxy-01",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 2,
+        "protocol_depth": 3,
+        "proxy_repeats": 2,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 16,
+        "stages": 3,
+        "threads": 64,
+        "tilelang_tma_bytes": 32,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 2,
+        "wgmma_repeats": 2,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1802,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-01.py",
+        "sha256": "b0b9054e53ae3b8754e4d3f06d1afabb61317912b190a27505aa21ae676266f2"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-01.json",
+      "template_family": "TMA-PROXY",
+      "variant": 1
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-safe-proxy-02",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 3,
+        "protocol_depth": 4,
+        "proxy_repeats": 3,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 32,
+        "stages": 4,
+        "threads": 96,
+        "tilelang_tma_bytes": 48,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 3,
+        "wgmma_repeats": 3,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1802,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-02.py",
+        "sha256": "607bee6eceb466de3b2df5c225e269654e3767273c2c9b9316937cc09879bf6c"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-02.json",
+      "template_family": "TMA-PROXY",
+      "variant": 2
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-safe-proxy-03",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 4,
+        "protocol_depth": 5,
+        "proxy_repeats": 4,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 48,
+        "stages": 2,
+        "threads": 128,
+        "tilelang_tma_bytes": 64,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 4,
+        "wgmma_repeats": 4,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1803,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-03.py",
+        "sha256": "204dd14b0e98cac00b466c1d647b55792dc7e431a74289a65afb8b52a1d8a0a5"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-03.json",
+      "template_family": "TMA-PROXY",
+      "variant": 3
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-safe-proxy-04",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 5,
+        "protocol_depth": 6,
+        "proxy_repeats": 5,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 64,
+        "stages": 3,
+        "threads": 32,
+        "tilelang_tma_bytes": 80,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 5,
+        "wgmma_repeats": 5,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1802,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-04.py",
+        "sha256": "f2f1c039a1dcc07030dcb2e98483ccbdd572bd5babf4d5fda8c3a65602249f51"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-04.json",
+      "template_family": "TMA-PROXY",
+      "variant": 4
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-safe-proxy-05",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 6,
+        "protocol_depth": 7,
+        "proxy_repeats": 6,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 80,
+        "stages": 4,
+        "threads": 64,
+        "tilelang_tma_bytes": 96,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 6,
+        "wgmma_repeats": 6,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1802,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-05.py",
+        "sha256": "e19593a2e9f0e400241f1133364bc6169a2878d12cd39c973984a5ba0ab7f237"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-05.json",
+      "template_family": "TMA-PROXY",
+      "variant": 5
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-safe-proxy-06",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 7,
+        "protocol_depth": 8,
+        "proxy_repeats": 7,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 96,
+        "stages": 2,
+        "threads": 96,
+        "tilelang_tma_bytes": 112,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 7,
+        "wgmma_repeats": 7,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1803,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-06.py",
+        "sha256": "261baf234040d25fbefdb4abc0c0bdc2f1e5c6f47077760989b16ca6555a728a"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-06.json",
+      "template_family": "TMA-PROXY",
+      "variant": 6
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-safe-proxy-07",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 8,
+        "protocol_depth": 9,
+        "proxy_repeats": 8,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 112,
+        "stages": 3,
+        "threads": 128,
+        "tilelang_tma_bytes": 128,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 8,
+        "wgmma_repeats": 8,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1805,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-07.py",
+        "sha256": "9d173beb0504b50ed9c15cecac196f664637ee88b92257bb9990f9ae62031b71"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-07.json",
+      "template_family": "TMA-PROXY",
+      "variant": 7
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-safe-proxy-08",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 9,
+        "protocol_depth": 10,
+        "proxy_repeats": 9,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 128,
+        "stages": 4,
+        "threads": 32,
+        "tilelang_tma_bytes": 144,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 9,
+        "wgmma_repeats": 9,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1805,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-08.py",
+        "sha256": "9b1654e1530038f452611cc930c0737584735de18423db6148c554afefc9df5a"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-08.json",
+      "template_family": "TMA-PROXY",
+      "variant": 8
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-safe-proxy-09",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 10,
+        "protocol_depth": 11,
+        "proxy_repeats": 10,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 144,
+        "stages": 2,
+        "threads": 64,
+        "tilelang_tma_bytes": 160,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 10,
+        "wgmma_repeats": 10,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1809,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-09.py",
+        "sha256": "b914da6feb892a1f24c6394dfddf41fdf3b70656a194a2014a9036a5543c2a6e"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-09.json",
+      "template_family": "TMA-PROXY",
+      "variant": 9
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-safe-proxy-10",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 11,
+        "protocol_depth": 12,
+        "proxy_repeats": 11,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 160,
+        "stages": 3,
+        "threads": 96,
+        "tilelang_tma_bytes": 176,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 11,
+        "wgmma_repeats": 11,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1810,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-10.py",
+        "sha256": "d43ac18d243de3578f5cd57670e8b4e0e7210f309cb101334828a1ff46c6f9d2"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-10.json",
+      "template_family": "TMA-PROXY",
+      "variant": 10
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-safe-proxy-11",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 12,
+        "protocol_depth": 13,
+        "proxy_repeats": 12,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 176,
+        "stages": 4,
+        "threads": 128,
+        "tilelang_tma_bytes": 192,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 12,
+        "wgmma_repeats": 12,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1811,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-11.py",
+        "sha256": "b4f7b778a07424b8723d730035deb09ff30cb4778cff126762396fa7c47fd1f2"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-11.json",
+      "template_family": "TMA-PROXY",
+      "variant": 11
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-safe-proxy-12",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 13,
+        "protocol_depth": 14,
+        "proxy_repeats": 13,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 192,
+        "stages": 2,
+        "threads": 32,
+        "tilelang_tma_bytes": 208,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 13,
+        "wgmma_repeats": 13,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1810,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-12.py",
+        "sha256": "facfea5ebca3ab62bbceb9f5828b32b35fcb8081c8feb526f83b98a67264e960"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-12.json",
+      "template_family": "TMA-PROXY",
+      "variant": 12
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-safe-proxy-13",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 14,
+        "protocol_depth": 15,
+        "proxy_repeats": 14,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 208,
+        "stages": 3,
+        "threads": 64,
+        "tilelang_tma_bytes": 224,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 14,
+        "wgmma_repeats": 14,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1810,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-13.py",
+        "sha256": "f87e0d960c4a481e411914bdeb628593cff5addb728f3747fa9ea99e7e25e5af"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-13.json",
+      "template_family": "TMA-PROXY",
+      "variant": 13
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-safe-proxy-14",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 15,
+        "protocol_depth": 16,
+        "proxy_repeats": 15,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 224,
+        "stages": 4,
+        "threads": 96,
+        "tilelang_tma_bytes": 240,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 15,
+        "wgmma_repeats": 15,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1810,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-14.py",
+        "sha256": "65cd0b63c1abce9d27cf83bf1f2d61b967059381bdeca9dbb25acb84ca981a76"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/safe/proxy/s2x-tilelang-safe-proxy-14.json",
+      "template_family": "TMA-PROXY",
+      "variant": 14
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-data-hazard-proxy-00",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 1,
+        "protocol_depth": 2,
+        "proxy_repeats": 1,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 0,
+        "stages": 2,
+        "threads": 32,
+        "tilelang_tma_bytes": 16,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 1,
+        "wgmma_repeats": 1,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1818,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-00.py",
+        "sha256": "8033cb6393f5b996af5379b883cc21501e3a669b8ac12a6c0f882ce59e25ea3a"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-00.json",
+      "template_family": "TMA-PROXY",
+      "variant": 0
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-data-hazard-proxy-01",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 2,
+        "protocol_depth": 3,
+        "proxy_repeats": 2,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 16,
+        "stages": 3,
+        "threads": 64,
+        "tilelang_tma_bytes": 32,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 2,
+        "wgmma_repeats": 2,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1819,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-01.py",
+        "sha256": "32c8765f6f1bdc7b1233f356e60ecaddb919de9ccb8f5c6f18e6b375e655465e"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-01.json",
+      "template_family": "TMA-PROXY",
+      "variant": 1
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-data-hazard-proxy-02",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 3,
+        "protocol_depth": 4,
+        "proxy_repeats": 3,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 32,
+        "stages": 4,
+        "threads": 96,
+        "tilelang_tma_bytes": 48,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 3,
+        "wgmma_repeats": 3,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1819,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-02.py",
+        "sha256": "507e87c7e8188f2829cfe2edb5d35a083d0d7a0191df89d747ae30de50827da6"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-02.json",
+      "template_family": "TMA-PROXY",
+      "variant": 2
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-data-hazard-proxy-03",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 4,
+        "protocol_depth": 5,
+        "proxy_repeats": 4,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 48,
+        "stages": 2,
+        "threads": 128,
+        "tilelang_tma_bytes": 64,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 4,
+        "wgmma_repeats": 4,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1820,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-03.py",
+        "sha256": "aa68b85e5fb6e13e7ef828f9ed26f3341a9c8edddfbaada8388fd38b5d84ed34"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-03.json",
+      "template_family": "TMA-PROXY",
+      "variant": 3
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-data-hazard-proxy-04",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 5,
+        "protocol_depth": 6,
+        "proxy_repeats": 5,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 64,
+        "stages": 3,
+        "threads": 32,
+        "tilelang_tma_bytes": 80,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 5,
+        "wgmma_repeats": 5,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1819,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-04.py",
+        "sha256": "15b1f86854fbda248138d842a49f73cc88a513a733172d1363962d822681d322"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-04.json",
+      "template_family": "TMA-PROXY",
+      "variant": 4
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-data-hazard-proxy-05",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 6,
+        "protocol_depth": 7,
+        "proxy_repeats": 6,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 80,
+        "stages": 4,
+        "threads": 64,
+        "tilelang_tma_bytes": 96,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 6,
+        "wgmma_repeats": 6,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1819,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-05.py",
+        "sha256": "0c7ea3b0588437c2e1713bd80cab4bcb7bb506b79911e536a0eff8c17d8910b1"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-05.json",
+      "template_family": "TMA-PROXY",
+      "variant": 5
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-data-hazard-proxy-06",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 7,
+        "protocol_depth": 8,
+        "proxy_repeats": 7,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 96,
+        "stages": 2,
+        "threads": 96,
+        "tilelang_tma_bytes": 112,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 7,
+        "wgmma_repeats": 7,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1820,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-06.py",
+        "sha256": "0f3fafdc44de26545d089247fd315d8d0d885fb7e2f2bef51feafb8c1001cd4c"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-06.json",
+      "template_family": "TMA-PROXY",
+      "variant": 6
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-data-hazard-proxy-07",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 8,
+        "protocol_depth": 9,
+        "proxy_repeats": 8,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 112,
+        "stages": 3,
+        "threads": 128,
+        "tilelang_tma_bytes": 128,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 8,
+        "wgmma_repeats": 8,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1822,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-07.py",
+        "sha256": "a15d1f575ebd3cb376dd3486eec99092ad06f7bef1873075722d34096932f90e"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-07.json",
+      "template_family": "TMA-PROXY",
+      "variant": 7
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-data-hazard-proxy-08",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 9,
+        "protocol_depth": 10,
+        "proxy_repeats": 9,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 128,
+        "stages": 4,
+        "threads": 32,
+        "tilelang_tma_bytes": 144,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 9,
+        "wgmma_repeats": 9,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1822,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-08.py",
+        "sha256": "3b5ba5e34650e3ae8519b07d4c17b91ac50c27383ed5848062c2d0432aee756f"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-08.json",
+      "template_family": "TMA-PROXY",
+      "variant": 8
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-data-hazard-proxy-09",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 10,
+        "protocol_depth": 11,
+        "proxy_repeats": 10,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 144,
+        "stages": 2,
+        "threads": 64,
+        "tilelang_tma_bytes": 160,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 10,
+        "wgmma_repeats": 10,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1826,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-09.py",
+        "sha256": "b664472b442817e97b4616373e92d30306ffdfc6cf68fc23e74c8184ba90d04c"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-09.json",
+      "template_family": "TMA-PROXY",
+      "variant": 9
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-data-hazard-proxy-10",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 11,
+        "protocol_depth": 12,
+        "proxy_repeats": 11,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 160,
+        "stages": 3,
+        "threads": 96,
+        "tilelang_tma_bytes": 176,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 11,
+        "wgmma_repeats": 11,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1827,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-10.py",
+        "sha256": "a8311c4aac7fd3328e509663c8a3e8175db882806be279cb98bb8190f6a9be5a"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-10.json",
+      "template_family": "TMA-PROXY",
+      "variant": 10
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-data-hazard-proxy-11",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 12,
+        "protocol_depth": 13,
+        "proxy_repeats": 12,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 176,
+        "stages": 4,
+        "threads": 128,
+        "tilelang_tma_bytes": 192,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 12,
+        "wgmma_repeats": 12,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1828,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-11.py",
+        "sha256": "a04bd38d367302cd0c3ed4195e8e08dafd992dae33d89ebcdf69cfc48337f791"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-11.json",
+      "template_family": "TMA-PROXY",
+      "variant": 11
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-data-hazard-proxy-12",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 13,
+        "protocol_depth": 14,
+        "proxy_repeats": 13,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 192,
+        "stages": 2,
+        "threads": 32,
+        "tilelang_tma_bytes": 208,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 13,
+        "wgmma_repeats": 13,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1827,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-12.py",
+        "sha256": "6a7c64f35758c1af2e47271d21075d7fb153204251171f631d288d8a5a6bb560"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-12.json",
+      "template_family": "TMA-PROXY",
+      "variant": 12
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-data-hazard-proxy-13",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 14,
+        "protocol_depth": 15,
+        "proxy_repeats": 14,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 208,
+        "stages": 3,
+        "threads": 64,
+        "tilelang_tma_bytes": 224,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 14,
+        "wgmma_repeats": 14,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1827,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-13.py",
+        "sha256": "36b776fb03ecbda0d414a6fe11b5b61de24720566423709495fbe3e1ddc5c2a8"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-13.json",
+      "template_family": "TMA-PROXY",
+      "variant": 13
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-data-hazard-proxy-14",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 15,
+        "protocol_depth": 16,
+        "proxy_repeats": 15,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 224,
+        "stages": 4,
+        "threads": 96,
+        "tilelang_tma_bytes": 240,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 15,
+        "wgmma_repeats": 15,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1827,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-14.py",
+        "sha256": "7ea40e2102e0b11b766d21dd8c689fce9171c5151a2603792b461476c6ca9d6b"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/data_hazard/proxy/s2x-tilelang-data-hazard-proxy-14.json",
+      "template_family": "TMA-PROXY",
+      "variant": 14
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-sync-hazard-proxy-00",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 1,
+        "protocol_depth": 2,
+        "proxy_repeats": 1,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 0,
+        "stages": 2,
+        "threads": 32,
+        "tilelang_tma_bytes": 16,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 1,
+        "wgmma_repeats": 1,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1832,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-00.py",
+        "sha256": "776c9b27b9e1290ae76fdfdf278232fe9e6a2c495b8d83a30cbe33feab1abcbe"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-00.json",
+      "template_family": "WGMMA",
+      "variant": 0
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-sync-hazard-proxy-01",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 2,
+        "protocol_depth": 3,
+        "proxy_repeats": 2,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 16,
+        "stages": 3,
+        "threads": 64,
+        "tilelang_tma_bytes": 32,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 2,
+        "wgmma_repeats": 2,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1833,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-01.py",
+        "sha256": "d05e37119ff7ecfdbe5b7fe9d76cda8f5dd33ccc3113306d79228810e87ff044"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-01.json",
+      "template_family": "WGMMA",
+      "variant": 1
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-sync-hazard-proxy-02",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 3,
+        "protocol_depth": 4,
+        "proxy_repeats": 3,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 32,
+        "stages": 4,
+        "threads": 96,
+        "tilelang_tma_bytes": 48,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 3,
+        "wgmma_repeats": 3,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1833,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-02.py",
+        "sha256": "033294be9e73bb2c99a78c1056f251b75fd23abe31c3c5ac534dd445e6fafa79"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-02.json",
+      "template_family": "WGMMA",
+      "variant": 2
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-sync-hazard-proxy-03",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 4,
+        "protocol_depth": 5,
+        "proxy_repeats": 4,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 48,
+        "stages": 2,
+        "threads": 128,
+        "tilelang_tma_bytes": 64,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 4,
+        "wgmma_repeats": 4,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1834,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-03.py",
+        "sha256": "19ffd09927a07474e3691cceabdfc3d84caa21577ea3f6186bf83bdabe7de2d1"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-03.json",
+      "template_family": "WGMMA",
+      "variant": 3
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-sync-hazard-proxy-04",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 5,
+        "protocol_depth": 6,
+        "proxy_repeats": 5,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 64,
+        "stages": 3,
+        "threads": 32,
+        "tilelang_tma_bytes": 80,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 5,
+        "wgmma_repeats": 5,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1833,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-04.py",
+        "sha256": "b24c9b40e9c90a1f459c5e9a4afd128da85b1ece3dfef0a06c68a6f0dacce330"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-04.json",
+      "template_family": "WGMMA",
+      "variant": 4
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-sync-hazard-proxy-05",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 6,
+        "protocol_depth": 7,
+        "proxy_repeats": 6,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 80,
+        "stages": 4,
+        "threads": 64,
+        "tilelang_tma_bytes": 96,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 6,
+        "wgmma_repeats": 6,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1833,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-05.py",
+        "sha256": "632446c5e262e601923a360671cd56aebb78a7fc5f8a05adf8032fd57c1dc4bd"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-05.json",
+      "template_family": "WGMMA",
+      "variant": 5
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-sync-hazard-proxy-06",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 7,
+        "protocol_depth": 8,
+        "proxy_repeats": 7,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 96,
+        "stages": 2,
+        "threads": 96,
+        "tilelang_tma_bytes": 112,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 7,
+        "wgmma_repeats": 7,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1834,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-06.py",
+        "sha256": "2b9b63f48e783c6966a21e10d304d908ac7160f177a121b86a2905ae3de6b7ea"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-06.json",
+      "template_family": "WGMMA",
+      "variant": 6
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-sync-hazard-proxy-07",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 8,
+        "protocol_depth": 9,
+        "proxy_repeats": 8,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 112,
+        "stages": 3,
+        "threads": 128,
+        "tilelang_tma_bytes": 128,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 8,
+        "wgmma_repeats": 8,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1836,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-07.py",
+        "sha256": "8169c7d1ef71b6399ae11e592a91c07da44cddd392d6644a214ccb8993d0b59d"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-07.json",
+      "template_family": "WGMMA",
+      "variant": 7
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-sync-hazard-proxy-08",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 9,
+        "protocol_depth": 10,
+        "proxy_repeats": 9,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 128,
+        "stages": 4,
+        "threads": 32,
+        "tilelang_tma_bytes": 144,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 9,
+        "wgmma_repeats": 9,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1836,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-08.py",
+        "sha256": "203a2e122ab2f235045648c8ad03a99974f46769a2ecd5583575b0bc20301a40"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-08.json",
+      "template_family": "WGMMA",
+      "variant": 8
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-sync-hazard-proxy-09",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 10,
+        "protocol_depth": 11,
+        "proxy_repeats": 10,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 144,
+        "stages": 2,
+        "threads": 64,
+        "tilelang_tma_bytes": 160,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 10,
+        "wgmma_repeats": 10,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1840,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-09.py",
+        "sha256": "004593a77984676ccaf2cee0b9b2a626b244f60f14ebe8bfbe57cf0505bf587f"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-09.json",
+      "template_family": "WGMMA",
+      "variant": 9
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-sync-hazard-proxy-10",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 11,
+        "protocol_depth": 12,
+        "proxy_repeats": 11,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 160,
+        "stages": 3,
+        "threads": 96,
+        "tilelang_tma_bytes": 176,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 11,
+        "wgmma_repeats": 11,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1841,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-10.py",
+        "sha256": "b46927d251bea40e18e42a3570ac5f2b65b7c956205b4199fb89b3ef85020d38"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-10.json",
+      "template_family": "WGMMA",
+      "variant": 10
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-sync-hazard-proxy-11",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 12,
+        "protocol_depth": 13,
+        "proxy_repeats": 12,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 176,
+        "stages": 4,
+        "threads": 128,
+        "tilelang_tma_bytes": 192,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 12,
+        "wgmma_repeats": 12,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1842,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-11.py",
+        "sha256": "5b86a780d0e30939d9dfe4ae79c19e4c66b9e297e16bf9bf6fc0608fc753c8a4"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-11.json",
+      "template_family": "WGMMA",
+      "variant": 11
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-sync-hazard-proxy-12",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 13,
+        "protocol_depth": 14,
+        "proxy_repeats": 13,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 192,
+        "stages": 2,
+        "threads": 32,
+        "tilelang_tma_bytes": 208,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 13,
+        "wgmma_repeats": 13,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1841,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-12.py",
+        "sha256": "b3e960aa44b4a4932504c75904c5251a58bffe7139e621b049fb9446a31ce00e"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-12.json",
+      "template_family": "WGMMA",
+      "variant": 12
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-sync-hazard-proxy-13",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 14,
+        "protocol_depth": 15,
+        "proxy_repeats": 14,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 208,
+        "stages": 3,
+        "threads": 64,
+        "tilelang_tma_bytes": 224,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 14,
+        "wgmma_repeats": 14,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1841,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-13.py",
+        "sha256": "80899ca8e13b11aa3ef10711edbeb8765b51378034ea2a66cd0cb704284836fa"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-13.json",
+      "template_family": "WGMMA",
+      "variant": 13
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-tilelang-sync-hazard-proxy-14",
+      "dsl": "tilelang",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 15,
+        "protocol_depth": 16,
+        "proxy_repeats": 15,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 224,
+        "stages": 4,
+        "threads": 96,
+        "tilelang_tma_bytes": 240,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 15,
+        "wgmma_repeats": 15,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 1841,
+        "path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-14.py",
+        "sha256": "2e265685fef1f1d02a36170cc437237585234508be8929c1c55aa6757bcd05c2"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/tilelang/sync_hazard/proxy/s2x-tilelang-sync-hazard-proxy-14.json",
+      "template_family": "WGMMA",
+      "variant": 14
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-safe-proxy-00",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 1,
+        "protocol_depth": 2,
+        "proxy_repeats": 1,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 0,
+        "stages": 2,
+        "threads": 32,
+        "tilelang_tma_bytes": 16,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 1,
+        "wgmma_repeats": 1,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2492,
+        "path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-00.py",
+        "sha256": "10a5d4e1065caeb8dada1fef9e9f4cbaf3f27351470c78d49b034096154293bd"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-00.json",
+      "template_family": "TMA-PROXY",
+      "variant": 0
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-safe-proxy-01",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 2,
+        "protocol_depth": 3,
+        "proxy_repeats": 2,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 16,
+        "stages": 3,
+        "threads": 64,
+        "tilelang_tma_bytes": 32,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 2,
+        "wgmma_repeats": 2,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2493,
+        "path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-01.py",
+        "sha256": "f64d2430963edb36276878c737be52cf70ae8281d68f2d896096260758458187"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-01.json",
+      "template_family": "TMA-PROXY",
+      "variant": 1
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-safe-proxy-02",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 3,
+        "protocol_depth": 4,
+        "proxy_repeats": 3,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 32,
+        "stages": 4,
+        "threads": 96,
+        "tilelang_tma_bytes": 48,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 3,
+        "wgmma_repeats": 3,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2493,
+        "path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-02.py",
+        "sha256": "db3e2846a19478dd4dd4bddcf26c091a15a0289b2bf1eefe162cfbc9aa479bc4"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-02.json",
+      "template_family": "TMA-PROXY",
+      "variant": 2
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-safe-proxy-03",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 4,
+        "protocol_depth": 5,
+        "proxy_repeats": 4,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 48,
+        "stages": 2,
+        "threads": 128,
+        "tilelang_tma_bytes": 64,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 4,
+        "wgmma_repeats": 4,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2494,
+        "path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-03.py",
+        "sha256": "b7d33fecf93ab683ad22530a39d2f56df74b694fd37b55fe531465dea8d0e72f"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-03.json",
+      "template_family": "TMA-PROXY",
+      "variant": 3
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-safe-proxy-04",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 5,
+        "protocol_depth": 6,
+        "proxy_repeats": 5,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 64,
+        "stages": 3,
+        "threads": 32,
+        "tilelang_tma_bytes": 80,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 5,
+        "wgmma_repeats": 5,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2493,
+        "path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-04.py",
+        "sha256": "be979e2de1ea7342fd9e7b3aab6410f523dec9c6fc11acf2323ca020d046e7ca"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-04.json",
+      "template_family": "TMA-PROXY",
+      "variant": 4
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-safe-proxy-05",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 6,
+        "protocol_depth": 7,
+        "proxy_repeats": 6,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 80,
+        "stages": 4,
+        "threads": 64,
+        "tilelang_tma_bytes": 96,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 6,
+        "wgmma_repeats": 6,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2493,
+        "path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-05.py",
+        "sha256": "845db3553b75814474b89dab69666830350f3d1666ea23b98fc7d65d354625c4"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-05.json",
+      "template_family": "TMA-PROXY",
+      "variant": 5
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-safe-proxy-06",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 7,
+        "protocol_depth": 8,
+        "proxy_repeats": 7,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 96,
+        "stages": 2,
+        "threads": 96,
+        "tilelang_tma_bytes": 112,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 7,
+        "wgmma_repeats": 7,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2494,
+        "path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-06.py",
+        "sha256": "517179e686af622577e78dab09fd9654d6eb3e2b476feaa9d6f0ce20641767b7"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-06.json",
+      "template_family": "TMA-PROXY",
+      "variant": 6
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-safe-proxy-07",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 8,
+        "protocol_depth": 9,
+        "proxy_repeats": 8,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 112,
+        "stages": 3,
+        "threads": 128,
+        "tilelang_tma_bytes": 128,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 8,
+        "wgmma_repeats": 8,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2496,
+        "path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-07.py",
+        "sha256": "8bec7bb437190b4e6787227849ce836960c146e6a7ea07650e768c6ce6b0f4d4"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-07.json",
+      "template_family": "TMA-PROXY",
+      "variant": 7
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-safe-proxy-08",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 9,
+        "protocol_depth": 10,
+        "proxy_repeats": 9,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 128,
+        "stages": 4,
+        "threads": 32,
+        "tilelang_tma_bytes": 144,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 9,
+        "wgmma_repeats": 9,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2496,
+        "path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-08.py",
+        "sha256": "15949ae42f8928ebe1278c60b8f508e6d132e83e43aa30ec1dbad1d4d8c87697"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-08.json",
+      "template_family": "TMA-PROXY",
+      "variant": 8
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-safe-proxy-09",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 10,
+        "protocol_depth": 11,
+        "proxy_repeats": 10,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 144,
+        "stages": 2,
+        "threads": 64,
+        "tilelang_tma_bytes": 160,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 10,
+        "wgmma_repeats": 10,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2500,
+        "path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-09.py",
+        "sha256": "078986a0b08dac07226610762da6e27d4125ed840e40b2ecd2f555f8cd20db5f"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-09.json",
+      "template_family": "TMA-PROXY",
+      "variant": 9
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-safe-proxy-10",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 11,
+        "protocol_depth": 12,
+        "proxy_repeats": 11,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 160,
+        "stages": 3,
+        "threads": 96,
+        "tilelang_tma_bytes": 176,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 11,
+        "wgmma_repeats": 11,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2501,
+        "path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-10.py",
+        "sha256": "1280dac37c6395118c008c08536403f8f884df3ca1b650df8ab56b805ab203a7"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-10.json",
+      "template_family": "TMA-PROXY",
+      "variant": 10
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-safe-proxy-11",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 12,
+        "protocol_depth": 13,
+        "proxy_repeats": 12,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 176,
+        "stages": 4,
+        "threads": 128,
+        "tilelang_tma_bytes": 192,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 12,
+        "wgmma_repeats": 12,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2502,
+        "path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-11.py",
+        "sha256": "595ae8096e18d2068930cda5a3b35428a8311373edace43fc7fe0141a126b347"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-11.json",
+      "template_family": "TMA-PROXY",
+      "variant": 11
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-safe-proxy-12",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 13,
+        "protocol_depth": 14,
+        "proxy_repeats": 13,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 192,
+        "stages": 2,
+        "threads": 32,
+        "tilelang_tma_bytes": 208,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 13,
+        "wgmma_repeats": 13,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2501,
+        "path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-12.py",
+        "sha256": "e08ea3be9c9c2236a46ecc718a99ed7fe77d4d84c5cb03aa4b95a8d46c340ab3"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-12.json",
+      "template_family": "TMA-PROXY",
+      "variant": 12
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-safe-proxy-13",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 14,
+        "protocol_depth": 15,
+        "proxy_repeats": 14,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 208,
+        "stages": 3,
+        "threads": 64,
+        "tilelang_tma_bytes": 224,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 14,
+        "wgmma_repeats": 14,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2501,
+        "path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-13.py",
+        "sha256": "3f21352b4f43b3a252f7d379824fe7b72b0bbc2e636481024e536a1da8bb5df1"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-13.json",
+      "template_family": "TMA-PROXY",
+      "variant": 13
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-safe-proxy-14",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SAFE"
+      },
+      "polarity": "CORRECT",
+      "primitive": "Proxy",
+      "result_class": "SAFE",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 15,
+        "protocol_depth": 16,
+        "proxy_repeats": 15,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 224,
+        "stages": 4,
+        "threads": 96,
+        "tilelang_tma_bytes": 240,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 15,
+        "wgmma_repeats": 15,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2501,
+        "path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-14.py",
+        "sha256": "f893241da8b709fb6f5ec31cee3ae488133fed00937ab6dfbb652cb6c16ff723"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/safe/proxy/s2x-triton-safe-proxy-14.json",
+      "template_family": "TMA-PROXY",
+      "variant": 14
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-data-hazard-proxy-00",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 1,
+        "protocol_depth": 2,
+        "proxy_repeats": 1,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 0,
+        "stages": 2,
+        "threads": 32,
+        "tilelang_tma_bytes": 16,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 1,
+        "wgmma_repeats": 1,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2509,
+        "path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-00.py",
+        "sha256": "40cb5c2d87fd2a56c64b8abc8ebdff1e3a5c60e1195b748f6e5b366356849fed"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-00.json",
+      "template_family": "TMA-PROXY",
+      "variant": 0
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-data-hazard-proxy-01",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 2,
+        "protocol_depth": 3,
+        "proxy_repeats": 2,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 16,
+        "stages": 3,
+        "threads": 64,
+        "tilelang_tma_bytes": 32,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 2,
+        "wgmma_repeats": 2,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2510,
+        "path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-01.py",
+        "sha256": "9af35e8105c69eecfca0bad1258017a92a46904ed527437c07eb7fc65d3e5b50"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-01.json",
+      "template_family": "TMA-PROXY",
+      "variant": 1
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-data-hazard-proxy-02",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 3,
+        "protocol_depth": 4,
+        "proxy_repeats": 3,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 32,
+        "stages": 4,
+        "threads": 96,
+        "tilelang_tma_bytes": 48,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 3,
+        "wgmma_repeats": 3,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2510,
+        "path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-02.py",
+        "sha256": "997aba5f88c79597eed7a12420b9af358fab9e796b923dbda3549827b9ffe027"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-02.json",
+      "template_family": "TMA-PROXY",
+      "variant": 2
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-data-hazard-proxy-03",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 4,
+        "protocol_depth": 5,
+        "proxy_repeats": 4,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 48,
+        "stages": 2,
+        "threads": 128,
+        "tilelang_tma_bytes": 64,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 4,
+        "wgmma_repeats": 4,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2511,
+        "path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-03.py",
+        "sha256": "53b5239dca57780d486f68d52dc9f74f2ff2a01ed0d1e881d24aa3f603f96caf"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-03.json",
+      "template_family": "TMA-PROXY",
+      "variant": 3
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-data-hazard-proxy-04",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 5,
+        "protocol_depth": 6,
+        "proxy_repeats": 5,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 64,
+        "stages": 3,
+        "threads": 32,
+        "tilelang_tma_bytes": 80,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 5,
+        "wgmma_repeats": 5,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2510,
+        "path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-04.py",
+        "sha256": "d3e9f61c864f5663464eee6d1746a64fc848a990672456f14523600c2a9497d7"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-04.json",
+      "template_family": "TMA-PROXY",
+      "variant": 4
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-data-hazard-proxy-05",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 6,
+        "protocol_depth": 7,
+        "proxy_repeats": 6,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 80,
+        "stages": 4,
+        "threads": 64,
+        "tilelang_tma_bytes": 96,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 6,
+        "wgmma_repeats": 6,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2510,
+        "path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-05.py",
+        "sha256": "d285aa5fb84325dfc1196822ad8fefc53dd8c38ad601c239c2edd8da90e92965"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-05.json",
+      "template_family": "TMA-PROXY",
+      "variant": 5
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-data-hazard-proxy-06",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 7,
+        "protocol_depth": 8,
+        "proxy_repeats": 7,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 96,
+        "stages": 2,
+        "threads": 96,
+        "tilelang_tma_bytes": 112,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 7,
+        "wgmma_repeats": 7,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2511,
+        "path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-06.py",
+        "sha256": "946b42662744cb5cec63d74032cb2e468fffd983419268c292d4f2ad50e359a8"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-06.json",
+      "template_family": "TMA-PROXY",
+      "variant": 6
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-data-hazard-proxy-07",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 8,
+        "protocol_depth": 9,
+        "proxy_repeats": 8,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 112,
+        "stages": 3,
+        "threads": 128,
+        "tilelang_tma_bytes": 128,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 8,
+        "wgmma_repeats": 8,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2513,
+        "path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-07.py",
+        "sha256": "a20cdd609b02a4a4f97a567bb3ba49435bb3f8d71c1dbb957599946cfffd9b90"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-07.json",
+      "template_family": "TMA-PROXY",
+      "variant": 7
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-data-hazard-proxy-08",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 9,
+        "protocol_depth": 10,
+        "proxy_repeats": 9,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 128,
+        "stages": 4,
+        "threads": 32,
+        "tilelang_tma_bytes": 144,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 9,
+        "wgmma_repeats": 9,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2513,
+        "path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-08.py",
+        "sha256": "f4c50bf12102d0c4ada5d156068da2d93b950b42ba18d07eb027908bb22ead96"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-08.json",
+      "template_family": "TMA-PROXY",
+      "variant": 8
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-data-hazard-proxy-09",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 10,
+        "protocol_depth": 11,
+        "proxy_repeats": 10,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 144,
+        "stages": 2,
+        "threads": 64,
+        "tilelang_tma_bytes": 160,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 10,
+        "wgmma_repeats": 10,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2517,
+        "path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-09.py",
+        "sha256": "03c06903349955a07d16ddef759d4a9c9d1dbe273c5ee0103cdd5120dc214561"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-09.json",
+      "template_family": "TMA-PROXY",
+      "variant": 9
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-data-hazard-proxy-10",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 11,
+        "protocol_depth": 12,
+        "proxy_repeats": 11,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 160,
+        "stages": 3,
+        "threads": 96,
+        "tilelang_tma_bytes": 176,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 11,
+        "wgmma_repeats": 11,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2518,
+        "path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-10.py",
+        "sha256": "b8eb2ec26cb5c691fda7703ae9a1e57e7ba84c10c39c3090ca7b6d89210c2683"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-10.json",
+      "template_family": "TMA-PROXY",
+      "variant": 10
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-data-hazard-proxy-11",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 12,
+        "protocol_depth": 13,
+        "proxy_repeats": 12,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 176,
+        "stages": 4,
+        "threads": 128,
+        "tilelang_tma_bytes": 192,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 12,
+        "wgmma_repeats": 12,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2519,
+        "path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-11.py",
+        "sha256": "f8d6669cb57b3e14b84f2efdc237cb85c912da6a0007096f1be0dac6abea9b85"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-11.json",
+      "template_family": "TMA-PROXY",
+      "variant": 11
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-data-hazard-proxy-12",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 13,
+        "protocol_depth": 14,
+        "proxy_repeats": 13,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 192,
+        "stages": 2,
+        "threads": 32,
+        "tilelang_tma_bytes": 208,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 13,
+        "wgmma_repeats": 13,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2518,
+        "path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-12.py",
+        "sha256": "934387e3a6735ad00fa873d2c47f04909e559e5367583fcc9cf2d4412b74646b"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-12.json",
+      "template_family": "TMA-PROXY",
+      "variant": 12
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-data-hazard-proxy-13",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 14,
+        "protocol_depth": 15,
+        "proxy_repeats": 14,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 208,
+        "stages": 3,
+        "threads": 64,
+        "tilelang_tma_bytes": 224,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 14,
+        "wgmma_repeats": 14,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2518,
+        "path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-13.py",
+        "sha256": "6b5644d8f8c3a596eac9c1c731b2336380f64a94c3669f3134a2f7352a65a184"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-13.json",
+      "template_family": "TMA-PROXY",
+      "variant": 13
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-data-hazard-proxy-14",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "DATA_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "DATA_HAZARD",
+      "scenario_id": "TMA-PROXY",
+      "semantic_knobs": {
+        "elements": 15,
+        "protocol_depth": 16,
+        "proxy_repeats": 15,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 224,
+        "stages": 4,
+        "threads": 96,
+        "tilelang_tma_bytes": 240,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 15,
+        "wgmma_repeats": 15,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2518,
+        "path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-14.py",
+        "sha256": "03c844b7df85bb41099e04f36117a1affbad224159fe38c27234bc0511a7b3cd"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-14.json",
+      "template_family": "TMA-PROXY",
+      "variant": 14
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-sync-hazard-proxy-00",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 1,
+        "protocol_depth": 2,
+        "proxy_repeats": 1,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 0,
+        "stages": 2,
+        "threads": 32,
+        "tilelang_tma_bytes": 16,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 1,
+        "wgmma_repeats": 1,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2523,
+        "path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-00.py",
+        "sha256": "b78a87032694ae2415215da433853c897ef0d3b34419c41eeb966093a1ea1362"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-00.json",
+      "template_family": "WGMMA",
+      "variant": 0
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-sync-hazard-proxy-01",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 2,
+        "protocol_depth": 3,
+        "proxy_repeats": 2,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 16,
+        "stages": 3,
+        "threads": 64,
+        "tilelang_tma_bytes": 32,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 2,
+        "wgmma_repeats": 2,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2524,
+        "path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-01.py",
+        "sha256": "b595f1933803afe9597d484d3e55766e06ae01d9dd48da25203765f83ff7b7cc"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-01.json",
+      "template_family": "WGMMA",
+      "variant": 1
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-sync-hazard-proxy-02",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 3,
+        "protocol_depth": 4,
+        "proxy_repeats": 3,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 32,
+        "stages": 4,
+        "threads": 96,
+        "tilelang_tma_bytes": 48,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 3,
+        "wgmma_repeats": 3,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2524,
+        "path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-02.py",
+        "sha256": "82ea73300b34bc74441c8daceda2448968bff5a48f381ce38a7e1ddf2e4acff2"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-02.json",
+      "template_family": "WGMMA",
+      "variant": 2
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-sync-hazard-proxy-03",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 4,
+        "protocol_depth": 5,
+        "proxy_repeats": 4,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 48,
+        "stages": 2,
+        "threads": 128,
+        "tilelang_tma_bytes": 64,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 4,
+        "wgmma_repeats": 4,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2525,
+        "path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-03.py",
+        "sha256": "e10c815f41f4b42d464f449758a9f2784caf07b4b2e6d221a94571d600922de8"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-03.json",
+      "template_family": "WGMMA",
+      "variant": 3
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-sync-hazard-proxy-04",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 5,
+        "protocol_depth": 6,
+        "proxy_repeats": 5,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 64,
+        "stages": 3,
+        "threads": 32,
+        "tilelang_tma_bytes": 80,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 5,
+        "wgmma_repeats": 5,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2524,
+        "path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-04.py",
+        "sha256": "d75c05eadd4b6f706080d507ae298bae8e3904b49e99b7e17a952802dce2ba16"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-04.json",
+      "template_family": "WGMMA",
+      "variant": 4
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-sync-hazard-proxy-05",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 6,
+        "protocol_depth": 7,
+        "proxy_repeats": 6,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 80,
+        "stages": 4,
+        "threads": 64,
+        "tilelang_tma_bytes": 96,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 6,
+        "wgmma_repeats": 6,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2524,
+        "path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-05.py",
+        "sha256": "111990a18566ed15db83de532d0f51c05c9ca52ab3a0dc340f57ac317be3c0e7"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-05.json",
+      "template_family": "WGMMA",
+      "variant": 5
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-sync-hazard-proxy-06",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 7,
+        "protocol_depth": 8,
+        "proxy_repeats": 7,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 96,
+        "stages": 2,
+        "threads": 96,
+        "tilelang_tma_bytes": 112,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 7,
+        "wgmma_repeats": 7,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2525,
+        "path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-06.py",
+        "sha256": "22baea51519b64709492f2678ac7fb5e3698d2fbeffa4366811fa6c8bb9e5883"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-06.json",
+      "template_family": "WGMMA",
+      "variant": 6
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-sync-hazard-proxy-07",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 8,
+        "protocol_depth": 9,
+        "proxy_repeats": 8,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 112,
+        "stages": 3,
+        "threads": 128,
+        "tilelang_tma_bytes": 128,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 8,
+        "wgmma_repeats": 8,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2527,
+        "path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-07.py",
+        "sha256": "05d9ee6acf50bd690f37ad086f9e5127fe8fff4142d3036e677cb0b95a7f2c44"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-07.json",
+      "template_family": "WGMMA",
+      "variant": 7
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-sync-hazard-proxy-08",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 9,
+        "protocol_depth": 10,
+        "proxy_repeats": 9,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 128,
+        "stages": 4,
+        "threads": 32,
+        "tilelang_tma_bytes": 144,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 9,
+        "wgmma_repeats": 9,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2527,
+        "path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-08.py",
+        "sha256": "d2c4bdf7852c6643deec510bc663e100467be09b76d448eceff11ad3dfd7b7f3"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-08.json",
+      "template_family": "WGMMA",
+      "variant": 8
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-sync-hazard-proxy-09",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 10,
+        "protocol_depth": 11,
+        "proxy_repeats": 10,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 144,
+        "stages": 2,
+        "threads": 64,
+        "tilelang_tma_bytes": 160,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 10,
+        "wgmma_repeats": 10,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2531,
+        "path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-09.py",
+        "sha256": "904a289ec27237d3938ad7841048fd13eed01de7c5c45f48ee1f049a501b8b96"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-09.json",
+      "template_family": "WGMMA",
+      "variant": 9
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-sync-hazard-proxy-10",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 11,
+        "protocol_depth": 12,
+        "proxy_repeats": 11,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 160,
+        "stages": 3,
+        "threads": 96,
+        "tilelang_tma_bytes": 176,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 11,
+        "wgmma_repeats": 11,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2532,
+        "path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-10.py",
+        "sha256": "f98e8b3495e71db0558da625bc48df03e4df654721027e0a9f7c8c216fd691b4"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-10.json",
+      "template_family": "WGMMA",
+      "variant": 10
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-sync-hazard-proxy-11",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 12,
+        "protocol_depth": 13,
+        "proxy_repeats": 12,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 176,
+        "stages": 4,
+        "threads": 128,
+        "tilelang_tma_bytes": 192,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 12,
+        "wgmma_repeats": 12,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2533,
+        "path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-11.py",
+        "sha256": "9ae782a123c09d2395c25df4fdf3b50c06b82976166129475370ad0244c71e9e"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-11.json",
+      "template_family": "WGMMA",
+      "variant": 11
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-sync-hazard-proxy-12",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 13,
+        "protocol_depth": 14,
+        "proxy_repeats": 13,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 192,
+        "stages": 2,
+        "threads": 32,
+        "tilelang_tma_bytes": 208,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 13,
+        "wgmma_repeats": 13,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2532,
+        "path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-12.py",
+        "sha256": "facb1b4a27d0666e73a74b7b1aedde4ca1dac3f5ab09bdc0eccb5ffe828e6f58"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-12.json",
+      "template_family": "WGMMA",
+      "variant": 12
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-sync-hazard-proxy-13",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 14,
+        "protocol_depth": 15,
+        "proxy_repeats": 14,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 208,
+        "stages": 3,
+        "threads": 64,
+        "tilelang_tma_bytes": 224,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 14,
+        "wgmma_repeats": 14,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2532,
+        "path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-13.py",
+        "sha256": "b550b77ec3ca04d960f0515e99ddcf79f51cc96cecf0edbd3393eeacde74bbab"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-13.json",
+      "template_family": "WGMMA",
+      "variant": 13
+    },
+    {
+      "admitted": false,
+      "ai_adjudication": {
+        "required_evidence": [
+          "source_and_lowered_operations",
+          "physical_participants",
+          "resource_generation_or_endpoint",
+          "byte_overlap_if_applicable",
+          "reachable_prefix",
+          "missing_or_present_typed_order"
+        ],
+        "status": "PENDING_INDEPENDENT_REVIEW"
+      },
+      "case_id": "s2x-triton-sync-hazard-proxy-14",
+      "dsl": "triton",
+      "oracle": {
+        "basis": "independent paired protocol template plus variant-specific participants/region/depth",
+        "verdict": "SYNC_HAZARD"
+      },
+      "polarity": "BUG",
+      "primitive": "Proxy",
+      "result_class": "SYNC_HAZARD",
+      "scenario_id": "WGMMA:MISSING-OPERAND-FENCE",
+      "semantic_knobs": {
+        "elements": 15,
+        "protocol_depth": 16,
+        "proxy_repeats": 15,
+        "proxy_store_shape": [
+          64,
+          64
+        ],
+        "region_offset_bytes": 224,
+        "stages": 4,
+        "threads": 96,
+        "tilelang_tma_bytes": 240,
+        "triton_tma_block": 32,
+        "triton_tma_transfers": 15,
+        "wgmma_repeats": 15,
+        "wgmma_shape": [
+          64,
+          64,
+          16
+        ]
+      },
+      "source": {
+        "bytes": 2532,
+        "path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-14.py",
+        "sha256": "c3879492f2b4666c99e1ffcdf0e788b66dd93aef1e469e3735eba9ab0442956e"
+      },
+      "spec_path": "corpus/suite2/executable-proxy-v1/triton/sync_hazard/proxy/s2x-triton-sync-hazard-proxy-14.json",
+      "template_family": "WGMMA",
+      "variant": 14
+    }
+  ],
+  "schema_version": "pipeguard-suite2-executable-matrix-v1",
+  "status": "EXECUTION_PENDING"
+}

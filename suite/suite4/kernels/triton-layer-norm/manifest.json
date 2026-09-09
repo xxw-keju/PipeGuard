@@ -1,0 +1,481 @@
+{
+  "kernel": {
+    "candidate_id": "3a2b5d012ec338da",
+    "capsule_sha256": "c51eb9caec45781fc78f46a360bdc8d8a079af4435863ae6cef550d49d95a6f7",
+    "dsl": "triton",
+    "family": "LAYER_NORM",
+    "features": [
+      "REDUCTION",
+      "MULTI_PASS",
+      "FUSED_EPILOGUE"
+    ],
+    "kernel_id": "triton-layer-norm",
+    "operator_family": "LAYER_NORM",
+    "path": "python/tutorials/05-layer-norm.py",
+    "project": "Triton",
+    "qualname": "_layer_norm_fwd_fused",
+    "selected_source_sha256": "f9827efdc479bc6a1c746202e1e0a3b4923c58b74632e92e2a3e1dc440c0f176",
+    "source_id": "triton-61c02bcd",
+    "source_sha256": "241f9f74e2f18567b26f3b4cf9b9873ae859150ccd10976d65d38fe24896d1d2",
+    "variant_ids": [
+      "triton-layer-norm-source-original",
+      "triton-layer-norm-source-m1-stage1",
+      "triton-layer-norm-source-m2-stage2",
+      "triton-layer-norm-source-m3-output-init",
+      "triton-layer-norm-source-m4-output-dup",
+      "triton-layer-norm-source-m8-global-roundtrip",
+      "triton-layer-norm-source-m9-masked-store-roundtrip",
+      "triton-layer-norm-source-m10-masked-load-roundtrip",
+      "triton-layer-norm-source-m11-relaxed-atomic-roundtrip",
+      "triton-layer-norm-source-m12-masked-other-constancy",
+      "triton-layer-norm-source-m13-nondominating-assume"
+    ],
+    "workload_spec_ids": [
+      "triton-layer-norm-workload-original",
+      "triton-layer-norm-workload-boundary-1",
+      "triton-layer-norm-workload-boundary-2",
+      "triton-layer-norm-workload-boundary-3"
+    ]
+  },
+  "variants": [
+    {
+      "adapter_sha256": "a6bf9e954a288e6531264ac4c30d889fe089e186f74a00ae2f5f01887651e625",
+      "adjudication": {
+        "class": "CORRECT",
+        "method": "REFERENCE_ORACLE",
+        "rationale": "Pinned official source replayed successfully against its independent PyTorch reference on the original and all three boundary workloads.",
+        "status": "CONFIRMED"
+      },
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-layer-norm",
+      "role": "ORIGINAL",
+      "selected_ast_sha256": "84c94c9ea2e575d60737f9fae439b7d675bf92ba7101e35b35d404273ffd08db",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/sources/original.py",
+        "sha256": "c51eb9caec45781fc78f46a360bdc8d8a079af4435863ae6cef550d49d95a6f7"
+      },
+      "variant_id": "triton-layer-norm-source-original"
+    },
+    {
+      "adapter_sha256": "a6bf9e954a288e6531264ac4c30d889fe089e186f74a00ae2f5f01887651e625",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "598fc1d563c54c03c37796e4bfdaabd1d60049639228cfca17f054be0e927865",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-layer-norm",
+      "mutation_family": "PIPELINE_DEPTH",
+      "mutation_rule_id": "MUT-M1-PIPE-STAGE-LOW",
+      "occurrence": 1,
+      "operation": "replace_all",
+      "parent_variant_id": "triton-layer-norm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/patches/m1-stage1.diff",
+        "sha256": "b1a063969868c48e688e78bb41b189bde4a044906b36502dbcf0d1cfc9d11071"
+      },
+      "replacement_sha256": "10697da942fa426438dec3de3a8a1d4c6cf8d5f0320405fcde1ab3ef144d2ff3",
+      "role": "MUTANT",
+      "selected_ast_sha256": "eb054522fb4f6444c833940abacc056659649af0d6a38f156a729a5f558ecea2",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/sources/m1-stage1.py",
+        "sha256": "8cd8b2e0928667c23aab0ed726683e2581877ecf44312a5def45d4ba89c71ee9"
+      },
+      "variant_id": "triton-layer-norm-source-m1-stage1"
+    },
+    {
+      "adapter_sha256": "a6bf9e954a288e6531264ac4c30d889fe089e186f74a00ae2f5f01887651e625",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "598fc1d563c54c03c37796e4bfdaabd1d60049639228cfca17f054be0e927865",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-layer-norm",
+      "mutation_family": "PIPELINE_DEPTH",
+      "mutation_rule_id": "MUT-M2-PIPE-STAGE-ALT",
+      "occurrence": 1,
+      "operation": "replace_all",
+      "parent_variant_id": "triton-layer-norm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/patches/m2-stage2.diff",
+        "sha256": "8f763adc4d962d52f41d49cb92729cf0d08a5e9f4aac85ccc44b417c2f1ea22e"
+      },
+      "replacement_sha256": "e0869e9e919084c56dff248953fe72281b96ca7e5bb7dfb5b21fb0a53b3bea56",
+      "role": "MUTANT",
+      "selected_ast_sha256": "c56bad5bfe44f94efd72bcb259679d9a8a8dab010878fa7f502c55d7158fbbbb",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/sources/m2-stage2.py",
+        "sha256": "1af1238ee30c2adb07d21c885d34cf8f1b7a9fa2ccc5d3dafd2f8e4ffa632f12"
+      },
+      "variant_id": "triton-layer-norm-source-m2-stage2"
+    },
+    {
+      "adapter_sha256": "a6bf9e954a288e6531264ac4c30d889fe089e186f74a00ae2f5f01887651e625",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "0abeac0291ee1989cd699e292c7c6e0e2ff22a44fb6f986f3074a157a3544001",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-layer-norm",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M3-DEST-INIT-DUP",
+      "occurrence": 1,
+      "operation": "insert_before",
+      "parent_variant_id": "triton-layer-norm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/patches/m3-output-init.diff",
+        "sha256": "1a0caeed9c3a3eab643195af4b1c0f703dc269fade3faad3117340c4d32705ad"
+      },
+      "replacement_sha256": "23ddba1041f83b65a49c322a2c0302f5edff9735ab2a1dac787484cc2e689183",
+      "role": "MUTANT",
+      "selected_ast_sha256": "1b4c286ae28d21cc6afcc520fbd898e97699779cd91c9c288bfdd2a9ffbb987c",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/sources/m3-output-init.py",
+        "sha256": "f3feb62d2a288193a0822e8d2097cf2e48f3eaa6ae5d9ef0772c7fab549dbded"
+      },
+      "variant_id": "triton-layer-norm-source-m3-output-init"
+    },
+    {
+      "adapter_sha256": "a6bf9e954a288e6531264ac4c30d889fe089e186f74a00ae2f5f01887651e625",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "0abeac0291ee1989cd699e292c7c6e0e2ff22a44fb6f986f3074a157a3544001",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-layer-norm",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M4-SOURCE-A-INIT",
+      "occurrence": 1,
+      "operation": "duplicate",
+      "parent_variant_id": "triton-layer-norm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/patches/m4-output-dup.diff",
+        "sha256": "2537706a60611a00682dd0c924cd32376a0d97b80740e7236bc42d8cff1a15bf"
+      },
+      "replacement_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "MUTANT",
+      "selected_ast_sha256": "7b082b53cfd05fb3f011acc017e6de768c5564462971d5168ebf4389aacb9e66",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/sources/m4-output-dup.py",
+        "sha256": "8a5d402054d32c85758e4b68024d1219dac40442b2ee8b36f8385a0892f8ed45"
+      },
+      "variant_id": "triton-layer-norm-source-m4-output-dup"
+    },
+    {
+      "adapter_sha256": "a6bf9e954a288e6531264ac4c30d889fe089e186f74a00ae2f5f01887651e625",
+      "adjudication": {
+        "class": "DATA_HAZARD",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "The store and reload use the same unique logical addresses, but Coalesce assigns different thread layouts. Eleven of twenty workloads mismatch; inserting tl.debug_barrier between the operations restores all twenty. PipeGuard reports DATA_HAZARD/UNORDERED_CONFLICT.",
+        "status": "CONFIRMED"
+      },
+      "anchor_sha256": "c51eb9caec45781fc78f46a360bdc8d8a079af4435863ae6cef550d49d95a6f7",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-layer-norm",
+      "mutation_family": "GLOBAL_MEMORY_ORDER",
+      "mutation_rule_id": "MUT-M8-GLOBAL-RAW-ROUNDTRIP",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-layer-norm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/patches/m8-global-roundtrip.diff",
+        "sha256": "60d733c8390090bf46be5a1fb606324dfc90a7b4d6fed922a30d118eff8c3bee"
+      },
+      "replacement_sha256": "801ab94c3deb956df9b319f58c6dc6c47a678660faa0fdcaa3c4eaa6f07f9cc7",
+      "role": "MUTANT",
+      "selected_ast_sha256": "13d962c2d9abfae4242305daa9dc300900073d548446f8bdcb08c980fc0bee68",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/sources/m8-global-roundtrip.py",
+        "sha256": "801ab94c3deb956df9b319f58c6dc6c47a678660faa0fdcaa3c4eaa6f07f9cc7"
+      },
+      "variant_id": "triton-layer-norm-source-m8-global-roundtrip"
+    },
+    {
+      "adapter_sha256": "a6bf9e954a288e6531264ac4c30d889fe089e186f74a00ae2f5f01887651e625",
+      "adjudication": {
+        "class": "DATA_HAZARD",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "The runtime mask buffer is all true, so every unique address is overwritten with zero before it is reloaded. All twenty workloads mismatch without a barrier and pass with a barrier.",
+        "status": "CONFIRMED"
+      },
+      "anchor_sha256": "c51eb9caec45781fc78f46a360bdc8d8a079af4435863ae6cef550d49d95a6f7",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-layer-norm",
+      "mutation_family": "GLOBAL_MEMORY_ORDER",
+      "mutation_rule_id": "MUT-M9-GLOBAL-RAW-MASKED-STORE",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-layer-norm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/patches/m9-masked-store-roundtrip.diff",
+        "sha256": "dc3aff220a3d0e0c5ca494a8895348cb7a68fde1400969ee84f1d77b8dcc0b5f"
+      },
+      "replacement_sha256": "2c3a6ab4be652edccffbf629f83875f19b01552b03c0b2ee79f184ab05ac4606",
+      "role": "MUTANT",
+      "selected_ast_sha256": "dcd0d2c5f642c3890bdb99920d13c89366546f89434c0cc41b38822dbc217640",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/sources/m9-masked-store-roundtrip.py",
+        "sha256": "2c3a6ab4be652edccffbf629f83875f19b01552b03c0b2ee79f184ab05ac4606"
+      },
+      "variant_id": "triton-layer-norm-source-m9-masked-store-roundtrip"
+    },
+    {
+      "adapter_sha256": "a6bf9e954a288e6531264ac4c30d889fe089e186f74a00ae2f5f01887651e625",
+      "adjudication": {
+        "class": "DATA_HAZARD",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "The runtime mask buffer is all true, so the masked load is semantically an ordinary reload. Eight of twenty workloads mismatch without a barrier and all twenty pass with a barrier.",
+        "status": "CONFIRMED"
+      },
+      "anchor_sha256": "c51eb9caec45781fc78f46a360bdc8d8a079af4435863ae6cef550d49d95a6f7",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-layer-norm",
+      "mutation_family": "GLOBAL_MEMORY_ORDER",
+      "mutation_rule_id": "MUT-M10-GLOBAL-RAW-MASKED-LOAD",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-layer-norm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/patches/m10-masked-load-roundtrip.diff",
+        "sha256": "c0ba192b5481b434fd5e73399966e643f8d63faf5a64321b37c4c0d8f0f1e8ff"
+      },
+      "replacement_sha256": "fc4429784712f982808ade003c06c738fb1a379924f223de559dadd40fc22729",
+      "role": "MUTANT",
+      "selected_ast_sha256": "58373f8918014798a0004cd33e3ca2506728ac32678ffe3b257c9c90739fd75c",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/sources/m10-masked-load-roundtrip.py",
+        "sha256": "fc4429784712f982808ade003c06c738fb1a379924f223de559dadd40fc22729"
+      },
+      "variant_id": "triton-layer-norm-source-m10-masked-load-roundtrip"
+    },
+    {
+      "adapter_sha256": "a6bf9e954a288e6531264ac4c30d889fe089e186f74a00ae2f5f01887651e625",
+      "adjudication": {
+        "class": "DATA_HAZARD",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "Seven of twenty workloads mismatch and all twenty pass after a CTA barrier. The result is kept provisional because the precise Triton/PTX guarantee for relaxed atomic-to-non-atomic ordering must be stated before treating it as a strongest semantics-preserving positive.",
+        "status": "PROVISIONAL"
+      },
+      "anchor_sha256": "c51eb9caec45781fc78f46a360bdc8d8a079af4435863ae6cef550d49d95a6f7",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-layer-norm",
+      "mutation_family": "ATOMIC_MEMORY_ORDER",
+      "mutation_rule_id": "MUT-M11-RELAXED-ATOMIC-RAW",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-layer-norm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/patches/m11-relaxed-atomic-roundtrip.diff",
+        "sha256": "23452f1f99a49535f2298142e239e0e3382ba1cb9b3e4dac9690ae54c443a31c"
+      },
+      "replacement_sha256": "67a156bafa01ff3e9245222f80b7afe2114dd57b3779ca964a192dbca79ec233",
+      "role": "MUTANT",
+      "selected_ast_sha256": "555f3a2efc1d0b6030a15baf70f096749bdc74c7e017ca52c4df301fd0519834",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/sources/m11-relaxed-atomic-roundtrip.py",
+        "sha256": "67a156bafa01ff3e9245222f80b7afe2114dd57b3779ca964a192dbca79ec233"
+      },
+      "variant_id": "triton-layer-norm-source-m11-relaxed-atomic-roundtrip"
+    },
+    {
+      "adapter_sha256": "a6bf9e954a288e6531264ac4c30d889fe089e186f74a00ae2f5f01887651e625",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "REFERENCE_ORACLE",
+        "rationale": "All twenty workloads mismatch on the pinned compiler. An equivalent explicit tl.where control passes all twenty. This is compiler wrong-code fixed upstream by commit 36cb2499e0 and is outside PipeGuard's synchronization scope.",
+        "status": "CONFIRMED"
+      },
+      "anchor_sha256": "c51eb9caec45781fc78f46a360bdc8d8a079af4435863ae6cef550d49d95a6f7",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-layer-norm",
+      "mutation_family": "COMPILER_ANALYSIS",
+      "mutation_rule_id": "MUT-M12-MASKED-OTHER-CONSTANCY",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-layer-norm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/patches/m12-masked-other-constancy.diff",
+        "sha256": "db72bd6395fa578b437627ed4e87d2fa6889eaed04a1ef7909f724fa12ce6559"
+      },
+      "replacement_sha256": "6586b7d251181d8ecd06b0aef387f8631a9968b85f68db838301277e01a2d0e3",
+      "role": "MUTANT",
+      "selected_ast_sha256": "81d11a5924b82c55c53567328ed8b6c05aac2b0a1a5f2b257c3d7db93ccd0144",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/sources/m12-masked-other-constancy.py",
+        "sha256": "6586b7d251181d8ecd06b0aef387f8631a9968b85f68db838301277e01a2d0e3"
+      },
+      "variant_id": "triton-layer-norm-source-m12-masked-other-constancy"
+    },
+    {
+      "adapter_sha256": "a6bf9e954a288e6531264ac4c30d889fe089e186f74a00ae2f5f01887651e625",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "REFERENCE_ORACLE",
+        "rationale": "At runtime m=4 and n=0, so the loop must execute zero iterations and the canary must be zero. All twenty workloads mismatch with flatten=True; the flatten=False control passes all twenty. This compiler control-flow defect is outside PipeGuard's synchronization scope.",
+        "status": "CONFIRMED"
+      },
+      "anchor_sha256": "c51eb9caec45781fc78f46a360bdc8d8a079af4435863ae6cef550d49d95a6f7",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-layer-norm",
+      "mutation_family": "CONTROL_FLOW_ANALYSIS",
+      "mutation_rule_id": "MUT-M13-NONDOMINATING-ASSUME",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-layer-norm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/patches/m13-nondominating-assume.diff",
+        "sha256": "9b4657a01e29b463591dc8720e2a2a1bf425ead499fdf220c6edde2b092b3216"
+      },
+      "replacement_sha256": "86bbe2c0793e3b7f9b17f820feb50a698e1684c9439ebc7f0fcc3f69fcb32de1",
+      "role": "MUTANT",
+      "selected_ast_sha256": "6e17e72bd2d9ec290b6bac481710fd5b47090f9c92c7f48e1e0a944b01f4671a",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/sources/m13-nondominating-assume.py",
+        "sha256": "86bbe2c0793e3b7f9b17f820feb50a698e1684c9439ebc7f0fcc3f69fcb32de1"
+      },
+      "variant_id": "triton-layer-norm-source-m13-nondominating-assume"
+    }
+  ],
+  "workloads": [
+    {
+      "bindings": {
+        "BLOCK_M": 1,
+        "M": 256,
+        "N": 1024,
+        "dtype": "float16",
+        "eps": 1e-05
+      },
+      "boundary_dimensions": [],
+      "delta": [],
+      "evidence": {
+        "kind": "UPSTREAM_TEST",
+        "path": "python/tutorials/05-layer-norm.py",
+        "rationale": "Pinned official example kernel with an independent PyTorch oracle.",
+        "sha256": "241f9f74e2f18567b26f3b4cf9b9873ae859150ccd10976d65d38fe24896d1d2"
+      },
+      "kernel_id": "triton-layer-norm",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/recipes/triton-layer-norm-workload-original.json",
+        "sha256": "c316cf5d6f1a2d8522a633894d00e3c124b6dc5d1e8fead80be6772b9c20465a"
+      },
+      "role": "ORIGINAL",
+      "spec_id": "triton-layer-norm-workload-original"
+    },
+    {
+      "bindings": {
+        "BLOCK_M": 1,
+        "M": 128,
+        "N": 1024,
+        "dtype": "float16",
+        "eps": 1e-05
+      },
+      "boundary_dimensions": [
+        "M"
+      ],
+      "delta": [
+        {
+          "after": 128,
+          "before": 256,
+          "path": "/bindings/M"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "python/tutorials/05-layer-norm.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "241f9f74e2f18567b26f3b4cf9b9873ae859150ccd10976d65d38fe24896d1d2"
+      },
+      "kernel_id": "triton-layer-norm",
+      "parent_spec_id": "triton-layer-norm-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/recipes/triton-layer-norm-workload-boundary-1.json",
+        "sha256": "221594dc26d0c0a71321622ab76085dec69c159b2590285febe5f09c0ad9c502"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "triton-layer-norm-workload-boundary-1"
+    },
+    {
+      "bindings": {
+        "BLOCK_M": 1,
+        "M": 256,
+        "N": 2048,
+        "dtype": "float16",
+        "eps": 1e-05
+      },
+      "boundary_dimensions": [
+        "N"
+      ],
+      "delta": [
+        {
+          "after": 2048,
+          "before": 1024,
+          "path": "/bindings/N"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "python/tutorials/05-layer-norm.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "241f9f74e2f18567b26f3b4cf9b9873ae859150ccd10976d65d38fe24896d1d2"
+      },
+      "kernel_id": "triton-layer-norm",
+      "parent_spec_id": "triton-layer-norm-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/recipes/triton-layer-norm-workload-boundary-2.json",
+        "sha256": "681f13579d26dfc66c9f925a543ca952fd81d56faad4ba93cbf7bd4db1469464"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "triton-layer-norm-workload-boundary-2"
+    },
+    {
+      "bindings": {
+        "BLOCK_M": 2,
+        "M": 256,
+        "N": 1024,
+        "dtype": "float16",
+        "eps": 1e-06
+      },
+      "boundary_dimensions": [
+        "BLOCK_M",
+        "eps"
+      ],
+      "delta": [
+        {
+          "after": 2,
+          "before": 1,
+          "path": "/bindings/BLOCK_M"
+        },
+        {
+          "after": 1e-06,
+          "before": 1e-05,
+          "path": "/bindings/eps"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "python/tutorials/05-layer-norm.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "241f9f74e2f18567b26f3b4cf9b9873ae859150ccd10976d65d38fe24896d1d2"
+      },
+      "kernel_id": "triton-layer-norm",
+      "parent_spec_id": "triton-layer-norm-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/triton-layer-norm/recipes/triton-layer-norm-workload-boundary-3.json",
+        "sha256": "1c6556aba1cb8d290fade7c149a6cc21f8f6fba820fadde0f763ea836caf8719"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "triton-layer-norm-workload-boundary-3"
+    }
+  ]
+}

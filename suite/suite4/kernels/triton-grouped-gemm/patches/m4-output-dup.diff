@@ -1,0 +1,10 @@
+--- original.py
++++ m4-output-dup.py
+@@ -127,6 +127,7 @@
+ 
+             # assumes full tile for now
+             tl.store(c_ptrs, c)
++            tl.store(c_ptrs, c)
+ 
+             # go to the next tile by advancing NUM_SM
+             tile_idx += NUM_SM

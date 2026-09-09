@@ -1,0 +1,63 @@
+{
+  "bindings": {
+    "BLOCK_K": 32,
+    "BLOCK_M": 64,
+    "BLOCK_N": 64,
+    "K": 256,
+    "N": 128,
+    "dtype": "float16",
+    "group_sizes": [
+      128,
+      256
+    ]
+  },
+  "compiler": {
+    "grid": [
+      6,
+      2,
+      1
+    ],
+    "pass_configs": {},
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "tuple_materialization_kwargs": [
+      "batch_sizes_list"
+    ]
+  },
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-grouped-gemm",
+  "materialization": {
+    "args": [],
+    "kwargs": {
+      "K": 256,
+      "N": 128,
+      "batch_sizes_list": [
+        128,
+        256
+      ],
+      "block_K": 32,
+      "block_M": 64,
+      "block_N": 64,
+      "num_stages": 2,
+      "threads": 128
+    },
+    "resolver_kwargs": {}
+  },
+  "numeric": {
+    "atol": 0.03,
+    "oracle": "per-group torch.matmul",
+    "rtol": 0.03,
+    "seed": 29,
+    "timeout_seconds": 45.0
+  },
+  "recipe_id": "tilelang-grouped-gemm-workload-boundary-2",
+  "schema_version": "pipeguard-mutation-workload-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  }
+}

@@ -1,0 +1,337 @@
+{
+  "kernel": {
+    "candidate_id": "e38d28b2c3f12e15",
+    "capsule_sha256": "cdeade6179150a8615e4b1b490f35a6e6f4dd4ed6f58e67bbaa3e4dc7bd5f09e",
+    "dsl": "tilelang",
+    "family": "SOFTMAX",
+    "features": [
+      "PIPELINED",
+      "REDUCTION",
+      "FUSED_EPILOGUE"
+    ],
+    "kernel_id": "tilelang-softmax",
+    "operator_family": "SOFTMAX",
+    "path": "examples/online_softmax/online_softmax.py",
+    "project": "TileLang",
+    "qualname": "softmax_kernel",
+    "selected_source_sha256": "1577ca04213f4159075ef407089b4e5c9b61a42949e9da9592705787396bb308",
+    "source_id": "tilelang-2c31e071",
+    "source_sha256": "13659eca22c5002de123f4678f50c604610eaa48800c4641bf25c3888eb6ae74",
+    "variant_ids": [
+      "tilelang-softmax-source-original",
+      "tilelang-softmax-source-m3-lse-init",
+      "tilelang-softmax-source-m4-x-init",
+      "tilelang-softmax-source-m5-y-init",
+      "tilelang-softmax-source-m6-x-before",
+      "tilelang-softmax-source-m7-x-after"
+    ],
+    "workload_spec_ids": [
+      "tilelang-softmax-workload-original",
+      "tilelang-softmax-workload-boundary-1",
+      "tilelang-softmax-workload-boundary-2",
+      "tilelang-softmax-workload-boundary-3"
+    ]
+  },
+  "variants": [
+    {
+      "adapter_sha256": "7b7d3b898250db19cea05bd2274fef66cc42a25a4789d3f687e50756d8429e89",
+      "adjudication": {
+        "class": "CORRECT",
+        "method": "REFERENCE_ORACLE",
+        "rationale": "Pinned official source replayed successfully against its independent PyTorch reference on the original and all three boundary workloads.",
+        "status": "CONFIRMED"
+      },
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-softmax",
+      "role": "ORIGINAL",
+      "selected_ast_sha256": "53d6cb6c141784495e4591c5958246397642c19da2dc5a8041acae6abc42d503",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-softmax/sources/original.py",
+        "sha256": "ccd63b31f61ed10f19474481673417a92210801156353270296a16549ab34868"
+      },
+      "variant_id": "tilelang-softmax-source-original"
+    },
+    {
+      "adapter_sha256": "7b7d3b898250db19cea05bd2274fef66cc42a25a4789d3f687e50756d8429e89",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "a032c3938b9af20413affd09bbb617c21f79b3c888d0b01c33444e67402fdfed",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-softmax",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M3-DEST-INIT-DUP",
+      "occurrence": 1,
+      "operation": "duplicate",
+      "parent_variant_id": "tilelang-softmax-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-softmax/patches/m3-lse-init.diff",
+        "sha256": "e82a8ebfafa78371aec3f5076c90e9fee74706c64db6d4a0a6f5f2c754847aa0"
+      },
+      "replacement_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "MUTANT",
+      "selected_ast_sha256": "b7e751baed3b71d4775f4bb2346409b1eb1c7afba3fa8a4abaab5554ff40f7d9",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-softmax/sources/m3-lse-init.py",
+        "sha256": "415aae46431cc293b6d44646057061b93f257e34acfe155e24e34cacfb272622"
+      },
+      "variant_id": "tilelang-softmax-source-m3-lse-init"
+    },
+    {
+      "adapter_sha256": "7b7d3b898250db19cea05bd2274fef66cc42a25a4789d3f687e50756d8429e89",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "e6c1071b208b467f308c2b3bd5ac17c9d7d3c02c49210712f6c33e5dcd0245b8",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-softmax",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M4-SOURCE-A-INIT",
+      "occurrence": 1,
+      "operation": "insert_before",
+      "parent_variant_id": "tilelang-softmax-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-softmax/patches/m4-x-init.diff",
+        "sha256": "36fca3626c5a1b7c467e51250bda51dd5acc26e330008c8e862564a63b80e25b"
+      },
+      "replacement_sha256": "2a53acbe4382d0b3ab20c2341deb7788364176155010bc929ad4311499823677",
+      "role": "MUTANT",
+      "selected_ast_sha256": "a8733f39de6296e0af13a2e7421cf89bc0ffa4e9f79baa26bb631706fa56dd59",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-softmax/sources/m4-x-init.py",
+        "sha256": "29d3c1b36bda3fec616c5332003bb6a9e1336a1815689c9798462c2c3e3f905f"
+      },
+      "variant_id": "tilelang-softmax-source-m4-x-init"
+    },
+    {
+      "adapter_sha256": "7b7d3b898250db19cea05bd2274fef66cc42a25a4789d3f687e50756d8429e89",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "2809706c939939cfc217c57b4c380ddf86b5a3de16ab61295d84ad52c300ac08",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-softmax",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M5-SOURCE-B-INIT",
+      "occurrence": 1,
+      "operation": "insert_before",
+      "parent_variant_id": "tilelang-softmax-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-softmax/patches/m5-y-init.diff",
+        "sha256": "83dedeea496c9fbfdafcecff6ffe981078d4dafa606d96b4fdc4b40adb8d161e"
+      },
+      "replacement_sha256": "b07b33e4a8a8922af98c7771316fdce3e59b89fc3d0644189323d4c4eeb58240",
+      "role": "MUTANT",
+      "selected_ast_sha256": "1f989284ec12f47462a1a6fea14650fb83a95bc539f3a6fe752534ac601eda07",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-softmax/sources/m5-y-init.py",
+        "sha256": "4c56b980a6f4828dbe55c6807ebd97480a050b1641b42f52867e1f7ee69187e3"
+      },
+      "variant_id": "tilelang-softmax-source-m5-y-init"
+    },
+    {
+      "adapter_sha256": "7b7d3b898250db19cea05bd2274fef66cc42a25a4789d3f687e50756d8429e89",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "e6c1071b208b467f308c2b3bd5ac17c9d7d3c02c49210712f6c33e5dcd0245b8",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-softmax",
+      "mutation_family": "ASYNC_PRODUCER",
+      "mutation_rule_id": "MUT-M6-PRODUCER-DUP-BEFORE",
+      "occurrence": 1,
+      "operation": "duplicate",
+      "parent_variant_id": "tilelang-softmax-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-softmax/patches/m6-x-before.diff",
+        "sha256": "1444c5719f2c871164627e5465463225dbaa4bf1034cf3094d48bf697b9a11bf"
+      },
+      "replacement_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "MUTANT",
+      "selected_ast_sha256": "fa87db1dd736f7d026bb4a8e93e6e5d654c676b4f21c8c3954a8de4f87937b86",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-softmax/sources/m6-x-before.py",
+        "sha256": "ee6a1c13c152529a569d76fc81524e897df9c3238a2cc793c8c2b0bf8158d9f5"
+      },
+      "variant_id": "tilelang-softmax-source-m6-x-before"
+    },
+    {
+      "adapter_sha256": "7b7d3b898250db19cea05bd2274fef66cc42a25a4789d3f687e50756d8429e89",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "e6c1071b208b467f308c2b3bd5ac17c9d7d3c02c49210712f6c33e5dcd0245b8",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-softmax",
+      "mutation_family": "ASYNC_PRODUCER",
+      "mutation_rule_id": "MUT-M7-PRODUCER-DUP-AFTER",
+      "occurrence": 1,
+      "operation": "duplicate_after",
+      "parent_variant_id": "tilelang-softmax-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-softmax/patches/m7-x-after.diff",
+        "sha256": "83f6fb9f565d79f381c510ea12e86185da2af943d2548a2b5ce75667b83b8a8b"
+      },
+      "replacement_sha256": "835fdcbc5ed0ecb9ad6302521cdf231dd7f5145ebefb753512191218b43a2cfb",
+      "role": "MUTANT",
+      "selected_ast_sha256": "ba85b071353f04fcd1f25d832f5ca6a654d78c74982b57175e1cc462cb4a7fc6",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-softmax/sources/m7-x-after.py",
+        "sha256": "5efc5d6ea1d1e6477156650f80c6189a91da995d7c5789e860b819e57e7f74c9"
+      },
+      "variant_id": "tilelang-softmax-source-m7-x-after"
+    }
+  ],
+  "workloads": [
+    {
+      "bindings": {
+        "BLOCK_M": 1,
+        "BLOCK_N": 1024,
+        "M": 256,
+        "N": 1024,
+        "dtype": "float16"
+      },
+      "boundary_dimensions": [],
+      "delta": [],
+      "evidence": {
+        "kind": "UPSTREAM_TEST",
+        "path": "examples/online_softmax/online_softmax.py",
+        "rationale": "Pinned official example kernel with an independent PyTorch oracle.",
+        "sha256": "13659eca22c5002de123f4678f50c604610eaa48800c4641bf25c3888eb6ae74"
+      },
+      "kernel_id": "tilelang-softmax",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-softmax/recipes/tilelang-softmax-workload-original.json",
+        "sha256": "82ac146b284b78a7eb6bb445c43bb356674606dde4d9ba6e81657d46c6aa34fa"
+      },
+      "role": "ORIGINAL",
+      "spec_id": "tilelang-softmax-workload-original"
+    },
+    {
+      "bindings": {
+        "BLOCK_M": 1,
+        "BLOCK_N": 1024,
+        "M": 128,
+        "N": 1024,
+        "dtype": "float16"
+      },
+      "boundary_dimensions": [
+        "M"
+      ],
+      "delta": [
+        {
+          "after": 128,
+          "before": 256,
+          "path": "/bindings/M"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "examples/online_softmax/online_softmax.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "13659eca22c5002de123f4678f50c604610eaa48800c4641bf25c3888eb6ae74"
+      },
+      "kernel_id": "tilelang-softmax",
+      "parent_spec_id": "tilelang-softmax-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-softmax/recipes/tilelang-softmax-workload-boundary-1.json",
+        "sha256": "af75a5572600ae1474ebaa2625e12e04f70053290f7004a5358289f62fe6855c"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "tilelang-softmax-workload-boundary-1"
+    },
+    {
+      "bindings": {
+        "BLOCK_M": 1,
+        "BLOCK_N": 2048,
+        "M": 256,
+        "N": 2048,
+        "dtype": "float16"
+      },
+      "boundary_dimensions": [
+        "BLOCK_N",
+        "N"
+      ],
+      "delta": [
+        {
+          "after": 2048,
+          "before": 1024,
+          "path": "/bindings/BLOCK_N"
+        },
+        {
+          "after": 2048,
+          "before": 1024,
+          "path": "/bindings/N"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "examples/online_softmax/online_softmax.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "13659eca22c5002de123f4678f50c604610eaa48800c4641bf25c3888eb6ae74"
+      },
+      "kernel_id": "tilelang-softmax",
+      "parent_spec_id": "tilelang-softmax-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-softmax/recipes/tilelang-softmax-workload-boundary-2.json",
+        "sha256": "75f60f186f959a50123e3ea3f58930bb6a27e516ed6483f0a5aa8b9b3def5bf4"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "tilelang-softmax-workload-boundary-2"
+    },
+    {
+      "bindings": {
+        "BLOCK_M": 2,
+        "BLOCK_N": 512,
+        "M": 256,
+        "N": 1024,
+        "dtype": "float16"
+      },
+      "boundary_dimensions": [
+        "BLOCK_M",
+        "BLOCK_N"
+      ],
+      "delta": [
+        {
+          "after": 2,
+          "before": 1,
+          "path": "/bindings/BLOCK_M"
+        },
+        {
+          "after": 512,
+          "before": 1024,
+          "path": "/bindings/BLOCK_N"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "examples/online_softmax/online_softmax.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "13659eca22c5002de123f4678f50c604610eaa48800c4641bf25c3888eb6ae74"
+      },
+      "kernel_id": "tilelang-softmax",
+      "parent_spec_id": "tilelang-softmax-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-softmax/recipes/tilelang-softmax-workload-boundary-3.json",
+        "sha256": "501ea07b0c0a82eee38c0ea33cb107733f8288f7fe25e3cc2992b9d06f648b37"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "tilelang-softmax-workload-boundary-3"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+--- original.py
++++ m4-output-dup.py
+@@ -31,6 +31,7 @@
+         output_row_start_ptr = output_ptr + row_idx * output_row_stride
+         output_ptrs = output_row_start_ptr + col_offsets
+         tl.store(output_ptrs, softmax_output, mask=mask)
++        tl.store(output_ptrs, softmax_output, mask=mask)
+ 
+ 
+ def pipeguard_resolve(**pipeguard_bindings):

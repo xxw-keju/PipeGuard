@@ -1,0 +1,11 @@
+--- original.py
++++ m2-stage3.py
+@@ -61,7 +61,7 @@
+         actual_rows = T.max(0, T.min(block_M, cur_batch_size + batch_padded_offsets[cur_batch_idx] - m_start_padded))
+ 
+         T.clear(C_local)
+-        for k in T.Pipelined(T.ceildiv(K, block_K), num_stages=num_stages):
++        for k in T.Pipelined(T.ceildiv(K, block_K), num_stages=3):
+             T.copy(A[m_start : m_start + block_M, k * block_K : (k + 1) * block_K], A_shared)
+             if trans_b:
+                 T.copy(B[cur_batch_idx, by * block_N : (by + 1) * block_N, k * block_K : (k + 1) * block_K], B_shared)

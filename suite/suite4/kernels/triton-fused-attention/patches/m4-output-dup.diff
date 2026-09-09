@@ -1,0 +1,10 @@
+--- original.py
++++ m4-output-dup.py
+@@ -173,6 +173,7 @@
+     m_ptrs = M + off_hz * N_CTX + offs_m
+     tl.store(m_ptrs, m_i)
+     desc_o.store([qo_offset_y, 0], acc.to(dtype))
++    desc_o.store([qo_offset_y, 0], acc.to(dtype))
+ 
+ 
+ def pipeguard_resolve(**pipeguard_bindings):

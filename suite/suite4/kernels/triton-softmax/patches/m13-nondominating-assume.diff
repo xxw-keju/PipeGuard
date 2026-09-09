@@ -1,0 +1,47 @@
+--- original.py
++++ m13-nondominating-assume.py
+@@ -5,8 +5,32 @@
+ 
+ import triton.language as tl
+ 
++
+ @triton.jit
+-def softmax_kernel(output_ptr, input_ptr, input_row_stride, output_row_stride, n_rows, n_cols, BLOCK_SIZE: tl.constexpr,
++def _pipeguard_global_roundtrip_fault(pipeguard_scratch, pipeguard_wide, pipeguard_slot):
++    pipeguard_control = pipeguard_scratch + pipeguard_slot * 66
++    pipeguard_m = tl.load(pipeguard_control)
++    pipeguard_n = tl.load(pipeguard_control + 1)
++    pipeguard_input = pipeguard_control + 2
++    pipeguard_sink = pipeguard_wide + pipeguard_slot * 2048
++    pipeguard_offsets = tl.arange(0, 64)
++    pipeguard_acc = tl.zeros((64,), dtype=tl.float32)
++    if pipeguard_m == 0:
++        tl.assume(pipeguard_n > 0)
++        pipeguard_acc += tl.load(pipeguard_input + pipeguard_offsets)
++    else:
++        for pipeguard_i in tl.range(0, pipeguard_m, flatten=True):
++            for pipeguard_j in range(0, pipeguard_n):
++                pipeguard_acc += tl.load(pipeguard_input + pipeguard_j * 64 + pipeguard_offsets)
++                tl.store(
++                    pipeguard_sink + (pipeguard_i * 8 + pipeguard_j) * 64 + pipeguard_offsets,
++                    pipeguard_acc,
++                )
++    return tl.max(tl.abs(pipeguard_acc), axis=0)
++
++
++@triton.jit
++def softmax_kernel(output_ptr, input_ptr, pipeguard_scratch, pipeguard_wide, input_row_stride, output_row_stride, n_rows, n_cols, BLOCK_SIZE: tl.constexpr,
+                    num_stages: tl.constexpr):
+     # starting row of the program
+     row_start = tl.program_id(0)
+@@ -27,6 +51,10 @@
+         numerator = tl.exp(row_minus_max)
+         denominator = tl.sum(numerator, axis=0)
+         softmax_output = numerator / denominator
++        pipeguard_fault = _pipeguard_global_roundtrip_fault(
++            pipeguard_scratch, pipeguard_wide, row_idx
++        )
++        softmax_output += pipeguard_fault
+         # Write back output to DRAM
+         output_row_start_ptr = output_ptr + row_idx * output_row_stride
+         output_ptrs = output_row_start_ptr + col_offsets

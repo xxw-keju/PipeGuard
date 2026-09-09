@@ -1,0 +1,1120 @@
+{
+  "baseline_index": {
+    "path": "corpus/mutations/suite4/baseline-index.json",
+    "role": "HISTORICAL_PARTIAL_COVERAGE_NOT_FINAL_ROW_INDEX",
+    "sha256": "21a172daf61fc9de975e3677e7bed29d03f00287deca977c9856da3ec5bd796a"
+  },
+  "catalog": {
+    "case_count": 376,
+    "mutant_variant_count": 84,
+    "path": "corpus/mutations/suite4/catalog.json",
+    "sha256": "127d7c6759d7da49dae1af2c65b9d48086ca5c34ac37609ce06c466388a89998"
+  },
+  "denominator": {
+    "by_dsl": {
+      "tilelang": {
+        "agreements": 2,
+        "rows": 2
+      },
+      "triton": {
+        "agreements": 4,
+        "rows": 4
+      }
+    },
+    "catalog_rows": 4,
+    "controls": 3,
+    "pairs": 3,
+    "pipeguard_agreements": 6,
+    "positives": 3,
+    "racecheck_in_domain": {
+      "correct_safe_controls": 1,
+      "detected_hazards": 0,
+      "hazards": 1,
+      "safe_controls": 1
+    },
+    "rows": 6,
+    "supplemental_rows": 2
+  },
+  "figure_contract": {
+    "oracle_series": false,
+    "panels": [
+      "tilelang",
+      "triton"
+    ],
+    "print_denominators": true,
+    "unit": "independently-confirmed-case"
+  },
+  "final_figure_eligible": true,
+  "integrity_notes": [
+    "The denominator is fixed before any optional cp.async executable result.",
+    "The shared pair is a supplemental final-PTX mutation/control, not a catalog DSL-source mutation.",
+    "TileLang M6 RaceCheck used a non-identical baseline-era cubin and has undocumented TMA coverage; its silence is not counted as a miss.",
+    "Triton M14/M15 RaceCheck and SyncCheck silence is out of domain or not applicable; initcheck contaminated timeouts are retained but excluded.",
+    "Numeric PASS is recorded independently and never establishes race freedom."
+  ],
+  "lock": {
+    "path": "corpus/mutations/suite4/lock.json",
+    "sha256": "74e27e3b8e2d3de1e23b3b9b6bc51cfc9a4c85940f8b0164ec5cbcf20bee6f54"
+  },
+  "optional_cp_async_pair": {
+    "denominator": false,
+    "dynamic_model": {
+      "bytes": 2070,
+      "kind": "OPTIONAL_CP_ASYNC_DYNAMIC_MODEL",
+      "path": ".artifacts/final-checker-cpasync-exact-r/cp-async-dynamic-simulation.json",
+      "sha256": "7f39b709d6eeb21d379c82c1a3cf3b433aa1d7c309cdaf6b4cc492359307a554"
+    },
+    "static_gate": {
+      "bytes": 2952,
+      "kind": "OPTIONAL_CP_ASYNC_STATIC_GATE",
+      "path": ".artifacts/final-checker-cpasync-exact-r/cp-async-consumer-gate.json",
+      "sha256": "15aa0e9358a1d27c0e44f37b33dbdb4ffdb59d33ddbd3cd58e1f3e6f36797fd9"
+    },
+    "status": "PENDING_UNSUPPORTED"
+  },
+  "producer": {
+    "branch": "exp-dsl-tilelang",
+    "direct_core": {
+      "bytes": 72588,
+      "kind": "CHECKER_CORE",
+      "path": "src/pipeguard/direct_parametric.py",
+      "sha256": "35df5f3e83268a5711ff65c2894897506fe7389de437dc4325932aa51620d531"
+    },
+    "generator": {
+      "bytes": 22956,
+      "kind": "GENERATOR",
+      "path": "tools/build_suite4_final_candidate.py",
+      "sha256": "41953fe67dc09fbfa33e4a2fd671cb37bb7d0bb7944157c38444101995b5cb33"
+    },
+    "head": "1e12b7718db007d4109126efd8d016e16054b546",
+    "tracked_dirty_diff_sha256": "8f3d26266d064ec21763346484a03667cd5bf21bd8c32c0ecf6ce07bba5ec652"
+  },
+  "records": [
+    {
+      "artifacts": {
+        "checker": {
+          "bytes": 3902,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/triton-dense-gemm-source-m14-cross-warp-roundtrip--triton-dense-gemm-wo__85b1bed/checker.json",
+          "sha256": "39f79e63ca01eb981e2dbe82b1c2f0ff9235497dd645fc18d1ac0b9f5139f77c"
+        },
+        "numeric": {
+          "bytes": 519,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/triton-dense-gemm-source-m14-cross-warp-roundtrip--triton-dense-gemm-wo__85b1bed/numeric.json",
+          "sha256": "74a063594c8793d14aa5778d3cc2c38391c55aadfc238d7bef9cfaf69e956c83"
+        },
+        "pgir": {
+          "bytes": 10114396,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/triton-dense-gemm-source-m14-cross-warp-roundtrip--triton-dense-gemm-wo__85b1bed/pgir.json",
+          "sha256": "afa196f399ddcfc0d221df7a838ac0f7e8ba1c59bf01e6046e4c20ea31d3baca"
+        },
+        "result": {
+          "bytes": 1875,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/triton-dense-gemm-source-m14-cross-warp-roundtrip--triton-dense-gemm-wo__85b1bed/result.json",
+          "sha256": "04d76e8dc8a7ae5ff002fbd2d38e18b69325ab6a0a507b4531bcec230b21abad"
+        },
+        "snapshot": {
+          "bytes": 10655340,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/triton-dense-gemm-source-m14-cross-warp-roundtrip--triton-dense-gemm-wo__85b1bed/snapshot.json",
+          "sha256": "f25c07616506279b376589e3137cd0bfec45de4c021b4cdf86486978011e5393"
+        }
+      },
+      "audit": {
+        "artifact": {
+          "bytes": 16133,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/triton-audit.json",
+          "sha256": "398d0a5ddfaa1c664556881f5f216ea1338e4a4c33120d97a9c1889f28be2317"
+        },
+        "label": "DATA_HAZARD",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "The source permutation is bijective. Exact final-lowering analysis finds 2,048 overlapping byte regions, all crossing physical warps, with no barrier or typed visibility operation.",
+        "status": "CONFIRMED"
+      },
+      "baselines": {
+        "nvidia": {
+          "initcheck": {
+            "artifact": {
+              "path": ".artifacts/final-suite4-gate/triton-m14-m15-sanitizers/baseline.json",
+              "sha256": "eb9d99f9e3cc64d9c25cfe8b2bb162c3ea44ce31516a9be02039433baa1c1f41"
+            },
+            "cache_reused_without_binary_change": true,
+            "denominator_eligible": false,
+            "elapsed_s": 60.05192990298383,
+            "integrity_note": "Contaminated timeout is retained and excluded from correctness statistics.",
+            "returncode": null,
+            "status": "CONTAMINATED_TIMEOUT",
+            "summary_lines": [],
+            "timed_out": true
+          },
+          "memcheck": {
+            "artifact": {
+              "path": ".artifacts/final-suite4-gate/triton-m14-m15-sanitizers/baseline.json",
+              "sha256": "eb9d99f9e3cc64d9c25cfe8b2bb162c3ea44ce31516a9be02039433baa1c1f41"
+            },
+            "cache_reused_without_binary_change": true,
+            "elapsed_s": 6.087722994852811,
+            "returncode": 0,
+            "status": "NO_ERROR_EXPECTED_OUTSIDE_HAZARD_DOMAIN",
+            "summary_lines": [
+              "========= ERROR SUMMARY: 0 errors"
+            ],
+            "timed_out": false
+          },
+          "racecheck": {
+            "artifact": {
+              "path": ".artifacts/final-suite4-gate/triton-m14-m15-sanitizers/baseline.json",
+              "sha256": "eb9d99f9e3cc64d9c25cfe8b2bb162c3ea44ce31516a9be02039433baa1c1f41"
+            },
+            "cache_reused_without_binary_change": true,
+            "elapsed_s": 7.767201476963237,
+            "returncode": 0,
+            "status": "NO_DIAGNOSTIC_OUT_OF_DOMAIN_OR_NOT_APPLICABLE",
+            "summary_lines": [
+              "========= RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)"
+            ],
+            "timed_out": false
+          },
+          "synccheck": {
+            "artifact": {
+              "path": ".artifacts/final-suite4-gate/triton-m14-m15-sanitizers/baseline.json",
+              "sha256": "eb9d99f9e3cc64d9c25cfe8b2bb162c3ea44ce31516a9be02039433baa1c1f41"
+            },
+            "cache_reused_without_binary_change": true,
+            "elapsed_s": 6.746662260964513,
+            "returncode": 0,
+            "status": "NO_DIAGNOSTIC_OUT_OF_DOMAIN_OR_NOT_APPLICABLE",
+            "summary_lines": [
+              "========= ERROR SUMMARY: 0 errors"
+            ],
+            "timed_out": false
+          }
+        },
+        "triton_compiler_verifier": {
+          "applicability": "COMPILER_ACCEPTANCE_ONLY",
+          "status": "ACCEPTED_NO_DIAGNOSTIC"
+        }
+      },
+      "case_id": "triton-dense-gemm-source-m14-cross-warp-roundtrip--triton-dense-gemm-workload-original",
+      "catalog_membership": true,
+      "catalog_role": "MUTANT",
+      "dsl": "triton",
+      "evaluation_role": "POSITIVE",
+      "final_figure_eligible": true,
+      "kernel": "triton-dense-gemm",
+      "mutation_family": "GLOBAL_MEMORY_ORDER",
+      "mutation_rule_id": "MUT-M14-GLOBAL-CROSS-WARP-RAW",
+      "pair_id": "triton-m14-m15",
+      "pipeguard": {
+        "agreement": true,
+        "diagnostic": "UNORDERED_CONFLICT",
+        "exact_conflicting_access_pairs": 2212,
+        "logical_events": 47121,
+        "materialized_event_objects": 0,
+        "pairs_examined_before_termination": 1,
+        "race_candidate_pairs": 2212,
+        "representation": "parametric-protocol",
+        "verdict": "DATA_HAZARD"
+      },
+      "pipeline": {
+        "capture": "CAPTURED",
+        "checker": "CHECKED",
+        "compile": "ACCEPTED",
+        "numeric": "PASS",
+        "pgir": "PARSED",
+        "timeout_s": 60,
+        "wall_time_s": 10.670222925022244
+      },
+      "project": "Triton",
+      "role": "MUTANT",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-dense-gemm/sources/m14-cross-warp-roundtrip.py",
+        "sha256": "27fa38b3b6ec3074e424cac8d3545177324565aa5cc16e2acb23d6554d401e44"
+      },
+      "specialization": "triton-dense-gemm-workload-original",
+      "stratum": "CATALOG_SOURCE_MUTATION",
+      "suite": "suite4"
+    },
+    {
+      "artifacts": {
+        "checker": {
+          "bytes": 3142,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/triton-dense-gemm-source-m15-cross-warp-barrier-control--triton-dense-g__16d57c5/checker.json",
+          "sha256": "c6a1056a5d5996bdeb7e75b588b2ff1c0dc005b8c05f2ab1d30068fd40174c0f"
+        },
+        "numeric": {
+          "bytes": 525,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/triton-dense-gemm-source-m15-cross-warp-barrier-control--triton-dense-g__16d57c5/numeric.json",
+          "sha256": "fe169293c6d33d3836cdba1ad2e510431b232b3a94c4f2eedc2b21e0ec43402e"
+        },
+        "pgir": {
+          "bytes": 10121811,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/triton-dense-gemm-source-m15-cross-warp-barrier-control--triton-dense-g__16d57c5/pgir.json",
+          "sha256": "138cc4383b77aff55abce0920daf07218f2390e58994815995a13bb89cbdbdd8"
+        },
+        "result": {
+          "bytes": 1879,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/triton-dense-gemm-source-m15-cross-warp-barrier-control--triton-dense-g__16d57c5/result.json",
+          "sha256": "98b0a40d5acaba838d9d40b537d0a0de4e65814d85f6e1fbfbbbc3bcddd40c5a"
+        },
+        "snapshot": {
+          "bytes": 10664379,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/triton-dense-gemm-source-m15-cross-warp-barrier-control--triton-dense-g__16d57c5/snapshot.json",
+          "sha256": "ead0f071c249bdddaa5cae98898fa39bcb15f8e0bfd3d9fbc620e2830d2f2764"
+        }
+      },
+      "audit": {
+        "artifact": {
+          "bytes": 16133,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/triton-audit.json",
+          "sha256": "398d0a5ddfaa1c664556881f5f216ea1338e4a4c33120d97a9c1889f28be2317"
+        },
+        "label": "CORRECT",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "The exact M14 lane-byte map is retained, while TTGIR, PTX, SASS, and normalized events all place a full-CTA barrier between the producer and consumer.",
+        "status": "CONFIRMED"
+      },
+      "baselines": {
+        "nvidia": {
+          "initcheck": {
+            "artifact": {
+              "path": ".artifacts/final-suite4-gate/triton-m14-m15-sanitizers/baseline.json",
+              "sha256": "eb9d99f9e3cc64d9c25cfe8b2bb162c3ea44ce31516a9be02039433baa1c1f41"
+            },
+            "cache_reused_without_binary_change": true,
+            "denominator_eligible": false,
+            "elapsed_s": 60.05479807197116,
+            "integrity_note": "Contaminated timeout is retained and excluded from correctness statistics.",
+            "returncode": null,
+            "status": "CONTAMINATED_TIMEOUT",
+            "summary_lines": [],
+            "timed_out": true
+          },
+          "memcheck": {
+            "artifact": {
+              "path": ".artifacts/final-suite4-gate/triton-m14-m15-sanitizers/baseline.json",
+              "sha256": "eb9d99f9e3cc64d9c25cfe8b2bb162c3ea44ce31516a9be02039433baa1c1f41"
+            },
+            "cache_reused_without_binary_change": true,
+            "elapsed_s": 5.087351573863998,
+            "returncode": 0,
+            "status": "NO_ERROR_EXPECTED_OUTSIDE_HAZARD_DOMAIN",
+            "summary_lines": [
+              "========= ERROR SUMMARY: 0 errors"
+            ],
+            "timed_out": false
+          },
+          "racecheck": {
+            "artifact": {
+              "path": ".artifacts/final-suite4-gate/triton-m14-m15-sanitizers/baseline.json",
+              "sha256": "eb9d99f9e3cc64d9c25cfe8b2bb162c3ea44ce31516a9be02039433baa1c1f41"
+            },
+            "cache_reused_without_binary_change": true,
+            "elapsed_s": 6.692706899018958,
+            "returncode": 0,
+            "status": "NO_DIAGNOSTIC_OUT_OF_DOMAIN_OR_NOT_APPLICABLE",
+            "summary_lines": [
+              "========= RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)"
+            ],
+            "timed_out": false
+          },
+          "synccheck": {
+            "artifact": {
+              "path": ".artifacts/final-suite4-gate/triton-m14-m15-sanitizers/baseline.json",
+              "sha256": "eb9d99f9e3cc64d9c25cfe8b2bb162c3ea44ce31516a9be02039433baa1c1f41"
+            },
+            "cache_reused_without_binary_change": true,
+            "elapsed_s": 5.355847793165594,
+            "returncode": 0,
+            "status": "NO_DIAGNOSTIC_OUT_OF_DOMAIN_OR_NOT_APPLICABLE",
+            "summary_lines": [
+              "========= ERROR SUMMARY: 0 errors"
+            ],
+            "timed_out": false
+          }
+        },
+        "triton_compiler_verifier": {
+          "applicability": "COMPILER_ACCEPTANCE_ONLY",
+          "status": "ACCEPTED_NO_DIAGNOSTIC"
+        }
+      },
+      "case_id": "triton-dense-gemm-source-m15-cross-warp-barrier-control--triton-dense-gemm-workload-original",
+      "catalog_membership": true,
+      "catalog_role": "MUTANT",
+      "dsl": "triton",
+      "evaluation_role": "SAFE_CONTROL",
+      "final_figure_eligible": true,
+      "kernel": "triton-dense-gemm",
+      "mutation_family": "GLOBAL_MEMORY_ORDER",
+      "mutation_rule_id": "MUT-M15-GLOBAL-CROSS-WARP-BARRIER-CONTROL",
+      "pair_id": "triton-m14-m15",
+      "pipeguard": {
+        "agreement": true,
+        "diagnostic": null,
+        "exact_conflicting_access_pairs": 2212,
+        "logical_events": 47377,
+        "materialized_event_objects": 0,
+        "pairs_examined_before_termination": 2212,
+        "race_candidate_pairs": 2212,
+        "representation": "parametric-protocol",
+        "verdict": "SAFE"
+      },
+      "pipeline": {
+        "capture": "CAPTURED",
+        "checker": "CHECKED",
+        "compile": "ACCEPTED",
+        "numeric": "PASS",
+        "pgir": "PARSED",
+        "timeout_s": 60,
+        "wall_time_s": 10.337263263063505
+      },
+      "project": "Triton",
+      "role": "SAFE_CONTROL",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-dense-gemm/sources/m15-cross-warp-barrier-control.py",
+        "sha256": "8fc1def576595bd995cce9ec7a38dd48394cf26598f06cb62082045443b74a4d"
+      },
+      "specialization": "triton-dense-gemm-workload-original",
+      "stratum": "CATALOG_SOURCE_MUTATION",
+      "suite": "suite4"
+    },
+    {
+      "artifacts": {
+        "checker": {
+          "bytes": 3936,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/tilelang-dense-gemm-source-m6-a-before--tilelang-dense-gemm-workload-original/checker.json",
+          "sha256": "9b65f27585a3f457a501596cefa688f36bc49537f41243dc719ab262bdd1fe46"
+        },
+        "numeric": {
+          "bytes": 510,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/tilelang-dense-gemm-source-m6-a-before--tilelang-dense-gemm-workload-original/numeric.json",
+          "sha256": "078e34090602b7b5edfb2e2d23f6fa96a7eecab97a2aa1634bb60602423b7988"
+        },
+        "pgir": {
+          "bytes": 2533436,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/tilelang-dense-gemm-source-m6-a-before--tilelang-dense-gemm-workload-original/pgir.json",
+          "sha256": "b6432027590e16cd0173dd10e3ce25a41ab7b558fd27b2e3538131dd275bbb76"
+        },
+        "result": {
+          "bytes": 1901,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/tilelang-dense-gemm-source-m6-a-before--tilelang-dense-gemm-workload-original/result.json",
+          "sha256": "456684a7d36025960710b09a9dcb6059328ecb33b01ec3904ac729eb49744273"
+        },
+        "snapshot": {
+          "bytes": 2472045,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/tilelang-dense-gemm-source-m6-a-before--tilelang-dense-gemm-workload-original/snapshot.json",
+          "sha256": "728247cd27adf5c337c5b8471d622b248a0431aaf5f3bf2f03d7eb0d1791182e"
+        }
+      },
+      "audit": {
+        "artifact": {
+          "bytes": 33618,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/m6-original-audit.json",
+          "sha256": "168d39610ecf16f91ccd7186892ed6860cd2d6dc86aeb19ba480ab2690c5e834"
+        },
+        "label": "DATA_HAZARD",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "The duplicated A producer lowers to two overlapping TMA writes under the same mbarrier lifecycle and generation without a successful wait or typed ordering relation between their asynchronous windows.",
+        "status": "CONFIRMED"
+      },
+      "baselines": {
+        "nvidia": {
+          "initcheck": {
+            "applicability": "INITIALIZATION_CHECK_NOT_RACE_DETECTION",
+            "status": "NOT_RUN"
+          },
+          "memcheck": {
+            "applicability": "VALID_ADDRESS_ACCESS_NOT_A_MEMORY_SAFETY_ERROR",
+            "status": "NOT_RUN"
+          },
+          "racecheck": {
+            "applicability": "SHARED_MEMORY_SUPPORTED_BUT_TMA_BULK_COPY_HAZARD_COVERAGE_NOT_EXPLICITLY_DOCUMENTED",
+            "artifact": {
+              "bytes": 3853,
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/tilelang-dense-racecheck/racecheck.json",
+              "sha256": "91e57f1a243cf18f39d94bc7dda0d1757f627363ede016c7512704bc0223daa5"
+            },
+            "binary_identity": "NON_EXACT_BINARY_APPLICABILITY_ONLY",
+            "denominator_eligible": false,
+            "elapsed_s": 10.159517558990046,
+            "final_matrix_classification": "OUT_OF_DOMAIN_OR_NOT_APPLICABLE",
+            "integrity_note": "The baseline-era cubin differs from the current-core PipeGuard replay; TMA bulk-copy hazard coverage is not explicitly documented, so silence is not a miss.",
+            "kernel_filter": "kns=matmul_kernel",
+            "returncode": 0,
+            "status": "NO_DIAGNOSTIC_DOMAIN_UNCONFIRMED",
+            "summary": "0 hazards displayed (0 errors, 0 warnings)",
+            "timeout_s": 60
+          },
+          "synccheck": {
+            "applicability": "PENDING_BASELINE_RUN",
+            "status": "NOT_RUN"
+          }
+        },
+        "triton_compiler_verifier": {
+          "applicability": "NO_TILELANG_INPUT",
+          "status": "NOT_APPLICABLE"
+        }
+      },
+      "case_id": "tilelang-dense-gemm-source-m6-a-before--tilelang-dense-gemm-workload-original",
+      "catalog_membership": true,
+      "catalog_role": "MUTANT",
+      "dsl": "tilelang",
+      "evaluation_role": "POSITIVE",
+      "final_figure_eligible": true,
+      "kernel": "tilelang-dense-gemm",
+      "mutation_family": "ASYNC_PRODUCER",
+      "mutation_rule_id": "MUT-M6-PRODUCER-DUP-BEFORE",
+      "pair_id": "tilelang-m6-original",
+      "pipeguard": {
+        "agreement": true,
+        "diagnostic": "UNORDERED_CONFLICT",
+        "exact_conflicting_access_pairs": 58840,
+        "logical_events": 19638,
+        "materialized_event_objects": 0,
+        "pairs_examined_before_termination": 49273,
+        "race_candidate_pairs": 58840,
+        "representation": "parametric-protocol",
+        "verdict": "DATA_HAZARD"
+      },
+      "pipeline": {
+        "capture": "CAPTURED",
+        "checker": "CHECKED",
+        "compile": "ACCEPTED",
+        "numeric": "PASS",
+        "pgir": "PARSED",
+        "timeout_s": 60,
+        "wall_time_s": 7.81256998796016
+      },
+      "project": "TileLang",
+      "role": "MUTANT",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/sources/m6-a-before.py",
+        "sha256": "73521f1664ffd481170507f0645ab0e12a7245fccd2821011c522aa0b29b93b6"
+      },
+      "specialization": "tilelang-dense-gemm-workload-original",
+      "stratum": "CATALOG_SOURCE_MUTATION",
+      "suite": "suite4"
+    },
+    {
+      "artifacts": {
+        "checker": {
+          "bytes": 3189,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/tilelang-dense-gemm-source-original--tilelang-dense-gemm-workload-original/checker.json",
+          "sha256": "634527ff88981e812c7c38e90c7c332f74927176001ce2eacb82bcf161924598"
+        },
+        "numeric": {
+          "bytes": 505,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/tilelang-dense-gemm-source-original--tilelang-dense-gemm-workload-original/numeric.json",
+          "sha256": "3a391a563de052dea8939a6bc1a4508ce6ff7d8903e96c145d31c58cc400c6c1"
+        },
+        "pgir": {
+          "bytes": 2429290,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/tilelang-dense-gemm-source-original--tilelang-dense-gemm-workload-original/pgir.json",
+          "sha256": "e5d3d31150f73fd7e4f164ea29d4709de85a858ca03406e9d711e3c8eebbe1a3"
+        },
+        "result": {
+          "bytes": 1889,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/tilelang-dense-gemm-source-original--tilelang-dense-gemm-workload-original/result.json",
+          "sha256": "ae82efc27c1c1b6599aa62a0f29884a7e6cc9a0bed31fc4b056bdf4df9bbedc0"
+        },
+        "snapshot": {
+          "bytes": 2353315,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/tilelang-dense-gemm-source-original--tilelang-dense-gemm-workload-original/snapshot.json",
+          "sha256": "9727282985345c6515480cb52e2e798ce236161f6227f09f13038970ed988d3a"
+        }
+      },
+      "audit": {
+        "artifact": {
+          "bytes": 33618,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/post-pdg-35df/m6-original-audit.json",
+          "sha256": "168d39610ecf16f91ccd7186892ed6860cd2d6dc86aeb19ba480ab2690c5e834"
+        },
+        "label": "CORRECT",
+        "method": "REFERENCE_ORACLE",
+        "rationale": "Pinned official source replayed successfully against its independent PyTorch reference on the original and all three boundary workloads.",
+        "status": "CONFIRMED"
+      },
+      "baselines": {
+        "nvidia": {
+          "initcheck": {
+            "applicability": "INITIALIZATION_CHECK_NOT_RACE_DETECTION",
+            "status": "NOT_RUN"
+          },
+          "memcheck": {
+            "applicability": "VALID_ADDRESS_ACCESS_NOT_A_MEMORY_SAFETY_ERROR",
+            "status": "NOT_RUN"
+          },
+          "racecheck": {
+            "applicability": "SHARED_MEMORY_SUPPORTED_BUT_TMA_BULK_COPY_HAZARD_COVERAGE_NOT_EXPLICITLY_DOCUMENTED",
+            "artifact": {
+              "bytes": 3853,
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/tilelang-dense-racecheck/racecheck.json",
+              "sha256": "91e57f1a243cf18f39d94bc7dda0d1757f627363ede016c7512704bc0223daa5"
+            },
+            "binary_identity": "NON_EXACT_BINARY_APPLICABILITY_ONLY",
+            "denominator_eligible": false,
+            "elapsed_s": 6.486242111073807,
+            "final_matrix_classification": "OUT_OF_DOMAIN_OR_NOT_APPLICABLE",
+            "integrity_note": "The baseline-era cubin differs from the current-core PipeGuard replay; TMA bulk-copy hazard coverage is not explicitly documented, so silence is not a miss.",
+            "kernel_filter": "kns=matmul_kernel",
+            "returncode": 0,
+            "status": "NO_DIAGNOSTIC_DOMAIN_UNCONFIRMED",
+            "summary": "0 hazards displayed (0 errors, 0 warnings)",
+            "timeout_s": 60
+          },
+          "synccheck": {
+            "applicability": "PENDING_BASELINE_RUN",
+            "status": "NOT_RUN"
+          }
+        },
+        "triton_compiler_verifier": {
+          "applicability": "NO_TILELANG_INPUT",
+          "status": "NOT_APPLICABLE"
+        }
+      },
+      "case_id": "tilelang-dense-gemm-source-original--tilelang-dense-gemm-workload-original",
+      "catalog_membership": true,
+      "catalog_role": "ORIGINAL",
+      "dsl": "tilelang",
+      "evaluation_role": "SAFE_CONTROL",
+      "final_figure_eligible": true,
+      "kernel": "tilelang-dense-gemm",
+      "mutation_family": "ORIGINAL_CONTROL",
+      "mutation_rule_id": null,
+      "pair_id": "tilelang-m6-original",
+      "pipeguard": {
+        "agreement": true,
+        "diagnostic": null,
+        "exact_conflicting_access_pairs": 54168,
+        "logical_events": 19622,
+        "materialized_event_objects": 0,
+        "pairs_examined_before_termination": 54168,
+        "race_candidate_pairs": 54168,
+        "representation": "parametric-protocol",
+        "verdict": "SAFE"
+      },
+      "pipeline": {
+        "capture": "CAPTURED",
+        "checker": "CHECKED",
+        "compile": "ACCEPTED",
+        "numeric": "PASS",
+        "pgir": "PARSED",
+        "timeout_s": 60,
+        "wall_time_s": 7.908738542115316
+      },
+      "project": "TileLang",
+      "role": "SAFE_CONTROL",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/sources/original.py",
+        "sha256": "3d13c323f50fcdae3c018a1d38ab6124bd300c1a524ff1dff7066e856fc85d6c"
+      },
+      "specialization": "tilelang-dense-gemm-workload-original",
+      "stratum": "CATALOG_SOURCE_MUTATION",
+      "suite": "suite4"
+    },
+    {
+      "artifacts": {
+        "checker": {
+          "bytes": 3566,
+          "kind": "CURRENT_CORE_CHECKER",
+          "path": ".artifacts/final-suite4-gate/final-candidate-v1/shared-no-barrier-hazard.checker.json",
+          "sha256": "245647e25ab83997483555f9b98e485c631ce5d597070fa27c6967d777a33a38"
+        },
+        "cubin": {
+          "bytes": 5888,
+          "kind": "EXACT_BINARY",
+          "path": ".artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-no-barrier.cubin",
+          "sha256": "9fa91f61956f72aaca6b94397cea82e68a9eae2b640315b77724d769c7273b4d"
+        },
+        "current_core_replay": {
+          "bytes": 3120,
+          "kind": "CURRENT_CORE_REPLAY_RECEIPT",
+          "path": ".artifacts/final-suite4-gate/final-candidate-v1/shared-current-core-replay.json",
+          "sha256": "7ef33c1eb9a94e11636b73db06b115047005b2450993812be72c63fc060756fc"
+        },
+        "pgir": {
+          "bytes": 19528,
+          "kind": "PGIR",
+          "path": ".artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-no-barrier.pgir.json",
+          "sha256": "029bb9cb9572509b6355fa615cde51e0a4c627ba9aae47afe5dbcf1697a9212e"
+        },
+        "ptx": {
+          "bytes": 4341,
+          "kind": "FINAL_PTX",
+          "path": ".artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-no-barrier.ptx",
+          "sha256": "b273b16a9a9364eb2b19b0b8ddff094e239d6c3ec701c949797ceea952ccb282"
+        },
+        "snapshot": {
+          "bytes": 19092,
+          "kind": "SNAPSHOT",
+          "path": ".artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-no-barrier.snapshot.json",
+          "sha256": "7017d09073e49ae078851516f01c02b8b681794347bf049c512e67f91ba38365"
+        },
+        "ttgir_control": {
+          "bytes": 1174,
+          "kind": "TTGIR_CONTROL_ANCESTOR",
+          "path": ".artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-control.ttgir",
+          "sha256": "c9fb15fb82f2caed7b5ba1a4a05164009212e10a430f97a3b3accc0143109dac"
+        }
+      },
+      "audit": {
+        "artifact": {
+          "bytes": 8194,
+          "kind": "PAIR_AUDIT",
+          "path": ".artifacts/final-suite4-gate/shared-racecheck/shared-race-binary-pair.json",
+          "sha256": "7a3e4e22c9d03f93c2f711256f15db55543d57a1f3d4ac6c698fba56c6e6d46c"
+        },
+        "label": "DATA_HAZARD",
+        "method": "EXACT_BINARY_MANUAL_PROTOCOL_TRACE",
+        "rationale": "The final-PTX positive removes exactly one compiler-generated CTA barrier and retains an unordered cross-lane shared RAW; the control retains the barrier.",
+        "status": "CONFIRMED"
+      },
+      "baselines": {
+        "nvidia": {
+          "initcheck": {
+            "case": "no-barrier",
+            "classification": "CORRECT_NO_DIAGNOSTIC",
+            "cubin": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-no-barrier.cubin",
+              "sha256": "9fa91f61956f72aaca6b94397cea82e68a9eae2b640315b77724d769c7273b4d"
+            },
+            "denominator_eligible": true,
+            "elapsed_s": 1.6511698712129146,
+            "error_count": 0,
+            "kernel_filter": "kns=shared_cross_lane",
+            "launcher": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/shared-race-launcher",
+              "sha256": "4154d3860f1c106ed23f2e0b2869e2c43ee5e668c98044e10404c60edcfada22"
+            },
+            "mode": "initcheck",
+            "returncode": 0,
+            "specific_diagnostic_markers": 0,
+            "status": "CORRECT_NO_DIAGNOSTIC",
+            "stderr": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/no-barrier.initcheck.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "stdout": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/no-barrier.initcheck.stdout",
+              "sha256": "4d58cb8ff6c974db9e5cca31cb90483a309fb8164a800e095da243e5a5fa26e2"
+            },
+            "timed_out": false
+          },
+          "memcheck": {
+            "case": "no-barrier",
+            "classification": "CORRECT_NO_DIAGNOSTIC",
+            "cubin": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-no-barrier.cubin",
+              "sha256": "9fa91f61956f72aaca6b94397cea82e68a9eae2b640315b77724d769c7273b4d"
+            },
+            "denominator_eligible": true,
+            "elapsed_s": 1.6819971080403775,
+            "error_count": 0,
+            "kernel_filter": "kns=shared_cross_lane",
+            "launcher": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/shared-race-launcher",
+              "sha256": "4154d3860f1c106ed23f2e0b2869e2c43ee5e668c98044e10404c60edcfada22"
+            },
+            "mode": "memcheck",
+            "returncode": 0,
+            "specific_diagnostic_markers": 0,
+            "status": "CORRECT_NO_DIAGNOSTIC",
+            "stderr": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/no-barrier.memcheck.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "stdout": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/no-barrier.memcheck.stdout",
+              "sha256": "4d58cb8ff6c974db9e5cca31cb90483a309fb8164a800e095da243e5a5fa26e2"
+            },
+            "timed_out": false
+          },
+          "racecheck": {
+            "case": "no-barrier",
+            "classification": "NOT_DETECTED_IN_DOMAIN",
+            "cubin": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-no-barrier.cubin",
+              "sha256": "9fa91f61956f72aaca6b94397cea82e68a9eae2b640315b77724d769c7273b4d"
+            },
+            "denominator_eligible": true,
+            "elapsed_s": 2.6187498080544174,
+            "kernel_filter": "kns=shared_cross_lane",
+            "launcher": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/shared-race-launcher",
+              "sha256": "4154d3860f1c106ed23f2e0b2869e2c43ee5e668c98044e10404c60edcfada22"
+            },
+            "raw_hazard_markers": 0,
+            "returncode": 0,
+            "status": "NOT_DETECTED_IN_DOMAIN",
+            "stderr": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/no-barrier.racecheck.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "stdout": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/no-barrier.racecheck.stdout",
+              "sha256": "0a115268e11fb49886ee86d81df49e4d3d58bff7c23bb3cdfa7f3afe4683c388"
+            },
+            "summary": {
+              "errors": 0,
+              "hazards_displayed": 0,
+              "warnings": 0
+            },
+            "timed_out": false
+          },
+          "synccheck": {
+            "case": "no-barrier",
+            "classification": "NO_DIAGNOSTIC_OUT_OF_DOMAIN_OR_NOT_APPLICABLE",
+            "cubin": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-no-barrier.cubin",
+              "sha256": "9fa91f61956f72aaca6b94397cea82e68a9eae2b640315b77724d769c7273b4d"
+            },
+            "denominator_eligible": false,
+            "elapsed_s": 1.7691920700017363,
+            "error_count": 0,
+            "kernel_filter": "kns=shared_cross_lane",
+            "launcher": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/shared-race-launcher",
+              "sha256": "4154d3860f1c106ed23f2e0b2869e2c43ee5e668c98044e10404c60edcfada22"
+            },
+            "mode": "synccheck",
+            "returncode": 0,
+            "specific_diagnostic_markers": 0,
+            "status": "NO_DIAGNOSTIC_OUT_OF_DOMAIN_OR_NOT_APPLICABLE",
+            "stderr": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/no-barrier.synccheck.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "stdout": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/no-barrier.synccheck.stdout",
+              "sha256": "4d58cb8ff6c974db9e5cca31cb90483a309fb8164a800e095da243e5a5fa26e2"
+            },
+            "timed_out": false
+          }
+        },
+        "triton_compiler_verifier": {
+          "applicability": "STRUCTURAL_BASELINE_ONLY",
+          "status": "NOT_APPLICABLE_FINAL_PTX_MUTATION"
+        }
+      },
+      "case_id": "shared-no-barrier-hazard",
+      "catalog_membership": false,
+      "catalog_role": "SUPPLEMENTAL",
+      "dsl": "triton",
+      "evaluation_role": "POSITIVE",
+      "final_figure_eligible": true,
+      "kernel": "shared-cross-lane",
+      "mutation_family": "SHARED_MEMORY_ORDER",
+      "mutation_rule_id": "SUPPLEMENTAL-FINAL-PTX-REMOVE-BARRIER",
+      "pair_id": "shared-exact-binary",
+      "pipeguard": {
+        "agreement": true,
+        "diagnostic": "UNORDERED_CONFLICT",
+        "exact_conflicting_access_pairs": 127,
+        "logical_events": 137,
+        "materialized_event_objects": 0,
+        "pairs_examined_before_termination": 1,
+        "race_candidate_pairs": 127,
+        "representation": "parametric-protocol",
+        "verdict": "DATA_HAZARD"
+      },
+      "pipeline": {
+        "capture": "CAPTURED",
+        "checker": "CHECKED",
+        "compile": "ACCEPTED",
+        "numeric": "PASS",
+        "pgir": "PARSED"
+      },
+      "project": "Triton",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source": {
+        "bytes": 4341,
+        "kind": "FINAL_PTX",
+        "path": ".artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-no-barrier.ptx",
+        "sha256": "b273b16a9a9364eb2b19b0b8ddff094e239d6c3ec701c949797ceea952ccb282"
+      },
+      "stratum": "SUPPLEMENTAL_FINAL_PTX_MUTATION",
+      "suite": "suite4",
+      "supplemental_lock_sha256": "1ad149692afb24f1b34a4fb407d588236aa16adbc29dbbf42b55b7b7e065a5dc"
+    },
+    {
+      "artifacts": {
+        "checker": {
+          "bytes": 3131,
+          "kind": "CURRENT_CORE_CHECKER",
+          "path": ".artifacts/final-suite4-gate/final-candidate-v1/shared-barrier-control.checker.json",
+          "sha256": "a1b9ad6b7bc6e15f82ad377102ccddc5cd553121a77a6b59d0f1a634b2960386"
+        },
+        "cubin": {
+          "bytes": 6016,
+          "kind": "EXACT_BINARY",
+          "path": ".artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-safe.cubin",
+          "sha256": "187982a65f9c60f10bd9300c5af8790a404df5cde2daabd89364d9e472790101"
+        },
+        "current_core_replay": {
+          "bytes": 3120,
+          "kind": "CURRENT_CORE_REPLAY_RECEIPT",
+          "path": ".artifacts/final-suite4-gate/final-candidate-v1/shared-current-core-replay.json",
+          "sha256": "7ef33c1eb9a94e11636b73db06b115047005b2450993812be72c63fc060756fc"
+        },
+        "pgir": {
+          "bytes": 26958,
+          "kind": "PGIR",
+          "path": ".artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-safe.pgir.json",
+          "sha256": "a86976370949e4880005ca1b6dbcac3a05ecd08a50c2fa998aa697b8a6afd45b"
+        },
+        "ptx": {
+          "bytes": 4354,
+          "kind": "FINAL_PTX",
+          "path": ".artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-safe.ptx",
+          "sha256": "80024695894c33093575e48079bcfb3bac5103d7771c8903cc2349884ffecc6d"
+        },
+        "snapshot": {
+          "bytes": 28150,
+          "kind": "SNAPSHOT",
+          "path": ".artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-safe.snapshot.json",
+          "sha256": "58bd71350deaf0c0c21c7c2c2b8aed56957a83e630998ecda03e520fc7a873d8"
+        },
+        "ttgir_control": {
+          "bytes": 1174,
+          "kind": "TTGIR_CONTROL_ANCESTOR",
+          "path": ".artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-control.ttgir",
+          "sha256": "c9fb15fb82f2caed7b5ba1a4a05164009212e10a430f97a3b3accc0143109dac"
+        }
+      },
+      "audit": {
+        "artifact": {
+          "bytes": 8194,
+          "kind": "PAIR_AUDIT",
+          "path": ".artifacts/final-suite4-gate/shared-racecheck/shared-race-binary-pair.json",
+          "sha256": "7a3e4e22c9d03f93c2f711256f15db55543d57a1f3d4ac6c698fba56c6e6d46c"
+        },
+        "label": "CORRECT",
+        "method": "EXACT_BINARY_MANUAL_PROTOCOL_TRACE",
+        "rationale": "The exact control binary retains the CTA barrier between the shared producer and consumer.",
+        "status": "CONFIRMED"
+      },
+      "baselines": {
+        "nvidia": {
+          "initcheck": {
+            "case": "barrier-control",
+            "classification": "CORRECT_NO_DIAGNOSTIC",
+            "cubin": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-safe.cubin",
+              "sha256": "187982a65f9c60f10bd9300c5af8790a404df5cde2daabd89364d9e472790101"
+            },
+            "denominator_eligible": true,
+            "elapsed_s": 1.7661559821572155,
+            "error_count": 0,
+            "kernel_filter": "kns=shared_cross_lane",
+            "launcher": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/shared-race-launcher",
+              "sha256": "4154d3860f1c106ed23f2e0b2869e2c43ee5e668c98044e10404c60edcfada22"
+            },
+            "mode": "initcheck",
+            "returncode": 0,
+            "specific_diagnostic_markers": 0,
+            "status": "CORRECT_NO_DIAGNOSTIC",
+            "stderr": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/barrier-control.initcheck.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "stdout": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/barrier-control.initcheck.stdout",
+              "sha256": "4d58cb8ff6c974db9e5cca31cb90483a309fb8164a800e095da243e5a5fa26e2"
+            },
+            "timed_out": false
+          },
+          "memcheck": {
+            "case": "barrier-control",
+            "classification": "CORRECT_NO_DIAGNOSTIC",
+            "cubin": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-safe.cubin",
+              "sha256": "187982a65f9c60f10bd9300c5af8790a404df5cde2daabd89364d9e472790101"
+            },
+            "denominator_eligible": true,
+            "elapsed_s": 1.6700536580756307,
+            "error_count": 0,
+            "kernel_filter": "kns=shared_cross_lane",
+            "launcher": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/shared-race-launcher",
+              "sha256": "4154d3860f1c106ed23f2e0b2869e2c43ee5e668c98044e10404c60edcfada22"
+            },
+            "mode": "memcheck",
+            "returncode": 0,
+            "specific_diagnostic_markers": 0,
+            "status": "CORRECT_NO_DIAGNOSTIC",
+            "stderr": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/barrier-control.memcheck.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "stdout": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/barrier-control.memcheck.stdout",
+              "sha256": "4d58cb8ff6c974db9e5cca31cb90483a309fb8164a800e095da243e5a5fa26e2"
+            },
+            "timed_out": false
+          },
+          "racecheck": {
+            "case": "barrier-control",
+            "classification": "CORRECT_NO_DIAGNOSTIC",
+            "cubin": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-safe.cubin",
+              "sha256": "187982a65f9c60f10bd9300c5af8790a404df5cde2daabd89364d9e472790101"
+            },
+            "denominator_eligible": true,
+            "elapsed_s": 1.550059995148331,
+            "kernel_filter": "kns=shared_cross_lane",
+            "launcher": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/shared-race-launcher",
+              "sha256": "4154d3860f1c106ed23f2e0b2869e2c43ee5e668c98044e10404c60edcfada22"
+            },
+            "raw_hazard_markers": 0,
+            "returncode": 0,
+            "status": "CORRECT_NO_DIAGNOSTIC",
+            "stderr": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/barrier-control.racecheck.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "stdout": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/barrier-control.racecheck.stdout",
+              "sha256": "0a115268e11fb49886ee86d81df49e4d3d58bff7c23bb3cdfa7f3afe4683c388"
+            },
+            "summary": {
+              "errors": 0,
+              "hazards_displayed": 0,
+              "warnings": 0
+            },
+            "timed_out": false
+          },
+          "synccheck": {
+            "case": "barrier-control",
+            "classification": "CORRECT_NO_DIAGNOSTIC",
+            "cubin": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-safe.cubin",
+              "sha256": "187982a65f9c60f10bd9300c5af8790a404df5cde2daabd89364d9e472790101"
+            },
+            "denominator_eligible": true,
+            "elapsed_s": 1.6440657109487802,
+            "error_count": 0,
+            "kernel_filter": "kns=shared_cross_lane",
+            "launcher": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/shared-race-launcher",
+              "sha256": "4154d3860f1c106ed23f2e0b2869e2c43ee5e668c98044e10404c60edcfada22"
+            },
+            "mode": "synccheck",
+            "returncode": 0,
+            "specific_diagnostic_markers": 0,
+            "status": "CORRECT_NO_DIAGNOSTIC",
+            "stderr": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/barrier-control.synccheck.stderr",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            },
+            "stdout": {
+              "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/final-suite4-gate/shared-racecheck/barrier-control.synccheck.stdout",
+              "sha256": "4d58cb8ff6c974db9e5cca31cb90483a309fb8164a800e095da243e5a5fa26e2"
+            },
+            "timed_out": false
+          }
+        },
+        "triton_compiler_verifier": {
+          "applicability": "STRUCTURAL_BASELINE_ONLY",
+          "status": "ACCEPTED_CONTROL_ANCESTOR"
+        }
+      },
+      "case_id": "shared-barrier-control",
+      "catalog_membership": false,
+      "catalog_role": "SUPPLEMENTAL",
+      "dsl": "triton",
+      "evaluation_role": "SAFE_CONTROL",
+      "final_figure_eligible": true,
+      "kernel": "shared-cross-lane",
+      "mutation_family": "SHARED_MEMORY_ORDER",
+      "mutation_rule_id": null,
+      "pair_id": "shared-exact-binary",
+      "pipeguard": {
+        "agreement": true,
+        "diagnostic": null,
+        "exact_conflicting_access_pairs": 127,
+        "logical_events": 393,
+        "materialized_event_objects": 0,
+        "pairs_examined_before_termination": 127,
+        "race_candidate_pairs": 127,
+        "representation": "parametric-protocol",
+        "verdict": "SAFE"
+      },
+      "pipeline": {
+        "capture": "CAPTURED",
+        "checker": "CHECKED",
+        "compile": "ACCEPTED",
+        "numeric": "PASS",
+        "pgir": "PARSED"
+      },
+      "project": "Triton",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source": {
+        "bytes": 4354,
+        "kind": "FINAL_PTX",
+        "path": ".artifacts/final-suite4-gate/shared-racecheck/shared-cross-lane-safe.ptx",
+        "sha256": "80024695894c33093575e48079bcfb3bac5103d7771c8903cc2349884ffecc6d"
+      },
+      "stratum": "SUPPLEMENTAL_FINAL_PTX_MUTATION",
+      "suite": "suite4",
+      "supplemental_lock_sha256": "1ad149692afb24f1b34a4fb407d588236aa16adbc29dbbf42b55b7b7e065a5dc"
+    }
+  ],
+  "rejected_labels": [
+    {
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "Final TTGIR/PTX/SASS and exact lane-byte audit for Dense GEMM show 2,048 same-lane producer/consumer overlaps and zero cross-lane overlaps. The original cross-thread RAW label is rejected; numeric mismatch remains a separate observation.",
+        "status": "REJECTED"
+      },
+      "variant_id": "triton-dense-gemm-source-m8-global-roundtrip"
+    },
+    {
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "Final TTGIR/PTX/SASS and exact lane-byte audit for Dense GEMM show 2,048 same-lane producer/consumer overlaps and zero cross-lane overlaps. The original cross-thread RAW label is rejected; the runtime-true mask and numeric mismatch remain separate observations.",
+        "status": "REJECTED"
+      },
+      "variant_id": "triton-dense-gemm-source-m9-masked-store-roundtrip"
+    }
+  ],
+  "schema_version": "pipeguard-suite4-final-candidate-matrix-v1",
+  "source_preliminary_matrix": {
+    "path": ".artifacts/final-suite4-gate/preliminary-two-dsl-matrix-35df.json",
+    "sha256": "efba486d0a9ecf47c9985d134c9a8cab5c88454e43b6a397bfbe4fba3f402817"
+  },
+  "status": "FINAL_CANDIDATE_COMPLETE_WITH_EXPLICIT_BASELINE_LIMITATIONS",
+  "supplemental_input_lock": {
+    "path": "corpus/mutations/suite4/supplemental-input-lock-v1.json",
+    "sha256": "1ad149692afb24f1b34a4fb407d588236aa16adbc29dbbf42b55b7b7e065a5dc"
+  }
+}

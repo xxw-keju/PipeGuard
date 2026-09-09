@@ -1,0 +1,58 @@
+{
+  "bindings": {
+    "BLOCK_M": 64,
+    "BLOCK_N": 64,
+    "batch": 1,
+    "dim": 64,
+    "dtype": "float16",
+    "heads": 4,
+    "is_causal": true,
+    "seq_kv": 128,
+    "seq_q": 128
+  },
+  "compiler": {
+    "grid": [
+      2,
+      4,
+      1
+    ],
+    "pass_configs": {},
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-fused-attention",
+  "materialization": {
+    "args": [
+      1,
+      4,
+      128,
+      128,
+      64,
+      true,
+      64,
+      64,
+      2,
+      128
+    ],
+    "kwargs": {},
+    "resolver_kwargs": {}
+  },
+  "numeric": {
+    "atol": 0.03,
+    "oracle": "torch.scaled_dot_product_attention",
+    "rtol": 0.03,
+    "seed": 37,
+    "timeout_seconds": 60.0
+  },
+  "recipe_id": "tilelang-fused-attention-workload-original",
+  "schema_version": "pipeguard-mutation-workload-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  }
+}

@@ -1,0 +1,414 @@
+{
+  "kernel": {
+    "candidate_id": "6692b5edf361d106",
+    "capsule_sha256": "b797c48322bf67bc7b3bbd9eb44f04883b3ad50e1ec76334766a18091bf01d37",
+    "dsl": "tilelang",
+    "family": "GROUPED_GEMM",
+    "features": [
+      "PIPELINED",
+      "TMA",
+      "MMA",
+      "IRREGULAR_GRID"
+    ],
+    "kernel_id": "tilelang-grouped-gemm",
+    "operator_family": "GROUPED_GEMM",
+    "path": "examples/grouped_gemm/example_grouped_gemm_fwd.py",
+    "project": "TileLang",
+    "qualname": "grouped_gemm",
+    "selected_source_sha256": "081d88c069adf7c669295f12de8112e10f0ec4b07017b0d52bda188b79982f4d",
+    "source_id": "tilelang-2c31e071",
+    "source_sha256": "71d077ddb94df0d60919bf4d3b94b0c675931b59e18e8dc7bed82fb7d2bbbe7c",
+    "variant_ids": [
+      "tilelang-grouped-gemm-source-original",
+      "tilelang-grouped-gemm-source-m1-stage1",
+      "tilelang-grouped-gemm-source-m2-stage3",
+      "tilelang-grouped-gemm-source-m3-acc-init",
+      "tilelang-grouped-gemm-source-m4-a-init",
+      "tilelang-grouped-gemm-source-m5-b-init",
+      "tilelang-grouped-gemm-source-m6-a-before",
+      "tilelang-grouped-gemm-source-m7-a-after"
+    ],
+    "workload_spec_ids": [
+      "tilelang-grouped-gemm-workload-original",
+      "tilelang-grouped-gemm-workload-boundary-1",
+      "tilelang-grouped-gemm-workload-boundary-2",
+      "tilelang-grouped-gemm-workload-boundary-3"
+    ]
+  },
+  "variants": [
+    {
+      "adapter_sha256": "307ef20078d07edba1d5b621e1bbfef5358e69acb9043c649a7f8745692763d6",
+      "adjudication": {
+        "class": "CORRECT",
+        "method": "REFERENCE_ORACLE",
+        "rationale": "Pinned official source replayed successfully against its independent PyTorch reference on the original and all three boundary workloads.",
+        "status": "CONFIRMED"
+      },
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-grouped-gemm",
+      "role": "ORIGINAL",
+      "selected_ast_sha256": "de28110aa6eb29380d28bf78843a7ab44e555ba77ad30226bfbb832466a52eda",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/sources/original.py",
+        "sha256": "b797c48322bf67bc7b3bbd9eb44f04883b3ad50e1ec76334766a18091bf01d37"
+      },
+      "variant_id": "tilelang-grouped-gemm-source-original"
+    },
+    {
+      "adapter_sha256": "307ef20078d07edba1d5b621e1bbfef5358e69acb9043c649a7f8745692763d6",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "c90e57efcd88321d13dfbda2448f9e148b5a384f91537d1105e16c365fc87383",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-grouped-gemm",
+      "mutation_family": "PIPELINE_DEPTH",
+      "mutation_rule_id": "MUT-M1-PIPE-STAGE-LOW",
+      "occurrence": 1,
+      "operation": "replace",
+      "parent_variant_id": "tilelang-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/patches/m1-stage1.diff",
+        "sha256": "51b671f9ceb4e73b7f241072ef4d8e4a01a4a9c2213b25a73ef9e8577857fe8c"
+      },
+      "replacement_sha256": "f114ad46611f166974c7a4e977dc054744fbd4229adbc3e5a3ed7c86c3b02760",
+      "role": "MUTANT",
+      "selected_ast_sha256": "4eacc84d82c6efeb3b5c536f96c3b7114a60523acc91f74e1853ca206f379c07",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/sources/m1-stage1.py",
+        "sha256": "fb14fea7410ecf99df200faf495b0cadecd2665b8a08f0ab03d65cc3db7d2c17"
+      },
+      "variant_id": "tilelang-grouped-gemm-source-m1-stage1"
+    },
+    {
+      "adapter_sha256": "307ef20078d07edba1d5b621e1bbfef5358e69acb9043c649a7f8745692763d6",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "c90e57efcd88321d13dfbda2448f9e148b5a384f91537d1105e16c365fc87383",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-grouped-gemm",
+      "mutation_family": "PIPELINE_DEPTH",
+      "mutation_rule_id": "MUT-M2-PIPE-STAGE-ALT",
+      "occurrence": 1,
+      "operation": "replace",
+      "parent_variant_id": "tilelang-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/patches/m2-stage3.diff",
+        "sha256": "b6048f44f77fcae805070a75efafaa67e7ef942131ee50ddacf2e5015910b8a2"
+      },
+      "replacement_sha256": "c0faa29ab9408f662ee897488483a7ddf61971da53b4ebfb4568a461b8d4293b",
+      "role": "MUTANT",
+      "selected_ast_sha256": "90fac5e110fb8afb263208a5d3cda7661f0c6e23486a7633b5591cd38cc0579d",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/sources/m2-stage3.py",
+        "sha256": "4db2552ae8a32a39485dc30aae74e43f66c2995cd000db61beda25a1d51d4369"
+      },
+      "variant_id": "tilelang-grouped-gemm-source-m2-stage3"
+    },
+    {
+      "adapter_sha256": "307ef20078d07edba1d5b621e1bbfef5358e69acb9043c649a7f8745692763d6",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "921100f2900466b2d72aec16e85a5ecf144f8d32d5aa72cd9b27cd0518da924f",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-grouped-gemm",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M3-DEST-INIT-DUP",
+      "occurrence": 1,
+      "operation": "duplicate",
+      "parent_variant_id": "tilelang-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/patches/m3-acc-init.diff",
+        "sha256": "465512a57947daf73c60d243ae056bd4c7831f627235dd1a1ba102dd1a5f2382"
+      },
+      "replacement_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "MUTANT",
+      "selected_ast_sha256": "6a66c3c84737dbf7fa757c1a287b2e521c331f625780b7979a46465cead93301",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/sources/m3-acc-init.py",
+        "sha256": "07e19dded51111a516846b567d06b8dc26712743078a9e0f81181a4aacc5913d"
+      },
+      "variant_id": "tilelang-grouped-gemm-source-m3-acc-init"
+    },
+    {
+      "adapter_sha256": "307ef20078d07edba1d5b621e1bbfef5358e69acb9043c649a7f8745692763d6",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "8a52e87798b459c1962088a5911ee4e29791a9b92ea7ccabb478ee9ebfba1db3",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-grouped-gemm",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M4-SOURCE-A-INIT",
+      "occurrence": 1,
+      "operation": "insert_before",
+      "parent_variant_id": "tilelang-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/patches/m4-a-init.diff",
+        "sha256": "79ad9bcaadab9067243634fed2614e99ac6f5b5ebd1b9f5b4adffbe65cc8f257"
+      },
+      "replacement_sha256": "e6e5a3c07e7511de12d381ca8891619b6f534dcd28c908c9b635cbfca4c20b61",
+      "role": "MUTANT",
+      "selected_ast_sha256": "94aa2065462c1454bee36d596415199f56ee476aa4471d754cbce1949e869f39",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/sources/m4-a-init.py",
+        "sha256": "db1c8518761d26acf15eefc76cc9c2ae7f8d172084d30835a36024c26fc5b9ca"
+      },
+      "variant_id": "tilelang-grouped-gemm-source-m4-a-init"
+    },
+    {
+      "adapter_sha256": "307ef20078d07edba1d5b621e1bbfef5358e69acb9043c649a7f8745692763d6",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "fb53ab26a4ecec30e3709ba61a3debed9d75774b77b89067bef52cb2d1029148",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-grouped-gemm",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M5-SOURCE-B-INIT",
+      "occurrence": 1,
+      "operation": "insert_before",
+      "parent_variant_id": "tilelang-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/patches/m5-b-init.diff",
+        "sha256": "32dcb2a2c1be44e4b8cdf9014c2d456c73d07a625f379ec96b64c7f2b0aec96b"
+      },
+      "replacement_sha256": "7dee1e28faccd13b7c1e921fa2a5048bcc3b18666dcb138d834517adfecb4229",
+      "role": "MUTANT",
+      "selected_ast_sha256": "f895b36234c64c17d8d30458f97d18fed12543c3836c1fd745a47e5e598f91ec",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/sources/m5-b-init.py",
+        "sha256": "d486ffb1c660d3004ea3c48b70b96991fff892a44341d427c7b5735227dfe30f"
+      },
+      "variant_id": "tilelang-grouped-gemm-source-m5-b-init"
+    },
+    {
+      "adapter_sha256": "307ef20078d07edba1d5b621e1bbfef5358e69acb9043c649a7f8745692763d6",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "8a52e87798b459c1962088a5911ee4e29791a9b92ea7ccabb478ee9ebfba1db3",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-grouped-gemm",
+      "mutation_family": "ASYNC_PRODUCER",
+      "mutation_rule_id": "MUT-M6-PRODUCER-DUP-BEFORE",
+      "occurrence": 1,
+      "operation": "duplicate",
+      "parent_variant_id": "tilelang-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/patches/m6-a-before.diff",
+        "sha256": "fe34e9815565674ecc2bea4a296b1d4a0fbe077e859d8d3ed55236f90be360f9"
+      },
+      "replacement_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "MUTANT",
+      "selected_ast_sha256": "4f4a0862c2059e3d8abae60246e0db1ddea06bbd8ff3497b13a810b4145e24f9",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/sources/m6-a-before.py",
+        "sha256": "6e502668cc145a6536ba97de1062807b032b77fbdc912be395e94ddc4a9bc771"
+      },
+      "variant_id": "tilelang-grouped-gemm-source-m6-a-before"
+    },
+    {
+      "adapter_sha256": "307ef20078d07edba1d5b621e1bbfef5358e69acb9043c649a7f8745692763d6",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "8a52e87798b459c1962088a5911ee4e29791a9b92ea7ccabb478ee9ebfba1db3",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-grouped-gemm",
+      "mutation_family": "ASYNC_PRODUCER",
+      "mutation_rule_id": "MUT-M7-PRODUCER-DUP-AFTER",
+      "occurrence": 1,
+      "operation": "duplicate_after",
+      "parent_variant_id": "tilelang-grouped-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/patches/m7-a-after.diff",
+        "sha256": "7695378cb2d862a57e05ec1b2141aa3733a1dc4f9dd3c9c28f534d216b3ccf73"
+      },
+      "replacement_sha256": "3639170784f53f2b4ce4dcb6f25c6bbc8c017d62b1b657819e97c529672b6835",
+      "role": "MUTANT",
+      "selected_ast_sha256": "c66dbde1408c96390723bbd98048027592eebbbc587f56149c885315c5cedd0c",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/sources/m7-a-after.py",
+        "sha256": "f11f996582727d09debf133a8b283254fbe3a2dd0e41d3af919a7082b6926f50"
+      },
+      "variant_id": "tilelang-grouped-gemm-source-m7-a-after"
+    }
+  ],
+  "workloads": [
+    {
+      "bindings": {
+        "BLOCK_K": 32,
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "K": 256,
+        "N": 256,
+        "dtype": "float16",
+        "group_sizes": [
+          128,
+          256
+        ]
+      },
+      "boundary_dimensions": [],
+      "delta": [],
+      "evidence": {
+        "kind": "UPSTREAM_TEST",
+        "path": "examples/grouped_gemm/example_grouped_gemm_fwd.py",
+        "rationale": "Pinned official example kernel with an independent PyTorch oracle.",
+        "sha256": "71d077ddb94df0d60919bf4d3b94b0c675931b59e18e8dc7bed82fb7d2bbbe7c"
+      },
+      "kernel_id": "tilelang-grouped-gemm",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/recipes/tilelang-grouped-gemm-workload-original.json",
+        "sha256": "a36686f41e5d10f9c36d82faf504920d445d99fde72d89d8d77e71f7572e4b78"
+      },
+      "role": "ORIGINAL",
+      "spec_id": "tilelang-grouped-gemm-workload-original"
+    },
+    {
+      "bindings": {
+        "BLOCK_K": 32,
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "K": 256,
+        "N": 256,
+        "dtype": "float16",
+        "group_sizes": [
+          64,
+          128,
+          256
+        ]
+      },
+      "boundary_dimensions": [
+        "group_sizes"
+      ],
+      "delta": [
+        {
+          "after": [
+            64,
+            128,
+            256
+          ],
+          "before": [
+            128,
+            256
+          ],
+          "path": "/bindings/group_sizes"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "examples/grouped_gemm/example_grouped_gemm_fwd.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "71d077ddb94df0d60919bf4d3b94b0c675931b59e18e8dc7bed82fb7d2bbbe7c"
+      },
+      "kernel_id": "tilelang-grouped-gemm",
+      "parent_spec_id": "tilelang-grouped-gemm-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/recipes/tilelang-grouped-gemm-workload-boundary-1.json",
+        "sha256": "b5937540022c08795cc416aa57e59101d917cfcfe58000e6a2adb97eb038cf54"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "tilelang-grouped-gemm-workload-boundary-1"
+    },
+    {
+      "bindings": {
+        "BLOCK_K": 32,
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "K": 256,
+        "N": 128,
+        "dtype": "float16",
+        "group_sizes": [
+          128,
+          256
+        ]
+      },
+      "boundary_dimensions": [
+        "N"
+      ],
+      "delta": [
+        {
+          "after": 128,
+          "before": 256,
+          "path": "/bindings/N"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "examples/grouped_gemm/example_grouped_gemm_fwd.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "71d077ddb94df0d60919bf4d3b94b0c675931b59e18e8dc7bed82fb7d2bbbe7c"
+      },
+      "kernel_id": "tilelang-grouped-gemm",
+      "parent_spec_id": "tilelang-grouped-gemm-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/recipes/tilelang-grouped-gemm-workload-boundary-2.json",
+        "sha256": "9a5dd81821f710ec8acee3db839a2dca247943a261db21a33b148e481fc9de8b"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "tilelang-grouped-gemm-workload-boundary-2"
+    },
+    {
+      "bindings": {
+        "BLOCK_K": 32,
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "K": 512,
+        "N": 256,
+        "dtype": "float16",
+        "group_sizes": [
+          128,
+          256
+        ]
+      },
+      "boundary_dimensions": [
+        "K"
+      ],
+      "delta": [
+        {
+          "after": 512,
+          "before": 256,
+          "path": "/bindings/K"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "examples/grouped_gemm/example_grouped_gemm_fwd.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "71d077ddb94df0d60919bf4d3b94b0c675931b59e18e8dc7bed82fb7d2bbbe7c"
+      },
+      "kernel_id": "tilelang-grouped-gemm",
+      "parent_spec_id": "tilelang-grouped-gemm-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-grouped-gemm/recipes/tilelang-grouped-gemm-workload-boundary-3.json",
+        "sha256": "171f6d80490e35877b758201dc5a56f5d72ba74e8c56067498adcf87d61c1307"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "tilelang-grouped-gemm-workload-boundary-3"
+    }
+  ]
+}

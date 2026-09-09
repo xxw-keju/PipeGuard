@@ -1,0 +1,10 @@
+--- original.py
++++ m6-x-before.py
+@@ -29,6 +29,7 @@
+ 
+         for i_n in T.Pipelined(T.ceildiv(N, BLOCK_N)):
+             T.copy(X[i_m * BLOCK_M, i_n * BLOCK_N], x)
++            T.copy(X[i_m * BLOCK_M, i_n * BLOCK_N], x)
+             T.reduce_max(x, max_x, dim=1, clear=True)
+ 
+             for i, j in T.Parallel(BLOCK_M, BLOCK_N):

@@ -1,0 +1,393 @@
+{
+  "kernel": {
+    "candidate_id": "4d6009bd3a002eaa",
+    "capsule_sha256": "3d13c323f50fcdae3c018a1d38ab6124bd300c1a524ff1dff7066e856fc85d6c",
+    "dsl": "tilelang",
+    "family": "DENSE_GEMM",
+    "features": [
+      "PIPELINED",
+      "TMA",
+      "MMA"
+    ],
+    "kernel_id": "tilelang-dense-gemm",
+    "operator_family": "DENSE_GEMM",
+    "path": "examples/gemm/example_gemm.py",
+    "project": "TileLang",
+    "qualname": "matmul",
+    "selected_source_sha256": "52dd4d970ca90e8f8cb4532ba82f3734cde221b6da3125edc1bdaa0cd3cf3265",
+    "source_id": "tilelang-2c31e071",
+    "source_sha256": "25d16f182bbe21d2cd0ea0edd9541b811120cba609c4d2c3aa4e800e8c946a99",
+    "variant_ids": [
+      "tilelang-dense-gemm-source-original",
+      "tilelang-dense-gemm-source-m1-stage1",
+      "tilelang-dense-gemm-source-m2-stage2",
+      "tilelang-dense-gemm-source-m3-acc-init",
+      "tilelang-dense-gemm-source-m4-a-init",
+      "tilelang-dense-gemm-source-m5-b-init",
+      "tilelang-dense-gemm-source-m6-a-before",
+      "tilelang-dense-gemm-source-m7-a-after"
+    ],
+    "workload_spec_ids": [
+      "tilelang-dense-gemm-workload-original",
+      "tilelang-dense-gemm-workload-boundary-1",
+      "tilelang-dense-gemm-workload-boundary-2",
+      "tilelang-dense-gemm-workload-boundary-3"
+    ]
+  },
+  "variants": [
+    {
+      "adapter_sha256": "8d4aa327f38293f3792493adb4d37d42ea7abca162a6ee0d9ca003dba79f4e02",
+      "adjudication": {
+        "class": "CORRECT",
+        "method": "REFERENCE_ORACLE",
+        "rationale": "Pinned official source replayed successfully against its independent PyTorch reference on the original and all three boundary workloads.",
+        "status": "CONFIRMED"
+      },
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-dense-gemm",
+      "role": "ORIGINAL",
+      "selected_ast_sha256": "0951d8684a6008519d487bd00535ad52f3644b4132f5dad6a6e18f832b17bae2",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/sources/original.py",
+        "sha256": "3d13c323f50fcdae3c018a1d38ab6124bd300c1a524ff1dff7066e856fc85d6c"
+      },
+      "variant_id": "tilelang-dense-gemm-source-original"
+    },
+    {
+      "adapter_sha256": "8d4aa327f38293f3792493adb4d37d42ea7abca162a6ee0d9ca003dba79f4e02",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "c0faa29ab9408f662ee897488483a7ddf61971da53b4ebfb4568a461b8d4293b",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-dense-gemm",
+      "mutation_family": "PIPELINE_DEPTH",
+      "mutation_rule_id": "MUT-M1-PIPE-STAGE-LOW",
+      "occurrence": 1,
+      "operation": "replace",
+      "parent_variant_id": "tilelang-dense-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/patches/m1-stage1.diff",
+        "sha256": "0df98b788c47955545d9e7e90d934dd0b871aa7febe2809a8e08a63e7cd1398c"
+      },
+      "replacement_sha256": "f114ad46611f166974c7a4e977dc054744fbd4229adbc3e5a3ed7c86c3b02760",
+      "role": "MUTANT",
+      "selected_ast_sha256": "2d1ef6924997796b01060baa444272693a6a59c70489ac6b0fb0156e13dbf0ee",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/sources/m1-stage1.py",
+        "sha256": "71e6066213ba0f41d1148dfb2f6dc6d7dd3d17b60786efc3d39c10282cb7fdda"
+      },
+      "variant_id": "tilelang-dense-gemm-source-m1-stage1"
+    },
+    {
+      "adapter_sha256": "8d4aa327f38293f3792493adb4d37d42ea7abca162a6ee0d9ca003dba79f4e02",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "c0faa29ab9408f662ee897488483a7ddf61971da53b4ebfb4568a461b8d4293b",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-dense-gemm",
+      "mutation_family": "PIPELINE_DEPTH",
+      "mutation_rule_id": "MUT-M2-PIPE-STAGE-ALT",
+      "occurrence": 1,
+      "operation": "replace",
+      "parent_variant_id": "tilelang-dense-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/patches/m2-stage2.diff",
+        "sha256": "25fa0fd6a2d9eaeb5b4b4966b21de558ce2a302ab2a31e2cc4a8f8ebb7f85903"
+      },
+      "replacement_sha256": "0d50c23771c8af93b8434209749b1dac751d9ba730b93cc50f6e12140f2db2e8",
+      "role": "MUTANT",
+      "selected_ast_sha256": "76495c956103bc036be8990e586ee7caf8478057fb86dd2cb659bbae0a3448a0",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/sources/m2-stage2.py",
+        "sha256": "3622201f602e87b908352f311c22c33ba8e59445f5c28082663a614fffee48b0"
+      },
+      "variant_id": "tilelang-dense-gemm-source-m2-stage2"
+    },
+    {
+      "adapter_sha256": "8d4aa327f38293f3792493adb4d37d42ea7abca162a6ee0d9ca003dba79f4e02",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "921100f2900466b2d72aec16e85a5ecf144f8d32d5aa72cd9b27cd0518da924f",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-dense-gemm",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M3-DEST-INIT-DUP",
+      "occurrence": 1,
+      "operation": "duplicate",
+      "parent_variant_id": "tilelang-dense-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/patches/m3-acc-init.diff",
+        "sha256": "940b7c450090bf32ec44f5e1a5891a3663e2eac2f896271c5e4b7e1351996f9c"
+      },
+      "replacement_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "MUTANT",
+      "selected_ast_sha256": "471012792f71e7fa5f3daa8d29c311260dfb6e90d57d867c6fb58e6f68dcee4d",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/sources/m3-acc-init.py",
+        "sha256": "5aa8f8adb90c81af3867016a9f54cb1845a2b858d8dbd0e1a4230e3a45999789"
+      },
+      "variant_id": "tilelang-dense-gemm-source-m3-acc-init"
+    },
+    {
+      "adapter_sha256": "8d4aa327f38293f3792493adb4d37d42ea7abca162a6ee0d9ca003dba79f4e02",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "4e05ac5b9128c1aeff1799e5c42182e05972995ca98f639c5379832a14d59c47",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-dense-gemm",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M4-SOURCE-A-INIT",
+      "occurrence": 1,
+      "operation": "insert_before",
+      "parent_variant_id": "tilelang-dense-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/patches/m4-a-init.diff",
+        "sha256": "3335f0bae1f5c1943357412e71ddb379b16b068d7e3f6b0e10fac7cb404b20fd"
+      },
+      "replacement_sha256": "e6e5a3c07e7511de12d381ca8891619b6f534dcd28c908c9b635cbfca4c20b61",
+      "role": "MUTANT",
+      "selected_ast_sha256": "1664c5b2b72405282dd9c754b00ffb5243efd942a2dea75083e43b7f719087ed",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/sources/m4-a-init.py",
+        "sha256": "4d92ae60bcdf9c26f0fed9ef8530f562b837d6e20166330ee389c54043789452"
+      },
+      "variant_id": "tilelang-dense-gemm-source-m4-a-init"
+    },
+    {
+      "adapter_sha256": "8d4aa327f38293f3792493adb4d37d42ea7abca162a6ee0d9ca003dba79f4e02",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "985a576379400289a3c285583fca84480c7ec44164fe2b77544546985d9d904d",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-dense-gemm",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M5-SOURCE-B-INIT",
+      "occurrence": 1,
+      "operation": "insert_before",
+      "parent_variant_id": "tilelang-dense-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/patches/m5-b-init.diff",
+        "sha256": "3b83776ec6c7b7ac4e6c887a62cd06e3f0f9e424737d87ec00c1ec6ad05a6b80"
+      },
+      "replacement_sha256": "7dee1e28faccd13b7c1e921fa2a5048bcc3b18666dcb138d834517adfecb4229",
+      "role": "MUTANT",
+      "selected_ast_sha256": "2f52cd01256a8b130b4b27073796a08b0555a132bf96e5228c4bafe68a5b2ee8",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/sources/m5-b-init.py",
+        "sha256": "51092a8e089220d33a7117542cc34c746805685d38444c70cc60582db81f7100"
+      },
+      "variant_id": "tilelang-dense-gemm-source-m5-b-init"
+    },
+    {
+      "adapter_sha256": "8d4aa327f38293f3792493adb4d37d42ea7abca162a6ee0d9ca003dba79f4e02",
+      "adjudication": {
+        "class": "DATA_HAZARD",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "The duplicated A producer lowers to two overlapping TMA writes under the same mbarrier lifecycle and generation without a successful wait or typed ordering relation between their asynchronous windows.",
+        "status": "CONFIRMED"
+      },
+      "anchor_sha256": "4e05ac5b9128c1aeff1799e5c42182e05972995ca98f639c5379832a14d59c47",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-dense-gemm",
+      "mutation_family": "ASYNC_PRODUCER",
+      "mutation_rule_id": "MUT-M6-PRODUCER-DUP-BEFORE",
+      "occurrence": 1,
+      "operation": "duplicate",
+      "parent_variant_id": "tilelang-dense-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/patches/m6-a-before.diff",
+        "sha256": "646de36ffb87d7e4e039b6c741b9dd0ee8adf16b83834a8760b41ab0a602cbf6"
+      },
+      "replacement_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "MUTANT",
+      "selected_ast_sha256": "73617b3e2915363f051425f58cc28fd971f9864e32e99d3c3f53d2c4157234c8",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/sources/m6-a-before.py",
+        "sha256": "73521f1664ffd481170507f0645ab0e12a7245fccd2821011c522aa0b29b93b6"
+      },
+      "variant_id": "tilelang-dense-gemm-source-m6-a-before"
+    },
+    {
+      "adapter_sha256": "8d4aa327f38293f3792493adb4d37d42ea7abca162a6ee0d9ca003dba79f4e02",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "4e05ac5b9128c1aeff1799e5c42182e05972995ca98f639c5379832a14d59c47",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-dense-gemm",
+      "mutation_family": "ASYNC_PRODUCER",
+      "mutation_rule_id": "MUT-M7-PRODUCER-DUP-AFTER",
+      "occurrence": 1,
+      "operation": "duplicate_after",
+      "parent_variant_id": "tilelang-dense-gemm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/patches/m7-a-after.diff",
+        "sha256": "b99be7bfb5177cd6f3d977698fefbae3b42fa0dca644b6e837661ac491127d0c"
+      },
+      "replacement_sha256": "3639170784f53f2b4ce4dcb6f25c6bbc8c017d62b1b657819e97c529672b6835",
+      "role": "MUTANT",
+      "selected_ast_sha256": "359c4d685f97f3adfeeddd7d4f2a31d3ce19bb3689264d6a80bb0a464f934418",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/sources/m7-a-after.py",
+        "sha256": "cc26a5f1745bc0d24bec001dfdcbd58222d975cc08010054bf4818caab817555"
+      },
+      "variant_id": "tilelang-dense-gemm-source-m7-a-after"
+    }
+  ],
+  "workloads": [
+    {
+      "bindings": {
+        "BLOCK_K": 32,
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "K": 256,
+        "M": 512,
+        "N": 512,
+        "dtype": "float16"
+      },
+      "boundary_dimensions": [],
+      "delta": [],
+      "evidence": {
+        "kind": "UPSTREAM_TEST",
+        "path": "examples/gemm/example_gemm.py",
+        "rationale": "Pinned official example kernel with an independent PyTorch oracle.",
+        "sha256": "25d16f182bbe21d2cd0ea0edd9541b811120cba609c4d2c3aa4e800e8c946a99"
+      },
+      "kernel_id": "tilelang-dense-gemm",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/recipes/tilelang-dense-gemm-workload-original.json",
+        "sha256": "5707944346e72d3e24df1a22f3a13bd9727a3bb2a8e59189f355caa7e2bb0620"
+      },
+      "role": "ORIGINAL",
+      "spec_id": "tilelang-dense-gemm-workload-original"
+    },
+    {
+      "bindings": {
+        "BLOCK_K": 32,
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "K": 256,
+        "M": 256,
+        "N": 512,
+        "dtype": "float16"
+      },
+      "boundary_dimensions": [
+        "M"
+      ],
+      "delta": [
+        {
+          "after": 256,
+          "before": 512,
+          "path": "/bindings/M"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "examples/gemm/example_gemm.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "25d16f182bbe21d2cd0ea0edd9541b811120cba609c4d2c3aa4e800e8c946a99"
+      },
+      "kernel_id": "tilelang-dense-gemm",
+      "parent_spec_id": "tilelang-dense-gemm-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/recipes/tilelang-dense-gemm-workload-boundary-1.json",
+        "sha256": "731847cf132756530c139938cfe0ba8b471b7d99c748f3a9ee8a9484dc2bc05a"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "tilelang-dense-gemm-workload-boundary-1"
+    },
+    {
+      "bindings": {
+        "BLOCK_K": 32,
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "K": 256,
+        "M": 512,
+        "N": 256,
+        "dtype": "float16"
+      },
+      "boundary_dimensions": [
+        "N"
+      ],
+      "delta": [
+        {
+          "after": 256,
+          "before": 512,
+          "path": "/bindings/N"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "examples/gemm/example_gemm.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "25d16f182bbe21d2cd0ea0edd9541b811120cba609c4d2c3aa4e800e8c946a99"
+      },
+      "kernel_id": "tilelang-dense-gemm",
+      "parent_spec_id": "tilelang-dense-gemm-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/recipes/tilelang-dense-gemm-workload-boundary-2.json",
+        "sha256": "bbe79d1ad425281b3a6cb605f1020785295813bcf98c71af9cb83156c0e18a27"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "tilelang-dense-gemm-workload-boundary-2"
+    },
+    {
+      "bindings": {
+        "BLOCK_K": 32,
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "K": 512,
+        "M": 512,
+        "N": 512,
+        "dtype": "float16"
+      },
+      "boundary_dimensions": [
+        "K"
+      ],
+      "delta": [
+        {
+          "after": 512,
+          "before": 256,
+          "path": "/bindings/K"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "examples/gemm/example_gemm.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "25d16f182bbe21d2cd0ea0edd9541b811120cba609c4d2c3aa4e800e8c946a99"
+      },
+      "kernel_id": "tilelang-dense-gemm",
+      "parent_spec_id": "tilelang-dense-gemm-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-dense-gemm/recipes/tilelang-dense-gemm-workload-boundary-3.json",
+        "sha256": "68aeba22cfaf98ab0cf7172b731e494c04bcac3441431fcbfa3f73309c3615e1"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "tilelang-dense-gemm-workload-boundary-3"
+    }
+  ]
+}

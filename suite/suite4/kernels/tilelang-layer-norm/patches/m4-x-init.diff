@@ -1,0 +1,10 @@
+--- original.py
++++ m4-x-init.py
+@@ -29,6 +29,7 @@
+             mean_row = T.alloc_fragment((blk_m,), accum_dtype)
+             rstd_row = T.alloc_fragment((blk_m,), accum_dtype)
+ 
++            T.clear(X_smem)
+             T.copy(X[bx * blk_m, 0], X_smem)
+             T.copy(gamma, G_smem)
+             T.copy(beta, B_smem)

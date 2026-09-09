@@ -1,0 +1,10 @@
+--- original.py
++++ m4-x-init.py
+@@ -28,6 +28,7 @@
+         T.fill(lse, -T.infinity(accum_dtype))
+ 
+         for i_n in T.Pipelined(T.ceildiv(N, BLOCK_N)):
++            T.clear(x)
+             T.copy(X[i_m * BLOCK_M, i_n * BLOCK_N], x)
+             T.reduce_max(x, max_x, dim=1, clear=True)
+ 

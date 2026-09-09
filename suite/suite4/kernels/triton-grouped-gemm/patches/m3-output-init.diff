@@ -1,0 +1,10 @@
+--- original.py
++++ m3-output-init.py
+@@ -126,6 +126,7 @@
+             c_ptrs = c_ptr + ldc * offs_cm[:, None] + offs_cn[None, :]
+ 
+             # assumes full tile for now
++            tl.store(c_ptrs, 0.0)
+             tl.store(c_ptrs, c)
+ 
+             # go to the next tile by advancing NUM_SM

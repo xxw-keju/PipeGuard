@@ -1,0 +1,10 @@
+--- original.py
++++ m7-x-after.py
+@@ -40,6 +40,7 @@
+ 
+             T.reduce_sum(X_local, sum_row, dim=1)
+             T.reduce_sum(X_sq_local, sumsq_row, dim=1)
++            T.copy(X[bx * blk_m, 0], X_smem)
+ 
+             inv_D = T.float32(1.0) / T.Cast(accum_dtype, D)
+             for i in T.Parallel(blk_m):

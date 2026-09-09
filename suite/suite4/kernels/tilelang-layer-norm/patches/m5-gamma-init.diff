@@ -1,0 +1,10 @@
+--- original.py
++++ m5-gamma-init.py
+@@ -30,6 +30,7 @@
+             rstd_row = T.alloc_fragment((blk_m,), accum_dtype)
+ 
+             T.copy(X[bx * blk_m, 0], X_smem)
++            T.clear(G_smem)
+             T.copy(gamma, G_smem)
+             T.copy(beta, B_smem)
+ 

@@ -1,0 +1,487 @@
+{
+  "kernel": {
+    "candidate_id": "908056021440cfc6",
+    "capsule_sha256": "651334e12e59a5e3ffb6a3a83f94f42baac1a18e995979190dabfca5d09f08d7",
+    "dsl": "triton",
+    "family": "SOFTMAX",
+    "features": [
+      "PIPELINED",
+      "REDUCTION",
+      "FUSED_EPILOGUE"
+    ],
+    "kernel_id": "triton-softmax",
+    "operator_family": "SOFTMAX",
+    "path": "python/tutorials/02-fused-softmax.py",
+    "project": "Triton",
+    "qualname": "softmax_kernel",
+    "selected_source_sha256": "42050a1a8082142125543b8344d2ad7f45d14e117d0577c9b20091b7afeb7204",
+    "source_id": "triton-61c02bcd",
+    "source_sha256": "8a65b696d5b02a3900380395ecd883671afeb66328db108f55622ed8853a05da",
+    "variant_ids": [
+      "triton-softmax-source-original",
+      "triton-softmax-source-m1-stage1",
+      "triton-softmax-source-m2-stage3",
+      "triton-softmax-source-m3-output-init",
+      "triton-softmax-source-m4-output-dup",
+      "triton-softmax-source-m8-global-roundtrip",
+      "triton-softmax-source-m9-masked-store-roundtrip",
+      "triton-softmax-source-m10-masked-load-roundtrip",
+      "triton-softmax-source-m11-relaxed-atomic-roundtrip",
+      "triton-softmax-source-m12-masked-other-constancy",
+      "triton-softmax-source-m13-nondominating-assume"
+    ],
+    "workload_spec_ids": [
+      "triton-softmax-workload-original",
+      "triton-softmax-workload-boundary-1",
+      "triton-softmax-workload-boundary-2",
+      "triton-softmax-workload-boundary-3"
+    ]
+  },
+  "variants": [
+    {
+      "adapter_sha256": "48b6ef8f6747e5b85ebf48243a1f197cffcb631c185b209c39d26320bcd3313c",
+      "adjudication": {
+        "class": "CORRECT",
+        "method": "REFERENCE_ORACLE",
+        "rationale": "Pinned official source replayed successfully against its independent PyTorch reference on the original and all three boundary workloads.",
+        "status": "CONFIRMED"
+      },
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-softmax",
+      "role": "ORIGINAL",
+      "selected_ast_sha256": "f773779cab3d562e5eae4d519e23fd065e5ab0befc79e169ae2cc06fa12a4bb2",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/sources/original.py",
+        "sha256": "651334e12e59a5e3ffb6a3a83f94f42baac1a18e995979190dabfca5d09f08d7"
+      },
+      "variant_id": "triton-softmax-source-original"
+    },
+    {
+      "adapter_sha256": "48b6ef8f6747e5b85ebf48243a1f197cffcb631c185b209c39d26320bcd3313c",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "c90e57efcd88321d13dfbda2448f9e148b5a384f91537d1105e16c365fc87383",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-softmax",
+      "mutation_family": "PIPELINE_DEPTH",
+      "mutation_rule_id": "MUT-M1-PIPE-STAGE-LOW",
+      "occurrence": 1,
+      "operation": "replace",
+      "parent_variant_id": "triton-softmax-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/patches/m1-stage1.diff",
+        "sha256": "bd2be56e7842ebf8cadb5c06d22e43601c959c44c312294c6cb43c5ae3644e6f"
+      },
+      "replacement_sha256": "f114ad46611f166974c7a4e977dc054744fbd4229adbc3e5a3ed7c86c3b02760",
+      "role": "MUTANT",
+      "selected_ast_sha256": "594d697f8b0df92463c0f81c9f31b27936206ba872ed7d3da2e0bd0ab40ac93e",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/sources/m1-stage1.py",
+        "sha256": "2852aff6658936ae80d33dbfe8893f56ebb70404972f3c70c5cd1f5b39098f13"
+      },
+      "variant_id": "triton-softmax-source-m1-stage1"
+    },
+    {
+      "adapter_sha256": "48b6ef8f6747e5b85ebf48243a1f197cffcb631c185b209c39d26320bcd3313c",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "c90e57efcd88321d13dfbda2448f9e148b5a384f91537d1105e16c365fc87383",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-softmax",
+      "mutation_family": "PIPELINE_DEPTH",
+      "mutation_rule_id": "MUT-M2-PIPE-STAGE-ALT",
+      "occurrence": 1,
+      "operation": "replace",
+      "parent_variant_id": "triton-softmax-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/patches/m2-stage3.diff",
+        "sha256": "b3dba36270eb3704cf51ea7abbb966a5838a83ea76ef8b3e1c05971650591b2f"
+      },
+      "replacement_sha256": "c0faa29ab9408f662ee897488483a7ddf61971da53b4ebfb4568a461b8d4293b",
+      "role": "MUTANT",
+      "selected_ast_sha256": "bd34cbe622865a05cb5ad3bc8be425638f29e82284090b107f151b1586a88a05",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/sources/m2-stage3.py",
+        "sha256": "d70bc7caf41a57d2e2304cc39d5ecc6015577fc3e0a377c5b7e1dcd3db36095a"
+      },
+      "variant_id": "triton-softmax-source-m2-stage3"
+    },
+    {
+      "adapter_sha256": "48b6ef8f6747e5b85ebf48243a1f197cffcb631c185b209c39d26320bcd3313c",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "45fec684a5e17501574ad2b35ca005d03f87c6a3c92570d3a19f0807e11af55f",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-softmax",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M3-DEST-INIT-DUP",
+      "occurrence": 1,
+      "operation": "insert_before",
+      "parent_variant_id": "triton-softmax-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/patches/m3-output-init.diff",
+        "sha256": "24e73a98e41d8e9738b3a7ce7cca3930b36a776ec39052d930de7665e408d3f4"
+      },
+      "replacement_sha256": "cc25174702aee0c7280cf3b58ce6f755d1ae3a2819ff80156dec966f3a6839c9",
+      "role": "MUTANT",
+      "selected_ast_sha256": "4a2b69427d50827e33525f24b27b878c5956c833fab4b4700221b34a6e60fe0d",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/sources/m3-output-init.py",
+        "sha256": "bd49e55b4fadbed811022643eb5147aa8edf4e6fa134882ce1722ef3dba9d74f"
+      },
+      "variant_id": "triton-softmax-source-m3-output-init"
+    },
+    {
+      "adapter_sha256": "48b6ef8f6747e5b85ebf48243a1f197cffcb631c185b209c39d26320bcd3313c",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "45fec684a5e17501574ad2b35ca005d03f87c6a3c92570d3a19f0807e11af55f",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-softmax",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M4-SOURCE-A-INIT",
+      "occurrence": 1,
+      "operation": "duplicate",
+      "parent_variant_id": "triton-softmax-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/patches/m4-output-dup.diff",
+        "sha256": "13bc585fd69c28e4f20b94ecc40ef22b952077211f2a687fc3c9b3c95242d014"
+      },
+      "replacement_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "MUTANT",
+      "selected_ast_sha256": "29b072ebc98388bdd2f8811ec0efe91e3b3f5854d17a67c41215507d7262b00e",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/sources/m4-output-dup.py",
+        "sha256": "ff3c7268e256bf064873c2fb08f04045aab1994bd61aaf413951c55f7f5f7bc6"
+      },
+      "variant_id": "triton-softmax-source-m4-output-dup"
+    },
+    {
+      "adapter_sha256": "48b6ef8f6747e5b85ebf48243a1f197cffcb631c185b209c39d26320bcd3313c",
+      "adjudication": {
+        "class": "DATA_HAZARD",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "The store and reload use the same unique logical addresses, but Coalesce assigns different thread layouts. Eleven of twenty workloads mismatch; inserting tl.debug_barrier between the operations restores all twenty. PipeGuard reports DATA_HAZARD/UNORDERED_CONFLICT.",
+        "status": "CONFIRMED"
+      },
+      "anchor_sha256": "651334e12e59a5e3ffb6a3a83f94f42baac1a18e995979190dabfca5d09f08d7",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-softmax",
+      "mutation_family": "GLOBAL_MEMORY_ORDER",
+      "mutation_rule_id": "MUT-M8-GLOBAL-RAW-ROUNDTRIP",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-softmax-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/patches/m8-global-roundtrip.diff",
+        "sha256": "ca35747a87f8df99c9dd45a4e2f4fe409b3d61b25101e17b5303cb7b490c9dc0"
+      },
+      "replacement_sha256": "776617293c72c58c5ffe998dd3426f3c9b5e0f9b454edbc645f2d83ebc0b551e",
+      "role": "MUTANT",
+      "selected_ast_sha256": "fb4c0d52ab00a152118e3bd6a92ed00ee37d8a444da84d73f28bf8228fb6dd25",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/sources/m8-global-roundtrip.py",
+        "sha256": "776617293c72c58c5ffe998dd3426f3c9b5e0f9b454edbc645f2d83ebc0b551e"
+      },
+      "variant_id": "triton-softmax-source-m8-global-roundtrip"
+    },
+    {
+      "adapter_sha256": "48b6ef8f6747e5b85ebf48243a1f197cffcb631c185b209c39d26320bcd3313c",
+      "adjudication": {
+        "class": "DATA_HAZARD",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "The runtime mask buffer is all true, so every unique address is overwritten with zero before it is reloaded. All twenty workloads mismatch without a barrier and pass with a barrier.",
+        "status": "CONFIRMED"
+      },
+      "anchor_sha256": "651334e12e59a5e3ffb6a3a83f94f42baac1a18e995979190dabfca5d09f08d7",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-softmax",
+      "mutation_family": "GLOBAL_MEMORY_ORDER",
+      "mutation_rule_id": "MUT-M9-GLOBAL-RAW-MASKED-STORE",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-softmax-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/patches/m9-masked-store-roundtrip.diff",
+        "sha256": "d231988a6fc727f0087db8383828cdc4e9e7d2516d03ab17815e5e6cf3819742"
+      },
+      "replacement_sha256": "aa21cf6e514790eba9f3b59d0cc7011264ad5ff140cdb87325e32ba088001f3e",
+      "role": "MUTANT",
+      "selected_ast_sha256": "ac520cc425ae9196231b8877b03f7917777cbffd7220aee233ed8088ff331000",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/sources/m9-masked-store-roundtrip.py",
+        "sha256": "aa21cf6e514790eba9f3b59d0cc7011264ad5ff140cdb87325e32ba088001f3e"
+      },
+      "variant_id": "triton-softmax-source-m9-masked-store-roundtrip"
+    },
+    {
+      "adapter_sha256": "48b6ef8f6747e5b85ebf48243a1f197cffcb631c185b209c39d26320bcd3313c",
+      "adjudication": {
+        "class": "DATA_HAZARD",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "The runtime mask buffer is all true, so the masked load is semantically an ordinary reload. Eight of twenty workloads mismatch without a barrier and all twenty pass with a barrier.",
+        "status": "CONFIRMED"
+      },
+      "anchor_sha256": "651334e12e59a5e3ffb6a3a83f94f42baac1a18e995979190dabfca5d09f08d7",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-softmax",
+      "mutation_family": "GLOBAL_MEMORY_ORDER",
+      "mutation_rule_id": "MUT-M10-GLOBAL-RAW-MASKED-LOAD",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-softmax-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/patches/m10-masked-load-roundtrip.diff",
+        "sha256": "d1b9c0fe63837b9639f2e2e1c90976a21743d12b0510a2aa581149cf671775fb"
+      },
+      "replacement_sha256": "2ba4914581554379a4c4e4bc568e66edd130d9766f116480e412edfe763f6ba7",
+      "role": "MUTANT",
+      "selected_ast_sha256": "9289c9c220cc3f26088da374799d1f7802b87786cf321515352772cfe0f58f11",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/sources/m10-masked-load-roundtrip.py",
+        "sha256": "2ba4914581554379a4c4e4bc568e66edd130d9766f116480e412edfe763f6ba7"
+      },
+      "variant_id": "triton-softmax-source-m10-masked-load-roundtrip"
+    },
+    {
+      "adapter_sha256": "48b6ef8f6747e5b85ebf48243a1f197cffcb631c185b209c39d26320bcd3313c",
+      "adjudication": {
+        "class": "DATA_HAZARD",
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "Seven of twenty workloads mismatch and all twenty pass after a CTA barrier. The result is kept provisional because the precise Triton/PTX guarantee for relaxed atomic-to-non-atomic ordering must be stated before treating it as a strongest semantics-preserving positive.",
+        "status": "PROVISIONAL"
+      },
+      "anchor_sha256": "651334e12e59a5e3ffb6a3a83f94f42baac1a18e995979190dabfca5d09f08d7",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-softmax",
+      "mutation_family": "ATOMIC_MEMORY_ORDER",
+      "mutation_rule_id": "MUT-M11-RELAXED-ATOMIC-RAW",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-softmax-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/patches/m11-relaxed-atomic-roundtrip.diff",
+        "sha256": "da703c3945585a22ff09e24c9d134974ecfce1a4e570d599f4bacb7005a05a2a"
+      },
+      "replacement_sha256": "a451f2e80f013fc093cc1bfbdc98ecdb77b27a7f2ad22ba39435a2158113dd9c",
+      "role": "MUTANT",
+      "selected_ast_sha256": "1ad9a38cc864bbc44212192973db71270bc06991cee839992423c62a8856a0c7",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/sources/m11-relaxed-atomic-roundtrip.py",
+        "sha256": "a451f2e80f013fc093cc1bfbdc98ecdb77b27a7f2ad22ba39435a2158113dd9c"
+      },
+      "variant_id": "triton-softmax-source-m11-relaxed-atomic-roundtrip"
+    },
+    {
+      "adapter_sha256": "48b6ef8f6747e5b85ebf48243a1f197cffcb631c185b209c39d26320bcd3313c",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "REFERENCE_ORACLE",
+        "rationale": "All twenty workloads mismatch on the pinned compiler. An equivalent explicit tl.where control passes all twenty. This is compiler wrong-code fixed upstream by commit 36cb2499e0 and is outside PipeGuard's synchronization scope.",
+        "status": "CONFIRMED"
+      },
+      "anchor_sha256": "651334e12e59a5e3ffb6a3a83f94f42baac1a18e995979190dabfca5d09f08d7",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-softmax",
+      "mutation_family": "COMPILER_ANALYSIS",
+      "mutation_rule_id": "MUT-M12-MASKED-OTHER-CONSTANCY",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-softmax-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/patches/m12-masked-other-constancy.diff",
+        "sha256": "311b09d308efa983c7d0f59273573b59eb6f9f8d7889520d3d3cf278c5e81f59"
+      },
+      "replacement_sha256": "cc75ed804b9c8e802364c5d099016b82117f75378856017552ae229e8a1c2b59",
+      "role": "MUTANT",
+      "selected_ast_sha256": "a59fdfa44f04a3623f8de5289b1b9212b78d72df652c7449aa0cc72593c56d52",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/sources/m12-masked-other-constancy.py",
+        "sha256": "cc75ed804b9c8e802364c5d099016b82117f75378856017552ae229e8a1c2b59"
+      },
+      "variant_id": "triton-softmax-source-m12-masked-other-constancy"
+    },
+    {
+      "adapter_sha256": "48b6ef8f6747e5b85ebf48243a1f197cffcb631c185b209c39d26320bcd3313c",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "REFERENCE_ORACLE",
+        "rationale": "At runtime m=4 and n=0, so the loop must execute zero iterations and the canary must be zero. All twenty workloads mismatch with flatten=True; the flatten=False control passes all twenty. This compiler control-flow defect is outside PipeGuard's synchronization scope.",
+        "status": "CONFIRMED"
+      },
+      "anchor_sha256": "651334e12e59a5e3ffb6a3a83f94f42baac1a18e995979190dabfca5d09f08d7",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "triton-softmax",
+      "mutation_family": "CONTROL_FLOW_ANALYSIS",
+      "mutation_rule_id": "MUT-M13-NONDOMINATING-ASSUME",
+      "occurrence": 1,
+      "operation": "inject_canary",
+      "parent_variant_id": "triton-softmax-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/patches/m13-nondominating-assume.diff",
+        "sha256": "2e3e4d6ef28bd771063776a0218e77e3a38555443c96321ef56cc42a53127ac7"
+      },
+      "replacement_sha256": "922eb7381b3db20f1914ade7fbe9bd7fd17fe7b972ad23a98c642758e7072ab0",
+      "role": "MUTANT",
+      "selected_ast_sha256": "94aa8c54bdb8875bcaf7564bf9ab6be1474e39d9c16ac79a19dc280889ab9bb7",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/sources/m13-nondominating-assume.py",
+        "sha256": "922eb7381b3db20f1914ade7fbe9bd7fd17fe7b972ad23a98c642758e7072ab0"
+      },
+      "variant_id": "triton-softmax-source-m13-nondominating-assume"
+    }
+  ],
+  "workloads": [
+    {
+      "bindings": {
+        "BLOCK_M": 1,
+        "BLOCK_N": 1024,
+        "M": 256,
+        "N": 1024,
+        "dtype": "float16"
+      },
+      "boundary_dimensions": [],
+      "delta": [],
+      "evidence": {
+        "kind": "UPSTREAM_TEST",
+        "path": "python/tutorials/02-fused-softmax.py",
+        "rationale": "Pinned official example kernel with an independent PyTorch oracle.",
+        "sha256": "8a65b696d5b02a3900380395ecd883671afeb66328db108f55622ed8853a05da"
+      },
+      "kernel_id": "triton-softmax",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/recipes/triton-softmax-workload-original.json",
+        "sha256": "8720a7eeedd1e0b87b3e77d44b651d5c4324fc1f1817b45738a96700a709006c"
+      },
+      "role": "ORIGINAL",
+      "spec_id": "triton-softmax-workload-original"
+    },
+    {
+      "bindings": {
+        "BLOCK_M": 1,
+        "BLOCK_N": 1024,
+        "M": 128,
+        "N": 1024,
+        "dtype": "float16"
+      },
+      "boundary_dimensions": [
+        "M"
+      ],
+      "delta": [
+        {
+          "after": 128,
+          "before": 256,
+          "path": "/bindings/M"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "python/tutorials/02-fused-softmax.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "8a65b696d5b02a3900380395ecd883671afeb66328db108f55622ed8853a05da"
+      },
+      "kernel_id": "triton-softmax",
+      "parent_spec_id": "triton-softmax-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/recipes/triton-softmax-workload-boundary-1.json",
+        "sha256": "78dd9c20664eb4b1eed1d021fe0cd24fa33729b135e2e553de4a876b3f410acb"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "triton-softmax-workload-boundary-1"
+    },
+    {
+      "bindings": {
+        "BLOCK_M": 1,
+        "BLOCK_N": 2048,
+        "M": 256,
+        "N": 2048,
+        "dtype": "float16"
+      },
+      "boundary_dimensions": [
+        "BLOCK_N",
+        "N"
+      ],
+      "delta": [
+        {
+          "after": 2048,
+          "before": 1024,
+          "path": "/bindings/BLOCK_N"
+        },
+        {
+          "after": 2048,
+          "before": 1024,
+          "path": "/bindings/N"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "python/tutorials/02-fused-softmax.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "8a65b696d5b02a3900380395ecd883671afeb66328db108f55622ed8853a05da"
+      },
+      "kernel_id": "triton-softmax",
+      "parent_spec_id": "triton-softmax-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/recipes/triton-softmax-workload-boundary-2.json",
+        "sha256": "ff41de0be495b6f790cc9ffd6db71fb9b1c5fcf22b823de0e5e47e7d0506a147"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "triton-softmax-workload-boundary-2"
+    },
+    {
+      "bindings": {
+        "BLOCK_M": 2,
+        "BLOCK_N": 512,
+        "M": 256,
+        "N": 1024,
+        "dtype": "float16"
+      },
+      "boundary_dimensions": [
+        "BLOCK_M",
+        "BLOCK_N"
+      ],
+      "delta": [
+        {
+          "after": 2,
+          "before": 1,
+          "path": "/bindings/BLOCK_M"
+        },
+        {
+          "after": 512,
+          "before": 1024,
+          "path": "/bindings/BLOCK_N"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "python/tutorials/02-fused-softmax.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "8a65b696d5b02a3900380395ecd883671afeb66328db108f55622ed8853a05da"
+      },
+      "kernel_id": "triton-softmax",
+      "parent_spec_id": "triton-softmax-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/triton-softmax/recipes/triton-softmax-workload-boundary-3.json",
+        "sha256": "cf0fbeb9e9193f141dc605242aaa8f135c93dae5d6c74cac5cfdbccb10836ba8"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "triton-softmax-workload-boundary-3"
+    }
+  ]
+}

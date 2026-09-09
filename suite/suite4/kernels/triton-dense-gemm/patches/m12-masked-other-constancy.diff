@@ -1,0 +1,48 @@
+--- original.py
++++ m12-masked-other-constancy.py
+@@ -4,6 +4,26 @@
+ import triton
+ 
+ import triton.language as tl
++
++
++@triton.jit
++def _pipeguard_global_roundtrip_fault(pipeguard_scratch, pipeguard_wide, pipeguard_slot):
++    pipeguard_offsets = tl.arange(0, 256)
++    pipeguard_groups = pipeguard_offsets // 16
++    pipeguard_outer_mask = (pipeguard_offsets % 16) < 8
++    pipeguard_varying_other = (pipeguard_offsets % 2) == 0
++    pipeguard_loaded_mask = tl.load(
++        pipeguard_scratch + pipeguard_slot * 16 + pipeguard_groups,
++        mask=pipeguard_outer_mask,
++        other=pipeguard_varying_other.to(tl.int32),
++    )
++    pipeguard_values = tl.load(
++        pipeguard_wide + pipeguard_slot * 256 + pipeguard_offsets,
++        mask=pipeguard_loaded_mask != 0,
++        other=0,
++    )
++    return tl.sum(pipeguard_values, axis=0) - 192
++
+ 
+ def is_cuda():
+     return triton.runtime.driver.active.get_current_target().backend == "cuda"
+@@ -75,7 +95,7 @@
+ @triton.jit
+ def matmul_kernel(
+         # Pointers to matrices
+-        a_ptr, b_ptr, c_ptr,
++        a_ptr, b_ptr, c_ptr, pipeguard_scratch, pipeguard_wide,
+         # Matrix dimensions
+         M, N, K,
+         # The stride variables represent how much to increase the ptr by when moving by 1
+@@ -152,7 +172,8 @@
+     # while the accumulator is still in FP32!
+     if ACTIVATION == "leaky_relu":
+         accumulator = leaky_relu(accumulator)
+-    c = accumulator.to(tl.float16)
++    pipeguard_fault = _pipeguard_global_roundtrip_fault(pipeguard_scratch, pipeguard_wide, pid)
++    c = (accumulator + pipeguard_fault).to(tl.float16)
+ 
+     # -----------------------------------------------------------
+     # Write back the block of the output matrix C with masks.

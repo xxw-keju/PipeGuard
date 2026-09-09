@@ -1,0 +1,10 @@
+--- original.py
++++ m3-output-init.py
+@@ -172,6 +172,7 @@
+     acc = acc / l_i[:, None]
+     m_ptrs = M + off_hz * N_CTX + offs_m
+     tl.store(m_ptrs, m_i)
++    desc_o.store([qo_offset_y, 0], tl.zeros([BLOCK_M, HEAD_DIM], dtype=dtype))
+     desc_o.store([qo_offset_y, 0], acc.to(dtype))
+ 
+ 

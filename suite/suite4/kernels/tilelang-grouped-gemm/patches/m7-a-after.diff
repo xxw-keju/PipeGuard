@@ -1,0 +1,10 @@
+--- original.py
++++ m7-a-after.py
+@@ -68,6 +68,7 @@
+             else:
+                 T.copy(B[cur_batch_idx, k * block_K : (k + 1) * block_K, by * block_N : (by + 1) * block_N], B_shared)
+             T.gemm(A_shared, B_shared, C_local, transpose_B=trans_b)
++            T.copy(A[m_start : m_start + block_M, k * block_K : (k + 1) * block_K], A_shared)
+ 
+         for i, j in T.Parallel(block_M, block_N):
+             if i < actual_rows:

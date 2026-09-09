@@ -1,0 +1,43 @@
+--- original.py
++++ m11-relaxed-atomic-roundtrip.py
+@@ -6,6 +6,19 @@
+ import triton
+ 
+ import triton.language as tl
++
++
++@triton.jit
++def _pipeguard_global_roundtrip_fault(pipeguard_scratch, pipeguard_wide, pipeguard_slot):
++    pipeguard_rows = tl.arange(0, 8)[:, None]
++    pipeguard_cols = tl.arange(0, 256)[None, :]
++    pipeguard_offsets = pipeguard_slot * 2048 + pipeguard_rows * 256 + pipeguard_cols
++    pipeguard_aliases = pipeguard_scratch + pipeguard_offsets
++    pipeguard_zero = tl.zeros((8, 256), tl.int32)
++    tl.atomic_xchg(pipeguard_aliases, pipeguard_zero, sem="relaxed", scope="gpu")
++    pipeguard_reloaded = tl.load(pipeguard_aliases)
++    return tl.max(tl.max(pipeguard_reloaded, axis=1), axis=0)
++
+ 
+ def is_cuda():
+     return triton.runtime.driver.active.get_current_target().backend == "cuda"
+@@ -62,6 +75,8 @@
+     group_a_ptrs,
+     group_b_ptrs,
+     group_c_ptrs,
++    pipeguard_scratch,
++    pipeguard_wide,
+     # device tensor of gemm sizes. its shape is [group_size, 3]
+     # dim 0 is group_size, dim 1 is the values of <M, N, K> of each gemm
+     group_gemm_sizes,
+@@ -119,7 +134,10 @@
+                 accumulator += tl.dot(a, b)
+                 a_ptrs += BLOCK_SIZE_K
+                 b_ptrs += BLOCK_SIZE_K * ldb
+-            c = accumulator.to(tl.float16)
++            pipeguard_fault = _pipeguard_global_roundtrip_fault(
++                pipeguard_scratch, pipeguard_wide, tile_idx
++            )
++            c = (accumulator + pipeguard_fault).to(tl.float16)
+ 
+             offs_cm = tile_m_idx * BLOCK_SIZE_M + tl.arange(0, BLOCK_SIZE_M)
+             offs_cn = tile_n_idx * BLOCK_SIZE_N + tl.arange(0, BLOCK_SIZE_N)

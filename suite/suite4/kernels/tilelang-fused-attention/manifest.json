@@ -1,0 +1,414 @@
+{
+  "kernel": {
+    "candidate_id": "8d170fca637a486f",
+    "capsule_sha256": "243a90b2ba446aa547ff6ce4e894ea4382df4b317a737c4d1f03f6aba31c4f84",
+    "dsl": "tilelang",
+    "family": "FUSED_ATTENTION",
+    "features": [
+      "PIPELINED",
+      "TMA",
+      "MMA",
+      "ONLINE_SOFTMAX"
+    ],
+    "kernel_id": "tilelang-fused-attention",
+    "operator_family": "FUSED_ATTENTION",
+    "path": "examples/flash_attention/example_mha_fwd_bhsd.py",
+    "project": "TileLang",
+    "qualname": "flashattn",
+    "selected_source_sha256": "5f1714b5ede86608beaf0103b12b6ddc4eecbb58c1058660d4676c4001b72c4d",
+    "source_id": "tilelang-2c31e071",
+    "source_sha256": "4f1b481983db1e55a06c11814f90655e391e0364e44843c06acfa1631a9b1c48",
+    "variant_ids": [
+      "tilelang-fused-attention-source-original",
+      "tilelang-fused-attention-source-m1-stage1",
+      "tilelang-fused-attention-source-m2-stage3",
+      "tilelang-fused-attention-source-m3-acc-init",
+      "tilelang-fused-attention-source-m4-k-init",
+      "tilelang-fused-attention-source-m5-v-init",
+      "tilelang-fused-attention-source-m6-k-before",
+      "tilelang-fused-attention-source-m7-k-after"
+    ],
+    "workload_spec_ids": [
+      "tilelang-fused-attention-workload-original",
+      "tilelang-fused-attention-workload-boundary-1",
+      "tilelang-fused-attention-workload-boundary-2",
+      "tilelang-fused-attention-workload-boundary-3"
+    ]
+  },
+  "variants": [
+    {
+      "adapter_sha256": "3b18dfe36b55191b991d9234f2dcad3c478290463d387dfc30d37d939c4d1f81",
+      "adjudication": {
+        "class": "CORRECT",
+        "method": "REFERENCE_ORACLE",
+        "rationale": "Pinned official source replayed successfully against its independent PyTorch reference on the original and all three boundary workloads.",
+        "status": "CONFIRMED"
+      },
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-fused-attention",
+      "role": "ORIGINAL",
+      "selected_ast_sha256": "36f3d316c1ce7873eb97b57387a487b207041e789ea299004de2f1f0ca243dba",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/sources/original.py",
+        "sha256": "a2171dc58971998b99a22dc209fa352a2992ec57ab949a00e109fd51336fb7ef"
+      },
+      "variant_id": "tilelang-fused-attention-source-original"
+    },
+    {
+      "adapter_sha256": "3b18dfe36b55191b991d9234f2dcad3c478290463d387dfc30d37d939c4d1f81",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "c90e57efcd88321d13dfbda2448f9e148b5a384f91537d1105e16c365fc87383",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-fused-attention",
+      "mutation_family": "PIPELINE_DEPTH",
+      "mutation_rule_id": "MUT-M1-PIPE-STAGE-LOW",
+      "occurrence": 1,
+      "operation": "replace",
+      "parent_variant_id": "tilelang-fused-attention-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/patches/m1-stage1.diff",
+        "sha256": "266fcd46bed95dddf06626158876036dcfcee8bd51cd6e1d80c4f33365b33478"
+      },
+      "replacement_sha256": "f114ad46611f166974c7a4e977dc054744fbd4229adbc3e5a3ed7c86c3b02760",
+      "role": "MUTANT",
+      "selected_ast_sha256": "740d922029bbe7a2ddd6995c148d3ed19df7b3a5263da4da81835bc639f6ac2a",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/sources/m1-stage1.py",
+        "sha256": "06cba75fa621e7b1ee723676cf7431a61840f0aab1c185f96e2c3011c198aab8"
+      },
+      "variant_id": "tilelang-fused-attention-source-m1-stage1"
+    },
+    {
+      "adapter_sha256": "3b18dfe36b55191b991d9234f2dcad3c478290463d387dfc30d37d939c4d1f81",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "c90e57efcd88321d13dfbda2448f9e148b5a384f91537d1105e16c365fc87383",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-fused-attention",
+      "mutation_family": "PIPELINE_DEPTH",
+      "mutation_rule_id": "MUT-M2-PIPE-STAGE-ALT",
+      "occurrence": 1,
+      "operation": "replace",
+      "parent_variant_id": "tilelang-fused-attention-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/patches/m2-stage3.diff",
+        "sha256": "23df8964447bcd9e10efb337adbb16b89eac3bf509f3c1f923518623f460f068"
+      },
+      "replacement_sha256": "c0faa29ab9408f662ee897488483a7ddf61971da53b4ebfb4568a461b8d4293b",
+      "role": "MUTANT",
+      "selected_ast_sha256": "28ec3c01ef8097904f8a8982bc2fc0896674ad34030adb6a60d869917a159607",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/sources/m2-stage3.py",
+        "sha256": "5480fee778d955de68584ebfc7428a5c75bf44a4896dc120dfe7d4fd5251113d"
+      },
+      "variant_id": "tilelang-fused-attention-source-m2-stage3"
+    },
+    {
+      "adapter_sha256": "3b18dfe36b55191b991d9234f2dcad3c478290463d387dfc30d37d939c4d1f81",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "2b4b3062366cc300b1b79b5adc5af09784d87985bc61b7ec687d8624c81c645b",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-fused-attention",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M3-DEST-INIT-DUP",
+      "occurrence": 1,
+      "operation": "duplicate",
+      "parent_variant_id": "tilelang-fused-attention-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/patches/m3-acc-init.diff",
+        "sha256": "17197e3ea4b13d2c82197e6add7fe47958f886e20d7253b0930d2095cff443c3"
+      },
+      "replacement_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "MUTANT",
+      "selected_ast_sha256": "c452d1bc83a6a12e1272939765f15072e996c71201deda5446088ae46f11a0d3",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/sources/m3-acc-init.py",
+        "sha256": "7d04e2d1afd0f94feca7f5819c84798780e7800fc35a757808dbd8befc3f389b"
+      },
+      "variant_id": "tilelang-fused-attention-source-m3-acc-init"
+    },
+    {
+      "adapter_sha256": "3b18dfe36b55191b991d9234f2dcad3c478290463d387dfc30d37d939c4d1f81",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "bcc01a1bae5e07dd0f3e952aeb442d45a1d6e6dc6866b42d9983011936cef8fd",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-fused-attention",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M4-SOURCE-A-INIT",
+      "occurrence": 1,
+      "operation": "insert_before",
+      "parent_variant_id": "tilelang-fused-attention-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/patches/m4-k-init.diff",
+        "sha256": "b79978f828759302e631034df8b48e083e3a7d2d867f03da709119ff09c9a96a"
+      },
+      "replacement_sha256": "83da0454da0d56e4f5d68b510d8c5f098593ec818becfb888f20e06c8385d22c",
+      "role": "MUTANT",
+      "selected_ast_sha256": "1675a85beadd57753cded4ada43b22f271de6b56a6346b19768a78aac7351eb4",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/sources/m4-k-init.py",
+        "sha256": "d8a9be708a625b3af15a3960cc0e173760036eb002ab7a7e8faabc067ad99db8"
+      },
+      "variant_id": "tilelang-fused-attention-source-m4-k-init"
+    },
+    {
+      "adapter_sha256": "3b18dfe36b55191b991d9234f2dcad3c478290463d387dfc30d37d939c4d1f81",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "3f4ebfa4ea066ecc6587f25592238f7e657fa170dd3e9cf17aa8a9eeb0a1f7d8",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-fused-attention",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M5-SOURCE-B-INIT",
+      "occurrence": 1,
+      "operation": "insert_before",
+      "parent_variant_id": "tilelang-fused-attention-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/patches/m5-v-init.diff",
+        "sha256": "dda9a83c3b3985b1c057b754c8cdc3223186610b8e377738d75b9312a6021e23"
+      },
+      "replacement_sha256": "d620bea22ec305cd92426684c7c0c40e60b57d1154cddb19effa342633fbc6e0",
+      "role": "MUTANT",
+      "selected_ast_sha256": "dcdc54d11968d9798f8caee742f0d38596b999342dc0322e459865301d082a72",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/sources/m5-v-init.py",
+        "sha256": "6bfea9d9ce1032ad32c0fd46178d155ecabf87b24c862bf0f7a0184527cdc9bb"
+      },
+      "variant_id": "tilelang-fused-attention-source-m5-v-init"
+    },
+    {
+      "adapter_sha256": "3b18dfe36b55191b991d9234f2dcad3c478290463d387dfc30d37d939c4d1f81",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "bcc01a1bae5e07dd0f3e952aeb442d45a1d6e6dc6866b42d9983011936cef8fd",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-fused-attention",
+      "mutation_family": "ASYNC_PRODUCER",
+      "mutation_rule_id": "MUT-M6-PRODUCER-DUP-BEFORE",
+      "occurrence": 1,
+      "operation": "duplicate",
+      "parent_variant_id": "tilelang-fused-attention-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/patches/m6-k-before.diff",
+        "sha256": "dba43d22f6c79b8f681a485e67f95883c368bfe819467cd2ff19388200ff60e8"
+      },
+      "replacement_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "MUTANT",
+      "selected_ast_sha256": "c2e203cb43787dee7eda525c8cda7ebb3468295eb11b751b727f3e9a6d1cf6a0",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/sources/m6-k-before.py",
+        "sha256": "287c14dff315e27915cc014ef4f7647197f5db47ffa53ea8de2ef69e45babe7f"
+      },
+      "variant_id": "tilelang-fused-attention-source-m6-k-before"
+    },
+    {
+      "adapter_sha256": "3b18dfe36b55191b991d9234f2dcad3c478290463d387dfc30d37d939c4d1f81",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "bcc01a1bae5e07dd0f3e952aeb442d45a1d6e6dc6866b42d9983011936cef8fd",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-fused-attention",
+      "mutation_family": "ASYNC_PRODUCER",
+      "mutation_rule_id": "MUT-M7-PRODUCER-DUP-AFTER",
+      "occurrence": 1,
+      "operation": "duplicate_after",
+      "parent_variant_id": "tilelang-fused-attention-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/patches/m7-k-after.diff",
+        "sha256": "31b30cfe6b87d3e86fae9c07ad380e7af65845cf93035378108c9f5f1c7951ac"
+      },
+      "replacement_sha256": "e3223675838afa4e6e66b1f4e66ad210cdc60bfc794722e3ef7a0c913e659c27",
+      "role": "MUTANT",
+      "selected_ast_sha256": "3dc5117997f353edf3d4e163f3b4439144e37bc83f1c34d77bd9ccc4d32cfb4b",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/sources/m7-k-after.py",
+        "sha256": "67944dba02a59c28d8ded4345e72991dc3b7085a29b1a54249a851b70937bf20"
+      },
+      "variant_id": "tilelang-fused-attention-source-m7-k-after"
+    }
+  ],
+  "workloads": [
+    {
+      "bindings": {
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "batch": 1,
+        "dim": 64,
+        "dtype": "float16",
+        "heads": 4,
+        "is_causal": true,
+        "seq_kv": 128,
+        "seq_q": 128
+      },
+      "boundary_dimensions": [],
+      "delta": [],
+      "evidence": {
+        "kind": "UPSTREAM_TEST",
+        "path": "examples/flash_attention/example_mha_fwd_bhsd.py",
+        "rationale": "Pinned official example kernel with an independent PyTorch oracle.",
+        "sha256": "4f1b481983db1e55a06c11814f90655e391e0364e44843c06acfa1631a9b1c48"
+      },
+      "kernel_id": "tilelang-fused-attention",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/recipes/tilelang-fused-attention-workload-original.json",
+        "sha256": "5746dd64d850410ff472470f4a2c288b4e24fedf2523c5f77f8772cf8f5b7425"
+      },
+      "role": "ORIGINAL",
+      "spec_id": "tilelang-fused-attention-workload-original"
+    },
+    {
+      "bindings": {
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "batch": 2,
+        "dim": 64,
+        "dtype": "float16",
+        "heads": 4,
+        "is_causal": true,
+        "seq_kv": 128,
+        "seq_q": 128
+      },
+      "boundary_dimensions": [
+        "batch"
+      ],
+      "delta": [
+        {
+          "after": 2,
+          "before": 1,
+          "path": "/bindings/batch"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "examples/flash_attention/example_mha_fwd_bhsd.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "4f1b481983db1e55a06c11814f90655e391e0364e44843c06acfa1631a9b1c48"
+      },
+      "kernel_id": "tilelang-fused-attention",
+      "parent_spec_id": "tilelang-fused-attention-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/recipes/tilelang-fused-attention-workload-boundary-1.json",
+        "sha256": "3fe08263a328eefc66e93ae38f732eed08dba4a15109a9f9f75814bf584f1140"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "tilelang-fused-attention-workload-boundary-1"
+    },
+    {
+      "bindings": {
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "batch": 1,
+        "dim": 64,
+        "dtype": "float16",
+        "heads": 8,
+        "is_causal": true,
+        "seq_kv": 128,
+        "seq_q": 128
+      },
+      "boundary_dimensions": [
+        "heads"
+      ],
+      "delta": [
+        {
+          "after": 8,
+          "before": 4,
+          "path": "/bindings/heads"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "examples/flash_attention/example_mha_fwd_bhsd.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "4f1b481983db1e55a06c11814f90655e391e0364e44843c06acfa1631a9b1c48"
+      },
+      "kernel_id": "tilelang-fused-attention",
+      "parent_spec_id": "tilelang-fused-attention-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/recipes/tilelang-fused-attention-workload-boundary-2.json",
+        "sha256": "207bfa55496e9fa2e87c5ccb2d01d1418d83a5699c48e8e9a889e2157c9085bc"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "tilelang-fused-attention-workload-boundary-2"
+    },
+    {
+      "bindings": {
+        "BLOCK_M": 64,
+        "BLOCK_N": 64,
+        "batch": 1,
+        "dim": 64,
+        "dtype": "float16",
+        "heads": 4,
+        "is_causal": false,
+        "seq_kv": 256,
+        "seq_q": 256
+      },
+      "boundary_dimensions": [
+        "is_causal",
+        "seq_kv",
+        "seq_q"
+      ],
+      "delta": [
+        {
+          "after": false,
+          "before": true,
+          "path": "/bindings/is_causal"
+        },
+        {
+          "after": 256,
+          "before": 128,
+          "path": "/bindings/seq_kv"
+        },
+        {
+          "after": 256,
+          "before": 128,
+          "path": "/bindings/seq_q"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "examples/flash_attention/example_mha_fwd_bhsd.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "4f1b481983db1e55a06c11814f90655e391e0364e44843c06acfa1631a9b1c48"
+      },
+      "kernel_id": "tilelang-fused-attention",
+      "parent_spec_id": "tilelang-fused-attention-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-fused-attention/recipes/tilelang-fused-attention-workload-boundary-3.json",
+        "sha256": "cad9abef62c91cbb3ea88482f175ec3c019cc02a2d0be29839d511a08406f50b"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "tilelang-fused-attention-workload-boundary-3"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+--- original.py
++++ m9-masked-store-roundtrip.py
+@@ -5,10 +5,26 @@
+ 
+ import triton.language as tl
+ 
++
++@triton.jit
++def _pipeguard_global_roundtrip_fault(pipeguard_scratch, pipeguard_wide, pipeguard_slot):
++    pipeguard_rows = tl.arange(0, 8)[:, None]
++    pipeguard_cols = tl.arange(0, 256)[None, :]
++    pipeguard_offsets = pipeguard_slot * 2048 + pipeguard_rows * 256 + pipeguard_cols
++    pipeguard_mask = tl.load(pipeguard_wide + pipeguard_offsets) != 0
++    pipeguard_aliases = pipeguard_scratch + pipeguard_offsets
++    pipeguard_zero = tl.zeros((8, 256), tl.float32)
++    tl.store(pipeguard_aliases, pipeguard_zero, mask=pipeguard_mask)
++    pipeguard_reloaded = tl.load(pipeguard_aliases)
++    return tl.max(tl.max(pipeguard_reloaded, axis=1), axis=0)
++
++
+ @triton.jit
+ def _layer_norm_fwd_fused(
+     X,  # pointer to the input
+     Y,  # pointer to the output
++    pipeguard_scratch,
++    pipeguard_wide,
+     W,  # pointer to the weights
+     B,  # pointer to the biases
+     Mean,  # pointer to the mean
+@@ -42,6 +58,7 @@
+     # Write mean / rstd
+     tl.store(Mean + row, mean)
+     tl.store(Rstd + row, rstd)
++    pipeguard_fault = _pipeguard_global_roundtrip_fault(pipeguard_scratch, pipeguard_wide, row)
+     # Normalize and apply linear transformation
+     for off in range(0, N, BLOCK_SIZE):
+         cols = off + tl.arange(0, BLOCK_SIZE)
+@@ -50,7 +67,7 @@
+         b = tl.load(B + cols, mask=mask)
+         x = tl.load(X + cols, mask=mask, other=0.).to(tl.float32)
+         x_hat = (x - mean) * rstd
+-        y = x_hat * w + b
++        y = x_hat * w + b + pipeguard_fault
+         # Write output
+         tl.store(Y + cols, y, mask=mask)
+ 

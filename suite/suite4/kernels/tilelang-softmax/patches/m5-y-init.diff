@@ -1,0 +1,10 @@
+--- original.py
++++ m5-y-init.py
+@@ -45,6 +45,7 @@
+             for i, j in T.Parallel(BLOCK_M, BLOCK_N):
+                 y[i, j] = T.exp2(x[i, j] * scale - lse[i])
+ 
++            T.clear(Y[i_m * BLOCK_M, i_n * BLOCK_N])
+             T.copy(y, Y[i_m * BLOCK_M, i_n * BLOCK_N])
+ 
+     return Y

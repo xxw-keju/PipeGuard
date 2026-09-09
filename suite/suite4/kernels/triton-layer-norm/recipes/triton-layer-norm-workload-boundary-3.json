@@ -1,0 +1,78 @@
+{
+  "bindings": {
+    "BLOCK_M": 2,
+    "M": 256,
+    "N": 1024,
+    "dtype": "float16",
+    "eps": 1e-06
+  },
+  "compiler": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:x",
+        "1": "global:y",
+        "2": "global:w",
+        "3": "global:b",
+        "4": "global:mean",
+        "5": "global:rstd"
+      },
+      "scalar_values": {},
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "BLOCK_SIZE": 1024
+    },
+    "grid": [
+      256,
+      1,
+      1
+    ],
+    "grid_ctas": 256,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "B": "*fp16",
+      "BLOCK_SIZE": "constexpr",
+      "Mean": "*fp32",
+      "N": "i32",
+      "Rstd": "*fp32",
+      "W": "*fp16",
+      "X": "*fp16",
+      "Y": "*fp16",
+      "eps": "fp32",
+      "stride": "i32"
+    }
+  },
+  "dsl": "triton",
+  "kernel_id": "triton-layer-norm",
+  "materialization": {
+    "args": [],
+    "kwargs": {},
+    "resolver_kwargs": {}
+  },
+  "numeric": {
+    "atol": 0.02,
+    "oracle": "torch.nn.functional.layer_norm",
+    "rtol": 0.02,
+    "seed": 41,
+    "timeout_seconds": 30.0
+  },
+  "recipe_id": "triton-layer-norm-workload-boundary-3",
+  "schema_version": "pipeguard-mutation-workload-v1",
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  }
+}

@@ -1,0 +1,10 @@
+--- original.py
++++ m3-output-init.py
+@@ -55,6 +55,7 @@
+                     norm * T.Cast(accum_dtype, G_smem[j]) + T.Cast(accum_dtype, B_smem[j]),
+                 )
+ 
++            T.clear(Y[bx * blk_m, 0])
+             T.copy(X_smem, Y[bx * blk_m, 0])
+ 
+     return main

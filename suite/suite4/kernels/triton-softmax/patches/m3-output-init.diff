@@ -1,0 +1,10 @@
+--- original.py
++++ m3-output-init.py
+@@ -30,6 +30,7 @@
+         # Write back output to DRAM
+         output_row_start_ptr = output_ptr + row_idx * output_row_stride
+         output_ptrs = output_row_start_ptr + col_offsets
++        tl.store(output_ptrs, 0.0, mask=mask)
+         tl.store(output_ptrs, softmax_output, mask=mask)
+ 
+ 

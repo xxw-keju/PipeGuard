@@ -1,0 +1,361 @@
+{
+  "kernel": {
+    "candidate_id": "bbd778951e0abc6a",
+    "capsule_sha256": "f4e064b88120ec43f2f8adb199f23dc41a17da76f8e4b4aaa94343cb386f201c",
+    "dsl": "tilelang",
+    "family": "LAYER_NORM",
+    "features": [
+      "REDUCTION",
+      "SHARED_MEMORY",
+      "FUSED_EPILOGUE"
+    ],
+    "kernel_id": "tilelang-layer-norm",
+    "operator_family": "LAYER_NORM",
+    "path": "examples/norm/layernorm.py",
+    "project": "TileLang",
+    "qualname": "_layernorm_fwd",
+    "selected_source_sha256": "72b768871b1f2b8e341973ea1ada80095db611fe55ff46cf94157d5d54a73881",
+    "source_id": "tilelang-2c31e071",
+    "source_sha256": "ef304cb4910312ef99f9878138239580404537ca2bfdec45be20e7f542c49a38",
+    "variant_ids": [
+      "tilelang-layer-norm-source-original",
+      "tilelang-layer-norm-source-m3-output-init",
+      "tilelang-layer-norm-source-m4-x-init",
+      "tilelang-layer-norm-source-m5-gamma-init",
+      "tilelang-layer-norm-source-m6-x-before",
+      "tilelang-layer-norm-source-m7-x-after",
+      "tilelang-layer-norm-source-m7-output-dup"
+    ],
+    "workload_spec_ids": [
+      "tilelang-layer-norm-workload-original",
+      "tilelang-layer-norm-workload-boundary-1",
+      "tilelang-layer-norm-workload-boundary-2",
+      "tilelang-layer-norm-workload-boundary-3"
+    ]
+  },
+  "variants": [
+    {
+      "adapter_sha256": "bd1b19986f6ae93492e8bf8de7bc4ceb493f92d33f5b6e2436ca7b5f759cfa24",
+      "adjudication": {
+        "class": "CORRECT",
+        "method": "REFERENCE_ORACLE",
+        "rationale": "Pinned official source replayed successfully against its independent PyTorch reference on the original and all three boundary workloads.",
+        "status": "CONFIRMED"
+      },
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-layer-norm",
+      "role": "ORIGINAL",
+      "selected_ast_sha256": "16a28f3aa036aa7adf8bfc85b3a766036018596b742a4fe20e59e9709ed4541d",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/sources/original.py",
+        "sha256": "f4e064b88120ec43f2f8adb199f23dc41a17da76f8e4b4aaa94343cb386f201c"
+      },
+      "variant_id": "tilelang-layer-norm-source-original"
+    },
+    {
+      "adapter_sha256": "bd1b19986f6ae93492e8bf8de7bc4ceb493f92d33f5b6e2436ca7b5f759cfa24",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "ea7986eae3eea23db68a399ab9e510f444b49a52857d4d2674daaa8dc8c51730",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-layer-norm",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M3-DEST-INIT-DUP",
+      "occurrence": 1,
+      "operation": "insert_before",
+      "parent_variant_id": "tilelang-layer-norm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/patches/m3-output-init.diff",
+        "sha256": "f41515e942941fb66f241a4fa62a80f55efaa82270a24e796b344306ec8d6f44"
+      },
+      "replacement_sha256": "d9d6c954a9304929cb64660f0bef698b59e58320660924be70fbe4859c1fd3c1",
+      "role": "MUTANT",
+      "selected_ast_sha256": "8ebc62a4a333a3c21edf3da54d061009047cd2c140efddb59f1f616e2250c5e1",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/sources/m3-output-init.py",
+        "sha256": "5cb9192fbb3adf7ea7443cd80bd949753a1cebb3669096dafc26c02cf8a965e4"
+      },
+      "variant_id": "tilelang-layer-norm-source-m3-output-init"
+    },
+    {
+      "adapter_sha256": "bd1b19986f6ae93492e8bf8de7bc4ceb493f92d33f5b6e2436ca7b5f759cfa24",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "2330db7655af6c6ef4694a42aeae342742ee04c5d0fcc9c0720d99b8cca44128",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-layer-norm",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M4-SOURCE-A-INIT",
+      "occurrence": 1,
+      "operation": "insert_before",
+      "parent_variant_id": "tilelang-layer-norm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/patches/m4-x-init.diff",
+        "sha256": "0c061fdc748a2ef3f5cbd0160c6d96e8bbe7bde88f9cd123cefec645dc82ceb0"
+      },
+      "replacement_sha256": "4ac863c89182d8285b8fda1a473119585f8de3b341a942683ca8b9d9a16c9eaf",
+      "role": "MUTANT",
+      "selected_ast_sha256": "d0cdca2c9286bd02616433a7234a746d396191d206d67cc1196e05904a9cb57a",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/sources/m4-x-init.py",
+        "sha256": "c574edcb149714188f654bc0b372e449559ef7a1d25ae97c6724c48fb6c1f318"
+      },
+      "variant_id": "tilelang-layer-norm-source-m4-x-init"
+    },
+    {
+      "adapter_sha256": "bd1b19986f6ae93492e8bf8de7bc4ceb493f92d33f5b6e2436ca7b5f759cfa24",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "0c1bf46583eaf8a7b900b4a641383b482a7c9dc81c8966426f336d18290175de",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-layer-norm",
+      "mutation_family": "BUFFER_INIT",
+      "mutation_rule_id": "MUT-M5-SOURCE-B-INIT",
+      "occurrence": 1,
+      "operation": "insert_before",
+      "parent_variant_id": "tilelang-layer-norm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/patches/m5-gamma-init.diff",
+        "sha256": "85081d762bfd86b82055215f8784b9121d4cc8106544062a20851b618cf4b86b"
+      },
+      "replacement_sha256": "dee96c8c10d67317a955f5639d87c1dee9130ae0bd4a13624057d74b5de5f44f",
+      "role": "MUTANT",
+      "selected_ast_sha256": "a5d98ee3c645639de610377d49173cc0cbf60b2bc8ef14699f32db65a926ca06",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/sources/m5-gamma-init.py",
+        "sha256": "d210a336158c7176fbb355c7fbd6affc282662b8300da80cb4043921df2e95ee"
+      },
+      "variant_id": "tilelang-layer-norm-source-m5-gamma-init"
+    },
+    {
+      "adapter_sha256": "bd1b19986f6ae93492e8bf8de7bc4ceb493f92d33f5b6e2436ca7b5f759cfa24",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "2330db7655af6c6ef4694a42aeae342742ee04c5d0fcc9c0720d99b8cca44128",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-layer-norm",
+      "mutation_family": "ASYNC_PRODUCER",
+      "mutation_rule_id": "MUT-M6-PRODUCER-DUP-BEFORE",
+      "occurrence": 1,
+      "operation": "duplicate",
+      "parent_variant_id": "tilelang-layer-norm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/patches/m6-x-before.diff",
+        "sha256": "f96bcd97652a42cbd234cda85ea6d4650ea7666885bce814cc195265bf49ab92"
+      },
+      "replacement_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "MUTANT",
+      "selected_ast_sha256": "799a8f274de1e00548b9c12f6a54846bc5e7560ab31a7ca22cdb9e6e4af8b64b",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/sources/m6-x-before.py",
+        "sha256": "3a430c2ce8b562f9b5640c67c4a24917c239286268433c3bc1ac4429f465dcdc"
+      },
+      "variant_id": "tilelang-layer-norm-source-m6-x-before"
+    },
+    {
+      "adapter_sha256": "bd1b19986f6ae93492e8bf8de7bc4ceb493f92d33f5b6e2436ca7b5f759cfa24",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "2330db7655af6c6ef4694a42aeae342742ee04c5d0fcc9c0720d99b8cca44128",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-layer-norm",
+      "mutation_family": "ASYNC_PRODUCER",
+      "mutation_rule_id": "MUT-M7-PRODUCER-DUP-AFTER",
+      "occurrence": 1,
+      "operation": "duplicate_after",
+      "parent_variant_id": "tilelang-layer-norm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/patches/m7-x-after.diff",
+        "sha256": "0116c8902b47552dd2e9a40207c14e76dc5e44e6e9257abe66dafe13f7e629c2"
+      },
+      "replacement_sha256": "bed32aee23c76ba47c182a4af8d7b9f4bff9fdc10c7f35b9829ce5a8590f8ef5",
+      "role": "MUTANT",
+      "selected_ast_sha256": "c3fba1c716e53b645fa71ecceff42c4906bc5827ae789151d206e4829f3b32f6",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/sources/m7-x-after.py",
+        "sha256": "2ff73a7a763bb3518dab50d8e571a03eddb6d048ed84f3a92bc7b042d121897c"
+      },
+      "variant_id": "tilelang-layer-norm-source-m7-x-after"
+    },
+    {
+      "adapter_sha256": "bd1b19986f6ae93492e8bf8de7bc4ceb493f92d33f5b6e2436ca7b5f759cfa24",
+      "adjudication": {
+        "class": "UNKNOWN",
+        "method": "UNADJUDICATED",
+        "rationale": "The mutation preserves intended arithmetic but requires independent protocol adjudication; checker output is not used as ground truth.",
+        "status": "UNADJUDICATED"
+      },
+      "anchor_sha256": "ea7986eae3eea23db68a399ab9e510f444b49a52857d4d2674daaa8dc8c51730",
+      "expected_computational_semantics": "PRESERVE_OUTPUT",
+      "kernel_id": "tilelang-layer-norm",
+      "mutation_family": "ASYNC_PRODUCER",
+      "mutation_rule_id": "MUT-M7-PRODUCER-DUP-AFTER",
+      "occurrence": 1,
+      "operation": "duplicate",
+      "parent_variant_id": "tilelang-layer-norm-source-original",
+      "patch": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/patches/m7-output-dup.diff",
+        "sha256": "da8b84fd7d28e99335984a9960525ced924f06f150f281936d255e81da0d35b4"
+      },
+      "replacement_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "role": "MUTANT",
+      "selected_ast_sha256": "b60485adfbd25ed7a73da03b596c6f191f88e3d2102873988e7ea25b53a579db",
+      "source": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/sources/m7-output-dup.py",
+        "sha256": "f8aea9775c5e1da55cb05983514ef3ec65b4599f02b20426f1a7cd35452ee4be"
+      },
+      "variant_id": "tilelang-layer-norm-source-m7-output-dup"
+    }
+  ],
+  "workloads": [
+    {
+      "bindings": {
+        "BLOCK_M": 1,
+        "M": 256,
+        "N": 1024,
+        "dtype": "float16",
+        "eps": 1e-05
+      },
+      "boundary_dimensions": [],
+      "delta": [],
+      "evidence": {
+        "kind": "UPSTREAM_TEST",
+        "path": "examples/norm/layernorm.py",
+        "rationale": "Pinned official example kernel with an independent PyTorch oracle.",
+        "sha256": "ef304cb4910312ef99f9878138239580404537ca2bfdec45be20e7f542c49a38"
+      },
+      "kernel_id": "tilelang-layer-norm",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/recipes/tilelang-layer-norm-workload-original.json",
+        "sha256": "861ca30e8a32204a351bcd57cb95ac86020cdf78a981faf42abc05c5628e3947"
+      },
+      "role": "ORIGINAL",
+      "spec_id": "tilelang-layer-norm-workload-original"
+    },
+    {
+      "bindings": {
+        "BLOCK_M": 1,
+        "M": 128,
+        "N": 1024,
+        "dtype": "float16",
+        "eps": 1e-05
+      },
+      "boundary_dimensions": [
+        "M"
+      ],
+      "delta": [
+        {
+          "after": 128,
+          "before": 256,
+          "path": "/bindings/M"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "examples/norm/layernorm.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "ef304cb4910312ef99f9878138239580404537ca2bfdec45be20e7f542c49a38"
+      },
+      "kernel_id": "tilelang-layer-norm",
+      "parent_spec_id": "tilelang-layer-norm-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/recipes/tilelang-layer-norm-workload-boundary-1.json",
+        "sha256": "bff893eb5b4d4855143c21b655899f309bf7dbeb2cf2d3b9e7c3b14bc8d68ff4"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "tilelang-layer-norm-workload-boundary-1"
+    },
+    {
+      "bindings": {
+        "BLOCK_M": 1,
+        "M": 256,
+        "N": 2048,
+        "dtype": "float16",
+        "eps": 1e-05
+      },
+      "boundary_dimensions": [
+        "N"
+      ],
+      "delta": [
+        {
+          "after": 2048,
+          "before": 1024,
+          "path": "/bindings/N"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "examples/norm/layernorm.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "ef304cb4910312ef99f9878138239580404537ca2bfdec45be20e7f542c49a38"
+      },
+      "kernel_id": "tilelang-layer-norm",
+      "parent_spec_id": "tilelang-layer-norm-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/recipes/tilelang-layer-norm-workload-boundary-2.json",
+        "sha256": "95498ded7ef9ada6a440f882918c94670220656e0efa2ae8b70d7b8e24cc6ea8"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "tilelang-layer-norm-workload-boundary-2"
+    },
+    {
+      "bindings": {
+        "BLOCK_M": 2,
+        "M": 256,
+        "N": 1024,
+        "dtype": "float16",
+        "eps": 1e-06
+      },
+      "boundary_dimensions": [
+        "BLOCK_M",
+        "eps"
+      ],
+      "delta": [
+        {
+          "after": 2,
+          "before": 1,
+          "path": "/bindings/BLOCK_M"
+        },
+        {
+          "after": 1e-06,
+          "before": 1e-05,
+          "path": "/bindings/eps"
+        }
+      ],
+      "evidence": {
+        "kind": "SUITE4_DERIVED_BOUNDARY",
+        "path": "examples/norm/layernorm.py",
+        "rationale": "Controlled Suite 4 boundary derived from the paired official operator and validated by the same independent PyTorch oracle.",
+        "sha256": "ef304cb4910312ef99f9878138239580404537ca2bfdec45be20e7f542c49a38"
+      },
+      "kernel_id": "tilelang-layer-norm",
+      "parent_spec_id": "tilelang-layer-norm-workload-original",
+      "recipe": {
+        "path": "corpus/mutations/suite4/kernels/tilelang-layer-norm/recipes/tilelang-layer-norm-workload-boundary-3.json",
+        "sha256": "c810dd4ba13b7f8ca6938595364e03a6faf82080e49769134bab47d8defbdac4"
+      },
+      "role": "BOUNDARY",
+      "spec_id": "tilelang-layer-norm-workload-boundary-3"
+    }
+  ]
+}

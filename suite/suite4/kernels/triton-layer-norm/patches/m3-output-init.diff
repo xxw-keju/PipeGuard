@@ -1,0 +1,10 @@
+--- original.py
++++ m3-output-init.py
+@@ -52,6 +52,7 @@
+         x_hat = (x - mean) * rstd
+         y = x_hat * w + b
+         # Write output
++        tl.store(Y + cols, 0.0, mask=mask)
+         tl.store(Y + cols, y, mask=mask)
+ 
+ 
