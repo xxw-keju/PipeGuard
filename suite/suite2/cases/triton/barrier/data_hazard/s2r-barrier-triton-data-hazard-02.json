@@ -1,0 +1,48 @@
+{
+  "case_id": "s2r-barrier-triton-data-hazard-02",
+  "dsl": "triton",
+  "gpu": 0,
+  "label_evidence": {
+    "accesses": [
+      {
+        "actor": "thread:0",
+        "byte_interval": [
+          96,
+          100
+        ],
+        "mode": "WRITE"
+      },
+      {
+        "actor": "thread:64",
+        "byte_interval": [
+          96,
+          100
+        ],
+        "mode": "READ"
+      }
+    ],
+    "actors": [
+      "thread:0",
+      "thread:64"
+    ],
+    "cta_threads": 128,
+    "independent_label": "DATA_HAZARD",
+    "issue": "cross-warp global RAW handoff without ordering",
+    "numeric_is_safety_oracle": false,
+    "present_order": "none between distinct warps",
+    "required_order": "producer -> full CTA barrier -> consumer",
+    "variant": 2
+  },
+  "pipeguard": "DEFERRED_NOT_RUN",
+  "primitive": "Barrier",
+  "result_class": "DATA_HAZARD",
+  "sanitizer_tool": "racecheck",
+  "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
+  "source": {
+    "bytes": 743,
+    "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/barrier/data_hazard/s2r-barrier-triton-data-hazard-02.py",
+    "sha256": "60a3cb95bac0cc26a8751b6e25abbd8d142900f0fe34c40119921b8744a2165f"
+  },
+  "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/barrier/data_hazard/s2r-barrier-triton-data-hazard-02.json",
+  "variant": 2
+}

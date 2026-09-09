@@ -1,0 +1,38 @@
+{
+  "case_id": "s2r-barrier-triton-sync-hazard-04",
+  "dsl": "triton",
+  "gpu": 0,
+  "label_evidence": {
+    "accesses": [],
+    "actors": [
+      "thread:0",
+      "thread:64"
+    ],
+    "barrier": {
+      "actual_participant_count": 96,
+      "actual_participant_predicate": "threadIdx.x < 96",
+      "expected_participants": 128,
+      "invocation": 0,
+      "missing_participant_count": 32
+    },
+    "cta_threads": 128,
+    "independent_label": "SYNC_HAZARD",
+    "issue": "divergent CTA barrier",
+    "numeric_is_safety_oracle": false,
+    "present_order": "only threads [0,96) execute bar.sync 0",
+    "required_order": "one full-CTA barrier invocation with all 128 participants",
+    "variant": 4
+  },
+  "pipeguard": "DEFERRED_NOT_RUN",
+  "primitive": "Barrier",
+  "result_class": "SYNC_HAZARD",
+  "sanitizer_tool": "synccheck",
+  "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
+  "source": {
+    "bytes": 800,
+    "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/barrier/sync_hazard/s2r-barrier-triton-sync-hazard-04.py",
+    "sha256": "10d8cdbaeaf3a4e52e45fc7184a5c242563b4656d1c09a9086de057cc244b70d"
+  },
+  "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/barrier/sync_hazard/s2r-barrier-triton-sync-hazard-04.json",
+  "variant": 4
+}

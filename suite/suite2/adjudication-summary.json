@@ -1,0 +1,71 @@
+{
+  "adjudication_status_counts": {
+    "CONFIRMED_FALSE_POSITIVE_ORDERING_EDGE_MISSING": 10,
+    "CORRECT_EXACT_CLASS_DETECTION": 105,
+    "CORRECT_SAFE": 56,
+    "CREDITED_EXPECTED_HAZARD_WRONG_TOP_LEVEL_CLASS": 10,
+    "CREDITED_VALID_ALTERNATE_HAZARD": 5,
+    "NOT_SCORED_FRONTEND_CP_ASYNC_CAPACITY_CONTRACT_WRONG": 5,
+    "NOT_SCORED_FRONTEND_INLINE_ASM_BARRIER_OMITTED": 5,
+    "NOT_SCORED_NEEDS_TMA_MULTI_WRITE_LABEL_REVIEW": 4,
+    "UNCREDITED_SPURIOUS_WITNESS_MASKS_EXPECTED_SYNC_HAZARD": 10
+  },
+  "confirmed_false_positives": 10,
+  "credited_hazard_detections": 120,
+  "input": {
+    "ledger": {
+      "bytes": 573611,
+      "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-210-v1/ledger.json",
+      "sha256": "504d304fcdff104a963059e991161339fcfdd6557a149299025a0f2f00bdc9ff"
+    },
+    "summary": {
+      "bytes": 6562,
+      "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-210-v1/summary.json",
+      "sha256": "2f0daa0e49e07f98fe8fcafe56cf16f8ec9c14f3fe09a91d47b06882bc070096"
+    }
+  },
+  "interpretation": {
+    "final": false,
+    "labels_preserved": true,
+    "mismatch_is_no_longer_a_terminal_category": true,
+    "raw_verdicts_preserved": true,
+    "remaining_blocker": "TMA multi-write label review and cross-owner admission remain open; frontend omissions require frontend fixes before final scoring."
+  },
+  "label_changes": 0,
+  "not_scored_rows": 14,
+  "pipeguard_verdict_changes": 0,
+  "producer_audits": {
+    "barrier_memory": {
+      "bytes": 248599,
+      "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/self-audit.json",
+      "sha256": "e8220ef8eb0a841c363a1a7ca53589751fd5883bffd08c4d750bf64d6b431284"
+    },
+    "cp_async": {
+      "bytes": 77314,
+      "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-tilelang2-cpasync-30-v2/audit-v1.json",
+      "sha256": "79563708f1d7fd228d77321ef9512f4e186cf7772d628f1c49dc7a39a376ae3a"
+    },
+    "proxy": {
+      "bytes": 36102,
+      "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-proxy-selected30-v1/audit-v1.json",
+      "sha256": "98eb6b0e09555f44ee70c0178ed1dff93ab778adf2bd4cbff9049fc354f16c14"
+    },
+    "tma": {
+      "bytes": 31005,
+      "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-tma-selected30-v1/audit-v1.json",
+      "sha256": "0e101d0520e6a1e610111a01564e2534732edd56ee4a8bee5f043e224ef8966d"
+    },
+    "wgmma": {
+      "bytes": 176126,
+      "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-wgmma-executable-v1/audit-v1.json",
+      "sha256": "a23209cc630f7731a8a90bb3214289ebc524d2196b6d3ddbda323140c17280f8"
+    }
+  },
+  "raw_exact_matches": 161,
+  "raw_mismatches_replaced_by_adjudication": 49,
+  "rows": 210,
+  "schema_version": "pipeguard-suite2-recovery-checker-adjudication-summary-v1",
+  "scored_rows": 196,
+  "status": "PRELIMINARY_MISMATCH_MARKERS_ADJUDICATED",
+  "uncredited_spurious_witness_rows": 10
+}

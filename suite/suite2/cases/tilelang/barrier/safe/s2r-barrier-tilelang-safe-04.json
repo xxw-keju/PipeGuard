@@ -1,0 +1,48 @@
+{
+  "case_id": "s2r-barrier-tilelang-safe-04",
+  "dsl": "tilelang",
+  "gpu": 0,
+  "label_evidence": {
+    "accesses": [
+      {
+        "actor": "thread:0",
+        "byte_interval": [
+          160,
+          164
+        ],
+        "mode": "WRITE"
+      },
+      {
+        "actor": "thread:64",
+        "byte_interval": [
+          160,
+          164
+        ],
+        "mode": "READ"
+      }
+    ],
+    "actors": [
+      "thread:0",
+      "thread:64"
+    ],
+    "cta_threads": 128,
+    "independent_label": "SAFE",
+    "issue": "cross-warp global RAW handoff",
+    "numeric_is_safety_oracle": false,
+    "present_order": "full CTA barrier executed by all 128 threads",
+    "required_order": "producer -> full CTA barrier -> consumer",
+    "variant": 4
+  },
+  "pipeguard": "DEFERRED_NOT_RUN",
+  "primitive": "Barrier",
+  "result_class": "SAFE",
+  "sanitizer_tool": "synccheck",
+  "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
+  "source": {
+    "bytes": 490,
+    "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/barrier/safe/s2r-barrier-tilelang-safe-04.py",
+    "sha256": "553a05ea2faa45cc09bd0e6666f87f71659ced2c37ec8cf4afd2181fdf361ef4"
+  },
+  "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/barrier/safe/s2r-barrier-tilelang-safe-04.json",
+  "variant": 4
+}

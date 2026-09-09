@@ -1,0 +1,48 @@
+{
+  "case_id": "s2r-barrier-triton-safe-00",
+  "dsl": "triton",
+  "gpu": 0,
+  "label_evidence": {
+    "accesses": [
+      {
+        "actor": "thread:0",
+        "byte_interval": [
+          32,
+          36
+        ],
+        "mode": "WRITE"
+      },
+      {
+        "actor": "thread:64",
+        "byte_interval": [
+          32,
+          36
+        ],
+        "mode": "READ"
+      }
+    ],
+    "actors": [
+      "thread:0",
+      "thread:64"
+    ],
+    "cta_threads": 128,
+    "independent_label": "SAFE",
+    "issue": "cross-warp global RAW handoff",
+    "numeric_is_safety_oracle": false,
+    "present_order": "full CTA barrier executed by all 128 threads",
+    "required_order": "producer -> full CTA barrier -> consumer",
+    "variant": 0
+  },
+  "pipeguard": "DEFERRED_NOT_RUN",
+  "primitive": "Barrier",
+  "result_class": "SAFE",
+  "sanitizer_tool": "synccheck",
+  "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
+  "source": {
+    "bytes": 746,
+    "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/barrier/safe/s2r-barrier-triton-safe-00.py",
+    "sha256": "82f616922c483594123a3fad10015caff823c481adb53e1dea19764f50061836"
+  },
+  "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/barrier/safe/s2r-barrier-triton-safe-00.json",
+  "variant": 0
+}

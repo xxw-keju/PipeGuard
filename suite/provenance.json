@@ -8,13 +8,28 @@
   ],
   "schema_version": "pipeguard-root-suite-provenance-v1",
   "suite2": {
-    "bytes": 8793819,
-    "files": 4507,
-    "files_sha256": "a1aac2de772e3bddf7f01e4c64e4d67879faf759975507225b4b72b870f20868",
-    "source_branch": "exp-dsl-tilelang",
-    "source_head": "1e12b7718db007d4109126efd8d016e16054b546",
-    "source_path": "corpus/suite2",
-    "source_worktree": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new"
+    "status": "SELECTED_210_PRELIMINARY_PENDING_REMEDIATION",
+    "rows": 210,
+    "selection": "2 DSL x 3 classes x 7 primitives x 5 variants",
+    "manifest_sha256": "325b21673686efd3a5efa09c8475a11c2ffd49036bd74aa134b88d419b3f4bbf",
+    "selection_lock_sha256": "4ba739c05b14ec584cf37941708aa96dc9fdc057dabbe540d65a8ef3302fd11e",
+    "files": 429,
+    "bytes": 1836182,
+    "files_sha256": "c9b978581397aa0caf2a9b7e1a4d29be3f76b33d838765b2eacdaa9da045412f",
+    "base_commit": "f86e0c7d62ac8a7d11a5417f356f8bd82c2eef55",
+    "helper_files": {
+      "tilelang_cases_sha256": "3ab49375029a522ea9f388e9737b73129d5db606b3ec4527d7f4bdb672ebff46",
+      "triton_cases_sha256": "9764a0b9c70d1c1148225686e14139f673683f0f08f38317dc87c6fc3d0afec4"
+    },
+    "source_worktrees": {
+      "tilelang": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new",
+      "tilelang2": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2"
+    },
+    "adjudication_summary_sha256": "1ca214c2946bd8541d60fcf4aeecc948c94b63918f15cd495c0862631050bae8",
+    "adjudication_ledger_sha256": "4f57a78c5697ae0d6a89cef0ccb0e5036f507b5965582e1d9ff747fe4ca1bea4",
+    "adjudication_validation_sha256": "41ae13ad4deac86c957dac8c8edf9492e8e043af6db407b5ddd896dbd87826bf",
+    "checker_issues_sha256": "8ddbf8aef32f1cdeb3b2cd09e10ff4cbc22ed976e477560514266c6415eb27e0",
+    "validation_sha256": "b9712f422d21ed70ccf55fc7bf5e12a99a643365f2795e5e2b249df4c602d206"
   },
   "suite3": {
     "bytes": 33728052,

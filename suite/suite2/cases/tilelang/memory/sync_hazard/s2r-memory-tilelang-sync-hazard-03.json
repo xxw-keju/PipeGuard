@@ -1,0 +1,55 @@
+{
+  "case_id": "s2r-memory-tilelang-sync-hazard-03",
+  "dsl": "tilelang",
+  "gpu": 0,
+  "label_evidence": {
+    "accesses": [
+      {
+        "actor": "thread:0",
+        "byte_interval": [
+          128,
+          132
+        ],
+        "mode": "WRITE"
+      },
+      {
+        "actor": "thread:64",
+        "byte_interval": [
+          128,
+          132
+        ],
+        "mode": "READ"
+      }
+    ],
+    "actors": [
+      "thread:0",
+      "thread:64"
+    ],
+    "barrier": {
+      "actual_participant_count": 64,
+      "actual_participant_predicate": "threadIdx.x < 64",
+      "expected_participants": 128,
+      "invocation": 0,
+      "missing_participant_count": 64
+    },
+    "cta_threads": 128,
+    "independent_label": "SYNC_HAZARD",
+    "issue": "global RAW handoff guarded by a divergent CTA barrier",
+    "numeric_is_safety_oracle": false,
+    "present_order": "only threads [0,64) execute bar.sync 0",
+    "required_order": "one full-CTA barrier invocation with all 128 participants",
+    "variant": 3
+  },
+  "pipeguard": "DEFERRED_NOT_RUN",
+  "primitive": "Memory",
+  "result_class": "SYNC_HAZARD",
+  "sanitizer_tool": "synccheck",
+  "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
+  "source": {
+    "bytes": 527,
+    "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/memory/sync_hazard/s2r-memory-tilelang-sync-hazard-03.py",
+    "sha256": "3624841c49eac7bbf5608f430f4182fc6a52da22f24f851a52979c0921e6a226"
+  },
+  "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/memory/sync_hazard/s2r-memory-tilelang-sync-hazard-03.json",
+  "variant": 3
+}

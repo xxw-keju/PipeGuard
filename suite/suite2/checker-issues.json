@@ -1,0 +1,213 @@
+{
+  "accepted_checker_identity": {
+    "checker": {
+      "bytes": 76225,
+      "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/src/pipeguard/checker.py",
+      "sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05"
+    },
+    "direct_parametric": {
+      "bytes": 93356,
+      "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/src/pipeguard/direct_parametric.py",
+      "sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f"
+    }
+  },
+  "admission_gate": "No final Suite-2 percentage. Recapture/rerun corrected frontend/core groups, complete TMA label review and cross-owner audits, then freeze a reconciled 210-row ledger.",
+  "independent_audit": {
+    "absolute_mismatch_evidence_records_rehashed": 368,
+    "category_invariant_failures": 0,
+    "changed_rows": 0,
+    "missing_or_digest_mismatched_evidence_records": 0,
+    "note": "Relative source/lowering metadata inherited from the input ledger was not treated as an absolute path; all 368 absolute records actually cited by the 49 adjudications rehashed cleanly.",
+    "output_rows_equal_input_rows_after_removing_marker_fields": true
+  },
+  "issues": [
+    {
+      "acceptance": [
+        "Triton Proxy SAFE variants 00-04 return SAFE.",
+        "Triton WGMMA SAFE variants 00-04 return SAFE.",
+        "Triton Proxy/WGMMA SYNC variants 00-04 report the real missing RESULT_READY ordering, not the ordered operand initialization pair.",
+        "Existing DATA hazards and exact proxy-region negative controls remain detected."
+      ],
+      "affected_rows": 20,
+      "case_ids": [
+        "s2x-triton-safe-proxy-00",
+        "s2x-triton-safe-proxy-01",
+        "s2x-triton-safe-proxy-02",
+        "s2x-triton-safe-proxy-03",
+        "s2x-triton-safe-proxy-04",
+        "s2x-triton-safe-wgmma-00",
+        "s2x-triton-safe-wgmma-01",
+        "s2x-triton-safe-wgmma-02",
+        "s2x-triton-safe-wgmma-03",
+        "s2x-triton-safe-wgmma-04",
+        "s2x-triton-sync-hazard-proxy-00",
+        "s2x-triton-sync-hazard-proxy-01",
+        "s2x-triton-sync-hazard-proxy-02",
+        "s2x-triton-sync-hazard-proxy-03",
+        "s2x-triton-sync-hazard-proxy-04",
+        "s2x-triton-sync-hazard-wgmma-00",
+        "s2x-triton-sync-hazard-wgmma-01",
+        "s2x-triton-sync-hazard-wgmma-02",
+        "s2x-triton-sync-hazard-wgmma-03",
+        "s2x-triton-sync-hazard-wgmma-04"
+      ],
+      "issue_id": "S2-CHECKER-ORDERING-ASYNC-VISIBILITY",
+      "kind": "CHECKER_CORE_ORDERING_AND_WITNESS",
+      "priority": "P0",
+      "repair_invariants": [
+        "Do not credit a witness whose producer/read pair is ordered by the retained CTA barrier or warp-specialize join and exact proxy/protocol fence.",
+        "Preserve the independently confirmed early-accumulator SYNC_HAZARD; fixing the false witness must not turn SYNC rows SAFE.",
+        "Preserve accepted direct-core parametric/indexed complexity; do not introduce target-linear fallback scans."
+      ],
+      "root_evidence": "For mixed synchronous/asynchronous conflicts, accepted direct_parametric._ordered uses proxy visibility or endpoint reachability but does not compose retained CTA visibility cuts / warp-specialize joins with the async protocol boundary. Ordered initialization/reuse is therefore reported as UNORDERED_CONFLICT.",
+      "source_sites": [
+        {
+          "line": 1558,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/src/pipeguard/direct_parametric.py",
+          "symbol": "_proxy_visible"
+        },
+        {
+          "line": 1612,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/src/pipeguard/direct_parametric.py",
+          "symbol": "_ordered_by_visibility_cut"
+        },
+        {
+          "line": 1660,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/src/pipeguard/direct_parametric.py",
+          "symbol": "_ordered"
+        }
+      ],
+      "symptoms": {
+        "confirmed_false_positive": 10,
+        "spurious_witness_masks_expected_sync_hazard": 10
+      }
+    },
+    {
+      "acceptance": [
+        "All five Barrier Triton SYNC rows are recaptured with a barrier resource/event and become scoreable, or terminate explicitly UNSUPPORTED; none remain silently SAFE from an empty protocol inventory."
+      ],
+      "affected_rows": 5,
+      "case_ids": [
+        "s2r-barrier-triton-sync-hazard-00",
+        "s2r-barrier-triton-sync-hazard-01",
+        "s2r-barrier-triton-sync-hazard-02",
+        "s2r-barrier-triton-sync-hazard-03",
+        "s2r-barrier-triton-sync-hazard-04"
+      ],
+      "issue_id": "S2-FRONTEND-TRITON-INLINE-ASM-BARRIER",
+      "kind": "FRONTEND_COMPLETENESS_FAIL_OPEN",
+      "priority": "P0",
+      "repair_invariants": [
+        "Recognize the supported bar.sync inline-asm form and emit exact BarrierArrive/BarrierObserve semantics, or fail closed with a stable unsupported diagnostic.",
+        "Never silently classify synchronization-bearing inline asm as pure."
+      ],
+      "root_evidence": "Raw TTGIR retains predicated bar.sync 0 in tt.elementwise_inline_asm, while capture classifies the op as value-only pure and emits no barrier resource/event or unsupported construct; checker therefore receives a one-event PGIR and returns SAFE.",
+      "source_sites": [
+        {
+          "line": 61,
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/tools/triton_capture.py",
+          "symbol": "TritonCapture._VALUE_ONLY_PURE_OPERATIONS"
+        }
+      ]
+    },
+    {
+      "acceptance": [
+        "Variants 00-04 retain 9-13 commits before first wait, PGIR records capacity 8, and the checker reports the capacity SYNC_HAZARD for all five."
+      ],
+      "affected_rows": 5,
+      "case_ids": [
+        "s2x-triton-sync-hazard-cp-async-00",
+        "s2x-triton-sync-hazard-cp-async-01",
+        "s2x-triton-sync-hazard-cp-async-02",
+        "s2x-triton-sync-hazard-cp-async-03",
+        "s2x-triton-sync-hazard-cp-async-04"
+      ],
+      "issue_id": "S2-FRONTEND-CPASYNC-CAPACITY",
+      "kind": "FRONTEND_PROTOCOL_CONTRACT",
+      "priority": "P0",
+      "repair_invariants": [
+        "Emit capacity 8 for CP_ASYNC and reject/fail closed on incompatible retained resource contracts.",
+        "Recapture all five rows and bind capture-tool/source/PGIR/report hashes; changing only the adjudication marker is insufficient.",
+        "Do not modify the accepted checker core for this frontend-only defect unless a new independently reproduced core issue appears."
+      ],
+      "root_evidence": "TileLang2 Triton capture records CP_ASYNC capacity 16, but PTX permits at most 8 pending committed groups. Variants commit 9-13 groups before the first wait, so the wrong capacity suppresses the expected capacity violation.",
+      "source_sites": [
+        {
+          "line": 782,
+          "observed": "capacity=16",
+          "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/tools/triton_capture.py",
+          "required": "capacity=8",
+          "symbol": "TritonCapture._async_resource"
+        }
+      ]
+    }
+  ],
+  "not_checker_issues": [
+    {
+      "case_ids": [
+        "s2r-memory-triton-sync-hazard-00",
+        "s2r-memory-triton-sync-hazard-01",
+        "s2r-memory-triton-sync-hazard-02",
+        "s2r-memory-triton-sync-hazard-03",
+        "s2r-memory-triton-sync-hazard-04",
+        "s2x-tilelang-sync-hazard-proxy-00",
+        "s2x-tilelang-sync-hazard-proxy-01",
+        "s2x-tilelang-sync-hazard-proxy-02",
+        "s2x-tilelang-sync-hazard-proxy-03",
+        "s2x-tilelang-sync-hazard-proxy-04",
+        "s2x-tilelang-sync-hazard-wgmma-00",
+        "s2x-tilelang-sync-hazard-wgmma-01",
+        "s2x-tilelang-sync-hazard-wgmma-02",
+        "s2x-tilelang-sync-hazard-wgmma-03",
+        "s2x-tilelang-sync-hazard-wgmma-04"
+      ],
+      "classification": "CREDITED_HAZARD_TAXONOMY_OR_COMPOSITE_PRIORITY",
+      "disposition": "Credit as valid hazard detection under the explicit policy; optionally improve multi-finding/top-level taxonomy, but do not call these soundness failures.",
+      "rows": 15
+    },
+    {
+      "case_ids": [
+        "s2x-triton-safe-tma-01",
+        "s2x-triton-safe-tma-02",
+        "s2x-triton-safe-tma-03",
+        "s2x-triton-safe-tma-04"
+      ],
+      "classification": "TMA_MULTI_WRITE_LABEL_REVIEW",
+      "disposition": "Do not change checker. Independently decide whether 2-5 asynchronous TMA writes to the same destination before one wait invalidate the producer SAFE labels; remain not scored until then.",
+      "rows": 4
+    }
+  ],
+  "schema_version": "pipeguard-suite2-mismatch-issue-package-v1",
+  "scope": {
+    "label_changes": 0,
+    "not_scored_rows": 14,
+    "pipeguard_verdict_changes": 0,
+    "raw_matches": 161,
+    "raw_mismatches_adjudicated": 49,
+    "rows": 210,
+    "scored_rows": 196
+  },
+  "source_artifacts": {
+    "adjudication_ledger": {
+      "bytes": 688831,
+      "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-adjudicated210-v1/ledger.json",
+      "sha256": "4f57a78c5697ae0d6a89cef0ccb0e5036f507b5965582e1d9ff747fe4ca1bea4"
+    },
+    "adjudication_script": {
+      "bytes": 14222,
+      "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-adjudicated210-v1/adjudicate.py",
+      "sha256": "27f6b62a1cb4df709b1f9aaab6a0b04bc2f847bedfc71abfe989a7b8fb922d17"
+    },
+    "adjudication_summary": {
+      "bytes": 3236,
+      "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-adjudicated210-v1/summary.json",
+      "sha256": "1ca214c2946bd8541d60fcf4aeecc948c94b63918f15cd495c0862631050bae8"
+    },
+    "adjudication_validation": {
+      "bytes": 968,
+      "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-adjudicated210-v1/validation.json",
+      "sha256": "41ae13ad4deac86c957dac8c8edf9492e8e043af6db407b5ddd896dbd87826bf"
+    }
+  },
+  "status": "PRELIMINARY_ISSUES_EXTRACTED_NO_CODE_OR_LABEL_CHANGES"
+}

@@ -1,0 +1,48 @@
+{
+  "case_id": "s2r-memory-triton-safe-01",
+  "dsl": "triton",
+  "gpu": 0,
+  "label_evidence": {
+    "accesses": [
+      {
+        "actor": "thread:0",
+        "byte_interval": [
+          64,
+          68
+        ],
+        "mode": "WRITE"
+      },
+      {
+        "actor": "thread:64",
+        "byte_interval": [
+          80,
+          84
+        ],
+        "mode": "WRITE"
+      }
+    ],
+    "actors": [
+      "thread:0",
+      "thread:64"
+    ],
+    "cta_threads": 128,
+    "independent_label": "SAFE",
+    "issue": "cross-warp disjoint global writes",
+    "numeric_is_safety_oracle": false,
+    "present_order": "none required",
+    "required_order": "none because byte intervals are disjoint",
+    "variant": 1
+  },
+  "pipeguard": "DEFERRED_NOT_RUN",
+  "primitive": "Memory",
+  "result_class": "SAFE",
+  "sanitizer_tool": "racecheck",
+  "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
+  "source": {
+    "bytes": 789,
+    "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/safe/s2r-memory-triton-safe-01.py",
+    "sha256": "019b42a8b38a37c5fce201521752785f09333114af90ad3d68f6a51c091df0d2"
+  },
+  "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/safe/s2r-memory-triton-safe-01.json",
+  "variant": 1
+}
