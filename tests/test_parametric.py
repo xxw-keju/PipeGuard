@@ -678,6 +678,61 @@ def test_once_transition_dependency_allows_ordered_phase_reuse():
     assert report["verdict"] == "SAFE"
     assert report["statistics"]["protocol_transitions"] == 4
 
+
+def test_false_predicated_arrive_expect_tx_has_no_protocol_effect():
+    raw = parametric_memory_module()
+    raw["program_streams"][0]["instances"] = [0]
+    raw["owners"][0]["participants"] = [0]
+    raw["target"]["cta_threads"] = 1
+    raw["resources"] = [{
+        "id": "bar",
+        "kind": "mbarrier",
+        "participants": ["partition:0"],
+    }]
+    common = {
+        "stream": "lane",
+        "program_instances": [0],
+        "executors": [0],
+        "transition": "ONCE",
+        "rendezvous": "NONE",
+        "owner": "partition:0",
+    }
+    raw["event_templates"] = [
+        {
+            **common,
+            "id": "init",
+            "type": "MBarrierInit",
+            "order": 0,
+            "fields": {"resource": "bar", "lifecycle_epoch": 0, "count": 1},
+        },
+        {
+            **common,
+            "id": "masked_expect",
+            "type": "MBarrierArriveExpectTx",
+            "order": 1,
+            "fields": {
+                "resource": "bar",
+                "lifecycle_epoch": 0,
+                "generation": 0,
+                "count": 1,
+                "bytes": 16,
+                "predicate": False,
+            },
+        },
+        {
+            **common,
+            "id": "invalidate",
+            "type": "MBarrierInvalidate",
+            "order": 2,
+            "fields": {"resource": "bar", "lifecycle_epoch": 0},
+        },
+    ]
+
+    report = check_module(module_from_dict(raw), engine="crosscheck")
+
+    assert report["verdict"] == "SAFE"
+
+
 def _shared_chain_mbarrier_reuse(size: int) -> dict:
     raw = _two_lane_mbarrier_reuse(ordered=True)
     init, arrive0, wait0, arrive1 = raw["event_templates"]

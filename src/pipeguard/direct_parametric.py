@@ -847,7 +847,10 @@ class DirectParametricChecker:
                 state.pending -= count
                 state.started = True
                 state.contributors.append(node)
-            if kind in {"MBarrierExpectTx", "MBarrierArriveExpectTx"}:
+            if kind == "MBarrierExpectTx" or (
+                kind == "MBarrierArriveExpectTx"
+                and self._field(template, "predicate", lane, True)
+            ):
                 state.expected_tx += self._field(template, "bytes", lane)
                 state.started = True
                 state.contributors.append(node)
@@ -882,6 +885,7 @@ class DirectParametricChecker:
                     ))
             if (
                 kind in {"MBarrierArrive", "MBarrierArriveExpectTx"}
+                and self._field(template, "predicate", lane, True)
                 and state.pending == 0
                 and state.pending_tx_completions == 0
                 and state.completed_tx == state.expected_tx
