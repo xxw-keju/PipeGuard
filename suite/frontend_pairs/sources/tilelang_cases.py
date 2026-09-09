@@ -63,6 +63,67 @@ def _mbarrier_case(variant: int, buggy: bool):
     return kernel
 
 
+def _suite2_diverse_mbarrier_case(scenario: str, buggy: bool):
+    @T.prim_func
+    def kernel(A: T.Tensor((256,), T.int32), Out: T.Tensor((1,), T.int32)):
+        with T.Kernel(1, threads=32):
+            tx = T.get_thread_binding()
+            count = 2 if scenario in {
+                "MBARRIER:MISSING-ARRIVAL",
+                "MBARRIER:LATE-MISSING-ARRIVAL",
+            } else 1
+            bar = T.alloc_barrier([count])
+            shared = T.alloc_shared((1,), T.int32)
+            if scenario == "MBARRIER:MISSING-ARRIVAL":
+                if tx == 0:
+                    T.mbarrier_arrive(bar)
+                if not buggy and tx == 1:
+                    T.mbarrier_arrive(bar)
+                if tx < 2:
+                    T.mbarrier_wait_parity(bar, 0)
+            elif scenario == "MBARRIER:DELAYED-NEXT-ARRIVE-BEFORE-WAIT":
+                if tx == 0:
+                    shared[0] = 1
+                    T.mbarrier_arrive(bar)
+                    if not buggy:
+                        T.mbarrier_wait_parity(bar, 0)
+                    for step in T.serial(64):
+                        shared[0] = shared[0] + step + 1
+                    T.mbarrier_arrive(bar)
+                if tx == 1:
+                    T.mbarrier_wait_parity(bar, 1)
+                    Out[0] = shared[0]
+            elif scenario == "MBARRIER:LATE-MISSING-ARRIVAL":
+                if tx < 2:
+                    T.mbarrier_arrive(bar)
+                    T.mbarrier_wait_parity(bar, 0)
+                if tx == 0:
+                    T.mbarrier_arrive(bar)
+                if not buggy and tx == 1:
+                    T.mbarrier_arrive(bar)
+                if tx < 2:
+                    T.mbarrier_wait_parity(bar, 1)
+            elif tx == 0:
+                if scenario == "MBARRIER:NEXT-ARRIVE-BEFORE-WAIT":
+                    T.mbarrier_arrive(bar)
+                    if buggy:
+                        T.mbarrier_arrive(bar)
+                        T.mbarrier_wait_parity(bar, 0)
+                        T.mbarrier_wait_parity(bar, 1)
+                    else:
+                        T.mbarrier_wait_parity(bar, 0)
+                        T.mbarrier_arrive(bar)
+                        T.mbarrier_wait_parity(bar, 1)
+                else:
+                    T.mbarrier_arrive(bar)
+                    T.mbarrier_wait_parity(bar, 0)
+                    T.mbarrier_arrive(bar)
+                    T.mbarrier_wait_parity(bar, 1)
+                    T.mbarrier_arrive(bar)
+                    T.mbarrier_wait_parity(bar, 1 if buggy else 0)
+
+    return kernel
+
 def _cp_async_case(family: str, variant: int, buggy: bool):
     elements, _stages, threads = _shape(variant)
     byte_count = (4, 8, 16)[variant % 3]
@@ -578,6 +639,8 @@ def build_tilelang_case(family: str, scenario_id: str, variant: int, polarity: s
         return _named_tma_store_case(scenario_id, buggy)
     if family in {"MEM-RAW", "MEM-WAW", "CTA-HANDOFF"}:
         return _memory_case(family, variant, buggy)
+    if family == "MBARRIER-DIVERSE":
+        return _suite2_diverse_mbarrier_case(scenario_id, buggy)
     if family == "MB-REUSE":
         return _mbarrier_case(variant, buggy)
     if family in {"CP-WAIT", "CP-OVERLAP"}:

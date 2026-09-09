@@ -43,6 +43,7 @@ def _run_capture(
     selected_cta: tuple[int, int, int] = (0, 0, 0),
     descriptor_evidence: str | None = None,
     binding_evidence: str | Path | None = None,
+    final_ptx: str | Path | None = None,
 ):
     environment = dict(os.environ)
     environment["PYTHONHASHSEED"] = str(seed)
@@ -63,6 +64,11 @@ def _run_capture(
         if not evidence_path.is_absolute():
             evidence_path = FIXTURES / evidence_path
         command.extend(["--binding-evidence", str(evidence_path)])
+    if final_ptx is not None:
+        final_ptx_path = Path(final_ptx)
+        if not final_ptx_path.is_absolute():
+            final_ptx_path = FIXTURES / final_ptx_path
+        command.extend(["--final-ptx", str(final_ptx_path)])
     return subprocess.run(
         command,
         cwd=ROOT,
@@ -88,6 +94,7 @@ def _capture(
     selected_cta: tuple[int, int, int] = (0, 0, 0),
     descriptor_evidence: str | None = None,
     binding_evidence: str | Path | None = None,
+    final_ptx: str | Path | None = None,
 ) -> tuple[bytes, dict]:
     process = _run_capture(
         python,
@@ -100,9 +107,56 @@ def _capture(
         selected_cta=selected_cta,
         descriptor_evidence=descriptor_evidence,
         binding_evidence=binding_evidence,
+        final_ptx=final_ptx,
     )
     process.check_returncode()
     return process.stdout, json.loads(process.stdout)
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_predicated_bar_sync_inline_asm_is_captured_exactly():
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        "triton_effectful_inline_asm.ttgir.mlir",
+        "triton-predicated-bar-sync-inline-asm",
+    )
+
+    barriers = [
+        operation for operation in snapshot["operations"]
+        if operation["op"].startswith("triton.barrier.")
+    ]
+    assert [operation["op"] for operation in barriers] == [
+        "triton.barrier.arrive",
+        "triton.barrier.observe",
+    ]
+    assert barriers[0]["count"] == 1
+    assert barriers[0]["execution_evidence"]["program_instances"] == list(range(16))
+    result = check_module(triton_snapshot_to_module(snapshot), engine="maximal")
+    assert result["verdict"] == "SYNC_HAZARD"
+    assert result["diagnostics"][0]["code"] == "STUCK_PROTOCOL_STATE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_unknown_effectful_inline_asm_still_fails_closed(tmp_path: Path):
+    fixture = tmp_path / "unknown-effectful-inline-asm.ttgir.mlir"
+    fixture.write_text(
+        (FIXTURES / "triton_effectful_inline_asm.ttgir.mlir").read_text().replace(
+            "@p bar.sync 0;",
+            "@p bar.warp.sync 0xffffffff;",
+        )
+    )
+    process = _run_capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "triton-unknown-effectful-inline-asm",
+    )
+
+    assert process.returncode == 2
+    assert json.loads(process.stdout)["diagnostics"][0]["code"] == (
+        "TRITON_EFFECTFUL_INLINE_ASM_UNSUPPORTED"
+    )
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
@@ -465,6 +519,58 @@ def test_triton_compiler_fenced_wgmma_maps_to_existing_typed_group_fsm():
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_final_ptx_proxy_fence_is_sha_bound_and_restores_wgmma_order(
+    tmp_path: Path,
+):
+    final_ptx = tmp_path / "kernel.ptx"
+    final_ptx.write_text(""".visible .entry kernel() {
+    fence.proxy.async.shared::cta;
+    wgmma.mma_async.sync.aligned.m64n64k16.f32.f16.f16;
+}
+""")
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        "triton_wgmma.ttgir.mlir",
+        "live-triton-wgmma-final-ptx-fenced",
+        final_ptx=final_ptx,
+    )
+
+    assert [operation["op"] for operation in snapshot["operations"]].count(
+        "triton.proxy_fence"
+    ) == 1
+    evidence = snapshot["profile"]["final_ptx_evidence"]
+    assert evidence["sha256"] == hashlib.sha256(final_ptx.read_bytes()).hexdigest()
+    assert evidence["proxy_fence_before_first_wgmma"] is True
+    assert check_module(triton_snapshot_to_module(snapshot), engine="maximal")[
+        "verdict"
+    ] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_final_ptx_proxy_fence_rejects_ambiguous_mapping(tmp_path: Path):
+    final_ptx = tmp_path / "ambiguous.ptx"
+    final_ptx.write_text(""".visible .entry kernel() {
+    fence.proxy.async.shared::cta;
+    fence.proxy.async.shared::cta;
+    wgmma.mma_async.sync.aligned.m64n64k16.f32.f16.f16;
+}
+""")
+    process = _run_capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        "triton_wgmma.ttgir.mlir",
+        "live-triton-wgmma-final-ptx-ambiguous",
+        final_ptx=final_ptx,
+    )
+
+    assert process.returncode == 2
+    assert json.loads(process.stdout)["diagnostics"][0]["code"] == (
+        "TRITON_FINAL_PTX_PROXY_FENCE_AMBIGUOUS"
+    )
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
 def test_triton_empty_wgmma_wait_is_protocol_pure(tmp_path: Path):
     fixture = tmp_path / "empty-wgmma-wait.ttgir.mlir"
     fixture.write_text("""\
@@ -571,8 +677,13 @@ def test_triton_wgmma_result_use_requires_result_ready_wait(tmp_path: Path):
     )
     result = check_module(triton_snapshot_to_module(missing_snapshot), engine="maximal")
     assert missing_snapshot["operations"][-1]["region"].startswith("region:register:")
-    assert result["verdict"] == "DATA_HAZARD"
-    assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
+    assert result["verdict"] == "SYNC_HAZARD"
+    assert result["diagnostics"][0]["code"] == "WGMMA_RESULT_NOT_READY"
+    assert [finding["class"] for finding in result["all_findings"]] == [
+        "SYNC_HAZARD",
+        "DATA_HAZARD",
+    ]
+    assert result["all_findings"][1]["code"] == "UNORDERED_CONFLICT"
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")

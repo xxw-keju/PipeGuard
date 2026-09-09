@@ -664,13 +664,17 @@ def _wgmma_pair(variant: int) -> tuple[RuleCase, RuleCase]:
     for events in (buggy_events, correct_events):
         for seq, event in enumerate(events):
             event["seq"] = seq
+    buggy_verdict = "DATA_HAZARD" if variant % 2 == 0 else "SYNC_HAZARD"
+    buggy_diagnostic = (
+        "UNORDERED_CONFLICT" if variant % 2 == 0 else "WGMMA_RESULT_NOT_READY"
+    )
     return (
         _case(family="WGMMA-ENDPOINT", rule_id=rule, variant=variant, buggy=True,
               raw=_raw("temporary", cta_threads=128, actors=deepcopy(actors), resources=deepcopy(resources), regions=deepcopy(regions), events=buggy_events),
-              buggy_verdict="DATA_HAZARD", buggy_diagnostic="UNORDERED_CONFLICT", bad_execution=bad),
+              buggy_verdict=buggy_verdict, buggy_diagnostic=buggy_diagnostic, bad_execution=bad),
         _case(family="WGMMA-ENDPOINT", rule_id=rule, variant=variant, buggy=False,
               raw=_raw("temporary", cta_threads=128, actors=deepcopy(actors), resources=deepcopy(resources), regions=deepcopy(regions), events=correct_events),
-              buggy_verdict="DATA_HAZARD", buggy_diagnostic="UNORDERED_CONFLICT", bad_execution=bad),
+              buggy_verdict=buggy_verdict, buggy_diagnostic=buggy_diagnostic, bad_execution=bad),
     )
 
 
@@ -1700,7 +1704,7 @@ def _add_named_cases() -> None:
         dimensions=("wgmma", "two-groups", "wait-group-1", "result-frontier"),
         buggy_raw=_raw("temporary", cta_threads=128, actors=deepcopy(actors), resources=deepcopy(resource), regions=deepcopy(regions), events=buggy_events),
         correct_raw=_raw("temporary", cta_threads=128, actors=deepcopy(actors), resources=deepcopy(resource), regions=deepcopy(regions), events=correct_events),
-        buggy_verdict="DATA_HAZARD", buggy_diagnostic="UNORDERED_CONFLICT", diagnostic_events=("issue1", "read"),
+        buggy_verdict="SYNC_HAZARD", buggy_diagnostic="WGMMA_RESULT_NOT_READY", diagnostic_events=("issue1", "read"),
         expected_effects=(
             _effect("effect:issue1:accumulator", "wg", "WRITE", "acc1", "issue1", wg1),
             _effect("read", "wg", "READ", "acc1", "read", "read"),

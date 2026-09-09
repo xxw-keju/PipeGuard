@@ -1,7 +1,7 @@
 # Generated executable Suite 2 DSL kernel; do not hand edit.
 from suite.frontend_pairs.sources import tilelang_cases as _cases
 
-CASE_SPEC = {'case_id': 's2x-tilelang-sync-hazard-mbarrier-00', 'dsl': 'tilelang', 'result_class': 'SYNC_HAZARD', 'primitive': 'mbarrier', 'variant': 0, 'template_family': 'MB-REUSE', 'scenario_id': 'MB-REUSE', 'polarity': 'BUG', 'semantic_knobs': {'elements': 1, 'stages': 2, 'threads': 32, 'region_offset_bytes': 0, 'protocol_depth': 1}, 'oracle': {'verdict': 'SYNC_HAZARD', 'basis': 'independent paired protocol template plus variant-specific participants/region/depth'}, 'admitted': False, 'ai_adjudication': {'status': 'PENDING_INDEPENDENT_REVIEW', 'required_evidence': ['source_and_lowered_operations', 'physical_participants', 'resource_generation_or_endpoint', 'byte_overlap_if_applicable', 'reachable_prefix', 'missing_or_present_typed_order']}}
+CASE_SPEC = {'case_id': 's2x-tilelang-sync-hazard-mbarrier-00', 'dsl': 'tilelang', 'result_class': 'SYNC_HAZARD', 'primitive': 'mbarrier', 'variant': 0, 'template_family': 'MBARRIER-DIVERSE', 'scenario_id': 'MBARRIER:MISSING-ARRIVAL', 'polarity': 'BUG', 'semantic_knobs': {'elements': 1, 'stages': 2, 'threads': 32, 'region_offset_bytes': 0, 'protocol_depth': 1, 'delay_iterations': 0}, 'oracle': {'verdict': 'SYNC_HAZARD', 'basis': 'paired mbarrier state-machine scenario MBARRIER:MISSING-ARRIVAL'}, 'admitted': False, 'ai_adjudication': {'status': 'PENDING_INDEPENDENT_REVIEW', 'required_evidence': ['source_and_lowered_operations', 'physical_participants', 'resource_generation_or_endpoint', 'byte_overlap_if_applicable', 'reachable_prefix', 'missing_or_present_typed_order']}}
 
 def pipeguard_resolve():
     old_shape = _cases._shape

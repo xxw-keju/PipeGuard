@@ -43,6 +43,54 @@ def _git_revision(path: Path) -> str:
         return "unavailable"
 
 
+def _final_ptx_proxy_fence_evidence(path: Path | None) -> dict[str, Any] | None:
+    if path is None:
+        return None
+    try:
+        data = path.read_bytes()
+        text = data.decode("utf-8")
+    except (OSError, UnicodeDecodeError) as error:
+        raise CaptureError(
+            "TRITON_FINAL_PTX_EVIDENCE_INVALID",
+            "final PTX evidence could not be read as UTF-8 text",
+            {"path": str(path), "error": str(error)},
+        ) from error
+    fence_positions = [
+        match.start()
+        for match in re.finditer(r"\bfence\.proxy\.async\.shared::cta\s*;", text)
+    ]
+    wgmma_positions = [
+        match.start()
+        for match in re.finditer(r"\bwgmma\.mma_async(?:\.sync)?\.aligned\b", text)
+    ]
+    if len(fence_positions) > 1:
+        raise CaptureError(
+            "TRITON_FINAL_PTX_PROXY_FENCE_AMBIGUOUS",
+            "multiple final-PTX proxy fences cannot be mapped to TTGIR consumers exactly",
+            {"path": str(path), "proxy_fences": len(fence_positions)},
+        )
+    if fence_positions and (
+        not wgmma_positions or fence_positions[0] >= wgmma_positions[0]
+    ):
+        raise CaptureError(
+            "TRITON_FINAL_PTX_PROXY_FENCE_UNRESOLVED",
+            "final-PTX proxy fence is not before the first WGMMA issue",
+            {
+                "path": str(path),
+                "proxy_fences": len(fence_positions),
+                "wgmma_issues": len(wgmma_positions),
+            },
+        )
+    return {
+        "sha256": hashlib.sha256(data).hexdigest(),
+        "bytes": len(data),
+        "proxy_fence_before_first_wgmma": bool(fence_positions),
+        "proxy_fence_count": len(fence_positions),
+        "wgmma_instruction_count": len(wgmma_positions),
+        "method": "final-ptx-exact-opcode-order-v1",
+    }
+
+
 class TritonCapture:
     _DECLARATIONS = {
         "arith.constant",
@@ -58,7 +106,6 @@ class TritonCapture:
     _VALUE_ONLY_PURE_OPERATIONS = {
         "llvm.intr.assume",
         "tt.clampf",
-        "tt.elementwise_inline_asm",
         "tt.extern_elementwise",
         "tt.fp_to_fp",
         "tt.join",
@@ -151,6 +198,7 @@ class TritonCapture:
         launch_grid: tuple[int, int, int],
         selected_cta: tuple[int, int, int],
         binding_evidence: dict[str, Any] | None = None,
+        final_ptx_evidence: dict[str, Any] | None = None,
     ):
         self.triton = triton
         self.module = module
@@ -160,6 +208,11 @@ class TritonCapture:
         self.launch_grid = launch_grid
         self.selected_cta = selected_cta
         self.binding_evidence = binding_evidence or {}
+        self.final_ptx_evidence = final_ptx_evidence
+        self.final_ptx_proxy_fence_pending = bool(
+            final_ptx_evidence
+            and final_ptx_evidence["proxy_fence_before_first_wgmma"]
+        )
         self.unit_attributes = {
             int(index): set(attributes)
             for index, attributes in self.binding_evidence.get("unit_attributes", {}).items()
@@ -1235,6 +1288,97 @@ class TritonCapture:
         )
         self.pending_shared_write_allocations.clear()
 
+    def _capture_predicated_bar_sync_inline_asm(
+        self,
+        operation: Any,
+        index: int,
+    ) -> None:
+        assembly = operation.get_str_attr("asm_string")
+        constraints = operation.get_str_attr("constraints")
+        packed = operation.get_int_attr("packed_element")
+        pattern = re.fullmatch(
+            r"\s*\.reg\s+\.pred\s+p\s*;\s*"
+            r"setp\.lt\.u32\s+p\s*,\s*\$1\s*,\s*(\d+)\s*;\s*"
+            r"@p\s+bar\.sync\s+0\s*;\s*"
+            r"mov\.u32\s+\$0\s*,\s*\$1\s*;\s*",
+            assembly or "",
+        )
+        if (
+            operation.get_bool_attr("pure") is not False
+            or constraints != "=r,r"
+            or packed != 1
+            or operation.get_num_operands() != 1
+            or operation.get_num_results() != 1
+            or pattern is None
+        ):
+            raise CaptureError(
+                "TRITON_EFFECTFUL_INLINE_ASM_UNSUPPORTED",
+                "effectful inline assembly requires an exact semantic capture rule",
+                {"operation_index": index},
+            )
+        threshold = int(pattern.group(1))
+        operand = operation.get_operand(0)
+        lanes = self.static_values.get(operand.id())
+        if (
+            not isinstance(lanes, (tuple, list))
+            or tuple(lanes) != tuple(range(self.cta_threads))
+            or not 0 < threshold < self.cta_threads
+            or str(operation.get_result(0).get_type()) != str(operand.get_type())
+        ):
+            raise CaptureError(
+                "TRITON_INLINE_BARRIER_PARTICIPANTS_UNRESOLVED",
+                "predicated bar.sync requires the exact static CTA lane range",
+                {
+                    "operation_index": index,
+                    "threshold": threshold,
+                    "cta_threads": self.cta_threads,
+                },
+            )
+        active = list(range(threshold))
+        identifier = "cta_barrier:inline_asm:0"
+        self.resources.setdefault(identifier, {
+            "id": identifier,
+            "kind": "cta_barrier",
+            "participants": [self.current_actor],
+            "capacity": self.cta_threads,
+            "scope": "CTA",
+            "visibility_mask": {
+                "shared": True,
+                "global_read": True,
+                "global_write": True,
+                "tensor_read": False,
+                "tensor_write": False,
+                "control_only": False,
+            },
+        })
+        invocation = self.collective_barrier_invocations.get(identifier, 0)
+        self.collective_barrier_invocations[identifier] = invocation + 1
+        execution_evidence = {
+            "program_instances": active,
+            "executors": active,
+            "transition": "PER_INSTANCE",
+            "rendezvous": "NONE",
+            "method": "ttgir-effectful-inline-asm-predicated-bar-sync-v1",
+        }
+        self._emit(
+            "triton.barrier.arrive",
+            index,
+            resource=identifier,
+            invocation_id=invocation,
+            count=1,
+            execution_evidence=execution_evidence,
+        )
+        self._emit(
+            "triton.barrier.observe",
+            index,
+            resource=identifier,
+            invocation_id=invocation,
+            execution_evidence=execution_evidence,
+        )
+        self.static_values[operation.get_result(0).id()] = tuple(lanes)
+        self.pending_shared_write_allocations.clear()
+
+
     def _capture_collective_barrier(self, operation: Any, index: int) -> None:
         if (
             operation.get_num_operands() != 0
@@ -2106,6 +2250,10 @@ class TritonCapture:
                     "SM90 warp_group_dot requires at least one shared-memory operand",
                     {"operation_index": index},
                 )
+            if self.final_ptx_proxy_fence_pending:
+                if self.pending_proxy_fence is None:
+                    self.pending_proxy_fence = index
+                self.final_ptx_proxy_fence_pending = False
             if self.pending_proxy_fence is not None:
                 self._emit(
                     "triton.proxy_fence",
@@ -3697,6 +3845,18 @@ class TritonCapture:
             self._execute_poison(operation, index)
             self.elided_nodes += 1
             return
+        if name == "tt.elementwise_inline_asm":
+            if operation.get_bool_attr("pure") is False:
+                self._capture_predicated_bar_sync_inline_asm(operation, index)
+                self.emitting_nodes += 1
+                return
+            self._capture_wgmma_result_reads(operation, index)
+            self._execute_value_only_pure(operation, index)
+            if len(self.output_operations) > before:
+                self.emitting_nodes += 1
+            else:
+                self.elided_nodes += 1
+            return
         if name in self._VALUE_ONLY_PURE_OPERATIONS:
             self._capture_wgmma_result_reads(operation, index)
             self._execute_value_only_pure(operation, index)
@@ -3954,6 +4114,12 @@ class TritonCapture:
                 "fence_async_shared has no statically resolved async consumer",
                 {"operation_index": self.pending_proxy_fence},
             )
+        if self.final_ptx_proxy_fence_pending:
+            raise CaptureError(
+                "TRITON_FINAL_PTX_PROXY_FENCE_UNRESOLVED",
+                "final-PTX proxy fence has no statically resolved WGMMA consumer",
+                {"evidence": self.final_ptx_evidence},
+            )
         triton_root = Path(self.triton.__file__).resolve().parents[1]
         return {
             "snapshot_version": SNAPSHOT_VERSION,
@@ -3962,6 +4128,7 @@ class TritonCapture:
                 "source_ir_sha256": self.source_ir_sha256,
                 "compiler_ir_stage": "post-ttgir-pipeline",
                 "target_rule": "triton-cuda-90-selected-cta-grid-v1",
+                "final_ptx_evidence": self.final_ptx_evidence,
             },
             "producer": {
                 "dsl_version": str(self.triton.__version__),
@@ -4074,6 +4241,7 @@ def capture_file(
     binding_evidence_path: Path | None = None,
     launch_grid: list[int] | tuple[int, ...] | None = None,
     selected_cta: list[int] | tuple[int, ...] = (0, 0, 0),
+    final_ptx_path: Path | None = None,
 ) -> dict[str, Any]:
     try:
         import triton
@@ -4098,6 +4266,7 @@ def capture_file(
             {"path": str(path), "error": str(error)},
         ) from error
     source_digest = hashlib.sha256(source_ir).hexdigest()
+    final_ptx_evidence = _final_ptx_proxy_fence_evidence(final_ptx_path)
     normalized_grid, normalized_cta = _normalize_grid_selection(
         launch_grid,
         grid_ctas,
@@ -4187,6 +4356,7 @@ def capture_file(
             normalized_grid,
             normalized_cta,
             binding_evidence,
+            final_ptx_evidence,
         ).capture()
     except CaptureError:
         raise
@@ -4226,6 +4396,11 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         help="SHA-bound unit/array attributes hidden by Triton Python bindings",
     )
+    parser.add_argument(
+        "--final-ptx",
+        type=Path,
+        help="same-compilation final PTX used to recover backend-inserted proxy fences",
+    )
     parser.add_argument("--pretty", action="store_true")
     args = parser.parse_args(argv)
     try:
@@ -4237,6 +4412,7 @@ def main(argv: list[str] | None = None) -> int:
             binding_evidence_path=args.binding_evidence,
             launch_grid=args.launch_grid,
             selected_cta=args.selected_cta,
+            final_ptx_path=args.final_ptx,
         )
     except CaptureError as error:
         print(json.dumps({

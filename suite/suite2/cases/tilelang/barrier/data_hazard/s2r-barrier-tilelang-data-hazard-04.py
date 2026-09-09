@@ -1,6 +1,6 @@
-# Generated Recovery Suite 2 real TileLang kernel. Do not edit.
+# Generated Suite 2 Barrier case; do not hand edit.
 # case_id=s2r-barrier-tilelang-data-hazard-04
-# independent_label=DATA_HAZARD; actors=thread:0,thread:64; variant=4
+# scenario=BARRIER:GLOBAL-RAW; independent_label=DATA_HAZARD
 import tilelang.language as T
 
 @T.prim_func
@@ -8,6 +8,6 @@ def kernel(Data: T.Tensor((256,), T.int32), Out: T.Tensor((128,), T.int32)):
     with T.Kernel(1, threads=128):
         tx = T.get_thread_binding()
         if tx == 0:
-            Data[40] = T.int32(105)
+            Data[8] = T.int32(101)
         if tx == 64:
-            Out[4] = Data[40]
+            Out[5] = Data[8]

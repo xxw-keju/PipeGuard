@@ -1040,6 +1040,23 @@ def _ordered_wgmma_accumulations(module: Module, left: Effect, right: Effect) ->
     )
 
 
+def _wgmma_result_not_ready(
+    module: Module,
+    left: Effect,
+    right: Effect,
+) -> bool:
+    if bool(left.async_window) == bool(right.async_window):
+        return False
+    window, point = (left, right) if left.async_window else (right, left)
+    return (
+        module.event_map[window.begin].type == "WgmmaIssue"
+        and window.mode == "WRITE"
+        and point.mode == "READ"
+        and module.region_map[window.region].address_space == "REGISTER"
+        and window.end.lower().endswith("result_ready")
+    )
+
+
 def _data_hazard(module: Module, graph: PDG) -> dict[str, Any] | None:
     effects = _effects(module)
     proxy_coverage = _proxy_coverage_index(module)
@@ -1086,7 +1103,7 @@ def _data_hazard(module: Module, graph: PDG) -> dict[str, Any] | None:
                 query = "async-copy destination conflict must precede issue or follow observed completion"
             safe = point_before or completion_before
         if not safe:
-            return {
+            result = {
                 "category": "UNORDERED_CONFLICT",
                 "events": sorted({left.begin, right.begin}),
                 "effects": [
@@ -1096,6 +1113,10 @@ def _data_hazard(module: Module, graph: PDG) -> dict[str, Any] | None:
                 "missing_path": query,
                 "repair": "add a supported, region-scoped mbarrier handoff; generic-to-TMA source publication additionally requires proxy support",
             }
+            if _wgmma_result_not_ready(module, left, right):
+                result["primary_category"] = "WGMMA_RESULT_NOT_READY"
+                result["endpoint"] = "RESULT_READY"
+            return result
     return None
 
 
@@ -1379,6 +1400,43 @@ def _run_engine(
                 for transfer in sorted(canonical.state.visibility_transfers, key=lambda item: item.event)
             ],
         }
+        primary = hazard.get("primary_category")
+        if primary == "WGMMA_RESULT_NOT_READY":
+            sync_witness = {
+                **hazard,
+                "category": primary,
+                "endpoint": "RESULT_READY",
+                "missing_path": (
+                    "the accumulator is read before a matching WGMMA "
+                    "RESULT_READY observation"
+                ),
+            }
+            return {
+                "verdict": "SYNC_HAZARD",
+                "checker_version": "0.2.0",
+                "summary": "WGMMA accumulator is read before RESULT_READY",
+                "diagnostics": [{
+                    "code": primary,
+                    "message": sync_witness["missing_path"],
+                    "events": sync_witness["events"],
+                }],
+                "witness": sync_witness,
+                "all_findings": [
+                    {
+                        "class": "SYNC_HAZARD",
+                        "code": primary,
+                        "endpoint": "RESULT_READY",
+                        "witness": sync_witness,
+                    },
+                    {
+                        "class": "DATA_HAZARD",
+                        "code": "UNORDERED_CONFLICT",
+                        "witness": hazard,
+                    },
+                ],
+                "statistics": statistics,
+                "artifacts": artifacts,
+            }
         return {
             "verdict": "DATA_HAZARD", "checker_version": "0.2.0",
             "summary": "a conflicting memory access pair lacks supported execution and visibility ordering",

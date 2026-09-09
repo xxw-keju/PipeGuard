@@ -48,37 +48,40 @@
       },
       "case_id": "s2r-barrier-tilelang-data-hazard-00",
       "checker_report_evidence": {
-        "bytes": 4119,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-tilelang-data-hazard-00.json",
-        "sha256": "ad624dc795d117ed53c161452353617a21597394871bfc008c2afa3230a0eb64"
+        "bytes": 4121,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-data-hazard-00/checker.json",
+        "sha256": "bb0acb299bf714f4c25a8d183cdb4e146b6830413e7af2f0d3cb0050bd4a5383"
       },
       "dsl": "tilelang",
+      "nvidia_applicability": "APPLICABLE_SHARED_MEMORY",
       "pgir_evidence": {
-        "bytes": 18582,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-tilelang-data-hazard-00.json",
-        "sha256": "b41a0148646ba255fad6d48a2e018893849ffa5c10bfd84ac1b7aa310a75f632"
+        "bytes": 18276,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-data-hazard-00/pgir.json",
+        "sha256": "3202503281ecd1308d844387b3b50a635414a04d03ce34a47ac4b2d6e5471c2d"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": "UNORDERED_CONFLICT",
+        "status": "CHECKED",
         "verdict": "DATA_HAZARD"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "DATA_HAZARD",
+      "scenario_id": "BARRIER:SHARED-RAW",
       "source": {
-        "bytes": 477,
+        "bytes": 507,
         "path": "suite/suite2/cases/tilelang/barrier/data_hazard/s2r-barrier-tilelang-data-hazard-00.py",
-        "sha256": "9db8b7b0a19fcbf059783c5f50403ec5146154bf64961ca5f18885e4ec8dce68"
+        "sha256": "a98bb81924bc8e032773e56b3f64b757e5cd2bde5a97e40153f3bd27001b2ad0"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1403,
+        "bytes": 1225,
         "path": "suite/suite2/cases/tilelang/barrier/data_hazard/s2r-barrier-tilelang-data-hazard-00.json",
-        "sha256": "087d9e9d8adf4d0ff43dd82a2d9e3410b0312530887bdc52d140abd61b7e85d5"
+        "sha256": "da82a39ec02aa6be6c82cd3fb60bc5bd7001e5b3914dfb9088c8c43cd22f994c"
       },
       "variant": 0
     },
@@ -90,37 +93,40 @@
       },
       "case_id": "s2r-barrier-tilelang-data-hazard-01",
       "checker_report_evidence": {
-        "bytes": 4119,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-tilelang-data-hazard-01.json",
-        "sha256": "5e19ef9d361240d56a1935e60f5bb53324f2445a8b67447d1328b36cb29ca542"
+        "bytes": 4125,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-data-hazard-01/checker.json",
+        "sha256": "91a7e0579bd4a318b3b198441fd4a835c4e6f40c43015e1cee464e2e4f4a8bf1"
       },
       "dsl": "tilelang",
+      "nvidia_applicability": "APPLICABLE_SHARED_MEMORY",
       "pgir_evidence": {
-        "bytes": 18582,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-tilelang-data-hazard-01.json",
-        "sha256": "98b47b822353f0e6b91d557aa03606e24b5cebd740775673b2748ce082cfe417"
+        "bytes": 18653,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-data-hazard-01/pgir.json",
+        "sha256": "885710b663541e00a335610c0ad9b6990a2b2d0c9e0b3e07008e34b57fccf2c6"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": "UNORDERED_CONFLICT",
+        "status": "CHECKED",
         "verdict": "DATA_HAZARD"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "DATA_HAZARD",
+      "scenario_id": "BARRIER:SHARED-WAW",
       "source": {
-        "bytes": 479,
+        "bytes": 544,
         "path": "suite/suite2/cases/tilelang/barrier/data_hazard/s2r-barrier-tilelang-data-hazard-01.py",
-        "sha256": "7d49479971900f001f62c73003568da448be4b588963dd4f06db87c99bb38733"
+        "sha256": "3d5389ceb28d1e9448196c054d37e92f67b12b9b97f901c96a7d60c7f0d788fe"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1403,
+        "bytes": 1225,
         "path": "suite/suite2/cases/tilelang/barrier/data_hazard/s2r-barrier-tilelang-data-hazard-01.json",
-        "sha256": "317ef17e9878b2adf417a83cc92da384d899becd0b43a39eba92529002f44679"
+        "sha256": "f059b30359e38ad77608d17cc08bd41c2a7e71e49c5064a9a46a556955d6b4cd"
       },
       "variant": 1
     },
@@ -132,37 +138,40 @@
       },
       "case_id": "s2r-barrier-tilelang-data-hazard-02",
       "checker_report_evidence": {
-        "bytes": 4120,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-tilelang-data-hazard-02.json",
-        "sha256": "f5058272b7725d470ac14a00ceea9e02481c4354eacbf526e2d43101c280071a"
+        "bytes": 4230,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-data-hazard-02/checker.json",
+        "sha256": "b1a4c346c09a80e6c7877d4e3a8d2ec3a07d743d76e849aaa767d8dce0f28d3e"
       },
       "dsl": "tilelang",
+      "nvidia_applicability": "APPLICABLE_SHARED_MEMORY",
       "pgir_evidence": {
-        "bytes": 18582,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-tilelang-data-hazard-02.json",
-        "sha256": "bd077131387a00693866729a3f7211eb32eefb6f82b90f05c295d760eed47931"
+        "bytes": 29094,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-data-hazard-02/pgir.json",
+        "sha256": "73639df5a6777428ecdb45472111da9bdbf0a978b2b49cd1f9bdee555e5a7c95"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": "UNORDERED_CONFLICT",
+        "status": "CHECKED",
         "verdict": "DATA_HAZARD"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "DATA_HAZARD",
+      "scenario_id": "BARRIER:SHARED-WAR",
       "source": {
-        "bytes": 479,
+        "bytes": 618,
         "path": "suite/suite2/cases/tilelang/barrier/data_hazard/s2r-barrier-tilelang-data-hazard-02.py",
-        "sha256": "d92b8d7e444d5d94f7f46663f97bb520b6ba91e37adf376c1a34a342af8fe990"
+        "sha256": "c84393c4075e5ada1f27bff3596150aebafae3cc37abf30a384bc23de8255579"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1405,
+        "bytes": 1227,
         "path": "suite/suite2/cases/tilelang/barrier/data_hazard/s2r-barrier-tilelang-data-hazard-02.json",
-        "sha256": "cfc3cab0e6c4d033ecd31cc0641bf296dafc6259ebdd9d02cab5acca0f64be7f"
+        "sha256": "2a530594c747d1d761e5023dc4a30669a905c020274fcc6ddde42e99e1fd5998"
       },
       "variant": 2
     },
@@ -174,37 +183,40 @@
       },
       "case_id": "s2r-barrier-tilelang-data-hazard-03",
       "checker_report_evidence": {
-        "bytes": 4123,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-tilelang-data-hazard-03.json",
-        "sha256": "5a2b4b479d1ab53884b281d3338729479a3f248391ad75d2be491da64c50afb9"
+        "bytes": 4135,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-data-hazard-03/checker.json",
+        "sha256": "e486b5a8d9f5804906fc922945c21817cdd477b9bc0c561754526b35e182c7ef"
       },
       "dsl": "tilelang",
+      "nvidia_applicability": "APPLICABLE_SHARED_MEMORY",
       "pgir_evidence": {
-        "bytes": 18589,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-tilelang-data-hazard-03.json",
-        "sha256": "9027f79a2429b2fe7cb83cf77eb47d1860acbcfc2d945ae80bb87bd7eda6e5de"
+        "bytes": 42492,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-data-hazard-03/pgir.json",
+        "sha256": "31dd1ac6f4bd88352f25b68964b9c77db01ed004b2a86ee00ff0bb2c6afa8915"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": "UNORDERED_CONFLICT",
+        "status": "CHECKED",
         "verdict": "DATA_HAZARD"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "DATA_HAZARD",
+      "scenario_id": "BARRIER:SHARED-DELAYED-RAW",
       "source": {
-        "bytes": 479,
+        "bytes": 593,
         "path": "suite/suite2/cases/tilelang/barrier/data_hazard/s2r-barrier-tilelang-data-hazard-03.py",
-        "sha256": "689ca03477897774ec071e5b494a0b2db1c019d64bbf6a72e4c0bd201e2497e4"
+        "sha256": "670ccc70c73b7d44ed61f07a38392102e6804ae3f6f61b533a7899bdd41083c7"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1407,
+        "bytes": 1245,
         "path": "suite/suite2/cases/tilelang/barrier/data_hazard/s2r-barrier-tilelang-data-hazard-03.json",
-        "sha256": "e4c53a4b75e0c058e78f393b6445774afed4edb0a28c07eff3b03746b01f4156"
+        "sha256": "8ed64dae936e596f3e88d406d5ade5be4ab53e24bbc6eb58eaa754ccd6798e7e"
       },
       "variant": 3
     },
@@ -216,37 +228,40 @@
       },
       "case_id": "s2r-barrier-tilelang-data-hazard-04",
       "checker_report_evidence": {
-        "bytes": 4124,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-tilelang-data-hazard-04.json",
-        "sha256": "cd6f79b418c929c582b05ad888a9efd22f777a88047f2a5777102a1e1f6cacb8"
+        "bytes": 4117,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-data-hazard-04/checker.json",
+        "sha256": "5193e0688b525c6218d4c7cc02b8af7c182e4450cd35f6a65602214bb8bac9f8"
       },
       "dsl": "tilelang",
+      "nvidia_applicability": "OUT_OF_DOMAIN_GLOBAL_MEMORY",
       "pgir_evidence": {
-        "bytes": 18589,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-tilelang-data-hazard-04.json",
-        "sha256": "7b44397afc7a59a0ba894b964368df75c5cb02d327849644bb9d699f0f70cea1"
+        "bytes": 18275,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-data-hazard-04/pgir.json",
+        "sha256": "be8aec5a24531943adde43db55990ccad8cd563739aa98f103bf0cc348211ce9"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": "UNORDERED_CONFLICT",
+        "status": "CHECKED",
         "verdict": "DATA_HAZARD"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "DATA_HAZARD",
+      "scenario_id": "BARRIER:GLOBAL-RAW",
       "source": {
-        "bytes": 479,
+        "bytes": 456,
         "path": "suite/suite2/cases/tilelang/barrier/data_hazard/s2r-barrier-tilelang-data-hazard-04.py",
-        "sha256": "eb8f35f61446fe92f7d6930fd00641b06cac5e1a703e41f4dde2053a452fab47"
+        "sha256": "d33556bfc0f5d928872585d411da1007c71ac0c3535615a75f8fb3af9d712339"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1407,
+        "bytes": 1232,
         "path": "suite/suite2/cases/tilelang/barrier/data_hazard/s2r-barrier-tilelang-data-hazard-04.json",
-        "sha256": "4bfe308dc2c4be5fe189f359d7d17afd37bbd2db0f3dce857c9f3fb363fc5d1d"
+        "sha256": "099e3700398f2faa0f9a4ae304fac7038ba7f4a2b3f4491d68cc667807d61156"
       },
       "variant": 4
     },
@@ -258,37 +273,40 @@
       },
       "case_id": "s2r-barrier-tilelang-safe-00",
       "checker_report_evidence": {
-        "bytes": 3710,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-tilelang-safe-00.json",
-        "sha256": "cab36a2518783467f3f7f6c3f43774ecab3308dd643355e47033db32e0233bae"
+        "bytes": 3408,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-safe-00/checker.json",
+        "sha256": "e9be5f6b06f913a6a496e2758bcdd1038fc1ecc47a8380938bc29bc4c0c82633"
       },
       "dsl": "tilelang",
+      "nvidia_applicability": "APPLICABLE_SHARED_MEMORY",
       "pgir_evidence": {
-        "bytes": 28103,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-tilelang-safe-00.json",
-        "sha256": "db0aafdb8cb52525adeac73ddbbfde9ff3b34392ac95b9ed918cbb13f64092af"
+        "bytes": 27811,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-safe-00/pgir.json",
+        "sha256": "c2feb14abbdea0873b38f8078e056c8a92b2c814c86424149c8bb1f8026e5873"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "BARRIER:SHARED-RAW",
       "source": {
-        "bytes": 488,
+        "bytes": 518,
         "path": "suite/suite2/cases/tilelang/barrier/safe/s2r-barrier-tilelang-safe-00.py",
-        "sha256": "38c035c56f60bb9ea2269c523225acc2d2c417e771a07618b7e95f46d7fea4ab"
+        "sha256": "7a22d843d0676f5ea68310b5a1ed0e6929564ca0104dd336d287eeb21e7e3a69"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1354,
+        "bytes": 1169,
         "path": "suite/suite2/cases/tilelang/barrier/safe/s2r-barrier-tilelang-safe-00.json",
-        "sha256": "967f4043bcf2af92daa8eb63ae4ac52f779319b5b799763d8715f6c3de8c79e3"
+        "sha256": "0060c8113b982023ca8a7c6cf9bf39ce069f10305d6f98d2286b2b887caa72a1"
       },
       "variant": 0
     },
@@ -300,37 +318,40 @@
       },
       "case_id": "s2r-barrier-tilelang-safe-01",
       "checker_report_evidence": {
-        "bytes": 3706,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-tilelang-safe-01.json",
-        "sha256": "e07efde6478e11004b569e576bcd6cafeb588baf3229c87f9fd65c3318737afd"
+        "bytes": 3411,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-safe-01/checker.json",
+        "sha256": "53c734a893429d473d6968329593a7fcabc46835d4dc260e59df73e289b7ce51"
       },
       "dsl": "tilelang",
+      "nvidia_applicability": "APPLICABLE_SHARED_MEMORY",
       "pgir_evidence": {
-        "bytes": 28103,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-tilelang-safe-01.json",
-        "sha256": "af9c9b622b7923900ac865e6df31d3ff3184e01ef32f3cb5bfb5b2cf1e60ff18"
+        "bytes": 28188,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-safe-01/pgir.json",
+        "sha256": "29d79324889a8bb0fb258ce14109da831ad81d6b1232d8e04f1ab542cf101a7d"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "BARRIER:SHARED-WAW",
       "source": {
-        "bytes": 490,
+        "bytes": 555,
         "path": "suite/suite2/cases/tilelang/barrier/safe/s2r-barrier-tilelang-safe-01.py",
-        "sha256": "71a280fe0fa104d7404d3bf0bc2949301c4bd9c107d7b78b5f16b2fc6a627a44"
+        "sha256": "8ae11d91479f727d5fc8a78887fb4b546b7385d511aa01f5844a80976ccbc286"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1354,
+        "bytes": 1169,
         "path": "suite/suite2/cases/tilelang/barrier/safe/s2r-barrier-tilelang-safe-01.json",
-        "sha256": "88b58ff101e6c611255f19205ac1b6d96cc09e1542815a27b103cab846056615"
+        "sha256": "9a443144c16df177082cb55b8c76f400f0599f5926a4237b7b18d2847d7d9937"
       },
       "variant": 1
     },
@@ -342,37 +363,40 @@
       },
       "case_id": "s2r-barrier-tilelang-safe-02",
       "checker_report_evidence": {
-        "bytes": 3706,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-tilelang-safe-02.json",
-        "sha256": "232fe6744486fafeb65192cbe8c0469993b9b5907578a80a0d3d780b77932882"
+        "bytes": 3411,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-safe-02/checker.json",
+        "sha256": "0c72011df037c6931022997c23c93bb9a447a290308a5ebe75e54edbcda287be"
       },
       "dsl": "tilelang",
+      "nvidia_applicability": "APPLICABLE_SHARED_MEMORY",
       "pgir_evidence": {
-        "bytes": 28103,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-tilelang-safe-02.json",
-        "sha256": "7be7488067150371a506e6aa71d4b535c15354f92084b8760bdd39f71c281d42"
+        "bytes": 38627,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-safe-02/pgir.json",
+        "sha256": "3e86e900ad0084f048ba6af7a83c0eeea012c7b7ed90022f898dad271e1a5981"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "BARRIER:SHARED-WAR",
       "source": {
-        "bytes": 490,
+        "bytes": 629,
         "path": "suite/suite2/cases/tilelang/barrier/safe/s2r-barrier-tilelang-safe-02.py",
-        "sha256": "705dfa4929511d1b9f11e6a075edf9ebea273bc99fd5b2b0e4f1592bba23873d"
+        "sha256": "9f72e6b36e95833cfa96ebca5818e262744857b912c0c9d52f80a1ce61279587"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1356,
+        "bytes": 1171,
         "path": "suite/suite2/cases/tilelang/barrier/safe/s2r-barrier-tilelang-safe-02.json",
-        "sha256": "40d075e545bfa1534d5fadc8cedd319fa153e1cf4892bad0c2ffbe8dbafcf2a4"
+        "sha256": "a6611566eae29175e36c4eaef052908a5f31faf1dde376724fc8289e1c745cd4"
       },
       "variant": 2
     },
@@ -384,37 +408,40 @@
       },
       "case_id": "s2r-barrier-tilelang-safe-03",
       "checker_report_evidence": {
-        "bytes": 3706,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-tilelang-safe-03.json",
-        "sha256": "30000ce9813e5a02e24f1ef5c168eb5dfe86b4510457f9f07ce07097bf0361b9"
+        "bytes": 3413,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-safe-03/checker.json",
+        "sha256": "fa59d9767ad2ed3f8592307a82632756f1ef5f1f33396a9c69a93f8fc5479eda"
       },
       "dsl": "tilelang",
+      "nvidia_applicability": "APPLICABLE_SHARED_MEMORY",
       "pgir_evidence": {
-        "bytes": 28110,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-tilelang-safe-03.json",
-        "sha256": "ea7089619463b2b2cc09e488eb13ef186826c2b5fa0aca1445a19e95f2ae8c2b"
+        "bytes": 52029,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-safe-03/pgir.json",
+        "sha256": "92204fedcf384f34505e5dbaaef076b77230c7b48edcc0f184606ca992cb6640"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "BARRIER:SHARED-DELAYED-RAW",
       "source": {
-        "bytes": 490,
+        "bytes": 604,
         "path": "suite/suite2/cases/tilelang/barrier/safe/s2r-barrier-tilelang-safe-03.py",
-        "sha256": "03d725d72bbf5747cdd9b9eeba155e7521a0e61a3f22fe40064b46306bbc7557"
+        "sha256": "10b92206156d969cca7fa62db3bff9e378892aad867f27abd3317bd037dd320b"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1358,
+        "bytes": 1189,
         "path": "suite/suite2/cases/tilelang/barrier/safe/s2r-barrier-tilelang-safe-03.json",
-        "sha256": "21d6e6c2878d871ae3b26644de69d492cb1e8b8d9086f6cfefbd1aab6bb9b702"
+        "sha256": "93b9360fecef811b7de515ca25809e26a782c8b6cc94182e8698097d69e114e3"
       },
       "variant": 3
     },
@@ -426,37 +453,40 @@
       },
       "case_id": "s2r-barrier-tilelang-safe-04",
       "checker_report_evidence": {
-        "bytes": 3707,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-tilelang-safe-04.json",
-        "sha256": "cb20ec47423a1ce7afa9d41356354db1c9e0a473aaab47d147eb4f777b1b2376"
+        "bytes": 3411,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-safe-04/checker.json",
+        "sha256": "98f9315bd0fe4a4ae64932b877fda916bd23b542b99916a541f2807013620d70"
       },
       "dsl": "tilelang",
+      "nvidia_applicability": "OUT_OF_DOMAIN_GLOBAL_MEMORY",
       "pgir_evidence": {
-        "bytes": 28110,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-tilelang-safe-04.json",
-        "sha256": "62da27705f667aeb1fa98afb990aae09f6f63ec467ca918083a26d122ec2cb29"
+        "bytes": 27810,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-tilelang-safe-04/pgir.json",
+        "sha256": "9e138889367ca1b73eaad044a5582081d0cddd0b0a8128c3e21af001aefd85be"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "BARRIER:GLOBAL-RAW",
       "source": {
-        "bytes": 490,
+        "bytes": 467,
         "path": "suite/suite2/cases/tilelang/barrier/safe/s2r-barrier-tilelang-safe-04.py",
-        "sha256": "553a05ea2faa45cc09bd0e6666f87f71659ced2c37ec8cf4afd2181fdf361ef4"
+        "sha256": "24ed75e1d263542a679cb119e8252470926ae02334f940d3d1ed83c2e6a5f191"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1358,
+        "bytes": 1176,
         "path": "suite/suite2/cases/tilelang/barrier/safe/s2r-barrier-tilelang-safe-04.json",
-        "sha256": "92665d2c46610a720fe7bdf219f6e359f1234e787ba9ed87dfbfbf2db3da3395"
+        "sha256": "aa6081a1372a7a3781f1598940ef99e7ae5b11b13eb3bfcdbe7ea722db049f57"
       },
       "variant": 4
     },
@@ -678,37 +708,40 @@
       },
       "case_id": "s2r-barrier-triton-data-hazard-00",
       "checker_report_evidence": {
-        "bytes": 4118,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-triton-data-hazard-00.json",
-        "sha256": "5b76a3e882c75918f0ac81eb6ef6f5a83e79b33dc241782f9e3cff90adc21664"
+        "bytes": 4358,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-data-hazard-00/checker.json",
+        "sha256": "74dc73cdfda47a5c0c6e8afbaa8130cc679b6b809f11b0c617b5ea934846c8c5"
       },
       "dsl": "triton",
+      "nvidia_applicability": "APPLICABLE_SHARED_MEMORY",
       "pgir_evidence": {
-        "bytes": 7574,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-triton-data-hazard-00.json",
-        "sha256": "355b688de3a79e118123eb23d9a80ac17c68a0499b2b7b5fe54b65c7a14c22de"
+        "bytes": 91174,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-data-hazard-00/pgir.json",
+        "sha256": "a1b29fc9ab0f1bd5a39d8964c0605e6c29b2d32449952b1fb90c507f5a37ce7a"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": "UNORDERED_CONFLICT",
+        "status": "CHECKED",
         "verdict": "DATA_HAZARD"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "DATA_HAZARD",
+      "scenario_id": "BARRIER:SHARED-RAW",
       "source": {
-        "bytes": 741,
+        "bytes": 1006,
         "path": "suite/suite2/cases/triton/barrier/data_hazard/s2r-barrier-triton-data-hazard-00.py",
-        "sha256": "0d94a57a3e19046ff45da537511944d2211faa83d0dd18b994c250babf764dd3"
+        "sha256": "52c6448393464653ac84067d78381455dc091da11ae14760c390ab3bc9cddbba"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1391,
+        "bytes": 1214,
         "path": "suite/suite2/cases/triton/barrier/data_hazard/s2r-barrier-triton-data-hazard-00.json",
-        "sha256": "e2189be515e892b73926f94b244dc3642f0229713e73b493aeb1f7db0fcb56e0"
+        "sha256": "db705c47bbf04060cc921806fe9059df2bce0fb8c0d54f9e8506e043008137cb"
       },
       "variant": 0
     },
@@ -720,37 +753,40 @@
       },
       "case_id": "s2r-barrier-triton-data-hazard-01",
       "checker_report_evidence": {
-        "bytes": 4119,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-triton-data-hazard-01.json",
-        "sha256": "c82005f626957994c0968aa030b4dfe24f03486582cc5befe1e9fdf36df76a70"
+        "bytes": 4361,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-data-hazard-01/checker.json",
+        "sha256": "3b1a4b79052c2c315ba2185f1fb40bb9cf8a9279e66caf845836ef3cd7170f1a"
       },
       "dsl": "triton",
+      "nvidia_applicability": "APPLICABLE_SHARED_MEMORY",
       "pgir_evidence": {
-        "bytes": 7744,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-triton-data-hazard-01.json",
-        "sha256": "ac18cb0aa5a4b09851a2fc53e6039542182be88c2f38bfa9957e14128ce4e736"
+        "bytes": 100987,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-data-hazard-01/pgir.json",
+        "sha256": "5482ff6e14458dcb11517984014f5d211de456760d24aa73b4e57fd7fc762ce5"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": "UNORDERED_CONFLICT",
+        "status": "CHECKED",
         "verdict": "DATA_HAZARD"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "DATA_HAZARD",
+      "scenario_id": "BARRIER:SHARED-WAW",
       "source": {
-        "bytes": 743,
+        "bytes": 1083,
         "path": "suite/suite2/cases/triton/barrier/data_hazard/s2r-barrier-triton-data-hazard-01.py",
-        "sha256": "7acc7c842c4b8ab6046abe1c4cb657a6f70b10b7f993784d9cb279ca275b7b9c"
+        "sha256": "a894247489e8c91ae2178d2b8c8d11bdf27f9bb1b8728683881ed8fd1910a5bb"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1391,
+        "bytes": 1214,
         "path": "suite/suite2/cases/triton/barrier/data_hazard/s2r-barrier-triton-data-hazard-01.json",
-        "sha256": "8f225b4e5daea96e9f40ba9250b2532fec1bc5d7c6f8348cde8607d314d1eade"
+        "sha256": "7c631e729275e4c607518eabe7fb14ab09a4fc3e3a6ad644a5f92413eb9c9034"
       },
       "variant": 1
     },
@@ -762,37 +798,40 @@
       },
       "case_id": "s2r-barrier-triton-data-hazard-02",
       "checker_report_evidence": {
-        "bytes": 4119,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-triton-data-hazard-02.json",
-        "sha256": "0d1b26cd35cdb63553de87b5e546fa91e157b6ce4aecfdaef0d2fa7e01ea718f"
+        "bytes": 4358,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-data-hazard-02/checker.json",
+        "sha256": "988cc7bb3ee9f3a5ad645056b9b9ff2bce27684ac0d20c565f368bc05e1c04d8"
       },
       "dsl": "triton",
+      "nvidia_applicability": "APPLICABLE_SHARED_MEMORY",
       "pgir_evidence": {
-        "bytes": 7744,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-triton-data-hazard-02.json",
-        "sha256": "6e82d5b77417f6fae669e8fefe250a3d9607e2512384ae6e0d5b51aff7830868"
+        "bytes": 90997,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-data-hazard-02/pgir.json",
+        "sha256": "08d05fa1d2243ae9caf523bb2e6436203a26d34308ef985ab10dabefce601246"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": "UNORDERED_CONFLICT",
+        "status": "CHECKED",
         "verdict": "DATA_HAZARD"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "DATA_HAZARD",
+      "scenario_id": "BARRIER:SHARED-WAR",
       "source": {
-        "bytes": 743,
+        "bytes": 1072,
         "path": "suite/suite2/cases/triton/barrier/data_hazard/s2r-barrier-triton-data-hazard-02.py",
-        "sha256": "60a3cb95bac0cc26a8751b6e25abbd8d142900f0fe34c40119921b8744a2165f"
+        "sha256": "a8061c7ec885bed7a4fc5736b7777c3bcf6ff8dfc74fb2ca6a4657926e6fffe5"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1393,
+        "bytes": 1216,
         "path": "suite/suite2/cases/triton/barrier/data_hazard/s2r-barrier-triton-data-hazard-02.json",
-        "sha256": "0828f3989b5cbf1a74154de117fd48ac1848d83c25733f56679abaa6230a496e"
+        "sha256": "fe964f3ee68b70aa2b628799665b257bab1a239300c356064b2d1f8fc624b293"
       },
       "variant": 2
     },
@@ -804,37 +843,40 @@
       },
       "case_id": "s2r-barrier-triton-data-hazard-03",
       "checker_report_evidence": {
-        "bytes": 4123,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-triton-data-hazard-03.json",
-        "sha256": "b62ef894b9b56914b5d52efdfda0f994934c4b7c56c2712b5c374e8761aea477"
+        "bytes": 4371,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-data-hazard-03/checker.json",
+        "sha256": "5dfaee11cbbcda943e8f0e6d79699bb1091fb43a95763a422f2368e357a6f357"
       },
       "dsl": "triton",
+      "nvidia_applicability": "APPLICABLE_SHARED_MEMORY",
       "pgir_evidence": {
-        "bytes": 7751,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-triton-data-hazard-03.json",
-        "sha256": "4c09cc378d84f958423365bd95eac80735fc3557cb599a9bad52812709bb3f4a"
+        "bytes": 736671,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-data-hazard-03/pgir.json",
+        "sha256": "2fa5a7401daa8da5dc74ffc47bf89d9e8fd105786299c340bc8baa3b20401909"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": "UNORDERED_CONFLICT",
+        "status": "CHECKED",
         "verdict": "DATA_HAZARD"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "DATA_HAZARD",
+      "scenario_id": "BARRIER:SHARED-DELAYED-RAW",
       "source": {
-        "bytes": 743,
+        "bytes": 1213,
         "path": "suite/suite2/cases/triton/barrier/data_hazard/s2r-barrier-triton-data-hazard-03.py",
-        "sha256": "1d39f1addc743350d8e3b6d41b8dc12fb34b91055748315b85359545bcc15bac"
+        "sha256": "9df87e1f355f28d08b28333a83c53690a310fd95eefa42e558dbb51432193132"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1395,
+        "bytes": 1234,
         "path": "suite/suite2/cases/triton/barrier/data_hazard/s2r-barrier-triton-data-hazard-03.json",
-        "sha256": "7daf7c998aa264c7b6b8fe4f21502367039b121a5c9852b6ed31498c41191e75"
+        "sha256": "fbc722b139ac9fecb5b9fa931922e0f539c82513d2c5748d7739c7b2974956fa"
       },
       "variant": 3
     },
@@ -846,37 +888,40 @@
       },
       "case_id": "s2r-barrier-triton-data-hazard-04",
       "checker_report_evidence": {
-        "bytes": 4123,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-triton-data-hazard-04.json",
-        "sha256": "1022bab5d53b0a3ba917b25d62c8f1055b88ff6e10712770ca4e1a09cc9e62a8"
+        "bytes": 4119,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-data-hazard-04/checker.json",
+        "sha256": "d000fea6e42716d9fa274e5dea4123897ba315f49989743ae18c43132b018951"
       },
       "dsl": "triton",
+      "nvidia_applicability": "OUT_OF_DOMAIN_GLOBAL_MEMORY",
       "pgir_evidence": {
-        "bytes": 7751,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-triton-data-hazard-04.json",
-        "sha256": "66f844857479c6eec383d56c47dea305740aa2dd1dd60dbf62c37ef0d1853d90"
+        "bytes": 7257,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-data-hazard-04/pgir.json",
+        "sha256": "1245e0db521d5bc61ccbe52987f839785d40ad73aced80ad4e49dcb0164eb602"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": "UNORDERED_CONFLICT",
+        "status": "CHECKED",
         "verdict": "DATA_HAZARD"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "DATA_HAZARD",
+      "scenario_id": "BARRIER:GLOBAL-RAW",
       "source": {
-        "bytes": 743,
+        "bytes": 861,
         "path": "suite/suite2/cases/triton/barrier/data_hazard/s2r-barrier-triton-data-hazard-04.py",
-        "sha256": "782c0c4e7dbd5dc926fa52e525ba4e113f80cee3a2fa11422c1366799bd7e76f"
+        "sha256": "2be5a164b27c4378c1772a31a2e952703856b1022eef8f23d7c9d6372d79e241"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1395,
+        "bytes": 1220,
         "path": "suite/suite2/cases/triton/barrier/data_hazard/s2r-barrier-triton-data-hazard-04.json",
-        "sha256": "b7b23beb6a2654b3a8e8dae7960b0745db6758cb4b5ad2c1f9b6f1ecc8b7c42a"
+        "sha256": "7a8342f6c8019e1ae1a288c46345d516e21bf38f6dd0777f0b7c4ba8788fbd4a"
       },
       "variant": 4
     },
@@ -888,37 +933,40 @@
       },
       "case_id": "s2r-barrier-triton-safe-00",
       "checker_report_evidence": {
-        "bytes": 3935,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-triton-safe-00.json",
-        "sha256": "b48b64d3d960921ee15520c856f423c32b9fa698c6be0c9fab433702df047a1d"
+        "bytes": 3470,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-safe-00/checker.json",
+        "sha256": "1c5e9d4095d992d88afe056edc3c320f1abd2cb5814fbb231e5a71718789424b"
       },
       "dsl": "triton",
+      "nvidia_applicability": "APPLICABLE_SHARED_MEMORY",
       "pgir_evidence": {
-        "bytes": 14953,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-triton-safe-00.json",
-        "sha256": "4ef69c8ad3b139b79d1c1bf503691429e59b088a2de1835280fcca1c63515907"
+        "bytes": 86745,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-safe-00/pgir.json",
+        "sha256": "dc24da171c082ab547891e3931ee40cae153260a27d2e4c6cd46f5d3596715e2"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "BARRIER:SHARED-RAW",
       "source": {
-        "bytes": 746,
+        "bytes": 855,
         "path": "suite/suite2/cases/triton/barrier/safe/s2r-barrier-triton-safe-00.py",
-        "sha256": "82f616922c483594123a3fad10015caff823c481adb53e1dea19764f50061836"
+        "sha256": "fae868748ddcba0f615b39e0db63bbe5e4f92d4cd3a2feb9155e285e148b56d1"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1342,
+        "bytes": 1157,
         "path": "suite/suite2/cases/triton/barrier/safe/s2r-barrier-triton-safe-00.json",
-        "sha256": "0821a0dce1edd41dc8386ce3156123e8cd4439ae7531dc78eedb6c2d97f8a555"
+        "sha256": "0158099624895230b8247a87c65faa582a62db24583fd83abb444167e0302001"
       },
       "variant": 0
     },
@@ -930,37 +978,40 @@
       },
       "case_id": "s2r-barrier-triton-safe-01",
       "checker_report_evidence": {
-        "bytes": 3937,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-triton-safe-01.json",
-        "sha256": "5e20f805e53e14d978cd56df2b4c59abb56562de78f1a40b809c19e11ec5aab1"
+        "bytes": 3476,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-safe-01/checker.json",
+        "sha256": "95e2d2531900a3e4de4b78021f3fbb54c40c2a06dcf79f9762176960a74ead98"
       },
       "dsl": "triton",
+      "nvidia_applicability": "APPLICABLE_SHARED_MEMORY",
       "pgir_evidence": {
-        "bytes": 15123,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-triton-safe-01.json",
-        "sha256": "6d36e7f543b7d9a5bf788bfd35c5043ed33687af733e4b70c229ae544c72a176"
+        "bytes": 103758,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-safe-01/pgir.json",
+        "sha256": "56f9cc8bd71c44400bfcd97c68d2398ca80e2f9f49076bf0bf14b379ba62c263"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "BARRIER:SHARED-WAW",
       "source": {
-        "bytes": 748,
+        "bytes": 918,
         "path": "suite/suite2/cases/triton/barrier/safe/s2r-barrier-triton-safe-01.py",
-        "sha256": "251b3023e9dcf1992894216b3f15da3876208d3288e71552fea6985a1e7778be"
+        "sha256": "7841c80355b21f7997df3f012c5538f2f902e7e2e3045e07a73123db620cc9eb"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1342,
+        "bytes": 1157,
         "path": "suite/suite2/cases/triton/barrier/safe/s2r-barrier-triton-safe-01.json",
-        "sha256": "79c9fa7df754fb9e6e4cfd5f84d0d6a19fb1e287aee6a4fb77beb0e6ea9d01e4"
+        "sha256": "df39ffcbf76d61dfe5bbf160e04709c204e3d48db12a184c97a185c13b4d42a8"
       },
       "variant": 1
     },
@@ -972,37 +1023,40 @@
       },
       "case_id": "s2r-barrier-triton-safe-02",
       "checker_report_evidence": {
-        "bytes": 3934,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-triton-safe-02.json",
-        "sha256": "6af89af261539208df5326ab85050fc54b178014315e9b6588c09f698155df36"
+        "bytes": 3475,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-safe-02/checker.json",
+        "sha256": "91ae4c996bf6ca9bd77f9b5cd0122383f0b0903981dfc2c2340aa0a0660b82b1"
       },
       "dsl": "triton",
+      "nvidia_applicability": "APPLICABLE_SHARED_MEMORY",
       "pgir_evidence": {
-        "bytes": 15123,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-triton-safe-02.json",
-        "sha256": "37e39b9d01a5c9dddcfb9154b7588464d0dc102f2e6531a4a58a5290adfd4b68"
+        "bytes": 103361,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-safe-02/pgir.json",
+        "sha256": "ebd3f5d7f4756ffc5f8f726299ab7c59525bdc469212b25b3c91f95a9dc607b7"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "BARRIER:SHARED-WAR",
       "source": {
-        "bytes": 748,
+        "bytes": 935,
         "path": "suite/suite2/cases/triton/barrier/safe/s2r-barrier-triton-safe-02.py",
-        "sha256": "0f86543517bed5c9730c88e88206748580d1510b2109b110902b67302c0e77c5"
+        "sha256": "7e31109ec6b3a46332f42632220b88a3dae9fd039b0c4fd1609203ede2df174f"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1344,
+        "bytes": 1159,
         "path": "suite/suite2/cases/triton/barrier/safe/s2r-barrier-triton-safe-02.json",
-        "sha256": "df8ed93f74d62c97c97f0e9259075f98fe7d0f8e7af5685326f3579d7918b909"
+        "sha256": "7731dc1af20536837f1b734a2b2175f3a12822e2cc7b0663f958a9b1e7ddd300"
       },
       "variant": 2
     },
@@ -1014,37 +1068,40 @@
       },
       "case_id": "s2r-barrier-triton-safe-03",
       "checker_report_evidence": {
-        "bytes": 3935,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-triton-safe-03.json",
-        "sha256": "869fb9f9f0995bd5486c2c7d56acec07fb0a399240a78081cda76dd9985bf479"
+        "bytes": 3477,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-safe-03/checker.json",
+        "sha256": "81fa6160d3f86e97a7a760c228380f7d3099a0754fee7c52b8c5ef7884ed0730"
       },
       "dsl": "triton",
+      "nvidia_applicability": "APPLICABLE_SHARED_MEMORY",
       "pgir_evidence": {
-        "bytes": 15130,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-triton-safe-03.json",
-        "sha256": "d7ceffa4982dd319ec110bc97f681c07ea0ed964f3d6de2d2a7f88efbb624217"
+        "bytes": 709336,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-safe-03/pgir.json",
+        "sha256": "45cff838b1fdafcd996de889abff1b11e4cbaa70d4f5be4ebdb473275ed15258"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "BARRIER:SHARED-DELAYED-RAW",
       "source": {
-        "bytes": 748,
+        "bytes": 971,
         "path": "suite/suite2/cases/triton/barrier/safe/s2r-barrier-triton-safe-03.py",
-        "sha256": "33af1c9582271b77798c97d459e282630834afabf1040e999c300987679abe0d"
+        "sha256": "bf152e77fd7de8194f416c7d85614b701532af6749cc8380ced9b618b164f16e"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1346,
+        "bytes": 1177,
         "path": "suite/suite2/cases/triton/barrier/safe/s2r-barrier-triton-safe-03.json",
-        "sha256": "cf65158e96521b2c2dc40dff4ecd6260f32b1a4b099f39f36e4ef7e19366cd25"
+        "sha256": "eaee6bc2eb090f7926b116918b2a701c8d9f469d9a51055cfa9f41736a194590"
       },
       "variant": 3
     },
@@ -1056,37 +1113,40 @@
       },
       "case_id": "s2r-barrier-triton-safe-04",
       "checker_report_evidence": {
-        "bytes": 3936,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/checks/s2r-barrier-triton-safe-04.json",
-        "sha256": "7a1044c67de963b62db590e42fa08a6daf51b6657e7a66c147f7094fd7d4ae1d"
+        "bytes": 3465,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-safe-04/checker.json",
+        "sha256": "f53c35d1f53b537c0963f910711686ee216679962c25abcdbcd26f6c2fb07cf7"
       },
       "dsl": "triton",
+      "nvidia_applicability": "OUT_OF_DOMAIN_GLOBAL_MEMORY",
       "pgir_evidence": {
-        "bytes": 15130,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-barrier-memory60-v2/pgir/s2r-barrier-triton-safe-04.json",
-        "sha256": "f5fa590ea12647a63f1a2857d2f14a5640e8f16e38dc7f82f3329f49f6e8bf29"
+        "bytes": 14657,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/cases/s2r-barrier-triton-safe-04/pgir.json",
+        "sha256": "c32969ae5772d4d5c164f71380958eaa7a0dc015812f64578ab491e538b1e4c8"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "Barrier",
-      "producer_package": "barrier_memory_reconstructed",
+      "producer_package": "suite2-barrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "BARRIER:GLOBAL-RAW",
       "source": {
-        "bytes": 748,
+        "bytes": 866,
         "path": "suite/suite2/cases/triton/barrier/safe/s2r-barrier-triton-safe-04.py",
-        "sha256": "e559a683d70b6e01694742f8986c1f96e5ffd8f438ca332cfd9fee6c49a36d8c"
+        "sha256": "f42a98aba6427111f33ecceb4aba2c2c3c34e41dbc5a49dadf1c70471e2d61ea"
       },
-      "source_binding": "BARRIER_MEMORY_PRODUCER_LEDGER",
+      "source_binding": "BARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 1346,
+        "bytes": 1164,
         "path": "suite/suite2/cases/triton/barrier/safe/s2r-barrier-triton-safe-04.json",
-        "sha256": "46c86ea2a49cf6a9189bc7b679cd60dfc394ca72efa6df2ec2457de454fa2af6"
+        "sha256": "e7cfb1e07af61d59a405ee8ae756cb9075e6c49f3ba76040e1155db8e74bd7a1"
       },
       "variant": 4
     },
@@ -8745,38 +8805,41 @@
       },
       "case_id": "s2x-tilelang-safe-mbarrier-00",
       "checker_report_evidence": {
-        "bytes": 3460,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/checks/s2x-tilelang-safe-mbarrier-00.json",
-        "sha256": "d1f919bac02997728e6874a0136da8c9baba4957acf81d63fe0198db5b0fc13d"
+        "bytes": 3462,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-safe-mbarrier-00/checker.json",
+        "sha256": "c40b731f83f87b4a8c35b8dc979d3bd8581e3c771aa9704a03240ae1253de514"
       },
       "dsl": "tilelang",
       "pgir_evidence": {
-        "bytes": 12493,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/pgir/s2x-tilelang-safe-mbarrier-00.json",
-        "sha256": "08ba45ef266537fa26cca759aefa328180dd148455c90d4eaeb6bed50daea7fb"
+        "bytes": 12120,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-safe-mbarrier-00/pgir.json",
+        "sha256": "aa5e881e27cb91acf6110c6eb63384c46b5a5560f51a86f0cd79f6dd2141898a"
       },
       "pipeguard": {
         "checker_engine": "maximal",
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "mbarrier",
-      "producer_package": "suite2-mbarrier-selected-split",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "MBARRIER:MISSING-ARRIVAL",
       "source": {
-        "bytes": 1288,
+        "bytes": 1314,
         "path": "suite/suite2/cases/tilelang/mbarrier/safe/s2x-tilelang-safe-mbarrier-00.py",
-        "sha256": "84e2376b9ffff209bffcff0994681158d903eedf2d44ddaf4ac7899f185f587d"
+        "sha256": "4b3678dc26061988c22497801c0b1668fa95dc8040154ea09e5ceb85dd19f24d"
       },
-      "source_binding": "MBARRIER_VARIANT0_OWNER_AUDIT",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 876,
+        "bytes": 891,
         "path": "suite/suite2/cases/tilelang/mbarrier/safe/s2x-tilelang-safe-mbarrier-00.json",
-        "sha256": "d8448441e2e19e86e5add0313766597069ba51507545a5aee2d56ee5249dbd93"
+        "sha256": "4ae9bb864a688dbbcdd300351d5d48b435e348ffae66dad2092812a7232e9b10"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 0
     },
     {
@@ -8787,38 +8850,41 @@
       },
       "case_id": "s2x-tilelang-safe-mbarrier-01",
       "checker_report_evidence": {
-        "bytes": 3469,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/checks/s2x-tilelang-safe-mbarrier-01.json",
-        "sha256": "931b0e1efb8d60e23dd5bc2278a55357e32e80696c356d96c1f7bddd388533da"
+        "bytes": 3462,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-safe-mbarrier-01/checker.json",
+        "sha256": "87c148cbf39b83eed0ca803c54bb798720f61f94c131eb7e6aa280b3f85875dc"
       },
       "dsl": "tilelang",
       "pgir_evidence": {
-        "bytes": 19916,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/pgir/s2x-tilelang-safe-mbarrier-01.json",
-        "sha256": "ae86b889fde8a927594119a50006c66bfeb37ac8b29b320ad4e3e7271dc7d574"
+        "bytes": 12493,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-safe-mbarrier-01/pgir.json",
+        "sha256": "dcc18f3b69751dc6f34e5afa14287f86d9a6631782cecf035cf99f4a8c13af28"
       },
       "pipeguard": {
         "checker_engine": "maximal",
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "mbarrier",
-      "producer_package": "suite2-mbarrier-remaining84-v3",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "MBARRIER:NEXT-ARRIVE-BEFORE-WAIT",
       "source": {
-        "bytes": 1339,
+        "bytes": 1381,
         "path": "suite/suite2/cases/tilelang/mbarrier/safe/s2x-tilelang-safe-mbarrier-01.py",
-        "sha256": "f705a33202028574224a59d89898eea5f98c45c0f8a9dc240e73819ba48a5f82"
+        "sha256": "9fdee60ef2cba76f8a7647d396a80e1c0888b62bd08b07b404a259eae411b897"
       },
-      "source_binding": "ADJUDICATED_PRODUCER_RECORD",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 923,
+        "bytes": 954,
         "path": "suite/suite2/cases/tilelang/mbarrier/safe/s2x-tilelang-safe-mbarrier-01.json",
-        "sha256": "33a5a80c916ae64749bb05f9ef4d07ed5bbe664ffce560efa2b46ff820d6af3f"
+        "sha256": "5e9090fd4ea6472f3949a993dbf893526fb1bb20c9461790fec433fccec758c4"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 1
     },
     {
@@ -8829,38 +8895,41 @@
       },
       "case_id": "s2x-tilelang-safe-mbarrier-02",
       "checker_report_evidence": {
-        "bytes": 3475,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/checks/s2x-tilelang-safe-mbarrier-02.json",
-        "sha256": "bcc3c4d5bc044ab81acbf1945a5c21bf6527c788b2bb0ee0a1a3ebcbb16d927d"
+        "bytes": 3461,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-safe-mbarrier-02/checker.json",
+        "sha256": "3514b341222ed869eb19c6a9ac2ec15e8cc1aafb5ca194593440c1ba5c5077cd"
       },
       "dsl": "tilelang",
       "pgir_evidence": {
-        "bytes": 27340,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/pgir/s2x-tilelang-safe-mbarrier-02.json",
-        "sha256": "ec8f5a41e02e1a89454cd889ff242981b51d86f653e86b0cce4684c9eba3442d"
+        "bytes": 13676,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-safe-mbarrier-02/pgir.json",
+        "sha256": "d800a07583a4813fc9d5bb6c09e1fef18ed93d9e109e7706e6f51aab4b64f643"
       },
       "pipeguard": {
         "checker_engine": "maximal",
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "mbarrier",
-      "producer_package": "suite2-mbarrier-remaining84-v3",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "MBARRIER:WRONG-PARITY-WAIT",
       "source": {
-        "bytes": 1339,
+        "bytes": 1369,
         "path": "suite/suite2/cases/tilelang/mbarrier/safe/s2x-tilelang-safe-mbarrier-02.py",
-        "sha256": "7a742356606a36568ec4190b9d480e7c112c4e83891ea60ced46b7b70a19916f"
+        "sha256": "e2d9620cf9c303c8a53d4a2e18dc7faf2610f35cba8d2a33bd011b5598e0727a"
       },
-      "source_binding": "ADJUDICATED_PRODUCER_RECORD",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 923,
+        "bytes": 942,
         "path": "suite/suite2/cases/tilelang/mbarrier/safe/s2x-tilelang-safe-mbarrier-02.json",
-        "sha256": "ade84d7063532899072e6306d9fcdd9afc2345a3cab342528114251e6f78f922"
+        "sha256": "1231e861dc11958c244034fe473245453d9ca5902193a8a8ae6b72efcfb6cc46"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 2
     },
     {
@@ -8871,38 +8940,41 @@
       },
       "case_id": "s2x-tilelang-safe-mbarrier-03",
       "checker_report_evidence": {
-        "bytes": 3473,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/checks/s2x-tilelang-safe-mbarrier-03.json",
-        "sha256": "f49a9dd5ddc4f22ba0ef2a548073418ad314e858809ed630dcf99df40d79278f"
+        "bytes": 3479,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-safe-mbarrier-03/checker.json",
+        "sha256": "f30e16e30904378e901221081b6165cdf61f616bdcea9023e7ea2e98ac432c7c"
       },
       "dsl": "tilelang",
       "pgir_evidence": {
-        "bytes": 34991,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/pgir/s2x-tilelang-safe-mbarrier-03.json",
-        "sha256": "171e4bb00e601eba92b194c7aba516ee0bb5da33cbfb4a0ef78d7d17fec720d5"
+        "bytes": 67834,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-safe-mbarrier-03/pgir.json",
+        "sha256": "0976a659f7969d8a44b8c20bf589abe04a9d864051a25880da25c36fe6c3e265"
       },
       "pipeguard": {
         "checker_engine": "maximal",
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "mbarrier",
-      "producer_package": "suite2-mbarrier-remaining84-v3",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "MBARRIER:DELAYED-NEXT-ARRIVE-BEFORE-WAIT",
       "source": {
-        "bytes": 1340,
+        "bytes": 1398,
         "path": "suite/suite2/cases/tilelang/mbarrier/safe/s2x-tilelang-safe-mbarrier-03.py",
-        "sha256": "e66346efd25bbc43a9813b54160d13b00f4d1ad36f1c9bc329f3c80146cf3f74"
+        "sha256": "a0a9107c0805dbc88e0bcd24355a342f2412b1a4319d3ed1b2f236abdbfce67b"
       },
-      "source_binding": "ADJUDICATED_PRODUCER_RECORD",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 924,
+        "bytes": 971,
         "path": "suite/suite2/cases/tilelang/mbarrier/safe/s2x-tilelang-safe-mbarrier-03.json",
-        "sha256": "ac7ffcc9f11b849d88e41156a2a09e5269c6999749cf72db77310ae93471133a"
+        "sha256": "bbaf3304d344e6f55409fbba66ee19c67a031a85cbae416448adf6476d7018b5"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 3
     },
     {
@@ -8913,38 +8985,41 @@
       },
       "case_id": "s2x-tilelang-safe-mbarrier-04",
       "checker_report_evidence": {
-        "bytes": 3463,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/checks/s2x-tilelang-safe-mbarrier-04.json",
-        "sha256": "63cca2ee3313034666418c79119c3a0bad6cd38d956b23796f91f14594311ee6"
+        "bytes": 3461,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-safe-mbarrier-04/checker.json",
+        "sha256": "4cd015173cb16b2559909c694c0ad6eab871a4093b58d939ec11f235ebea5ec4"
       },
       "dsl": "tilelang",
       "pgir_evidence": {
-        "bytes": 17230,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/pgir/s2x-tilelang-safe-mbarrier-04.json",
-        "sha256": "dfda76276511a7e9c6244ad577c2a5599789769b677685965a6742e87f9a750f"
+        "bytes": 13658,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-safe-mbarrier-04/pgir.json",
+        "sha256": "109d636dc8bc5ad46e52ba10e355857313bd49528c6bc9bda3ca948bf6c163cd"
       },
       "pipeguard": {
         "checker_engine": "maximal",
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "mbarrier",
-      "producer_package": "suite2-mbarrier-remaining84-v3",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "MBARRIER:LATE-MISSING-ARRIVAL",
       "source": {
-        "bytes": 1339,
+        "bytes": 1375,
         "path": "suite/suite2/cases/tilelang/mbarrier/safe/s2x-tilelang-safe-mbarrier-04.py",
-        "sha256": "4b348ac58d73fd90b5a172c32b00ba63d65948cc17d6f6920835f295ee8d7ab2"
+        "sha256": "8ab3594372c6adb8d735789b4c1ff70545394c07a12d9cd799018bcc72153a9d"
       },
-      "source_binding": "ADJUDICATED_PRODUCER_RECORD",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 923,
+        "bytes": 948,
         "path": "suite/suite2/cases/tilelang/mbarrier/safe/s2x-tilelang-safe-mbarrier-04.json",
-        "sha256": "e19d731982298c35131eb476edb93a7dde53747723e257a9aeb5bbe8f5260e79"
+        "sha256": "a9054ebec978a7e4d6c861d154d835e774fa7d92dadf76133edb4c63b863f55d"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 4
     },
     {
@@ -8955,38 +9030,41 @@
       },
       "case_id": "s2x-tilelang-sync-hazard-mbarrier-00",
       "checker_report_evidence": {
-        "bytes": 3762,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/checks/s2x-tilelang-sync-hazard-mbarrier-00.json",
-        "sha256": "4500b8f491175d11fda667c3ba49407f0c56ae58fa1578e8fc169199ef4032e3"
+        "bytes": 3623,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-sync-hazard-mbarrier-00/checker.json",
+        "sha256": "7e58a9c20511ffc831abb5f7891387acd79ee62a66ff6b88b9bfdb571c3e2424"
       },
       "dsl": "tilelang",
       "pgir_evidence": {
-        "bytes": 12507,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/pgir/s2x-tilelang-sync-hazard-mbarrier-00.json",
-        "sha256": "919e18abcb8f5cb3d8a4e0a1139be4ab79cf9570c758a1f901ecf9ca68b50330"
+        "bytes": 11650,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-sync-hazard-mbarrier-00/pgir.json",
+        "sha256": "b53fda9f17c723db604c3ec420dda29fe202977bb155181c2ce4bdf8a7b2976f"
       },
       "pipeguard": {
         "checker_engine": "maximal",
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
-        "primary_diagnostic": "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE",
+        "primary_diagnostic": "STUCK_PROTOCOL_STATE",
+        "status": "CHECKED",
         "verdict": "SYNC_HAZARD"
       },
       "primitive": "mbarrier",
-      "producer_package": "suite2-mbarrier-selected-split",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SYNC_HAZARD",
+      "scenario_id": "MBARRIER:MISSING-ARRIVAL",
       "source": {
-        "bytes": 1305,
+        "bytes": 1331,
         "path": "suite/suite2/cases/tilelang/mbarrier/sync_hazard/s2x-tilelang-sync-hazard-mbarrier-00.py",
-        "sha256": "5e60ea9b2cc8cf54e72e13939c7e405663a125f2f60559ebea4ddd3815e88e40"
+        "sha256": "ff766b0f4940829bbace6b700f49a9ad85a8b88698f4717739c502d13031279f"
       },
-      "source_binding": "MBARRIER_VARIANT0_OWNER_AUDIT",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 907,
+        "bytes": 922,
         "path": "suite/suite2/cases/tilelang/mbarrier/sync_hazard/s2x-tilelang-sync-hazard-mbarrier-00.json",
-        "sha256": "039d01cfed4cf8e32e7100f795f056efdefead6f02b90749e50f6fe3ce427834"
+        "sha256": "91eb05f1ee9ff88c9e8c56c9f97a6711a18f1937e2c2b43a6b95132ba955cec8"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 0
     },
     {
@@ -8997,38 +9075,41 @@
       },
       "case_id": "s2x-tilelang-sync-hazard-mbarrier-01",
       "checker_report_evidence": {
-        "bytes": 4315,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-missing18-source-v2/checks/s2x-tilelang-sync-hazard-mbarrier-01.json",
-        "sha256": "dfa204452b6032cae2dbf776beb7c511c0161d7eda561e2b05e4116eff23fab1"
+        "bytes": 3759,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-sync-hazard-mbarrier-01/checker.json",
+        "sha256": "f92f44519e4c6f73128605f776dd7c5549befa3b1caf8c77579877e0d9086198"
       },
       "dsl": "tilelang",
       "pgir_evidence": {
-        "bytes": 22306,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-missing18-source-v2/pgir/s2x-tilelang-sync-hazard-mbarrier-01.json",
-        "sha256": "8e9a1094af1dfc5e1742f9769e1072209e9cb25a8a161e4d819ec78d48e7abb1"
+        "bytes": 12500,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-sync-hazard-mbarrier-01/pgir.json",
+        "sha256": "5d4871e7a5e6cc3f08b6acf380c7e41b4ba46adfdc9a8a4156429a8130157aaa"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE",
+        "status": "CHECKED",
         "verdict": "SYNC_HAZARD"
       },
       "primitive": "mbarrier",
-      "producer_package": "missing18_source_rebuilt",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SYNC_HAZARD",
+      "scenario_id": "MBARRIER:NEXT-ARRIVE-BEFORE-WAIT",
       "source": {
-        "bytes": 1356,
+        "bytes": 1398,
         "path": "suite/suite2/cases/tilelang/mbarrier/sync_hazard/s2x-tilelang-sync-hazard-mbarrier-01.py",
-        "sha256": "3f1ad1b35f1133029364428de792ba4e593caec70dda2a4b5e2dead44c9b2680"
+        "sha256": "8149e0398ed796c601c248c134c6bd9a2de4aaf44bbf7da224088da6d71dfbd4"
       },
-      "source_binding": "ADJUDICATED_LEDGER_DIRECT",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 954,
+        "bytes": 985,
         "path": "suite/suite2/cases/tilelang/mbarrier/sync_hazard/s2x-tilelang-sync-hazard-mbarrier-01.json",
-        "sha256": "545c7354e88fa4699ccfc664bf836824b56e98aa8af160d9b01509ae8b198a23"
+        "sha256": "3c4fce29c6da67231cb64193c6996719541763e59fccf754d3b10a906fd67470"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 1
     },
     {
@@ -9039,38 +9120,41 @@
       },
       "case_id": "s2x-tilelang-sync-hazard-mbarrier-02",
       "checker_report_evidence": {
-        "bytes": 4810,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-missing18-source-v2/checks/s2x-tilelang-sync-hazard-mbarrier-02.json",
-        "sha256": "450249557a0097e4aa06ac9e0559561983b0037fb7a6334c7d73e336f3c70313"
+        "bytes": 3739,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-sync-hazard-mbarrier-02/checker.json",
+        "sha256": "452fb3181f9bb43fb120af6ace36f2523883770c7578656b9a7c05bde988e9b5"
       },
       "dsl": "tilelang",
       "pgir_evidence": {
-        "bytes": 29731,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-missing18-source-v2/pgir/s2x-tilelang-sync-hazard-mbarrier-02.json",
-        "sha256": "280fc36d954cc9631048c0dea4334256c3c260663bda52446d221b9c3bbb32e8"
+        "bytes": 13683,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-sync-hazard-mbarrier-02/pgir.json",
+        "sha256": "4925dbf6c0add851b9161241a333b6c565e1c91087bff9244d1f1d42c1348de1"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
-        "primary_diagnostic": "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE",
+        "primary_diagnostic": "WRONG_PARITY",
+        "status": "CHECKED",
         "verdict": "SYNC_HAZARD"
       },
       "primitive": "mbarrier",
-      "producer_package": "missing18_source_rebuilt",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SYNC_HAZARD",
+      "scenario_id": "MBARRIER:WRONG-PARITY-WAIT",
       "source": {
-        "bytes": 1356,
+        "bytes": 1386,
         "path": "suite/suite2/cases/tilelang/mbarrier/sync_hazard/s2x-tilelang-sync-hazard-mbarrier-02.py",
-        "sha256": "601da7f8644c40a97a13140ae1b0e36db25c3498844d3b9723ddca227aac8b30"
+        "sha256": "538ac36e398459c621f513ebc0f597d4ec26300be421ce90cc6bc3c9fbc9c9f6"
       },
-      "source_binding": "ADJUDICATED_LEDGER_DIRECT",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 954,
+        "bytes": 973,
         "path": "suite/suite2/cases/tilelang/mbarrier/sync_hazard/s2x-tilelang-sync-hazard-mbarrier-02.json",
-        "sha256": "6b18c75b89d7e8930bc6915dc82e4c2af252bcc8dfa6fa7467e82820321a8e08"
+        "sha256": "66bd046829510d144e03f6a882b12350cef8e7c5ee2ab6ad724f97fff4777a33"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 2
     },
     {
@@ -9081,38 +9165,41 @@
       },
       "case_id": "s2x-tilelang-sync-hazard-mbarrier-03",
       "checker_report_evidence": {
-        "bytes": 5332,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-missing18-source-v2/checks/s2x-tilelang-sync-hazard-mbarrier-03.json",
-        "sha256": "0867ce823983f8da896ffd039c7395e8235d9ca9cb9f35c747fff4cda1f3abd5"
+        "bytes": 3785,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-sync-hazard-mbarrier-03/checker.json",
+        "sha256": "f022df8eab506d03a4358b24d86221bfec12ed78875619a9732c21bbaa1cd947"
       },
       "dsl": "tilelang",
       "pgir_evidence": {
-        "bytes": 37382,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-missing18-source-v2/pgir/s2x-tilelang-sync-hazard-mbarrier-03.json",
-        "sha256": "2219bd4d23b00d79e5eafe495bd57312643d95a9a6b3098e285ec424b9fd83b2"
+        "bytes": 67133,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-sync-hazard-mbarrier-03/pgir.json",
+        "sha256": "7d3bd0d8574dd28ed2007568538da3dbcd3c0dbac5989e54745e3175a4a452aa"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE",
+        "status": "CHECKED",
         "verdict": "SYNC_HAZARD"
       },
       "primitive": "mbarrier",
-      "producer_package": "missing18_source_rebuilt",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SYNC_HAZARD",
+      "scenario_id": "MBARRIER:DELAYED-NEXT-ARRIVE-BEFORE-WAIT",
       "source": {
-        "bytes": 1357,
+        "bytes": 1415,
         "path": "suite/suite2/cases/tilelang/mbarrier/sync_hazard/s2x-tilelang-sync-hazard-mbarrier-03.py",
-        "sha256": "79e00c30aa92d776fc68a4c26cd742bf240c16a017fd1ff2ba44bafbaed55aae"
+        "sha256": "df675c621552f52c2833172286bb0abc2b10523bfd9305646411276788ac6b3b"
       },
-      "source_binding": "ADJUDICATED_LEDGER_DIRECT",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 955,
+        "bytes": 1002,
         "path": "suite/suite2/cases/tilelang/mbarrier/sync_hazard/s2x-tilelang-sync-hazard-mbarrier-03.json",
-        "sha256": "2f1510703b0205a496b9c886c62b5e372e53bdc6d7cd793140293ac7c2794220"
+        "sha256": "e716e6150fececca919e49abf32ee8473a942e0ee57d0377ce99686cc8aa106a"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 3
     },
     {
@@ -9123,38 +9210,41 @@
       },
       "case_id": "s2x-tilelang-sync-hazard-mbarrier-04",
       "checker_report_evidence": {
-        "bytes": 3860,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-missing18-source-v2/checks/s2x-tilelang-sync-hazard-mbarrier-04.json",
-        "sha256": "977ca095a18112e74a09ce1264359ed338f4c158856c399d3421d767cd3d30ab"
+        "bytes": 3701,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-sync-hazard-mbarrier-04/checker.json",
+        "sha256": "f75d22cfbb92a223a7cb809f9d1e330d3978b144804aacd5b28e61bdef6b8343"
       },
       "dsl": "tilelang",
       "pgir_evidence": {
-        "bytes": 19621,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-missing18-source-v2/pgir/s2x-tilelang-sync-hazard-mbarrier-04.json",
-        "sha256": "9eca5240404e440f59b22b6a39fe9a3e7c3d8620089c6d7114c13b2b5b7efe77"
+        "bytes": 13188,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-tilelang-sync-hazard-mbarrier-04/pgir.json",
+        "sha256": "4e1953b784e3134ada0527aeb8faf214cd7809617c7bd2dc90feb340666e018b"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
-        "primary_diagnostic": "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE",
+        "primary_diagnostic": "STUCK_PROTOCOL_STATE",
+        "status": "CHECKED",
         "verdict": "SYNC_HAZARD"
       },
       "primitive": "mbarrier",
-      "producer_package": "missing18_source_rebuilt",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SYNC_HAZARD",
+      "scenario_id": "MBARRIER:LATE-MISSING-ARRIVAL",
       "source": {
-        "bytes": 1356,
+        "bytes": 1392,
         "path": "suite/suite2/cases/tilelang/mbarrier/sync_hazard/s2x-tilelang-sync-hazard-mbarrier-04.py",
-        "sha256": "db7f2a6b6a576249f4da3faa4ddf26d5c7b51a8f843acd13274a43b72a9d100f"
+        "sha256": "7e8507781f0031715d266a4a5937f2c0ddc31803282ea60a2773d8b890b06270"
       },
-      "source_binding": "ADJUDICATED_LEDGER_DIRECT",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 954,
+        "bytes": 979,
         "path": "suite/suite2/cases/tilelang/mbarrier/sync_hazard/s2x-tilelang-sync-hazard-mbarrier-04.json",
-        "sha256": "d7252485fd3bdf3af5195af1210ac9e286c21258ed2bdd854427c2c381e4320c"
+        "sha256": "10f2cd48ce741359ff690417677597153926dad0b66c77d4d92c542201b11ba3"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 4
     },
     {
@@ -9375,38 +9465,41 @@
       },
       "case_id": "s2x-triton-safe-mbarrier-00",
       "checker_report_evidence": {
-        "bytes": 3460,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/checks/s2x-triton-safe-mbarrier-00.json",
-        "sha256": "a385c4cfb0394821b2fadf78506cf0f6c7053d3881591bfd908e243cc3fb616a"
+        "bytes": 3423,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-safe-mbarrier-00/checker.json",
+        "sha256": "9f39557f3d3f5d8f5fad44e688d0cfca68ce9aa3db43bf08fc5c73bbdf4f8088"
       },
       "dsl": "triton",
       "pgir_evidence": {
-        "bytes": 8490,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/pgir/s2x-triton-safe-mbarrier-00.json",
-        "sha256": "fbe68e9118e2d1db17e02bf2da0c17f1dcfd7e0c1cd971cb18be35c1d5b38ae4"
+        "bytes": 6564,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-safe-mbarrier-00/pgir.json",
+        "sha256": "151785b23dc17cceb3e2ac7f5a19676e54de194611f4d0e896e647ad3762a9cc"
       },
       "pipeguard": {
         "checker_engine": "maximal",
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "mbarrier",
-      "producer_package": "suite2-mbarrier-selected-split",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "MBARRIER:MISSING-ARRIVAL",
       "source": {
-        "bytes": 2085,
+        "bytes": 2204,
         "path": "suite/suite2/cases/triton/mbarrier/safe/s2x-triton-safe-mbarrier-00.py",
-        "sha256": "45b98625d5629c9838b0d86fe900803a1570748466c005d35b4d09470526370a"
+        "sha256": "67edf6c2e758ab7f171a2efdaa9a887e1c1b267362ad7a2c806196fa98d1653c"
       },
-      "source_binding": "MBARRIER_VARIANT0_OWNER_AUDIT",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 868,
+        "bytes": 883,
         "path": "suite/suite2/cases/triton/mbarrier/safe/s2x-triton-safe-mbarrier-00.json",
-        "sha256": "91787c87dc6aa4dbdcde0055629a776ea46773070152afa6e0abc336dda874f4"
+        "sha256": "8d31b7797ebca65782019dcfa99245691c049f464da5b0172222f22f86ac61fb"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 0
     },
     {
@@ -9417,38 +9510,41 @@
       },
       "case_id": "s2x-triton-safe-mbarrier-01",
       "checker_report_evidence": {
-        "bytes": 3463,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/checks/s2x-triton-safe-mbarrier-01.json",
-        "sha256": "6198f21d82734a474b5da62b3980133901480991de47faf693cc4ca4ad7a0432"
+        "bytes": 3464,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-safe-mbarrier-01/checker.json",
+        "sha256": "10268f5fe388cd85d6afe4525b5e8c0a1c7d571076d8943c72cb2f0419e3df37"
       },
       "dsl": "triton",
       "pgir_evidence": {
-        "bytes": 14401,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/pgir/s2x-triton-safe-mbarrier-01.json",
-        "sha256": "4f0445b264225fb827aa635676377fc47c851310b23900981392b439377f7d0b"
+        "bytes": 8507,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-safe-mbarrier-01/pgir.json",
+        "sha256": "cbca5d4ae29cb92f439cf71b77d696aeb282025a359c6b91299da03d3afb1e83"
       },
       "pipeguard": {
         "checker_engine": "maximal",
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "mbarrier",
-      "producer_package": "suite2-mbarrier-remaining84-v3",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "MBARRIER:NEXT-ARRIVE-BEFORE-WAIT",
       "source": {
-        "bytes": 2150,
+        "bytes": 2285,
         "path": "suite/suite2/cases/triton/mbarrier/safe/s2x-triton-safe-mbarrier-01.py",
-        "sha256": "1af32238bf4f8dc8d4e45567d21305369871cb9c2e56e080e8a110234f173dba"
+        "sha256": "d171703c0df9684f88860119d18362e36252df7dc526b06f68984f5b35fbb600"
       },
-      "source_binding": "ADJUDICATED_PRODUCER_RECORD",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 915,
+        "bytes": 946,
         "path": "suite/suite2/cases/triton/mbarrier/safe/s2x-triton-safe-mbarrier-01.json",
-        "sha256": "b676a104a0b6be49f9df8b36794359bc5b663cbffb0cad0b2a222244c3440273"
+        "sha256": "d4927adc4385f42ba8d227f3bcf3b012baf7bef63cfec86ab7b42f6589561e66"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 1
     },
     {
@@ -9459,38 +9555,41 @@
       },
       "case_id": "s2x-triton-safe-mbarrier-02",
       "checker_report_evidence": {
-        "bytes": 3472,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/checks/s2x-triton-safe-mbarrier-02.json",
-        "sha256": "07eb55d8550fa3c9cd3396b9a19a4408d89637a7a5eca0b4d15d1c1d454b1c5a"
+        "bytes": 3462,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-safe-mbarrier-02/checker.json",
+        "sha256": "d7a7944e307f9edb33350ddd019a0f8b5caed3fcc9852266fab572250e5a9d77"
       },
       "dsl": "triton",
       "pgir_evidence": {
-        "bytes": 26921,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/pgir/s2x-triton-safe-mbarrier-02.json",
-        "sha256": "3fec55bb0413ce64bf57c34d0a99fdbbf2e664f6a600100424b3a18129794b80"
+        "bytes": 10450,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-safe-mbarrier-02/pgir.json",
+        "sha256": "35f8a689557573b156b027e167930fe959f364543757f3f44e42d4e7c2f2fbc9"
       },
       "pipeguard": {
         "checker_engine": "maximal",
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "mbarrier",
-      "producer_package": "suite2-mbarrier-remaining84-v3",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "MBARRIER:WRONG-PARITY-WAIT",
       "source": {
-        "bytes": 2150,
+        "bytes": 2273,
         "path": "suite/suite2/cases/triton/mbarrier/safe/s2x-triton-safe-mbarrier-02.py",
-        "sha256": "2c297e07885c6ca6a3996a11116a1f645afd5379f4bd32c923edcd30bec99e6a"
+        "sha256": "f9e5a7fc8d03fd95177f1db3cbe04d7dfae006cc14518778f495a013bfa91806"
       },
-      "source_binding": "ADJUDICATED_PRODUCER_RECORD",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 915,
+        "bytes": 934,
         "path": "suite/suite2/cases/triton/mbarrier/safe/s2x-triton-safe-mbarrier-02.json",
-        "sha256": "80c5a4b5e42e9a346e394af1fb1611d7c9a4a94772bdb3b8cf3bd32fef52be1b"
+        "sha256": "d7a9d8c004f33b52e944906d7eced9c0f2eb0d2d2f79f71faa62d63425aaa516"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 2
     },
     {
@@ -9501,38 +9600,41 @@
       },
       "case_id": "s2x-triton-safe-mbarrier-03",
       "checker_report_evidence": {
-        "bytes": 3482,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/checks/s2x-triton-safe-mbarrier-03.json",
-        "sha256": "c49c182e82d822f907779df45f350cfe49f6ffda8f94fed42f169965b97e7dcb"
+        "bytes": 3544,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-safe-mbarrier-03/checker.json",
+        "sha256": "725f9d9062668d6ea4a13a6d37daeac5bed8a6c00e030df0b88b247336a2b962"
       },
       "dsl": "triton",
       "pgir_evidence": {
-        "bytes": 31225,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/pgir/s2x-triton-safe-mbarrier-03.json",
-        "sha256": "5eeac2a379d638140ef5de13f04ae840c86f4aefd4827223114a84a3aae20975"
+        "bytes": 197855,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-safe-mbarrier-03/pgir.json",
+        "sha256": "7998fe6607e3d8641fb56264198381a4b08a66f838238bc664d94f0e7d124f9d"
       },
       "pipeguard": {
         "checker_engine": "maximal",
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "mbarrier",
-      "producer_package": "suite2-mbarrier-remaining84-v3",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "MBARRIER:DELAYED-NEXT-ARRIVE-BEFORE-WAIT",
       "source": {
-        "bytes": 2151,
+        "bytes": 2302,
         "path": "suite/suite2/cases/triton/mbarrier/safe/s2x-triton-safe-mbarrier-03.py",
-        "sha256": "458bbe4f0f90e4c2dfee1979a5bdc95b314fdbc42b72731a95eaccd0d96531c6"
+        "sha256": "51bc529cab8f7763cdedb3773c59f22f34320d1f8d7c8b7705085d6f143d0c43"
       },
-      "source_binding": "ADJUDICATED_PRODUCER_RECORD",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 916,
+        "bytes": 963,
         "path": "suite/suite2/cases/triton/mbarrier/safe/s2x-triton-safe-mbarrier-03.json",
-        "sha256": "6b29db4e6b21e5d5b193a6f10053c5746dc3c8ce0f004b69f581482d0b1566e9"
+        "sha256": "d7166b5f6bce7025d771760150c5fbfb93dee80ce55d23ba515f955e4bc9d997"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 3
     },
     {
@@ -9543,38 +9645,41 @@
       },
       "case_id": "s2x-triton-safe-mbarrier-04",
       "checker_report_evidence": {
-        "bytes": 3468,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/checks/s2x-triton-safe-mbarrier-04.json",
-        "sha256": "500c1be7a80b703411142f605b2129b22a00810b585bac4de2a01379ae0b3177"
+        "bytes": 3463,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-safe-mbarrier-04/checker.json",
+        "sha256": "a91a2d9aeafa45b7144b679f52c520ba02959439fa6df99ebe52251db23472b5"
       },
       "dsl": "triton",
       "pgir_evidence": {
-        "bytes": 16265,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/pgir/s2x-triton-safe-mbarrier-04.json",
-        "sha256": "e690ea873157a260c7b1aaf0c64c1783b9f8eaf95107c6e41538cca846e70271"
+        "bytes": 8507,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-safe-mbarrier-04/pgir.json",
+        "sha256": "b2f74f4de71be7097f73c3f926c57920ee98e2f9e00fac8ff7a13c75b7c4ed9a"
       },
       "pipeguard": {
         "checker_engine": "maximal",
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": null,
+        "status": "CHECKED",
         "verdict": "SAFE"
       },
       "primitive": "mbarrier",
-      "producer_package": "suite2-mbarrier-remaining84-v3",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SAFE",
+      "scenario_id": "MBARRIER:LATE-MISSING-ARRIVAL",
       "source": {
-        "bytes": 2150,
+        "bytes": 2279,
         "path": "suite/suite2/cases/triton/mbarrier/safe/s2x-triton-safe-mbarrier-04.py",
-        "sha256": "4bccd9f784ce2ad7bec602486db3a839bd5c13b3f3ac0c3a28bdf03652e411af"
+        "sha256": "a0b2799196b727dcb38014af5eb6b3645ab65c1e7499ecdcb7c042f95cf23d40"
       },
-      "source_binding": "ADJUDICATED_PRODUCER_RECORD",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 915,
+        "bytes": 940,
         "path": "suite/suite2/cases/triton/mbarrier/safe/s2x-triton-safe-mbarrier-04.json",
-        "sha256": "25f77961d8cebb9aaf8a5bf6a5e0f61c91f133741f9453a9cd0ee02fb2a292a6"
+        "sha256": "f21ed7ab29553361e56efc00ad2bc4b63ab916c67fedad6e99678bd3cecf3b84"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 4
     },
     {
@@ -9585,38 +9690,41 @@
       },
       "case_id": "s2x-triton-sync-hazard-mbarrier-00",
       "checker_report_evidence": {
-        "bytes": 3764,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/checks/s2x-triton-sync-hazard-mbarrier-00.json",
-        "sha256": "56a0154dc22a7804144fafbd21859478ececb5acb2010cf4f93f8ffc72e4b2f5"
+        "bytes": 3594,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-sync-hazard-mbarrier-00/checker.json",
+        "sha256": "653bf94e14f9c85037316ba9549cc88737c84e97e2bf3c90048e6a69fa2a04de"
       },
       "dsl": "triton",
       "pgir_evidence": {
-        "bytes": 8497,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-preliminary-v2/pgir/s2x-triton-sync-hazard-mbarrier-00.json",
-        "sha256": "75c52438dae9c7827c4a8e5dcff0a2ddd56cc3de970f40d5adc43e3ce650568f"
+        "bytes": 6571,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-sync-hazard-mbarrier-00/pgir.json",
+        "sha256": "e439506ccc6eac10d0b8cc56673e8c97f44580ff8b6eef86d30b2261ea372910"
       },
       "pipeguard": {
         "checker_engine": "maximal",
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
-        "primary_diagnostic": "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE",
+        "primary_diagnostic": "STUCK_PROTOCOL_STATE",
+        "status": "CHECKED",
         "verdict": "SYNC_HAZARD"
       },
       "primitive": "mbarrier",
-      "producer_package": "suite2-mbarrier-selected-split",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SYNC_HAZARD",
+      "scenario_id": "MBARRIER:MISSING-ARRIVAL",
       "source": {
-        "bytes": 2102,
+        "bytes": 2221,
         "path": "suite/suite2/cases/triton/mbarrier/sync_hazard/s2x-triton-sync-hazard-mbarrier-00.py",
-        "sha256": "3567af7cba5620e94a3897381dfcc76eb19ba2ce9d207cd4e0d30ee286dc74f2"
+        "sha256": "61c8384d016d55bc2a42db9074dfbf6509e492a3799b5f26304d44dedc6fd85b"
       },
-      "source_binding": "MBARRIER_VARIANT0_OWNER_AUDIT",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 899,
+        "bytes": 914,
         "path": "suite/suite2/cases/triton/mbarrier/sync_hazard/s2x-triton-sync-hazard-mbarrier-00.json",
-        "sha256": "5a3c0de6361444feb54455a571e5eded07a1c3201b4f49902d529f3a4561bf8e"
+        "sha256": "5136595303f272e2e42ac3026fa77e6efe4a3c44bca1b852df10275426d8399f"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 0
     },
     {
@@ -9627,38 +9735,41 @@
       },
       "case_id": "s2x-triton-sync-hazard-mbarrier-01",
       "checker_report_evidence": {
-        "bytes": 4317,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-missing18-source-v2/checks/s2x-triton-sync-hazard-mbarrier-01.json",
-        "sha256": "69d6d75b44776b87995c08ae48aab5586503dac9ab9d36208be7205cf705f9be"
+        "bytes": 3765,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-sync-hazard-mbarrier-01/checker.json",
+        "sha256": "9423ff7208ca89a5e2f51298ae4c1643ab4d36a5ea1019b5ec643854f3d0b5e5"
       },
       "dsl": "triton",
       "pgir_evidence": {
-        "bytes": 19831,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-missing18-source-v2/pgir/s2x-triton-sync-hazard-mbarrier-01.json",
-        "sha256": "1b4fdf8e83255139d2b7836bf2de830648882cd42205a85029323ba11dfd31d2"
+        "bytes": 8514,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-sync-hazard-mbarrier-01/pgir.json",
+        "sha256": "9352009a30f847022a5e497523f1a42dda5a216fc20c1895ec63a6b9427f2761"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE",
+        "status": "CHECKED",
         "verdict": "SYNC_HAZARD"
       },
       "primitive": "mbarrier",
-      "producer_package": "missing18_source_rebuilt",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SYNC_HAZARD",
+      "scenario_id": "MBARRIER:NEXT-ARRIVE-BEFORE-WAIT",
       "source": {
-        "bytes": 2167,
+        "bytes": 2302,
         "path": "suite/suite2/cases/triton/mbarrier/sync_hazard/s2x-triton-sync-hazard-mbarrier-01.py",
-        "sha256": "1e941badab4972ff98152a408d60984faea0e85670c8c0a95013bbfb56a8b21b"
+        "sha256": "5d752759412f7474f47ce35b55d0ee0a56ad66c41c8e027780e1d839a8a5cefe"
       },
-      "source_binding": "ADJUDICATED_LEDGER_DIRECT",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 946,
+        "bytes": 977,
         "path": "suite/suite2/cases/triton/mbarrier/sync_hazard/s2x-triton-sync-hazard-mbarrier-01.json",
-        "sha256": "21e1b4e30e1cc8f718988acba8b5298c12ab535e92af3e2b56b01180503879bb"
+        "sha256": "cf7aac91e2b03891a4e2e52359ed391a009c70382b2eab0d6bca3a5ec8ada7f3"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 1
     },
     {
@@ -9669,38 +9780,41 @@
       },
       "case_id": "s2x-triton-sync-hazard-mbarrier-02",
       "checker_report_evidence": {
-        "bytes": 5461,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-missing18-source-v2/checks/s2x-triton-sync-hazard-mbarrier-02.json",
-        "sha256": "a69a2e5decf48187e76168e9413478cfb0f0d39621fbb5d0bf003be14290672d"
+        "bytes": 3744,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-sync-hazard-mbarrier-02/checker.json",
+        "sha256": "c1c22cdcfc8b4e5f5139d14250fc2ae5e3e0ab9ece203bd1c65584a82edcf561"
       },
       "dsl": "triton",
       "pgir_evidence": {
-        "bytes": 35537,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-missing18-source-v2/pgir/s2x-triton-sync-hazard-mbarrier-02.json",
-        "sha256": "d2bd5e033a98890ad804ebf10734bc2f7e61ce21f9840eaa598a76dc08aa4fa5"
+        "bytes": 10457,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-sync-hazard-mbarrier-02/pgir.json",
+        "sha256": "0ec0c86a12924b8bbe51d0cc3615444e388ad0f97dc56760465e9f7d0375c2c7"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
-        "primary_diagnostic": "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE",
+        "primary_diagnostic": "WRONG_PARITY",
+        "status": "CHECKED",
         "verdict": "SYNC_HAZARD"
       },
       "primitive": "mbarrier",
-      "producer_package": "missing18_source_rebuilt",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SYNC_HAZARD",
+      "scenario_id": "MBARRIER:WRONG-PARITY-WAIT",
       "source": {
-        "bytes": 2167,
+        "bytes": 2290,
         "path": "suite/suite2/cases/triton/mbarrier/sync_hazard/s2x-triton-sync-hazard-mbarrier-02.py",
-        "sha256": "ff39dfe07cca14e45e049dbca94eca8d77714432ccaafff755b6e688b1ca762e"
+        "sha256": "653aa248ef001541f4cd9e95c339bba80146dbd59464f6b95768c2bb7d34d0db"
       },
-      "source_binding": "ADJUDICATED_LEDGER_DIRECT",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 946,
+        "bytes": 965,
         "path": "suite/suite2/cases/triton/mbarrier/sync_hazard/s2x-triton-sync-hazard-mbarrier-02.json",
-        "sha256": "f580bc7ab751667ce711b4d2f35148917872ca89e6e42168e45301c728d4b564"
+        "sha256": "41a384edd1f872a7c789e6ebeeed4f8db624fbb72f531d0c5fa6cf4c29c7bc80"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 2
     },
     {
@@ -9711,38 +9825,41 @@
       },
       "case_id": "s2x-triton-sync-hazard-mbarrier-03",
       "checker_report_evidence": {
-        "bytes": 5470,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-missing18-source-v2/checks/s2x-triton-sync-hazard-mbarrier-03.json",
-        "sha256": "11b55ad49e9249c633852b78054294c215d41ca24eaf5c30f5d9ac54477f32b7"
+        "bytes": 3877,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-sync-hazard-mbarrier-03/checker.json",
+        "sha256": "811fdd6dc5176cdc2d063a28ed0a4f50b4897e03b3b6b46642c6c035470d7493"
       },
       "dsl": "triton",
       "pgir_evidence": {
-        "bytes": 39842,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-missing18-source-v2/pgir/s2x-triton-sync-hazard-mbarrier-03.json",
-        "sha256": "ceb443f8b5d20887c637b7da1cb315e05ee53c82d0f2c3c873d69d67291e1e1b"
+        "bytes": 196759,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-sync-hazard-mbarrier-03/pgir.json",
+        "sha256": "66e9db1e2fce2ccf5fdb6b5afa76e19ece65503ed62175293961f7aae8364235"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
         "primary_diagnostic": "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE",
+        "status": "CHECKED",
         "verdict": "SYNC_HAZARD"
       },
       "primitive": "mbarrier",
-      "producer_package": "missing18_source_rebuilt",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SYNC_HAZARD",
+      "scenario_id": "MBARRIER:DELAYED-NEXT-ARRIVE-BEFORE-WAIT",
       "source": {
-        "bytes": 2168,
+        "bytes": 2319,
         "path": "suite/suite2/cases/triton/mbarrier/sync_hazard/s2x-triton-sync-hazard-mbarrier-03.py",
-        "sha256": "175906ca3f9e0920cc1bd02ef01c6b11a91b6a2e601a1bb059bc1c61146a42e3"
+        "sha256": "fbb6ba32fa4d1933075bb1881f7df3db66c239be1ed7fd5ceef4401c3313af50"
       },
-      "source_binding": "ADJUDICATED_LEDGER_DIRECT",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 947,
+        "bytes": 994,
         "path": "suite/suite2/cases/triton/mbarrier/sync_hazard/s2x-triton-sync-hazard-mbarrier-03.json",
-        "sha256": "48179c0646efe4758129678bb813d89a6773e35c05930537a141c1bb3f358e73"
+        "sha256": "da799f7243a11f61ca5a64faf590902a295821e07d448783c3b12fa4ffa9d0f2"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 3
     },
     {
@@ -9753,52 +9870,55 @@
       },
       "case_id": "s2x-triton-sync-hazard-mbarrier-04",
       "checker_report_evidence": {
-        "bytes": 3905,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-missing18-source-v2/checks/s2x-triton-sync-hazard-mbarrier-04.json",
-        "sha256": "50811d393818842ca2abd650cd931882080a4e1006201548024b8dc4f34c1f7c"
+        "bytes": 3715,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-sync-hazard-mbarrier-04/checker.json",
+        "sha256": "b22aa2a034313b1cac73c2aae8bc324e67556cca52d7c750bd2a2c300c92cc5a"
       },
       "dsl": "triton",
       "pgir_evidence": {
-        "bytes": 20162,
-        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-new/.artifacts/frontend-pairs/suite2-recovery-checker-missing18-source-v2/pgir/s2x-triton-sync-hazard-mbarrier-04.json",
-        "sha256": "261d4a1c13ed6dc2f732c9885ae07596d475a07d0e45d5d8f59b3d8f0692d77f"
+        "bytes": 8514,
+        "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/cases/s2x-triton-sync-hazard-mbarrier-04/pgir.json",
+        "sha256": "42e1e8dec4d25839b90ebcd1a2251c22736b6849432868bab510fb660af8b0fe"
       },
       "pipeguard": {
-        "checker_engine": null,
-        "checker_sha256": "1cd8d786f5ecbc4b402ae427a5971d90d0bd761069f1a0164df3559d69446a05",
-        "direct_core_sha256": "60dd6d7b3d9202d5320475ed2bd0f658ab1ae1a51c21afe6e47854dd1c06658f",
+        "checker_engine": "maximal",
+        "checker_sha256": "98f6503735b8d14742488a1ccf25dab322b92813f1feecbb9130fa11e0ffae8d",
+        "direct_core_sha256": "fc888eb589471720ec22c1891a921dc13e40513b1c1e2a86a5827f27acb3a022",
         "matches_independent_label": true,
-        "primary_diagnostic": "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE",
+        "primary_diagnostic": "STUCK_PROTOCOL_STATE",
+        "status": "CHECKED",
         "verdict": "SYNC_HAZARD"
       },
       "primitive": "mbarrier",
-      "producer_package": "missing18_source_rebuilt",
+      "producer_package": "suite2-mbarrier-diverse-v1",
       "result_class": "SYNC_HAZARD",
+      "scenario_id": "MBARRIER:LATE-MISSING-ARRIVAL",
       "source": {
-        "bytes": 2167,
+        "bytes": 2296,
         "path": "suite/suite2/cases/triton/mbarrier/sync_hazard/s2x-triton-sync-hazard-mbarrier-04.py",
-        "sha256": "d1532815236a6d284028509f26df99af930452d6f4705e3011dc2c69fcf33659"
+        "sha256": "5bfa64bd14aa266136da5dd561438538ef2c76c7eee1825d2c52dae18037970a"
       },
-      "source_binding": "ADJUDICATED_LEDGER_DIRECT",
+      "source_binding": "MBARRIER_DIVERSE_V1",
       "spec": {
-        "bytes": 946,
+        "bytes": 971,
         "path": "suite/suite2/cases/triton/mbarrier/sync_hazard/s2x-triton-sync-hazard-mbarrier-04.json",
-        "sha256": "26bb6b4e59c764a2c998d83d7c771d4d1283c37baf6b14ee62f946efa0079fb2"
+        "sha256": "ee9cea8235a8a4d1ca3be8881ea107b401a16b4a77e1e16209475c6194f0b94f"
       },
+      "template_family": "MBARRIER-DIVERSE",
       "variant": 4
     }
   ],
   "helper_namespace": {
     "files": {
       "tilelang_cases.py": {
-        "bytes": 24756,
+        "bytes": 27422,
         "path": "suite/frontend_pairs/sources/tilelang_cases.py",
-        "sha256": "3ab49375029a522ea9f388e9737b73129d5db606b3ec4527d7f4bdb672ebff46"
+        "sha256": "f8d8552f150953f47e0d6004d4ba0e5413354a3763d12513628f663731a1680e"
       },
       "triton_cases.py": {
-        "bytes": 32827,
+        "bytes": 35624,
         "path": "suite/frontend_pairs/sources/triton_cases.py",
-        "sha256": "9764a0b9c70d1c1148225686e14139f673683f0f08f38317dc87c6fc3d0afec4"
+        "sha256": "87d33733f5f3799cfed846022fb585939dfadeab76bd04e08415cdf1e81dfc17"
       }
     },
     "inputs": {
@@ -9836,6 +9956,18 @@
       "sha256": "8ddbf8aef32f1cdeb3b2cd09e10ff4cbc22ed976e477560514266c6415eb27e0"
     }
   },
+  "redesign_evidence": {
+    "barrier": {
+      "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-barrier-diverse-pg-v5/ledger.json",
+      "rows": 20,
+      "sha256": "0b7952e36d71282a20bd0d9b40312bee4b8b213cd8d75f21d9d60c5b04401ee6"
+    },
+    "mbarrier": {
+      "path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-exp-dsl-suite2-final/.artifacts/suite2-mbarrier-diverse-pg-v2/ledger.json",
+      "rows": 20,
+      "sha256": "5d39b6af1ae05d937d162511c31b1109c07a1bb010a666e1b15f83933bd1ca0d"
+    }
+  },
   "schema_version": "pipeguard-suite2-final-210-source-corpus-v1",
   "selection": {
     "dsl": {
@@ -9867,10 +9999,12 @@
     ]
   },
   "source_bindings": {
-    "ADJUDICATED_LEDGER_DIRECT": 18,
-    "ADJUDICATED_PRODUCER_RECORD": 126,
-    "BARRIER_MEMORY_PRODUCER_LEDGER": 60,
-    "MBARRIER_VARIANT0_OWNER_AUDIT": 6
+    "ADJUDICATED_LEDGER_DIRECT": 10,
+    "ADJUDICATED_PRODUCER_RECORD": 118,
+    "BARRIER_DIVERSE_V1": 20,
+    "BARRIER_MEMORY_PRODUCER_LEDGER": 40,
+    "MBARRIER_DIVERSE_V1": 20,
+    "MBARRIER_VARIANT0_OWNER_AUDIT": 2
   },
-  "status": "SELECTED_210_PRELIMINARY_PENDING_REMEDIATION"
+  "status": "SELECTED_210_PRELIMINARY_REDESIGNED_BARRIER_MBARRIER_CLOSED"
 }

@@ -1,0 +1,23 @@
+#blocked = #ttg.blocked<{sizePerThread = [1], threadsPerWarp = [32], warpsPerCTA = [4], order = [0]}>
+#loc1 = loc("/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-suite2-recovery/.artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/barrier/sync_hazard/s2r-barrier-triton-sync-hazard-00.py":12:1)
+#loc7 = loc("Data"(#loc1))
+#loc8 = loc("Out"(#loc1))
+module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:90", "ttg.threads-per-warp" = 32 : i32, "ttng.two-ctas" = false} {
+  tt.func public @kernel(%Data: !tt.ptr<i32> {tt.divisibility = 16 : i32} loc("Data"(#loc1)), %Out: !tt.ptr<i32> {tt.divisibility = 16 : i32} loc("Out"(#loc1))) attributes {noinline = false} {
+    %cst = arith.constant dense<0> : tensor<128xi32, #blocked> loc(#loc)
+    %lanes = tt.make_range {end = 128 : i32, start = 0 : i32} : tensor<128xi32, #blocked> loc(#loc9)
+    %token = tt.elementwise_inline_asm ".reg .pred p; setp.lt.u32 p, $1, 16; @p bar.sync 0; mov.u32 $0, $1;" {constraints = "=r,r", packed_element = 1 : i32, pure = false} %lanes : tensor<128xi32, #blocked> -> tensor<128xi32, #blocked> loc(#loc10)
+    %0 = arith.cmpi eq, %lanes, %cst : tensor<128xi32, #blocked> loc(#loc4)
+    %1 = tt.splat %Out : !tt.ptr<i32> -> tensor<128x!tt.ptr<i32>, #blocked> loc(#loc5)
+    tt.store %1, %token, %0 : tensor<128x!tt.ptr<i32>, #blocked> loc(#loc6)
+    tt.return loc(#loc1)
+  } loc(#loc1)
+} loc(#loc)
+#loc = loc(unknown)
+#loc2 = loc("/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-suite2-recovery/.artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/barrier/sync_hazard/s2r-barrier-triton-sync-hazard-00.py":14:13)
+#loc3 = loc("/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-suite2-recovery/.artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/barrier/sync_hazard/s2r-barrier-triton-sync-hazard-00.py":15:13)
+#loc4 = loc("/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-suite2-recovery/.artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/barrier/sync_hazard/s2r-barrier-triton-sync-hazard-00.py":19:49)
+#loc5 = loc("/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-suite2-recovery/.artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/barrier/sync_hazard/s2r-barrier-triton-sync-hazard-00.py":19:16)
+#loc6 = loc("/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-suite2-recovery/.artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/barrier/sync_hazard/s2r-barrier-triton-sync-hazard-00.py":19:5)
+#loc9 = loc("lanes"(#loc2))
+#loc10 = loc("token"(#loc3))

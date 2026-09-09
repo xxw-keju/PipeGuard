@@ -1,6 +1,6 @@
-# Generated Recovery Suite 2 real Triton Gluon kernel. Do not edit.
+# Generated Suite 2 Barrier case; do not hand edit.
 # case_id=s2r-barrier-triton-data-hazard-02
-# independent_label=DATA_HAZARD; actors=thread:0,thread:64; variant=2
+# scenario=BARRIER:SHARED-WAR; independent_label=DATA_HAZARD
 from triton.experimental import gluon
 from triton.experimental.gluon import language as ttgl
 
@@ -8,10 +8,21 @@ from triton.experimental.gluon import language as ttgl
 def _layout():
     return ttgl.BlockedLayout(size_per_thread=[1], threads_per_warp=[32], warps_per_cta=[4], order=[0], cga_layout=[])
 
+@gluon.constexpr_function
+def _shared_layout():
+    return ttgl.SwizzledSharedLayout(vec=1, per_phase=1, max_phase=1, order=[0], cga_layout=[])
+
+@gluon.jit
+def _reader(shared, sink):
+    sink.store(shared.load(_layout()))
+
+@gluon.jit
+def _writer(shared):
+    shared.store(ttgl.full([128], 202, ttgl.int32, _layout()))
+
 @gluon.jit
 def kernel(Data, Out):
-    layout: ttgl.constexpr = _layout()
-    lanes = ttgl.arange(0, 128, layout)
-    ttgl.store(Data + lanes * 0 + 24, 103, mask=lanes == 0)
-    value = ttgl.load(Data + lanes * 0 + 24, mask=lanes == 64, other=0)
-    ttgl.store(Out + lanes * 0 + 2, value, mask=lanes == 64)
+    initial = ttgl.full([128], 7, ttgl.int32, _layout())
+    shared = ttgl.allocate_shared_memory(ttgl.int32, [128], _shared_layout(), initial)
+    sink = ttgl.allocate_shared_memory(ttgl.int32, [128], _shared_layout())
+    ttgl.warp_specialize([(_reader, (shared, sink)), (_writer, (shared,))], [4], [32])

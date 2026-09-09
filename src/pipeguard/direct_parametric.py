@@ -759,7 +759,10 @@ class DirectParametricChecker:
                 raise self._error("WAIT_BEFORE_COMMIT", "group wait reached uncommitted operations", template, {})
             destination_lanes = (
                 template.program_instances
-                if template.rendezvous == "ALL_PROGRAM_INSTANCES"
+                if (
+                    template.rendezvous == "ALL_PROGRAM_INSTANCES"
+                    or kind == "TmaStoreWaitGroup"
+                )
                 else (lane,)
             )
             destination_positions = {
@@ -1410,6 +1413,7 @@ class DirectParametricChecker:
             return
 
         fence_bits_by_node: dict[int, int] = defaultdict(int)
+        dependency_fence_bits_by_node: dict[int, int] = defaultdict(int)
         intervals_by_key: dict[
             tuple[str, str, int | None, str],
             list[tuple[int, int, int]],
@@ -1423,6 +1427,28 @@ class DirectParametricChecker:
         ) in enumerate(self.proxy_fences):
             bit = 1 << index
             fence_bits_by_node[node] |= bit
+            template = self._template_for_node(node)
+            if template is not None:
+                for dependency in template.dependencies:
+                    source_id = self.module.template_indices[dependency.template]
+                    source = self.module.templates[source_id]
+                    if dependency.relation == "SAME_INSTANCE":
+                        source_nodes = (
+                            self.graph.occurrence_by_lane_template[(lane, source_id)]
+                            for lane in template.program_instances
+                        )
+                    elif dependency.relation == "ALL_INSTANCES":
+                        source_nodes = (
+                            self.graph.occurrence_by_lane_template[(lane, source_id)]
+                            for lane in source.program_instances
+                        )
+                    else:
+                        source_nodes = (
+                            self._source_node(source_id, min(source.executors)),
+                        )
+                    for source_node in source_nodes:
+                        dependency_fence_bits_by_node[source_node] |= bit
+                        self.proxy_fence_index_build_visits += 1
             if source_domain != "GENERIC" or scope != "CTA":
                 continue
             for (
@@ -1464,7 +1490,11 @@ class DirectParametricChecker:
             for target in successors[node]:
                 ancestors[target] |= ancestors[node]
                 self.proxy_fence_index_build_visits += 1
-        descendants = [fence_bits_by_node.get(node, 0) for node in range(node_count)]
+        descendants = [
+            fence_bits_by_node.get(node, 0)
+            | dependency_fence_bits_by_node.get(node, 0)
+            for node in range(node_count)
+        ]
         for node in reversed(topological):
             for target in successors[node]:
                 descendants[node] |= descendants[target]
@@ -1816,6 +1846,54 @@ class DirectParametricChecker:
         self.race_seconds = perf_counter() - race_start
         return exact_pairs
 
+    def _conflict_witness(
+        self,
+        left: Effect,
+        right: Effect,
+        allocation: tuple[Any, ...],
+    ) -> dict[str, Any]:
+        return {
+            "category": "UNORDERED_CONFLICT",
+            "events": sorted({
+                self._event_identifier(left.node),
+                self._event_identifier(right.node),
+            }),
+            "effects": [self._effect_witness(left), self._effect_witness(right)],
+            "allocation": allocation[2],
+            "overlap": {
+                "offset": max(
+                    self.regions[left.region]["offset"],
+                    self.regions[right.region]["offset"],
+                ),
+                "extent": min(
+                    self.regions[left.region]["offset"]
+                    + self.regions[left.region]["extent"],
+                    self.regions[right.region]["offset"]
+                    + self.regions[right.region]["extent"],
+                ) - max(
+                    self.regions[left.region]["offset"],
+                    self.regions[right.region]["offset"],
+                ),
+            },
+            "missing_path": (
+                "neither program order nor a typed visibility boundary "
+                "orders the conflict"
+            ),
+        }
+
+    def _wgmma_result_not_ready(self, left: Effect, right: Effect) -> bool:
+        if left.asynchronous == right.asynchronous:
+            return False
+        window, point = (left, right) if left.asynchronous else (right, left)
+        return (
+            window.kind == "WgmmaIssue"
+            and window.mode == "WRITE"
+            and point.mode == "READ"
+            and self.regions[window.region]["address_space"] == "REGISTER"
+            and self.graph.label(window.end).endswith(":RESULT_READY")
+        )
+
+
     def _memory_report(self) -> dict[str, Any]:
         race_start = perf_counter()
         exact_pairs = 0
@@ -1831,35 +1909,43 @@ class DirectParametricChecker:
         self.race_seconds = perf_counter() - race_start
         if first_hazard is not None:
             left, right, allocation = first_hazard
+            data_witness = self._conflict_witness(left, right, allocation)
+            if self._wgmma_result_not_ready(left, right):
+                sync_witness = {
+                    **data_witness,
+                    "category": "WGMMA_RESULT_NOT_READY",
+                    "endpoint": "RESULT_READY",
+                    "missing_path": (
+                        "the accumulator is read before a matching WGMMA "
+                        "RESULT_READY observation"
+                    ),
+                }
+                return self._report(
+                    "SYNC_HAZARD",
+                    "WGMMA_RESULT_NOT_READY",
+                    "WGMMA accumulator is read before RESULT_READY",
+                    witness=sync_witness,
+                    all_findings=[
+                        {
+                            "class": "SYNC_HAZARD",
+                            "code": "WGMMA_RESULT_NOT_READY",
+                            "endpoint": "RESULT_READY",
+                            "witness": sync_witness,
+                        },
+                        {
+                            "class": "DATA_HAZARD",
+                            "code": "UNORDERED_CONFLICT",
+                            "witness": data_witness,
+                        },
+                    ],
+                    race_pairs=exact_pairs,
+                    examined_pairs=examined_pairs,
+                )
             return self._report(
                 "DATA_HAZARD",
                 "UNORDERED_CONFLICT",
                 "a conflicting memory access pair lacks supported ordering",
-                witness={
-                    "category": "UNORDERED_CONFLICT",
-                    "events": sorted({
-                        self._event_identifier(left.node),
-                        self._event_identifier(right.node),
-                    }),
-                    "effects": [self._effect_witness(left), self._effect_witness(right)],
-                    "allocation": allocation[2],
-                    "overlap": {
-                        "offset": max(
-                            self.regions[left.region]["offset"],
-                            self.regions[right.region]["offset"],
-                        ),
-                        "extent": min(
-                            self.regions[left.region]["offset"]
-                            + self.regions[left.region]["extent"],
-                            self.regions[right.region]["offset"]
-                            + self.regions[right.region]["extent"],
-                        ) - max(
-                            self.regions[left.region]["offset"],
-                            self.regions[right.region]["offset"],
-                        ),
-                    },
-                    "missing_path": "neither program order nor a typed visibility boundary orders the conflict",
-                },
+                witness=data_witness,
                 race_pairs=exact_pairs,
                 examined_pairs=examined_pairs,
             )
@@ -1930,6 +2016,7 @@ class DirectParametricChecker:
         summary: str,
         *,
         witness: dict[str, Any] | None = None,
+        all_findings: list[dict[str, Any]] | None = None,
         race_pairs: int = 0,
         examined_pairs: int | None = None,
         race_scan_scope: str = "DYNAMIC_EFFECT_ORDERING",
@@ -2021,6 +2108,8 @@ class DirectParametricChecker:
         }
         if witness is not None:
             result["witness"] = witness
+        if all_findings is not None:
+            result["all_findings"] = all_findings
         if verdict == "SAFE":
             result["manifest"] = {
                 "scope": "sm90/sm90a selected-single-CTA unified lane-parameterized core",

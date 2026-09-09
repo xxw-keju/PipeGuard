@@ -27,6 +27,11 @@ def _binding_evidence(raw_path: Path, family: str) -> dict:
         pointer_allocations = {"5": "global:input", "6": "global:output"}
     elif family == "TMA-STORE":
         pointer_allocations = {"5": "global:output", "6": "global:sink"}
+    elif family == "PROXY-STORE":
+        pointer_allocations = {
+            "5": "global:output",
+            "6": "global:sink",
+        }
     return {
         "evidence_version": "triton-binding-evidence-v1",
         "source_ir_sha256": hashlib.sha256(raw_path.read_bytes()).hexdigest(),
@@ -37,9 +42,20 @@ def _binding_evidence(raw_path: Path, family: str) -> dict:
     }
 
 
-def _capture_with_evidence(raw_path: Path, evidence_path: Path, family: str, label: str) -> dict:
+MAX_BINDING_EVIDENCE_ATTEMPTS = 64
+
+
+def _capture_with_evidence(
+    raw_path: Path,
+    evidence_path: Path,
+    family: str,
+    label: str,
+    *,
+    descriptor_shape: list[int] | None = None,
+    final_ptx_path: Path | None = None,
+) -> dict:
     evidence = _binding_evidence(raw_path, family)
-    for _attempt in range(8):
+    for _attempt in range(MAX_BINDING_EVIDENCE_ATTEMPTS):
         evidence_path.write_text(json.dumps(evidence, indent=2, sort_keys=True))
         try:
             return triton_capture.capture_file(
@@ -48,26 +64,39 @@ def _capture_with_evidence(raw_path: Path, evidence_path: Path, family: str, lab
                 command="suite2-native-triton-compile-only",
                 grid_ctas=1,
                 binding_evidence_path=evidence_path,
+                final_ptx_path=final_ptx_path,
             )
         except triton_capture.CaptureError as error:
             operation_index = error.details.get("operation_index")
             if not isinstance(operation_index, int):
                 raise
             if error.code == "TRITON_BINDING_EVIDENCE_REQUIRED":
-                evidence["unit_attributes"][str(operation_index)] = []
+                if family == "PROXY-STORE" and "warp_specialize" in str(error):
+                    evidence["array_attributes"][str(operation_index)] = {
+                        "partition_num_warps": [4],
+                        "warp_group_start_ids": [4],
+                    }
+                else:
+                    evidence["unit_attributes"][str(operation_index)] = []
                 continue
             if error.code != "TRITON_TMA_DESCRIPTOR_UNRESOLVED":
                 raise
             is_named_store = family == "TMA-STORE"
-            allocation = "global:output" if family in {"TMA-STORE", "TMA-STORE-ENDPOINT"} else "global:input"
+            is_proxy_store = family == "PROXY-STORE"
+            allocation = (
+                "global:output"
+                if family in {"TMA-STORE", "TMA-STORE-ENDPOINT", "PROXY-STORE"}
+                else "global:input"
+            )
+            shape = descriptor_shape or ([64, 32] if is_named_store else [32, 32])
             evidence["array_attributes"][str(operation_index)] = {
                 "descriptor": {
                     "allocation_id": allocation,
                     "coordinate_order": [0, 1],
                     "element_bytes": 2,
-                    "shape": [64, 32] if is_named_store else [32, 32],
-                    "strides": [32, 1],
-                    "tile_shape": [32, 32],
+                    "shape": shape,
+                    "strides": [shape[1], 1],
+                    "tile_shape": [64, 64] if is_proxy_store else [32, 32],
                 }
             }
     raise AssertionError("descriptor evidence retry did not return or raise")

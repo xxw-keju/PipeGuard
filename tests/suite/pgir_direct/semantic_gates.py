@@ -270,7 +270,7 @@ def gate_definitions() -> list[tuple[str, dict[str, Any], str]]:
         ("cta-barrier-typed-cut-orders-cross-lane-access", _barrier_pair(), "SAFE"),
         ("wgmma-eager-operand-completion-without-wait-stays-open", _single_stream_parametric(_events(_case(wgmma), "fence", "issue", "commit", "overwrite")), "DATA_HAZARD"),
         ("wgmma-operands-released-closes-only-operand-window", _single_stream_parametric(_events(_case(wgmma), "fence", "issue", "commit", "wait_operand", "overwrite")), "SAFE"),
-        ("wgmma-operand-wait-does-not-release-result", _single_stream_parametric(_events(_case(wgmma), "fence", "issue", "commit", "wait_operand", "read_accumulator")), "DATA_HAZARD"),
+        ("wgmma-operand-wait-does-not-release-result", _single_stream_parametric(_events(_case(wgmma), "fence", "issue", "commit", "wait_operand", "read_accumulator")), "SYNC_HAZARD"),
         ("wgmma-result-ready-releases-result", _single_stream_parametric(_events(_case(wgmma), "fence", "issue", "commit", "wait_result", "read_accumulator")), "SAFE"),
         ("tma-store-eager-source-completion-without-wait-stays-open", _single_stream_parametric(_events(_case(tma), "issue", "commit", "overwrite")), "DATA_HAZARD"),
         ("tma-store-source-released-allows-source-reuse", _single_stream_parametric(_events(_case(tma), "issue", "commit", "wait_source", "overwrite")), "SAFE"),

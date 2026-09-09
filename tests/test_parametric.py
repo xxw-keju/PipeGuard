@@ -1232,6 +1232,259 @@ def test_parametric_region_rejects_64_bit_address_overflow():
 
 
 
+def _two_lane_tma_store_wait(wait_mode: str) -> dict:
+    raw = parametric_memory_module()
+    raw["owners"][0]["participants"] = [0, 1]
+    raw["resources"] = [{
+        "id": "store",
+        "kind": "async_group",
+        "participants": ["partition:0"],
+        "capacity": 8,
+        "protocol": "TMA_STORE",
+        "scope": "CTA",
+    }]
+    raw["regions"] = [
+        {
+            "id": "source",
+            "allocation_id": "shared:source",
+            "address_space": "SHARED",
+            "offset": 0,
+            "extent": 16,
+        },
+        {
+            "id": "output",
+            "allocation_id": "global:output",
+            "address_space": "GLOBAL",
+            "offset": 0,
+            "extent": 16,
+        },
+    ]
+    common = {
+        "stream": "lane",
+        "program_instances": [0, 1],
+        "executors": [0],
+        "transition": "ONCE",
+        "rendezvous": "NONE",
+    }
+    raw["event_templates"] = [
+        {
+            **common,
+            "id": "issue",
+            "type": "TmaStoreIssue",
+            "order": 0,
+            "fields": {
+                "resource": "store",
+                "group_owner": "partition:0",
+                "source_region": "source",
+                "destination_region": "output",
+                "bytes": 16,
+            },
+        },
+        {
+            **common,
+            "id": "commit",
+            "type": "TmaStoreCommitGroup",
+            "order": 1,
+            "fields": {
+                "resource": "store",
+                "group_owner": "partition:0",
+                "group_seq": 0,
+            },
+        },
+        {
+            **common,
+            "id": "wait",
+            "type": "TmaStoreWaitGroup",
+            "order": 2,
+            "fields": {
+                "resource": "store",
+                "group_owner": "partition:0",
+                "wait_group_count": 0,
+                "wait_mode": wait_mode,
+            },
+        },
+        {
+            "id": "read",
+            "type": "MemRead",
+            "stream": "lane",
+            "order": 3,
+            "program_instances": [1],
+            "executors": [1],
+            "transition": "PER_INSTANCE",
+            "rendezvous": "NONE",
+            "fields": {"region": "output"},
+        },
+    ]
+    return raw
+
+
+@pytest.mark.parametrize(
+    ("wait_mode", "expected"),
+    [("GLOBAL", "SAFE"), ("READ_ONLY", "DATA_HAZARD")],
+)
+def test_tma_store_wait_publishes_completion_to_all_program_lanes(
+    wait_mode: str,
+    expected: str,
+):
+    report = check_module(
+        module_from_dict(_two_lane_tma_store_wait(wait_mode)),
+        engine="maximal",
+    )
+
+    assert report["verdict"] == expected
+    assert report["statistics"]["exact_conflicting_access_pairs"] == 1
+
+
+def _proxy_dependency_handoff(*, ordered: bool) -> dict:
+    raw = parametric_memory_module()
+    raw["owners"][0]["participants"] = [0]
+    raw["resources"] = [{
+        "id": "bar",
+        "kind": "mbarrier",
+        "participants": ["partition:0"],
+    }]
+    raw["regions"] = [
+        {
+            "id": "source",
+            "allocation_id": "global:source",
+            "address_space": "GLOBAL",
+            "offset": 0,
+            "extent": 16,
+        },
+        {
+            "id": "tile",
+            "allocation_id": "shared:tile",
+            "address_space": "SHARED",
+            "offset": 0,
+            "extent": 16,
+        },
+    ]
+    dependency = (
+        [{"template": "producer", "relation": "ALL_INSTANCES"}]
+        if ordered else []
+    )
+    raw["event_templates"] = [
+        {
+            "id": "producer",
+            "type": "MemWrite",
+            "stream": "lane",
+            "order": 0,
+            "program_instances": [1],
+            "executors": [1],
+            "transition": "PER_INSTANCE",
+            "rendezvous": "NONE",
+            "fields": {"region": "source"},
+        },
+        {
+            "id": "init",
+            "type": "MBarrierInit",
+            "stream": "lane",
+            "order": 1,
+            "program_instances": [0],
+            "executors": [0],
+            "transition": "ONCE",
+            "rendezvous": "NONE",
+            "fields": {"resource": "bar", "lifecycle_epoch": 0, "count": 1},
+        },
+        {
+            "id": "expect",
+            "type": "MBarrierExpectTx",
+            "stream": "lane",
+            "order": 2,
+            "program_instances": [0],
+            "executors": [0],
+            "transition": "ONCE",
+            "rendezvous": "NONE",
+            "fields": {
+                "resource": "bar", "lifecycle_epoch": 0,
+                "generation": 0, "bytes": 16,
+            },
+        },
+        {
+            "id": "proxy",
+            "type": "ProxyFence",
+            "stream": "lane",
+            "order": 3,
+            "program_instances": [0],
+            "executors": [0],
+            "transition": "ONCE",
+            "rendezvous": "NONE",
+            "dependencies": dependency,
+            "fields": {
+                "from_domain": "GENERIC", "to_domain": "TMA",
+                "scope": "CTA", "regions": ["source"],
+                "visibility_mask": _visibility_mask(),
+            },
+        },
+        {
+            "id": "issue",
+            "type": "TmaLoadIssue",
+            "stream": "lane",
+            "order": 4,
+            "program_instances": [0],
+            "executors": [0],
+            "transition": "ONCE",
+            "rendezvous": "NONE",
+            "fields": {
+                "resource": "bar", "lifecycle_epoch": 0, "generation": 0,
+                "source_region": "source", "destination_region": "tile",
+                "bytes": 16,
+            },
+        },
+        {
+            "id": "arrive",
+            "type": "MBarrierArrive",
+            "stream": "lane",
+            "order": 5,
+            "program_instances": [0],
+            "executors": [0],
+            "transition": "ONCE",
+            "rendezvous": "NONE",
+            "fields": {
+                "resource": "bar", "lifecycle_epoch": 0,
+                "generation": 0, "count": 1,
+            },
+        },
+        {
+            "id": "wait",
+            "type": "MBarrierWaitParity",
+            "stream": "lane",
+            "order": 6,
+            "program_instances": [0],
+            "executors": [0],
+            "transition": "ONCE",
+            "rendezvous": "NONE",
+            "fields": {
+                "resource": "bar", "lifecycle_epoch": 0,
+                "generation": 0, "raw_parity": 0,
+                "parity_evidence": {
+                    "derivation_kind": "BARRIER_HISTORY",
+                    "logical_stream_id": "partition:0:bar",
+                    "lifecycle_epoch": 0, "stream_rank": 0,
+                    "polling_coalesced": True,
+                },
+            },
+        },
+    ]
+    return raw
+
+
+@pytest.mark.parametrize(
+    ("ordered", "expected"),
+    [(True, "SAFE"), (False, "DATA_HAZARD")],
+)
+def test_proxy_fence_honors_all_instances_dependency_from_other_lane(
+    ordered: bool,
+    expected: str,
+):
+    compact = module_from_dict(_proxy_dependency_handoff(ordered=ordered))
+
+    direct = check_module(compact, engine="maximal")
+
+    assert direct["verdict"] == expected
+    assert direct["statistics"]["exact_conflicting_access_pairs"] == 1
+
+
 @pytest.mark.parametrize(
     ("fragments", "expected"),
     [

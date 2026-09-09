@@ -65,6 +65,68 @@ def _mbarrier_kernel():
     return kernel
 
 
+def _suite2_diverse_mbarrier_kernel(scenario: str):
+    MISSING_ARRIVAL = ttgl.constexpr(scenario == "MBARRIER:MISSING-ARRIVAL")
+    NEXT_BEFORE_WAIT = ttgl.constexpr(scenario == "MBARRIER:NEXT-ARRIVE-BEFORE-WAIT")
+    WRONG_PARITY = ttgl.constexpr(scenario == "MBARRIER:WRONG-PARITY-WAIT")
+    DELAYED_NEXT = ttgl.constexpr(scenario == "MBARRIER:DELAYED-NEXT-ARRIVE-BEFORE-WAIT")
+    LATE_MISSING = ttgl.constexpr(scenario == "MBARRIER:LATE-MISSING-ARRIVAL")
+    INIT_COUNT = ttgl.constexpr(2 if MISSING_ARRIVAL or LATE_MISSING else 1)
+
+    @gluon.jit
+    def kernel(data, out, BUGGY: ttgl.constexpr):
+        layout: ttgl.constexpr = _blocked_1d(32)
+        lanes = ttgl.arange(0, 32, layout)
+        shared = ttgl.allocate_shared_memory(
+            ttgl.int32,
+            [32],
+            ttgl.SwizzledSharedLayout(
+                vec=1, per_phase=1, max_phase=1, order=[0], cga_layout=_cga_layout()
+            ),
+        )
+        bar = mbarrier.allocate_mbarrier()
+        mbarrier.init(bar, count=INIT_COUNT)
+        if MISSING_ARRIVAL:
+            mbarrier.arrive(bar, count=1 if BUGGY else 2)
+            mbarrier.wait(bar, phase=0)
+        elif NEXT_BEFORE_WAIT:
+            mbarrier.arrive(bar, count=1)
+            if BUGGY:
+                mbarrier.arrive(bar, count=1)
+                mbarrier.wait(bar, phase=0)
+                mbarrier.wait(bar, phase=1)
+            else:
+                mbarrier.wait(bar, phase=0)
+                mbarrier.arrive(bar, count=1)
+                mbarrier.wait(bar, phase=1)
+        elif WRONG_PARITY:
+            mbarrier.arrive(bar, count=1)
+            mbarrier.wait(bar, phase=0)
+            mbarrier.arrive(bar, count=1)
+            mbarrier.wait(bar, phase=1)
+            mbarrier.arrive(bar, count=1)
+            mbarrier.wait(bar, phase=1 if BUGGY else 0)
+        elif DELAYED_NEXT:
+            shared.store(ttgl.full([32], 1, ttgl.int32, layout))
+            mbarrier.arrive(bar, count=1)
+            if not BUGGY:
+                mbarrier.wait(bar, phase=0)
+            value = shared.load(layout)
+            for step in ttgl.static_range(0, 64):
+                value = value + step + 1
+                shared.store(value)
+            mbarrier.arrive(bar, count=1)
+            mbarrier.wait(bar, phase=1)
+            observed = shared.load(layout)
+            ttgl.store(out + lanes, observed, mask=lanes == 1)
+        else:
+            mbarrier.arrive(bar, count=2)
+            mbarrier.wait(bar, phase=0)
+            mbarrier.arrive(bar, count=1 if BUGGY else 2)
+            mbarrier.wait(bar, phase=1)
+
+    return kernel
+
 def _cp_async_kernel(family: str, threads: int):
     THREADS = ttgl.constexpr(threads)
     IS_OVERLAP = ttgl.constexpr(family == "CP-OVERLAP")
@@ -103,7 +165,11 @@ def _tma_load_kernel(family: str, variant: int = 0):
         layout: ttgl.constexpr = ttgl.BlockedLayout(
             size_per_thread=[1, 1], threads_per_warp=[32, 1], warps_per_cta=[4, 1],
             order=[0, 1], cga_layout=_cga_layout())
-        shared = ttgl.allocate_shared_memory(ttgl.float16, [block, block], input_desc.layout)
+        shared = ttgl.allocate_shared_memory(
+            ttgl.float16,
+            [TRANSFERS, block, block],
+            input_desc.layout,
+        )
         bar = mbarrier.allocate_mbarrier()
         mbarrier.init(bar, count=1)
         if IS_PROXY:
@@ -113,13 +179,19 @@ def _tma_load_kernel(family: str, variant: int = 0):
                 hopper.fence_async_shared()
         mbarrier.expect(bar, input_desc.nbytes_per_cta * TRANSFERS)
         for transfer in ttgl.static_range(0, TRANSFERS):
-            tma.async_load(input_desc, [transfer * block, 0], bar, shared)
+            tma.async_load(
+                input_desc,
+                [transfer * block, 0],
+                bar,
+                shared.index(transfer),
+            )
+        observed = shared.index(TRANSFERS - 1)
         if IS_OBSERVE and BUGGY:
-            value = shared.load(layout)
+            value = observed.load(layout)
             mbarrier.wait(bar, 0, deps=[shared])
         else:
             mbarrier.wait(bar, 0, deps=[shared])
-            value = shared.load(layout)
+            value = observed.load(layout)
         rows = ttgl.arange(0, block, ttgl.SliceLayout(1, layout))[:, None]
         cols = ttgl.arange(0, block, ttgl.SliceLayout(0, layout))[None, :]
         ttgl.store(output + rows * block + cols, value)
@@ -284,7 +356,7 @@ def _suite2_proxy_kernel(variant: int, result_class: str):
             shared.store(ttgl.full([64, 64], phase + 1, ttgl.float16, layout))
 
     @gluon.jit
-    def kernel(output_desc, output, BUGGY: ttgl.constexpr):
+    def kernel(output_desc, output, sink, BUGGY: ttgl.constexpr):
         layout: ttgl.constexpr = ttgl.BlockedLayout(
             [1, 64], [32, 1], [4, 1], [0, 1], cga_layout=_cga_layout()
         )
@@ -304,7 +376,7 @@ def _suite2_proxy_kernel(variant: int, result_class: str):
         rows = ttgl.arange(0, 64, ttgl.SliceLayout(1, layout))[:, None]
         cols = ttgl.arange(0, 64, ttgl.SliceLayout(0, layout))[None, :]
         value = ttgl.load(output + rows * 64 + cols)
-        ttgl.store(output + rows * 64 + cols, value)
+        ttgl.store(sink + rows * 64 + cols, value)
 
     return kernel
 

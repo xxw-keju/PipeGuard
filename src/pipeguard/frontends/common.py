@@ -358,7 +358,7 @@ def validate_snapshot_envelope(
     require_exact_keys(
         snapshot["profile"],
         {"id", "source_ir_sha256", "compiler_ir_stage", "target_rule"},
-        set(),
+        {"final_ptx_evidence"},
         "/profile",
     )
     profile = snapshot["profile"]
@@ -390,6 +390,42 @@ def validate_snapshot_envelope(
             },
         )
     _require_nonempty_string(profile["target_rule"], "/profile/target_rule")
+    final_ptx = profile.get("final_ptx_evidence")
+    if final_ptx is not None:
+        require_exact_keys(
+            final_ptx,
+            {
+                "sha256", "bytes", "proxy_fence_before_first_wgmma",
+                "proxy_fence_count", "wgmma_instruction_count", "method",
+            },
+            set(),
+            "/profile/final_ptx_evidence",
+        )
+        final_digest = final_ptx["sha256"]
+        if (
+            not isinstance(final_digest, str)
+            or re.fullmatch(r"[0-9a-f]{64}", final_digest) is None
+            or _require_nonnegative_integer(
+                final_ptx["bytes"], "/profile/final_ptx_evidence/bytes"
+            ) == 0
+            or not isinstance(final_ptx["proxy_fence_before_first_wgmma"], bool)
+            or _require_nonnegative_integer(
+                final_ptx["proxy_fence_count"],
+                "/profile/final_ptx_evidence/proxy_fence_count",
+            ) not in {0, 1}
+            or _require_nonnegative_integer(
+                final_ptx["wgmma_instruction_count"],
+                "/profile/final_ptx_evidence/wgmma_instruction_count",
+            ) == 0
+            or final_ptx["proxy_fence_before_first_wgmma"]
+            != bool(final_ptx["proxy_fence_count"])
+            or final_ptx["method"] != "final-ptx-exact-opcode-order-v1"
+        ):
+            raise FrontendError(
+                "FRONTEND_PROVENANCE_INVALID",
+                f"{dsl} final PTX evidence is malformed",
+                {"final_ptx_evidence": final_ptx},
+            )
     evidence_fields = [
         "allocation_identity_evidence",
         "alias_evidence",

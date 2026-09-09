@@ -2238,7 +2238,12 @@ def test_wgmma_result_wait_does_not_publish_outside_owner_warpgroup():
     read = next(event for event in raw["events"] if event["id"] == "accumulator_read")
     read.update({"actor": "outsider", "seq": 0, "depends_on": ["wait_result"]})
     result = check_module(module_from_dict(raw), engine="crosscheck")
-    assert result["verdict"] == "DATA_HAZARD"
+    assert result["verdict"] == "SYNC_HAZARD"
+    assert result["diagnostics"][0]["code"] == "WGMMA_RESULT_NOT_READY"
+    assert [finding["class"] for finding in result["all_findings"]] == [
+        "SYNC_HAZARD",
+        "DATA_HAZARD",
+    ]
 
 
 def test_wgmma_result_ready_does_not_release_shared_operands():
@@ -2259,9 +2264,14 @@ def test_wgmma_operands_released_does_not_make_result_ready():
         wgmma_module(wait_result=False, overwrite_operand=False, read_accumulator=True),
         engine="crosscheck",
     )
-    assert result["verdict"] == "DATA_HAZARD"
+    assert result["verdict"] == "SYNC_HAZARD"
+    assert result["diagnostics"][0]["code"] == "WGMMA_RESULT_NOT_READY"
+    data_finding = next(
+        finding for finding in result["all_findings"]
+        if finding["class"] == "DATA_HAZARD"
+    )
     accumulator = next(
-        effect for effect in result["witness"]["effects"]
+        effect for effect in data_finding["witness"]["effects"]
         if effect["id"] == "effect:mma_issue:accumulator"
     )
     assert accumulator["window"][1].endswith("result_ready")
