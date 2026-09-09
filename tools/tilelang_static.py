@@ -60,7 +60,10 @@ def valid_set_max_nreg(arguments: Any, scalar_evaluator: ScalarEvaluator) -> boo
 
 
 def is_pure_payload_call(name: str, argument_count: int) -> bool:
-    return name == "tl.fast_rcp" and argument_count == 1
+    return (
+        name == "tl.fast_rcp" and argument_count == 1
+        or name in {"tir.reinterpret", "tirx.reinterpret"} and argument_count == 1
+    )
 
 
 def peel_static_byte_offsets(

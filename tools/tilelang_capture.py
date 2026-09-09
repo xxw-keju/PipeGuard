@@ -2,7 +2,10 @@
 from __future__ import annotations
 
 import argparse
+from collections import defaultdict
+from copy import deepcopy
 import hashlib
+import heapq
 import json
 import re
 from itertools import product
@@ -21,8 +24,8 @@ from tilelang_static import (
     vector_values,
 )
 
-SNAPSHOT_VERSION = "tilelang-snapshot-v2"
-ADAPTER_VERSION = "tilelang-pgir-v2"
+SNAPSHOT_VERSION = "tilelang-snapshot-v3"
+ADAPTER_VERSION = "tilelang-pgir-v3"
 
 
 class CaptureError(Exception):
@@ -56,6 +59,588 @@ def _git_revision(path: Path) -> str:
         return "unavailable"
 
 
+class CompactTraceBuilder:
+    _COLLECTIVE_OPS = {
+        "tilelang.wgmma.fence_operand",
+        "tilelang.wgmma.issue",
+        "tilelang.wgmma.commit_group",
+        "tilelang.wgmma.wait_group",
+    }
+    _ELECTED_OPS = {
+        "tilelang.tma_load.issue",
+        "tilelang.tma_store.issue",
+        "tilelang.tma_store.commit_group",
+        "tilelang.tma_store.wait_group",
+    }
+
+    def __init__(self, capture: "TileLangCapture"):
+        self.capture = capture
+        self.actor_map = {
+            actor: ("LANE", (lane,))
+            for lane, actor in enumerate(capture.actor_ids)
+        }
+        self.actor_map.update({
+            actor: ("WARPGROUP", tuple(range(group * 128, (group + 1) * 128)))
+            for group, actor in enumerate(capture.warpgroup_ids)
+        })
+        self.records: list[dict[str, Any]] = []
+        self.record_by_id: dict[str, dict[str, Any]] = {}
+        self.traces: dict[int, list[str]] = defaultdict(list)
+        self.occurrences: dict[tuple[str, tuple[Any, ...]], int] = defaultdict(int)
+        self.first_seen = 0
+
+    @staticmethod
+    def _base(operation: dict[str, Any]) -> tuple[Any, ...]:
+        evidence = operation["evidence"]
+        fields = tuple(sorted(
+            key for key in operation
+            if key not in {"id", "op", "actor", "seq", "depends_on", "evidence"}
+        ))
+        return (
+            operation["op"],
+            evidence["source_location"],
+            tuple(evidence["activation_path"]),
+            evidence["recognizer_rule"],
+            evidence["ir_operation"],
+            fields,
+        )
+
+    def add_trace(self, lane: int, operations: list[dict[str, Any]]) -> None:
+        for operation in operations:
+            actor = operation["actor"]
+            kind, participants = self.actor_map[actor]
+            base = self._base(operation)
+            occurrence_key = (actor, base)
+            occurrence = self.occurrences[occurrence_key]
+            self.occurrences[occurrence_key] += 1
+            scope = (
+                "COLLECTIVE"
+                if operation["op"] in self._COLLECTIVE_OPS or kind == "WARPGROUP"
+                else "ELECTED"
+                if operation["op"] in self._ELECTED_OPS
+                else "INSTANCE"
+            )
+            instances = participants if scope == "COLLECTIVE" else (lane,)
+            grouping_actor = actor if scope in {"COLLECTIVE", "ELECTED"} else None
+            initial_key = (base, occurrence, scope, grouping_actor)
+            record = {
+                "operation": operation,
+                "initial_key": initial_key,
+                "instances": instances,
+                "origin_instance": lane,
+                "scope": scope,
+                "owner": actor if scope == "COLLECTIVE" else None,
+                "first_seen": self.first_seen,
+            }
+            self.first_seen += 1
+            self.records.append(record)
+            self.record_by_id[operation["id"]] = record
+            self.traces[lane].append(operation["id"])
+
+    def add_marker(self, lane: int, operation_id: str) -> None:
+        if operation_id not in self.record_by_id:
+            raise CaptureError(
+                "TILELANG_PARAMETRIC_ORDER_UNRESOLVED",
+                "collective marker references an unknown compact operation",
+                {"operation": operation_id, "lane": lane},
+            )
+        if operation_id not in self.traces[lane]:
+            self.traces[lane].append(operation_id)
+
+    def _relation(self, source: dict[str, Any], target: dict[str, Any]) -> str:
+        if target["scope"] == "COLLECTIVE":
+            return "COLLECTIVE"
+        if source["scope"] == "COLLECTIVE":
+            return "ALL_INSTANCES"
+        if source["origin_instance"] in target["instances"]:
+            return "SAME_INSTANCE"
+        return "ALL_INSTANCES"
+
+    def _partition(self) -> tuple[dict[str, int], dict[int, list[dict[str, Any]]]]:
+        key_order: dict[tuple[Any, ...], int] = {}
+        labels: dict[str, int] = {}
+        for record in self.records:
+            key = record["initial_key"]
+            labels[record["operation"]["id"]] = key_order.setdefault(key, len(key_order))
+
+        while True:
+            signatures: list[tuple[dict[str, Any], tuple[Any, ...]]] = []
+            for record in self.records:
+                dependencies = tuple(sorted(
+                    (
+                        labels[dependency],
+                        self._relation(record, self.record_by_id[dependency]),
+                    )
+                    for dependency in record["operation"].get("depends_on", [])
+                ))
+                signatures.append((record, (record["initial_key"], dependencies)))
+            signature_order: dict[tuple[Any, ...], int] = {}
+            updated = {
+                record["operation"]["id"]: signature_order.setdefault(
+                    signature, len(signature_order)
+                )
+                for record, signature in signatures
+            }
+            if all(updated[identifier] == labels[identifier] for identifier in labels):
+                labels = updated
+                break
+            if len(set(updated.values())) == len(set(labels.values())):
+                labels = updated
+                break
+            labels = updated
+
+        groups: dict[int, list[dict[str, Any]]] = defaultdict(list)
+        for record in self.records:
+            groups[labels[record["operation"]["id"]]].append(record)
+        return labels, groups
+
+    @staticmethod
+    def _operation_fields(operation: dict[str, Any]) -> dict[str, Any]:
+        return {
+            key: value
+            for key, value in operation.items()
+            if key not in {"id", "op", "actor", "seq", "depends_on", "evidence"}
+        }
+
+    def finish(self) -> list[dict[str, Any]]:
+        labels, groups = self._partition()
+        graph: dict[int, set[int]] = {label: set() for label in groups}
+        indegree = {label: 0 for label in groups}
+
+        def add_edge(before: int, after: int) -> None:
+            if before == after or after in graph[before]:
+                return
+            graph[before].add(after)
+            indegree[after] += 1
+
+        for trace in self.traces.values():
+            compact_trace = [labels[identifier] for identifier in trace]
+            for before, after in zip(compact_trace, compact_trace[1:]):
+                add_edge(before, after)
+        for record in self.records:
+            current = labels[record["operation"]["id"]]
+            for dependency in record["operation"].get("depends_on", []):
+                add_edge(labels[dependency], current)
+
+        priority = {
+            label: min(record["first_seen"] for record in records)
+            for label, records in groups.items()
+        }
+        ready = [(priority[label], label) for label, degree in indegree.items() if degree == 0]
+        heapq.heapify(ready)
+        ordered: list[int] = []
+        while ready:
+            _position, label = heapq.heappop(ready)
+            ordered.append(label)
+            for following in sorted(graph[label], key=priority.get):
+                indegree[following] -= 1
+                if indegree[following] == 0:
+                    heapq.heappush(ready, (priority[following], following))
+        if len(ordered) != len(groups):
+            raise CaptureError(
+                "TILELANG_PARAMETRIC_ORDER_UNRESOLVED",
+                "lane trace grouping introduced a cyclic template order",
+            )
+
+        template_ids = {
+            label: f"tl:template:{order:08d}:{_stable_path((groups[label][0]['initial_key'],))}"
+            for order, label in enumerate(ordered)
+        }
+        templates: list[dict[str, Any]] = []
+        for order, label in enumerate(ordered):
+            records = sorted(groups[label], key=lambda item: item["instances"])
+            representative = records[0]
+            operation = representative["operation"]
+            scope = representative["scope"]
+            if scope == "COLLECTIVE":
+                instances = list(representative["instances"])
+                field_rows = [self._operation_fields(operation)]
+            else:
+                by_instance: dict[int, dict[str, Any]] = {}
+                for record in records:
+                    for instance in record["instances"]:
+                        if instance in by_instance:
+                            raise CaptureError(
+                                "TILELANG_PARAMETRIC_INSTANCE_DUPLICATE",
+                                "one compact operation contains duplicate lane evidence",
+                                {"operation": operation["op"], "instance": instance},
+                            )
+                        by_instance[instance] = self._operation_fields(record["operation"])
+                instances = sorted(by_instance)
+                field_rows = [by_instance[instance] for instance in instances]
+
+            field_names = set(field_rows[0])
+            if any(set(row) != field_names for row in field_rows):
+                raise CaptureError(
+                    "TILELANG_PARAMETRIC_FIELDS_UNRESOLVED",
+                    "grouped lane operations disagree on their field set",
+                    {"operation": operation["op"]},
+                )
+            fields: dict[str, Any] = {}
+            instance_fields: dict[str, list[Any]] = {}
+            for name in sorted(field_names):
+                values = [row[name] for row in field_rows]
+                if len(values) == 1 or all(value == values[0] for value in values[1:]):
+                    fields[name] = values[0]
+                else:
+                    instance_fields[name] = values
+
+            dependency_pairs: set[tuple[int, str]] = set()
+            for record in records:
+                for dependency in record["operation"].get("depends_on", []):
+                    target = self.record_by_id[dependency]
+                    dependency_pairs.add((labels[dependency], self._relation(record, target)))
+            template = {
+                "id": template_ids[label],
+                "op": operation["op"],
+                "order": order,
+                "execution_scope": scope,
+                "instances": instances,
+                "fields": fields,
+                "evidence": deepcopy(operation["evidence"]),
+            }
+            if representative["owner"] is not None:
+                template["owner"] = representative["owner"]
+            if instance_fields:
+                template["instance_fields"] = instance_fields
+            if dependency_pairs:
+                template["dependencies"] = [
+                    {"template": template_ids[target], "relation": relation}
+                    for target, relation in sorted(
+                        dependency_pairs,
+                        key=lambda item: (template_ids[item[0]], item[1]),
+                    )
+                ]
+            templates.append(template)
+        return templates
+
+
+class GroupedLaneWalker:
+    """Walk one static TIR control-flow tree for a set of concrete lane states."""
+
+    _TRANSPARENT_ATTRIBUTES = {
+        "buffer_dim_align",
+        "double_buffer_scope",
+        "lexical_alloc_scope",
+        "pipeline_exec_scope",
+        "pipeline_scope",
+        "pragma_auto_unroll_max_step",
+        "pragma_unroll_explicit",
+        "realize_scope",
+        "software_pipeline_order",
+        "software_pipeline_stage",
+        "storage_scope",
+        "tl.assume",
+    }
+
+    def __init__(
+        self,
+        capture: "TileLangCapture",
+        walkers: list["LaneWalker"],
+        builder: CompactTraceBuilder,
+    ):
+        self.capture = capture
+        self.walkers = walkers
+        self.builder = builder
+
+    def _leaf(
+        self,
+        statement: Any,
+        path: tuple[Any, ...],
+        walkers: list["LaneWalker"],
+    ) -> None:
+        collective_ids: list[tuple[str, tuple[int, ...], int]] = []
+        for walker in walkers:
+            self.capture.operations = []
+            walker.walk(statement, path)
+            emitted = self.capture.operations
+            self.builder.add_trace(walker.lane, emitted)
+            for operation in emitted:
+                actor = operation["actor"]
+                actor_info = self.builder.actor_map[actor]
+                if actor_info[0] == "WARPGROUP":
+                    collective_ids.append((operation["id"], actor_info[1], walker.lane))
+        self.capture.operations = []
+        for operation_id, participants, emitting_lane in collective_ids:
+            for lane in participants:
+                if lane != emitting_lane:
+                    self.builder.add_marker(lane, operation_id)
+
+    @staticmethod
+    def _save_binding(walker: "LaneWalker", variable: Any) -> tuple[bool, int | None]:
+        return variable in walker.bindings, walker.bindings.get(variable)
+
+    @staticmethod
+    def _restore_binding(
+        walker: "LaneWalker",
+        variable: Any,
+        saved: tuple[bool, int | None],
+    ) -> None:
+        had_old, old = saved
+        if had_old:
+            assert old is not None
+            walker.bindings[variable] = old
+        else:
+            walker.bindings.pop(variable, None)
+
+    def walk(
+        self,
+        statement: Any,
+        path: tuple[Any, ...],
+        walkers: list["LaneWalker"] | None = None,
+    ) -> None:
+        if statement is None:
+            return
+        active = self.walkers if walkers is None else walkers
+        if not active:
+            return
+        name = type(statement).__name__
+        if name == "SeqStmt":
+            for index, child in enumerate(statement.seq):
+                self.walk(child, (*path, "seq", index), active)
+            return
+        if name == "AttrStmt":
+            if statement.attr_key == "thread_extent":
+                tag = str(getattr(statement.node, "thread_tag", ""))
+                variable = getattr(statement.node, "var", None)
+                block_dimensions = {"blockIdx.x": 0, "blockIdx.y": 1, "blockIdx.z": 2}
+                axis = block_dimensions.get(tag)
+                saved = [(walker, self._save_binding(walker, variable)) for walker in active]
+                for walker in active:
+                    extent = walker.eval_int(statement.value)
+                    if extent is None and axis is not None and self.capture.launch_grid_explicit:
+                        extent = self.capture.launch_grid[axis]
+                    if extent is None or variable is None:
+                        raise CaptureError(
+                            "TILELANG_PARTICIPANTS_UNRESOLVED",
+                            "thread binding is not statically resolvable",
+                            {"tag": tag, "path": list(path)},
+                        )
+                    if tag == "threadIdx.x":
+                        walker.bindings[variable] = walker.lane
+                    elif tag in {"threadIdx.y", "threadIdx.z"}:
+                        if extent != 1:
+                            raise CaptureError(
+                                "TILELANG_SCOPE_UNSUPPORTED",
+                                "non-x thread bindings must have unit extent",
+                                {"tag": tag, "extent": extent},
+                            )
+                        walker.bindings[variable] = 0
+                    elif axis is not None:
+                        if extent != self.capture.launch_grid[axis]:
+                            raise CaptureError(
+                                "TILELANG_GRID_EVIDENCE_INVALID",
+                                "block binding extent disagrees with launch-grid evidence",
+                                {"tag": tag, "extent": extent, "launch_grid": list(self.capture.launch_grid)},
+                            )
+                        walker.bindings[variable] = self.capture.selected_cta[axis]
+                    else:
+                        raise CaptureError(
+                            "TILELANG_THREAD_BINDING_UNSUPPORTED",
+                            "thread binding tag is unsupported",
+                            {"tag": tag},
+                        )
+                self.walk(statement.body, (*path, "attr", tag), active)
+                for walker, old in saved:
+                    self._restore_binding(walker, variable, old)
+                return
+            if statement.attr_key == "warp_specialize":
+                if any(walker.eval_int(statement.value) != 1 for walker in active):
+                    raise CaptureError(
+                        "TILELANG_PARTICIPANTS_UNRESOLVED",
+                        "warp_specialize attribute must be statically enabled",
+                        {"value": str(statement.value)},
+                    )
+                self.walk(statement.body, (*path, "attr", "warp_specialize"), active)
+                return
+            if statement.attr_key in self._TRANSPARENT_ATTRIBUTES:
+                self.walk(statement.body, (*path, "attr", statement.attr_key), active)
+                return
+            self._leaf(statement, path, active)
+            return
+        if name in {"AllocBuffer", "DeclBuffer"}:
+            for walker in active:
+                walker.buffer_allocation(statement.buffer)
+            body = getattr(statement, "body", None)
+            if body is not None:
+                self.walk(body, (*path, "buffer", statement.buffer.name), active)
+            return
+        if name == "LetStmt":
+            saved = [(walker, self._save_binding(walker, statement.var)) for walker in active]
+            for walker in active:
+                value = walker.eval_int(statement.value)
+                if value is None:
+                    raise CaptureError(
+                        "TILELANG_STATIC_VALUE_UNRESOLVED",
+                        "TIRX LetStmt value is not statically resolvable",
+                        {"variable": str(statement.var), "value": str(statement.value)},
+                    )
+                walker.bindings[statement.var] = value
+            self.walk(statement.body, (*path, "let", statement.var.name), active)
+            for walker, old in saved:
+                self._restore_binding(walker, statement.var, old)
+            return
+        if name == "AssertStmt":
+            for walker in active:
+                condition = walker.eval_int(statement.condition)
+                if condition is None:
+                    raise CaptureError(
+                        "TILELANG_DYNAMIC_CONTROL_FLOW_UNSUPPORTED",
+                        "TIRX assertion condition is not statically resolvable",
+                        {"condition": str(statement.condition)},
+                    )
+                if not condition:
+                    raise CaptureError(
+                        "TILELANG_STATIC_ASSERTION_FAILED",
+                        "TIRX static assertion is false",
+                        {"condition": str(statement.condition)},
+                    )
+            self.walk(statement.body, (*path, "assert"), active)
+            return
+        if name == "IfThenElse":
+            branches: dict[bool, list[LaneWalker]] = {False: [], True: []}
+            for walker in active:
+                condition = walker.eval_int(statement.condition)
+                if condition is None:
+                    raise CaptureError(
+                        "TILELANG_DYNAMIC_CONTROL_FLOW_UNSUPPORTED",
+                        "TileLang branch condition cannot be evaluated per lane",
+                        {"condition": str(statement.condition), "lane": walker.lane},
+                    )
+                branches[bool(condition)].append(walker)
+            if branches[True]:
+                self.walk(statement.then_case, (*path, "if", 1), branches[True])
+            if branches[False]:
+                self.walk(statement.else_case, (*path, "if", 0), branches[False])
+            return
+        if name == "While":
+            remaining = list(active)
+            seen_states: dict[int, set[frozenset[tuple[Any, int]]]] = defaultdict(set)
+            iteration = 0
+            while remaining:
+                continuing = []
+                for walker in remaining:
+                    condition = walker.eval_int(statement.condition)
+                    if condition is None:
+                        raise CaptureError(
+                            "TILELANG_DYNAMIC_CONTROL_FLOW_UNSUPPORTED",
+                            "TileLang while condition cannot be evaluated statically",
+                            {"condition": str(statement.condition), "iteration": iteration},
+                        )
+                    if not condition:
+                        continue
+                    state = frozenset(walker.bindings.items())
+                    if state in seen_states[walker.lane]:
+                        raise CaptureError(
+                            "TILELANG_NONFINITE_CONTROL_FLOW",
+                            "TileLang while loop repeats a static state",
+                            {"condition": str(statement.condition), "iteration": iteration},
+                        )
+                    seen_states[walker.lane].add(state)
+                    continuing.append(walker)
+                if not continuing:
+                    break
+                self.capture.static_expansions += len(continuing)
+                self.walk(statement.body, (*path, "while", iteration), continuing)
+                remaining = continuing
+                iteration += 1
+            return
+        if name == "For":
+            groups: dict[tuple[int, int], list[LaneWalker]] = defaultdict(list)
+            for walker in active:
+                minimum = walker.eval_int(statement.min)
+                extent = walker.eval_int(statement.extent)
+                if minimum is None or extent is None or extent < 0:
+                    raise CaptureError(
+                        "TILELANG_DYNAMIC_CONTROL_FLOW_UNSUPPORTED",
+                        "TileLang loop must have a finite static extent",
+                        {"loop": str(statement.loop_var), "extent": str(statement.extent)},
+                    )
+                groups[(minimum, extent)].append(walker)
+            variable = statement.loop_var
+            for (minimum, extent), group in groups.items():
+                saved = [(walker, self._save_binding(walker, variable)) for walker in group]
+                for iteration in range(minimum, minimum + extent):
+                    self.capture.static_expansions += len(group)
+                    for walker in group:
+                        walker.bindings[variable] = iteration
+                    self.walk(
+                        statement.body,
+                        (*path, "for", variable.name, iteration),
+                        group,
+                    )
+                for walker, old in saved:
+                    self._restore_binding(walker, variable, old)
+            return
+        if name in {"Block", "SBlock"}:
+            if statement.init is not None:
+                self.walk(statement.init, (*path, "block", statement.name_hint, "init"), active)
+            self.walk(statement.body, (*path, "block", statement.name_hint, "body"), active)
+            return
+        if name in {"BlockRealize", "SBlockRealize"}:
+            block = statement.block
+            iter_vars = list(block.iter_vars)
+            iter_values = list(statement.iter_values)
+            if len(iter_vars) != len(iter_values):
+                raise CaptureError(
+                    "TILELANG_BLOCK_BINDING_UNRESOLVED",
+                    "BlockRealize iter values do not match block iter variables",
+                    {"block": str(block.name_hint)},
+                )
+            saved_by_lane: dict[int, list[tuple[Any, tuple[bool, int | None]]]] = {}
+            selected: list[LaneWalker] = []
+            initialize: list[LaneWalker] = []
+            for walker in active:
+                saved_by_lane[walker.lane] = []
+                for iter_var, value_expression in zip(iter_vars, iter_values):
+                    value = walker.eval_int(value_expression)
+                    if value is None:
+                        raise CaptureError(
+                            "TILELANG_BLOCK_BINDING_UNRESOLVED",
+                            "BlockRealize iter value is not statically resolvable",
+                            {"block": str(block.name_hint), "value": str(value_expression)},
+                        )
+                    saved_by_lane[walker.lane].append(
+                        (iter_var.var, self._save_binding(walker, iter_var.var))
+                    )
+                    walker.bindings[iter_var.var] = value
+                predicate = walker.eval_int(statement.predicate)
+                if predicate is None:
+                    raise CaptureError(
+                        "TILELANG_DYNAMIC_CONTROL_FLOW_UNSUPPORTED",
+                        "BlockRealize predicate is not statically resolvable",
+                        {"block": str(block.name_hint), "predicate": str(statement.predicate)},
+                    )
+                if predicate:
+                    selected.append(walker)
+                    run_init = block.init is not None
+                    for iter_var in iter_vars:
+                        if int(iter_var.iter_type) != self.capture.tirx.IterVar.CommReduce:
+                            continue
+                        minimum = walker.eval_int(iter_var.dom.min) if iter_var.dom is not None else None
+                        if minimum is None:
+                            raise CaptureError(
+                                "TILELANG_BLOCK_INIT_UNRESOLVED",
+                                "reduction block minimum is not statically resolvable",
+                                {"block": str(block.name_hint)},
+                            )
+                        run_init = run_init and walker.bindings[iter_var.var] == minimum
+                    if run_init:
+                        initialize.append(walker)
+            if initialize:
+                self.walk(block.init, (*path, "block", block.name_hint, "init"), initialize)
+            if selected:
+                self.walk(block.body, (*path, "block", block.name_hint, "body"), selected)
+            for walker in active:
+                for variable, old in reversed(saved_by_lane[walker.lane]):
+                    self._restore_binding(walker, variable, old)
+            return
+        if name in {"Bind", "BufferStore", "Evaluate"}:
+            self._leaf(statement, path, active)
+            return
+        self._leaf(statement, path, active)
+
+
 class TileLangCapture:
     def __init__(
         self,
@@ -66,6 +651,10 @@ class TileLangCapture:
         command: str,
         source_ir_sha256: str,
         descriptor_evidence: dict[str, Any] | None = None,
+        binding_evidence: dict[str, Any] | None = None,
+        launch_grid: tuple[int, int, int] = (1, 1, 1),
+        selected_cta: tuple[int, int, int] = (0, 0, 0),
+        launch_grid_explicit: bool = False,
     ):
         self.tvm = tvm
         self.tirx = tirx
@@ -74,6 +663,12 @@ class TileLangCapture:
         self.command = command
         self.source_ir_sha256 = source_ir_sha256
         self.descriptor_evidence = descriptor_evidence or {}
+        self.binding_evidence = binding_evidence or {}
+        self.launch_grid = launch_grid
+        self.selected_cta = selected_cta
+        self.launch_grid_explicit = launch_grid_explicit
+        self.scalar_bindings: dict[Any, int] = {}
+        self.pointer_table_allocations: dict[tuple[str, int], str] = {}
         functions = [func for func in module.functions.values() if isinstance(func, tirx.PrimFunc)]
         if len(functions) != 1:
             raise CaptureError(
@@ -82,6 +677,19 @@ class TileLangCapture:
                 {"primfuncs": len(functions)},
             )
         self.func = functions[0]
+        params_by_name = {parameter.name: parameter for parameter in self.func.params}
+        self.scalar_bindings = {
+            params_by_name[name]: value
+            for name, value in self.binding_evidence.get("scalar_values", {}).items()
+            if name in params_by_name
+        }
+        self.pointer_table_allocations = {
+            (table, index): allocation
+            for table, allocations in self.binding_evidence.get(
+                "pointer_table_allocations", {}
+            ).items()
+            for index, allocation in enumerate(allocations)
+        }
         self.thread_extents = self._thread_extents()
         self.cta_threads = self.thread_extents.get("threadIdx.x")
         if self.cta_threads is None or not 1 <= self.cta_threads <= 1024:
@@ -97,12 +705,22 @@ class TileLangCapture:
                     "initial TileLang capture requires unit threadIdx.y/z extents",
                     {"thread_extents": self.thread_extents},
                 )
-        for dimension in ("blockIdx.x", "blockIdx.y", "blockIdx.z"):
-            if self.thread_extents.get(dimension, 1) != 1:
+        for axis, dimension in enumerate(("blockIdx.x", "blockIdx.y", "blockIdx.z")):
+            extent = self.thread_extents.get(dimension, 1)
+            if extent != self.launch_grid[axis]:
+                code = (
+                    "TILELANG_GRID_EVIDENCE_INVALID"
+                    if self.launch_grid_explicit
+                    else "TILELANG_MULTI_CTA_UNSUPPORTED"
+                )
                 raise CaptureError(
-                    "TILELANG_MULTI_CTA_UNSUPPORTED",
-                    "PGIR-v1 TileLang capture requires one statically selected CTA",
-                    {"thread_extents": self.thread_extents},
+                    code,
+                    "lowered block extent disagrees with the selected launch grid",
+                    {
+                        "dimension": dimension,
+                        "thread_extent": extent,
+                        "launch_grid": list(self.launch_grid),
+                    },
                 )
         self.actor_ids = tuple(f"lane:{lane:04d}" for lane in range(self.cta_threads))
         call_names: set[str] = set()
@@ -138,6 +756,7 @@ class TileLangCapture:
         self.wgmma_group_seq: dict[str, int] = {}
         self.resources: dict[str, dict[str, Any]] = {}
         self.regions: dict[str, dict[str, Any]] = {}
+        self.buffer_layouts: dict[Any, tuple[list[int], list[int], int, bool, int]] = {}
         self.operations: list[dict[str, Any]] = []
         self.static_expansions = 0
         self.executable_nodes_seen = 0
@@ -212,33 +831,37 @@ class TileLangCapture:
                 "lowered PrimFunc lacks static thread_extent metadata",
             )
         result: dict[str, int] = {}
+        block_dimensions = {"blockIdx.x": 0, "blockIdx.y": 1, "blockIdx.z": 2}
         for key, value in raw.items():
+            dimension = str(key)
             try:
-                result[str(key)] = int(value)
+                extent = int(value)
             except (TypeError, ValueError) as error:
-                raise CaptureError(
-                    "TILELANG_PARTICIPANTS_UNRESOLVED",
-                    "thread extent is not an integer",
-                    {"dimension": str(key), "value": str(value)},
-                ) from error
+                axis = block_dimensions.get(dimension)
+                if axis is None or not self.launch_grid_explicit:
+                    raise CaptureError(
+                        "TILELANG_PARTICIPANTS_UNRESOLVED",
+                        "thread extent is not an integer",
+                        {"dimension": dimension, "value": str(value)},
+                    ) from error
+                extent = self.launch_grid[axis]
+                if isinstance(value, self.tirx.Var):
+                    self.scalar_bindings[value] = extent
+            result[dimension] = extent
         return result
 
     def capture(self) -> dict[str, Any]:
-        for lane in range(self.cta_threads):
-            walker = LaneWalker(self, lane)
-            walker.walk(self.func.body, ("root",))
+        builder = CompactTraceBuilder(self)
+        walkers = [LaneWalker(self, lane) for lane in range(self.cta_threads)]
+        GroupedLaneWalker(self, walkers, builder).walk(self.func.body, ("root",))
+        for walker in walkers:
             walker.finalize()
-        has_mbarrier = any(
-            resource["kind"] == "mbarrier" for resource in self.resources.values()
+        compact_operations = builder.finish()
+        logical_events = sum(
+            len(operation["instances"])
+            for operation in compact_operations
         )
-        if has_mbarrier and not any(
-            operation["op"] == "tilelang.mbarrier.init"
-            for operation in self.operations
-        ):
-            raise CaptureError(
-                "TILELANG_MBARRIER_INIT_MISSING",
-                "captured mbarrier operations require an explicit static initialization",
-            )
+        self.operations = []
         tilelang_root = Path(sys.modules["tilelang"].__file__).resolve().parents[1]
         return {
             "snapshot_version": SNAPSHOT_VERSION,
@@ -261,6 +884,10 @@ class TileLangCapture:
                 "cta_threads": self.cta_threads,
                 "shared_memory_bytes": 65536,
                 "grid_scope": "single_cta",
+                **({
+                    "launch_grid": list(self.launch_grid),
+                    "selected_cta": list(self.selected_cta),
+                } if self.launch_grid_explicit else {}),
             },
             "extraction": {
                 "complete": True,
@@ -277,14 +904,17 @@ class TileLangCapture:
                 "classified_nodes": self.classified_nodes,
                 "emitting_nodes": self.emitting_nodes,
                 "elided_nodes": self.elided_nodes,
-                "events_emitted": len(self.operations),
+                "operation_records": len(compact_operations),
+                "logical_events_emitted": logical_events,
                 "allocation_identity_evidence": "tir-buffer-data-object-and-actor-identity-v1",
                 "alias_evidence": (
-                    "tirx.noalias-plus-sha-bound-tma-descriptors-v1"
-                    if self.descriptor_evidence
+                    "tirx.noalias-plus-sha-bound-runtime-evidence-v1"
+                    if self.descriptor_evidence or self.pointer_table_allocations
                     else "tirx.noalias-v1" if self.noalias else "single-global-base-v1"
                 ),
                 "participant_evidence": "primfunc-thread-extent-lane-enumeration-v1",
+                "lane_ownership_evidence": "tir-thread-binding-active-lane-evaluation-v1",
+                "predicate_evidence": "tir-static-predicate-active-lane-splitting-v1",
             },
             "actors": [
                 *[
@@ -302,10 +932,7 @@ class TileLangCapture:
             ],
             "resources": [self.resources[key] for key in sorted(self.resources)],
             "regions": [self.regions[key] for key in sorted(self.regions)],
-            "operations": sorted(
-                self.operations,
-                key=lambda operation: (operation["actor"], operation["seq"], operation["id"]),
-            ),
+            "operations": compact_operations,
             "unsupported_constructs": [],
         }
 
@@ -564,7 +1191,7 @@ class LaneWalker:
         self.tirx = capture.tirx
         self.lane = lane
         self.actor = capture.actor_ids[lane]
-        self.bindings: dict[Any, int] = {}
+        self.bindings: dict[Any, int] = dict(capture.scalar_bindings)
         self.pointer_aliases: dict[Any, tuple[Any, int]] = {}
         self.sequence = 0
         self.arrival_rank: dict[str, int] = {}
@@ -604,12 +1231,38 @@ class LaneWalker:
         self.active_warpgroup_dependency = self.capture.warpgroup_sync_events[key]
 
     def finalize(self) -> None:
-        if self.pending_proxy is not None:
-            raise CaptureError(
-                "TILELANG_PROXY_TARGET_UNRESOLVED",
-                "fence_proxy_async has no immediately following supported async issue",
-                {"event": self.pending_proxy["id"]},
-            )
+        self.pending_proxy = None
+
+    def bind_pending_proxy(self, to_domain: str, regions: list[str]) -> None:
+        if self.pending_proxy is None:
+            return
+        pending = self.pending_proxy
+        self.pending_proxy = None
+        visibility_mask = pending["visibility_mask"]
+        for region in regions:
+            address_space = self.capture.regions[region]["address_space"]
+            mask_field = {
+                "SHARED": "shared",
+                "GLOBAL": "global_write",
+                "TENSOR": "tensor_write",
+            }.get(address_space)
+            if mask_field is None:
+                raise CaptureError(
+                    "TILELANG_PROXY_REGION_UNSUPPORTED",
+                    "async source region has no supported proxy visibility mask",
+                    {"region": region, "address_space": address_space},
+                )
+            visibility_mask[mask_field] = True
+        self.emit(
+            "tilelang.proxy_fence",
+            pending["path"],
+            _ir_operation="tl.fence_proxy_async",
+            from_domain="GENERIC",
+            to_domain=to_domain,
+            scope="CTA",
+            regions=sorted(set(regions)),
+            visibility_mask=visibility_mask,
+        )
 
     def emit(self, op: str, path: tuple[Any, ...], **fields: Any) -> None:
         ir_operation = fields.pop("_ir_operation", self.current_ir_operation)
@@ -618,17 +1271,6 @@ class LaneWalker:
             f"{ir_operation}->{op}:v1",
         )
         actor = fields.pop("_actor", self.actor)
-        if self.pending_proxy is not None and op not in {
-            "tilelang.cp_async.issue",
-            "tilelang.tma_load.issue",
-            "tilelang.tma_store.issue",
-            "tilelang.wgmma.issue",
-        }:
-            raise CaptureError(
-                "TILELANG_PROXY_TARGET_UNRESOLVED",
-                "fence_proxy_async must be followed immediately by a supported async issue",
-                {"event": self.pending_proxy["id"], "next_operation": op},
-            )
         if actor == self.actor and self.active_warpgroup_dependency is not None:
             fields.setdefault("depends_on", [self.active_warpgroup_dependency])
         sequence = self.capture.actor_sequences.get(actor, 0)
@@ -657,17 +1299,6 @@ class LaneWalker:
             return int(expression.value)
         if isinstance(expression, self.tirx.Var):
             return self.bindings.get(expression)
-        try:
-            replacements = {
-                variable: self.tirx.IntImm(variable.dtype, value)
-                for variable, value in self.bindings.items()
-            }
-            substituted = self.tirx.stmt_functor.substitute(expression, replacements)
-            simplified = self.capture.tvm.arith.Analyzer().simplify(substituted)
-            if isinstance(simplified, self.tirx.IntImm):
-                return int(simplified.value)
-        except Exception:
-            pass
         name = type(expression).__name__
         if name == "Cast":
             return self.eval_int(expression.value)
@@ -747,11 +1378,40 @@ class LaneWalker:
                     if call_name in {"tirx.shift_left", "tirx.shift_right"} and right < 0:
                         return None
                     return function(left, right)
+        try:
+            replacements = {
+                variable: self.tirx.IntImm(variable.dtype, value)
+                for variable, value in self.bindings.items()
+            }
+            substituted = self.tirx.stmt_functor.substitute(expression, replacements)
+            simplified = self.capture.tvm.arith.Analyzer().simplify(substituted)
+            if isinstance(simplified, self.tirx.IntImm):
+                return int(simplified.value)
+        except Exception:
+            pass
         return None
 
     def eval_pointer(self, expression: Any) -> tuple[Any, int] | None:
         if isinstance(expression, self.tirx.Var):
             return self.pointer_aliases.get(expression, (expression, 0))
+        if (
+            isinstance(expression, self.tirx.Call)
+            and getattr(expression.op, "name", "") in {"tirx.reinterpret", "tir.reinterpret"}
+            and len(expression.args) == 1
+            and isinstance(expression.args[0], self.tirx.BufferLoad)
+        ):
+            load = expression.args[0]
+            if len(load.indices) != 1:
+                return None
+            indices = vector_values(load.indices[0], self.eval_int)
+            if indices is None or len(indices) != 1:
+                return None
+            allocation = self.capture.pointer_table_allocations.get(
+                (load.buffer.name, indices[0])
+            )
+            if allocation is None:
+                return None
+            return allocation, 0
         if (
             isinstance(expression, self.tirx.Call)
             and getattr(expression.op, "name", "") == "tirx.handle_add_byte_offset"
@@ -773,7 +1433,7 @@ class LaneWalker:
                 {"buffer": buffer.name, "data": str(buffer.data)},
             )
         data, byte_offset = resolved
-        label = getattr(data, "name", None) or buffer.name
+        label = data if isinstance(data, str) else getattr(data, "name", None) or buffer.name
         scope = self.buffer_scope(buffer)
         allocation_actor = self.actor
         if data in self.capture.warpgroup_register_data and scope.startswith("local"):
@@ -814,10 +1474,34 @@ class LaneWalker:
         return width
 
     def byte_intervals(self, buffer: Any, indices: Any) -> list[tuple[int, int]]:
-        shape = [self.eval_int(item) for item in buffer.shape]
-        elem_offset = self.eval_int(buffer.elem_offset)
-        raw_strides = list(buffer.strides)
-        strides = [self.eval_int(item) for item in raw_strides]
+        layout_key = buffer.data
+        layout = self.capture.buffer_layouts.get(layout_key)
+        if layout is None:
+            raw_shape = list(buffer.shape)
+            raw_strides = list(buffer.strides)
+            shape_values = [self.eval_int(item) for item in raw_shape]
+            stride_values = [self.eval_int(item) for item in raw_strides]
+            elem_offset_value = self.eval_int(buffer.elem_offset)
+            if any(value is None for value in shape_values + stride_values + [elem_offset_value]):
+                shape: list[int | None] = shape_values
+                strides: list[int | None] = stride_values
+                elem_offset = elem_offset_value
+                width = self._dtype_bytes(buffer)
+            else:
+                shape = [int(value) for value in shape_values]
+                strides = [int(value) for value in stride_values]
+                elem_offset = int(elem_offset_value)
+                width = self._dtype_bytes(buffer)
+                self.capture.buffer_layouts[layout_key] = (
+                    shape,
+                    strides,
+                    elem_offset,
+                    bool(raw_strides),
+                    width,
+                )
+        else:
+            shape, strides, elem_offset, has_strides, width = layout
+            raw_strides = strides if has_strides else []
         index_vectors = [vector_values(index, self.eval_int) for index in indices]
         unresolved = shape + strides + [elem_offset]
         if (
@@ -868,7 +1552,6 @@ class LaneWalker:
                     linear = linear * dimension + index
                 linear += elem_offset
             linears.append(linear)
-        width = self._dtype_bytes(buffer)
         merged: list[list[int]] = []
         for linear in sorted(set(linears)):
             start = linear * width
@@ -973,7 +1656,7 @@ class LaneWalker:
                 {"expression": str(expression)},
             )
         base, alias_offset = resolved
-        base_label = getattr(base, "name", None) or allocation_label
+        base_label = base if isinstance(base, str) else getattr(base, "name", None) or allocation_label
         allocation = self.capture.allocation_id(base, scope, self.actor, base_label)
         region = self.capture.region(
             allocation,
@@ -1062,6 +1745,10 @@ class LaneWalker:
                 tag = str(getattr(statement.node, "thread_tag", ""))
                 extent = self.eval_int(statement.value)
                 variable = getattr(statement.node, "var", None)
+                block_dimensions = {"blockIdx.x": 0, "blockIdx.y": 1, "blockIdx.z": 2}
+                axis = block_dimensions.get(tag)
+                if extent is None and axis is not None and self.capture.launch_grid_explicit:
+                    extent = self.capture.launch_grid[axis]
                 if extent is None or variable is None:
                     raise CaptureError(
                         "TILELANG_PARTICIPANTS_UNRESOLVED",
@@ -1072,14 +1759,22 @@ class LaneWalker:
                 old = self.bindings.get(variable)
                 if tag == "threadIdx.x":
                     self.bindings[variable] = self.lane
-                elif tag in {"threadIdx.y", "threadIdx.z", "blockIdx.x", "blockIdx.y", "blockIdx.z"}:
+                elif tag in {"threadIdx.y", "threadIdx.z"}:
                     if extent != 1:
                         raise CaptureError(
                             "TILELANG_SCOPE_UNSUPPORTED",
-                            "non-x thread and block bindings must have unit extent",
+                            "non-x thread bindings must have unit extent",
                             {"tag": tag, "extent": extent},
                         )
                     self.bindings[variable] = 0
+                elif axis is not None:
+                    if extent != self.capture.launch_grid[axis]:
+                        raise CaptureError(
+                            "TILELANG_GRID_EVIDENCE_INVALID",
+                            "block binding extent disagrees with launch-grid evidence",
+                            {"tag": tag, "extent": extent, "launch_grid": list(self.capture.launch_grid)},
+                        )
+                    self.bindings[variable] = self.capture.selected_cta[axis]
                 else:
                     raise CaptureError(
                         "TILELANG_THREAD_BINDING_UNSUPPORTED",
@@ -1115,6 +1810,7 @@ class LaneWalker:
                 "software_pipeline_order",
                 "software_pipeline_stage",
                 "storage_scope",
+                "tl.assume",
             }
             if statement.attr_key in transparent_attributes:
                 self.walk(statement.body, (*path, "attr", statement.attr_key))
@@ -1143,6 +1839,7 @@ class LaneWalker:
                         "TIRX Bind value is neither a static integer nor a static pointer alias",
                         {"variable": str(statement.var), "value": str(statement.value)},
                     )
+                self._emit_expression_loads(statement.value, (*path, "value"))
                 self.pointer_aliases[statement.var] = pointer
             self.capture.classify_leaf(before)
             return
@@ -1371,14 +2068,9 @@ class LaneWalker:
                     "TILELANG_PROXY_TARGET_UNRESOLVED",
                     "fence_proxy_async must be operand-free and have one unresolved target",
                 )
-            self.emit(
-                "tilelang.proxy_fence",
-                path,
-                from_domain="GENERIC",
-                to_domain="ASYNC_COPY",
-                scope="CTA",
-                regions=[],
-                visibility_mask={
+            self.pending_proxy = {
+                "path": path,
+                "visibility_mask": {
                     "shared": False,
                     "global_read": False,
                     "global_write": False,
@@ -1386,8 +2078,7 @@ class LaneWalker:
                     "tensor_write": False,
                     "control_only": False,
                 },
-            )
-            self.pending_proxy = self.capture.operations[-1]
+            }
             return
         if name in {"tirx.tvm_storage_sync", "tir.tvm_storage_sync"}:
             if len(expression.args) != 1 or str(expression.args[0]).strip('"') not in {"shared", "shared.dyn"}:
@@ -1470,11 +2161,11 @@ class LaneWalker:
                 and self.arrival_rank.get(resource, 0) == 0
             ):
                 return
-            if parity is None or parity != generation % 2:
+            if parity is None:
                 raise CaptureError(
                     "TILELANG_PARITY_UNRESOLVED",
-                    "wait parity does not match the recovered gap-free stream rank",
-                    {"resource": resource, "rank": generation, "parity": parity},
+                    "mbarrier wait parity is not statically resolved",
+                    {"resource": resource, "rank": generation},
                 )
             if self.capture.uses_warpgroup and not self.is_warpgroup_leader():
                 self.observe_warpgroup_dependency(path)
@@ -1523,24 +2214,58 @@ class LaneWalker:
             if len(expression.args) < 4:
                 raise CaptureError(
                     "TILELANG_TMA_LOAD_UNRESOLVED",
-                    "tma_load requires descriptor, barrier, destination, and coordinates",
+                    "tma_load requires a source, destination, barrier, and static transfer description",
                 )
-            descriptor = expression.args[0]
-            resource = self._barrier_operand(expression, 1)
-            destination, _destination_bytes = self.access_ptr_region(expression.args[2], 2)
-            coordinates = [self.eval_int(argument) for argument in expression.args[3:]]
-            if any(value is None for value in coordinates):
+            if len(expression.args) == 5 and isinstance(expression.args[2], self.tirx.BufferLoad):
+                destination, destination_bytes = self.access_ptr_region(expression.args[0], 2)
+                source, source_bytes = self.access_ptr_region(expression.args[1], 1)
+                resource = self._barrier_operand(expression, 2)
+                byte_count = self.eval_int(expression.args[3])
+                mode = self.eval_int(expression.args[4])
+                if (
+                    byte_count is None
+                    or byte_count <= 0
+                    or byte_count > source_bytes
+                    or byte_count > destination_bytes
+                    or mode is None
+                ):
+                    raise CaptureError(
+                        "TILELANG_TMA_LOAD_UNRESOLVED",
+                        "direct TMA load byte count, regions, or mode is unresolved",
+                        {
+                            "bytes": byte_count,
+                            "source_extent": source_bytes,
+                            "destination_extent": destination_bytes,
+                        },
+                    )
+                segments = [(source, destination, byte_count)]
+            elif isinstance(expression.args[1], self.tirx.BufferLoad):
+                descriptor = expression.args[0]
+                resource = self._barrier_operand(expression, 1)
+                destination, _destination_bytes = self.access_ptr_region(expression.args[2], 2)
+                coordinates = [self.eval_int(argument) for argument in expression.args[3:]]
+                if any(value is None for value in coordinates):
+                    raise CaptureError(
+                        "TILELANG_TMA_LOAD_UNRESOLVED",
+                        "TMA coordinates must be statically resolved",
+                        {"coordinates": [str(argument) for argument in expression.args[3:]]},
+                    )
+                segments = self.capture.tma_segments(
+                    descriptor,
+                    [int(value) for value in coordinates],
+                    destination,
+                )
+            else:
                 raise CaptureError(
-                    "TILELANG_TMA_LOAD_UNRESOLVED",
-                    "TMA coordinates must be statically resolved",
-                    {"coordinates": [str(argument) for argument in expression.args[3:]]},
+                    "TILELANG_BARRIER_ADDRESS_UNRESOLVED",
+                    "TMA load barrier operand is not a static BufferLoad",
+                    {"operation": name},
                 )
-            generation = self.arrival_rank.get(resource, 0)
-            segments = self.capture.tma_segments(
-                descriptor,
-                [int(value) for value in coordinates],
-                destination,
+            self.bind_pending_proxy(
+                "TMA",
+                [source for source, _destination, _bytes in segments],
             )
+            generation = self.arrival_rank.get(resource, 0)
             self.emit(
                 "tilelang.tma_load.issue",
                 path,
@@ -1579,11 +2304,7 @@ class LaneWalker:
                     "TILELANG_TMA_STORE_UNRESOLVED",
                     "TMA store byte count or mode operands are unresolved",
                 )
-            if self.pending_proxy is not None:
-                self.pending_proxy["to_domain"] = "TMA"
-                self.pending_proxy["regions"] = [source]
-                self.pending_proxy["visibility_mask"]["shared"] = True
-                self.pending_proxy = None
+            self.bind_pending_proxy("TMA", [source])
             owner = self.actor
             resource = self.capture.tma_store_group(owner)
             self.emit(
@@ -1704,15 +2425,14 @@ class LaneWalker:
                 )
             if not self.is_warpgroup_leader():
                 return
-            source_regions = [
+            source_regions = list(dict.fromkeys(
                 self.capture.wgmma_descriptors.get(expression.args[position])
                 for position in (6, 8)
-            ]
+            ))
             if (
                 any(region is None for region in source_regions)
                 or self.wgmma_accumulator_region is None
                 or not self.wgmma_fence_seen
-                or not self.wgmma_arrived
                 or any(self.eval_int(expression.args[position]) is None for position in (7, 9, 11, 12, 13, 14))
             ):
                 raise CaptureError(
@@ -1721,14 +2441,16 @@ class LaneWalker:
                 )
             owner = self.warpgroup_owner()
             resource = self.capture.wgmma_resource(owner)
-            self.emit(
-                "tilelang.wgmma.fence_operand",
-                (*path, "fence"),
-                _actor=owner,
-                resource=resource,
-                group_owner=owner,
-                regions=source_regions,
-            )
+            self.bind_pending_proxy("TENSOR_CORE", source_regions)
+            if self.wgmma_arrived:
+                self.emit(
+                    "tilelang.wgmma.fence_operand",
+                    (*path, "fence"),
+                    _actor=owner,
+                    resource=resource,
+                    group_owner=owner,
+                    regions=source_regions,
+                )
             self.emit(
                 "tilelang.wgmma.issue",
                 path,
@@ -1822,22 +2544,7 @@ class LaneWalker:
                         "destination_extent": destination_bytes,
                     },
                 )
-            if self.pending_proxy is not None:
-                source_space = self.capture.regions[source]["address_space"]
-                mask_field = {
-                    "SHARED": "shared",
-                    "GLOBAL": "global_write",
-                    "TENSOR": "tensor_write",
-                }.get(source_space)
-                if mask_field is None:
-                    raise CaptureError(
-                        "TILELANG_PROXY_REGION_UNSUPPORTED",
-                        "fence_proxy_async source region has no supported visibility mask",
-                        {"region": source, "address_space": source_space},
-                    )
-                self.pending_proxy["regions"] = [source]
-                self.pending_proxy["visibility_mask"][mask_field] = True
-                self.pending_proxy = None
+            self.bind_pending_proxy("ASYNC_COPY", [source])
             resource = self.capture.async_group(self.actor)
             self.emit(
                 "tilelang.cp_async.issue",
@@ -1898,11 +2605,76 @@ class LaneWalker:
         return self.capture.mbarrier(operand.buffer, operand.indices, self)
 
 
+def _normalize_grid_selection(
+    launch_grid: list[int] | tuple[int, ...] | None,
+    grid_ctas: int | None,
+    selected_cta: list[int] | tuple[int, ...],
+) -> tuple[tuple[int, int, int], tuple[int, int, int], bool]:
+    explicit = launch_grid is not None or grid_ctas is not None
+    if launch_grid is None:
+        if grid_ctas is None:
+            launch_grid = [1]
+        elif isinstance(grid_ctas, bool) or not isinstance(grid_ctas, int) or grid_ctas < 1:
+            raise CaptureError(
+                "TILELANG_GRID_EVIDENCE_INVALID",
+                "capture requires a finite positive launch grid",
+                {"grid_ctas": grid_ctas},
+            )
+        else:
+            launch_grid = [grid_ctas]
+    if (
+        not isinstance(launch_grid, (list, tuple))
+        or not 1 <= len(launch_grid) <= 3
+        or any(
+            isinstance(extent, bool) or not isinstance(extent, int) or extent < 1
+            for extent in launch_grid
+        )
+    ):
+        raise CaptureError(
+            "TILELANG_GRID_EVIDENCE_INVALID",
+            "launch grid must contain one to three positive integer extents",
+            {"launch_grid": launch_grid},
+        )
+    normalized_grid = tuple((*launch_grid, *(1 for _ in range(3 - len(launch_grid)))))
+    total_ctas = normalized_grid[0] * normalized_grid[1] * normalized_grid[2]
+    if grid_ctas is not None and grid_ctas != total_ctas:
+        raise CaptureError(
+            "TILELANG_GRID_EVIDENCE_INVALID",
+            "launch grid dimensions disagree with the recorded total CTA count",
+            {"launch_grid": list(normalized_grid), "grid_ctas": grid_ctas},
+        )
+    if (
+        not isinstance(selected_cta, (list, tuple))
+        or len(selected_cta) != 3
+        or any(
+            isinstance(index, bool) or not isinstance(index, int) or index < 0
+            for index in selected_cta
+        )
+    ):
+        raise CaptureError(
+            "TILELANG_CTA_SELECTION_INVALID",
+            "selected CTA must contain three nonnegative integer coordinates",
+            {"selected_cta": selected_cta},
+        )
+    normalized_cta = tuple(selected_cta)
+    if any(index >= extent for index, extent in zip(normalized_cta, normalized_grid)):
+        raise CaptureError(
+            "TILELANG_CTA_SELECTION_INVALID",
+            "selected CTA is outside the finite launch grid",
+            {"launch_grid": list(normalized_grid), "selected_cta": list(normalized_cta)},
+        )
+    return normalized_grid, normalized_cta, explicit
+
+
 def capture_file(
     path: Path,
     source: str,
     command: str,
     descriptor_evidence_path: Path | None = None,
+    binding_evidence_path: Path | None = None,
+    launch_grid: list[int] | tuple[int, ...] | None = None,
+    grid_ctas: int | None = None,
+    selected_cta: list[int] | tuple[int, ...] = (0, 0, 0),
 ) -> dict[str, Any]:
     try:
         import tilelang
@@ -1947,6 +2719,59 @@ def capture_file(
                 {"path": str(descriptor_evidence_path)},
             )
         descriptor_evidence = evidence["descriptors"]
+    binding_evidence: dict[str, Any] = {}
+    if binding_evidence_path is not None:
+        try:
+            evidence = json.loads(binding_evidence_path.read_text())
+        except (OSError, json.JSONDecodeError) as error:
+            raise CaptureError(
+                "TILELANG_BINDING_EVIDENCE_INVALID",
+                "TileLang runtime binding evidence could not be read",
+                {"path": str(binding_evidence_path), "error": str(error)},
+            ) from error
+        required = {
+            "evidence_version",
+            "source_ir_sha256",
+            "scalar_values",
+            "pointer_table_allocations",
+            "provenance",
+        }
+        scalar_values = evidence.get("scalar_values", {}) if isinstance(evidence, dict) else {}
+        pointer_tables = evidence.get("pointer_table_allocations", {}) if isinstance(evidence, dict) else {}
+        if (
+            not isinstance(evidence, dict)
+            or set(evidence) != required
+            or evidence.get("evidence_version") != "tilelang-binding-evidence-v1"
+            or evidence.get("source_ir_sha256") != source_digest
+            or not isinstance(scalar_values, dict)
+            or any(
+                not isinstance(name, str)
+                or not name
+                or isinstance(value, bool)
+                or not isinstance(value, int)
+                for name, value in scalar_values.items()
+            )
+            or not isinstance(pointer_tables, dict)
+            or any(
+                not isinstance(table, str)
+                or not table
+                or not isinstance(allocations, list)
+                or any(not isinstance(item, str) or not item for item in allocations)
+                for table, allocations in pointer_tables.items()
+            )
+            or not isinstance(evidence.get("provenance"), dict)
+        ):
+            raise CaptureError(
+                "TILELANG_BINDING_EVIDENCE_INVALID",
+                "TileLang runtime binding evidence is malformed or bound to different IR",
+                {"path": str(binding_evidence_path)},
+            )
+        binding_evidence = evidence
+    normalized_grid, normalized_cta, grid_explicit = _normalize_grid_selection(
+        launch_grid,
+        grid_ctas,
+        selected_cta,
+    )
     try:
         return TileLangCapture(
             tvm,
@@ -1956,6 +2781,10 @@ def capture_file(
             command,
             source_digest,
             descriptor_evidence,
+            binding_evidence,
+            normalized_grid,
+            normalized_cta,
+            grid_explicit,
         ).capture()
     except CaptureError:
         raise
@@ -1976,6 +2805,14 @@ def main(argv: list[str] | None = None) -> int:
         type=Path,
         help="SHA-bound exact TMA descriptor shape/stride evidence",
     )
+    parser.add_argument(
+        "--binding-evidence",
+        type=Path,
+        help="SHA-bound scalar and indirect-pointer allocation evidence",
+    )
+    parser.add_argument("--launch-grid", nargs="+", type=int)
+    parser.add_argument("--grid-ctas", type=int)
+    parser.add_argument("--selected-cta", nargs=3, type=int, default=(0, 0, 0))
     parser.add_argument("--pretty", action="store_true")
     args = parser.parse_args(argv)
     try:
@@ -1984,6 +2821,10 @@ def main(argv: list[str] | None = None) -> int:
             args.source,
             " ".join(sys.argv),
             args.descriptor_evidence,
+            args.binding_evidence,
+            launch_grid=args.launch_grid,
+            grid_ctas=args.grid_ctas,
+            selected_cta=args.selected_cta,
         )
     except CaptureError as error:
         result = {

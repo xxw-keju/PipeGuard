@@ -144,6 +144,20 @@ _V2_EXTRACTION_FIELDS = {
     "alias_evidence",
     "participant_evidence",
 }
+_V3_EXTRACTION_FIELDS = {
+    "static_expansions",
+    "executable_nodes_seen",
+    "classified_nodes",
+    "emitting_nodes",
+    "elided_nodes",
+    "operation_records",
+    "logical_events_emitted",
+    "allocation_identity_evidence",
+    "alias_evidence",
+    "participant_evidence",
+    "lane_ownership_evidence",
+    "predicate_evidence",
+}
 _EVIDENCE_FIELDS = {
     "source_location",
     "activation_path",
@@ -199,18 +213,24 @@ def validate_snapshot_envelope(
     dsl: str,
     snapshot_prefix: str,
     stage: str,
-    v2_adapter_version: str,
+    v2_adapter_version: str | frozenset[str],
+    v3_adapter_version: str | frozenset[str] | None = None,
+    profile_id: str | frozenset[str] = "sm90-single-cta-static-v1",
 ) -> bool:
     version = snapshot.get("snapshot_version") if isinstance(snapshot, dict) else None
     v1 = f"{snapshot_prefix}-snapshot-v1"
     v2 = f"{snapshot_prefix}-snapshot-v2"
-    if version not in {v1, v2}:
+    v3 = f"{snapshot_prefix}-snapshot-v3"
+    accepted_versions = {v1, v2} | ({v3} if v3_adapter_version is not None else set())
+    if version not in accepted_versions:
         raise FrontendError(
             "FRONTEND_SCHEMA_VERSION_UNSUPPORTED",
             f"{dsl} snapshot version is not supported",
             {"snapshot_version": version},
         )
     is_v2 = version == v2
+    is_v3 = version == v3
+    is_evidenced = is_v2 or is_v3
     root_fields = {
         "snapshot_version",
         "producer",
@@ -222,7 +242,7 @@ def validate_snapshot_envelope(
         "operations",
         "unsupported_constructs",
     }
-    if is_v2:
+    if is_evidenced:
         root_fields.add("profile")
     require_exact_keys(snapshot, root_fields, set(), "/")
     require_exact_keys(
@@ -232,19 +252,25 @@ def validate_snapshot_envelope(
         "/producer",
     )
     producer = snapshot["producer"]
-    if is_v2 and producer["adapter_version"] != v2_adapter_version:
+    adapter_spec = v3_adapter_version if is_v3 else v2_adapter_version
+    accepted_adapters = (
+        frozenset({adapter_spec})
+        if isinstance(adapter_spec, str)
+        else adapter_spec
+    )
+    if is_evidenced and producer["adapter_version"] not in accepted_adapters:
         raise FrontendError(
             "FRONTEND_ADAPTER_VERSION_UNSUPPORTED",
-            f"{dsl} snapshot was not produced by the required v2 adapter",
+            f"{dsl} snapshot was not produced by a supported adapter",
             {
                 "adapter_version": producer["adapter_version"],
-                "required": v2_adapter_version,
+                "required": sorted(accepted_adapters),
             },
         )
     require_exact_keys(
         snapshot["target"],
         {"architecture", "warp_size", "cta_threads", "shared_memory_bytes", "grid_scope"},
-        {"launch_grid", "selected_cta"} if is_v2 else set(),
+        {"launch_grid", "selected_cta"} if is_evidenced else set(),
         "/target",
     )
     target = snapshot["target"]
@@ -290,7 +316,10 @@ def validate_snapshot_envelope(
                 f"{dsl} snapshot has invalid selected-CTA launch evidence",
                 {"launch_grid": launch_grid, "selected_cta": selected_cta},
             )
-    extraction_fields = _BASE_EXTRACTION_FIELDS | (_V2_EXTRACTION_FIELDS if is_v2 else set())
+    versioned_extraction_fields = (
+        _V3_EXTRACTION_FIELDS if is_v3 else _V2_EXTRACTION_FIELDS if is_v2 else set()
+    )
+    extraction_fields = _BASE_EXTRACTION_FIELDS | versioned_extraction_fields
     require_exact_keys(snapshot["extraction"], extraction_fields, set(), "/extraction")
     extraction = snapshot["extraction"]
     if not isinstance(extraction["complete"], bool):
@@ -323,7 +352,7 @@ def validate_snapshot_envelope(
             f"{dsl} snapshot operations must be a list",
             {"location": "/operations"},
         )
-    if not is_v2:
+    if not is_evidenced:
         return False
 
     require_exact_keys(
@@ -333,11 +362,16 @@ def validate_snapshot_envelope(
         "/profile",
     )
     profile = snapshot["profile"]
-    if profile["id"] != "sm90-single-cta-static-v1":
+    accepted_profiles = (
+        frozenset({profile_id})
+        if isinstance(profile_id, str)
+        else profile_id
+    )
+    if profile["id"] not in accepted_profiles:
         raise FrontendError(
             "FRONTEND_PROFILE_UNSUPPORTED",
             f"{dsl} snapshot profile is not supported",
-            {"profile": profile["id"]},
+            {"profile": profile["id"], "required": sorted(accepted_profiles)},
         )
     digest = profile["source_ir_sha256"]
     if not isinstance(digest, str) or re.fullmatch(r"[0-9a-f]{64}", digest) is None:
@@ -356,30 +390,48 @@ def validate_snapshot_envelope(
             },
         )
     _require_nonempty_string(profile["target_rule"], "/profile/target_rule")
-    for field in (
+    evidence_fields = [
         "allocation_identity_evidence",
         "alias_evidence",
         "participant_evidence",
-    ):
+    ]
+    if is_v3:
+        evidence_fields.extend(["lane_ownership_evidence", "predicate_evidence"])
+    for field in evidence_fields:
         _require_nonempty_string(extraction[field], f"/extraction/{field}")
+    count_fields = [
+        "static_expansions",
+        "executable_nodes_seen",
+        "classified_nodes",
+        "emitting_nodes",
+        "elided_nodes",
+        *(
+            ["operation_records", "logical_events_emitted"]
+            if is_v3
+            else ["events_emitted"]
+        ),
+    ]
     accounting = {
         field: _require_nonnegative_integer(extraction[field], f"/extraction/{field}")
-        for field in (
-            "static_expansions",
-            "executable_nodes_seen",
-            "classified_nodes",
-            "emitting_nodes",
-            "elided_nodes",
-            "events_emitted",
-        )
+        for field in count_fields
     }
-    if (
+    structurally_invalid = (
         accounting["classified_nodes"] != accounting["executable_nodes_seen"]
         or accounting["emitting_nodes"] + accounting["elided_nodes"]
         != accounting["classified_nodes"]
-        or accounting["emitting_nodes"] > accounting["events_emitted"]
-        or accounting["events_emitted"] != len(operations)
-    ):
+    )
+    if is_v3:
+        count_invalid = (
+            accounting["operation_records"] != len(operations)
+            or accounting["emitting_nodes"] > accounting["logical_events_emitted"]
+            or accounting["operation_records"] > accounting["logical_events_emitted"]
+        )
+    else:
+        count_invalid = (
+            accounting["emitting_nodes"] > accounting["events_emitted"]
+            or accounting["events_emitted"] != len(operations)
+        )
+    if structurally_invalid or count_invalid:
         raise FrontendError(
             "FRONTEND_EXTRACTION_ACCOUNTING_INVALID",
             f"{dsl} snapshot does not account for every executable IR node",

@@ -24,6 +24,28 @@ def _dump(value: Any, pretty: bool = False) -> None:
     print(json.dumps(value, **options))
 
 
+def _module_counts(module: Any) -> dict[str, int]:
+    from .parametric import ParametricModule
+
+    if isinstance(module, ParametricModule):
+        logical_events = sum(
+            1 if template.execution_scope == "COLLECTIVE" else len(template.instances)
+            for template in module.templates
+        )
+        return {
+            "actors": module.logical_stream_count,
+            "events": logical_events,
+            "regions": len(module.raw["regions"]),
+            "resources": len(module.raw["resources"]),
+        }
+    return {
+        "actors": len(module.actors),
+        "events": len(module.events),
+        "regions": len(module.regions),
+        "resources": len(module.resources),
+    }
+
+
 def _empty_statistics(engine: str) -> dict[str, Any]:
     return {
         "actors": None, "events": None, "resources": None, "regions": None,
@@ -133,7 +155,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "validate":
             result = {
                 "valid": True, "schema_version": module.raw["schema_version"], "normalized_sha256": stable_digest(normalize_module(module)),
-                "counts": {"actors": len(module.actors), "events": len(module.events), "regions": len(module.regions), "resources": len(module.resources)},
+                "counts": _module_counts(module),
                 "diagnostics": [],
             }
             _dump(result, args.pretty)

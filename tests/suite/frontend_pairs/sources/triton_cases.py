@@ -187,13 +187,334 @@ def _tma_store_kernel():
     return kernel
 
 
-def compile_triton_case(family: str, variant: int, polarity: str) -> str:
+
+def _named_memory_kernel(scenario: str, threads: int):
+    THREADS = ttgl.constexpr(threads)
+    IS_PARTIAL_WAR = ttgl.constexpr(scenario == "MEMORY:PARTIAL-WAR")
+    IS_ADJACENT = ttgl.constexpr(scenario == "MEMORY:ADJACENT-DISJOINT")
+    IS_DANGLING = ttgl.constexpr(scenario == "MEMORY:DANGLING-REGION")
+    IS_CONTAINED = ttgl.constexpr(scenario == "MEMORY:CONTAINED-WAW")
+    IS_IDENTITY = ttgl.constexpr(scenario == "MEMORY:ALLOCATION-IDENTITY")
+
+    @gluon.jit
+    def kernel(data, other, BUGGY: ttgl.constexpr):
+        layout: ttgl.constexpr = _blocked_1d(THREADS)
+        lanes = ttgl.arange(0, THREADS, layout)
+        if IS_PARTIAL_WAR:
+            value = ttgl.load(data + lanes * 0, mask=lanes == 0, other=0)
+            ttgl.store(other + lanes, value, mask=lanes == 0)
+            ttgl.store(data + lanes * 0, 1, mask=lanes == 1)
+        elif IS_ADJACENT:
+            ttgl.store(data + lanes * 0, 1, mask=lanes == 0)
+            value = ttgl.load(data + lanes * 0 + 16, mask=lanes == 1, other=0)
+            ttgl.store(other + lanes, value, mask=lanes == 1)
+        elif IS_DANGLING:
+            value = ttgl.load(data + lanes * 0 + 64, mask=lanes == 0, other=0)
+            ttgl.store(other + lanes, value, mask=lanes == 0)
+        elif IS_CONTAINED:
+            ttgl.store(data + lanes * 0, 1, mask=lanes == 0)
+            ttgl.store(data + lanes * 0 + (0 if BUGGY else 16), 2, mask=lanes == 1)
+        elif IS_IDENTITY:
+            ttgl.store(data + lanes * 0, 1, mask=lanes == 0)
+            target = data if BUGGY else other
+            ttgl.store(target + lanes * 0, 2, mask=lanes == 1)
+
+    return kernel
+
+
+def _named_cta_kernel(scenario: str, threads: int):
+    THREADS = ttgl.constexpr(threads)
+    NEED_HANDOFF = ttgl.constexpr(scenario in {
+        "CTA-BARRIER:CONTROL-ONLY-HANDOFF",
+        "CTA-BARRIER:COMPLETE-HANDOFF",
+    })
+    DUPLICATE = ttgl.constexpr(scenario == "CTA-BARRIER:DUPLICATE-ARRIVAL")
+
+    @gluon.jit
+    def kernel(data, out, BUGGY: ttgl.constexpr):
+        layout: ttgl.constexpr = _blocked_1d(THREADS)
+        lanes = ttgl.arange(0, THREADS, layout)
+        if NEED_HANDOFF:
+            ttgl.store(data + lanes * 0, 1, mask=lanes == 0)
+            if not BUGGY:
+                ttgl.barrier()
+            value = ttgl.load(data + lanes * 0, mask=lanes == 1, other=0)
+            ttgl.store(out + lanes, value, mask=lanes == 1)
+        else:
+            ttgl.barrier()
+            if DUPLICATE and BUGGY:
+                ttgl.barrier()
+
+    return kernel
+
+
+def _named_mbarrier_kernel(scenario: str):
+    USE_BEFORE_INIT = ttgl.constexpr(scenario == "MBARRIER:USE-BEFORE-INIT")
+    TX_MISMATCH = ttgl.constexpr(scenario == "MBARRIER:TX-BYTES-MISMATCH")
+    NEXT_BEFORE_WAIT = ttgl.constexpr(scenario == "MBARRIER:NEXT-ARRIVE-BEFORE-WAIT")
+    INVALIDATE = ttgl.constexpr(scenario == "MBARRIER:INVALIDATE-REQUIRES-OBSERVATION")
+    REINIT = ttgl.constexpr(scenario == "MBARRIER:REINITIALIZE-LIFECYCLE")
+    PARITY_WRAP = ttgl.constexpr(scenario == "MBARRIER:PARITY-WRAP")
+    STALE_WAIT = ttgl.constexpr(scenario == "MBARRIER:STALE-GENERATION-WAIT")
+    TWO_GENERATIONS = ttgl.constexpr(scenario in {
+        "MBARRIER:TWO-GENERATION-HANDOFF",
+        "MBARRIER:NONCOALESCED-POLL",
+    })
+
+    @gluon.jit
+    def kernel(BUGGY: ttgl.constexpr):
+        bar = mbarrier.allocate_mbarrier()
+        if not USE_BEFORE_INIT:
+            mbarrier.init(bar, count=1)
+        if TX_MISMATCH:
+            mbarrier.expect(bar, 8 if BUGGY else 16)
+            mbarrier.wait(bar, phase=0)
+        elif NEXT_BEFORE_WAIT:
+            mbarrier.arrive(bar)
+            mbarrier.arrive(bar)
+            mbarrier.wait(bar, phase=0)
+            mbarrier.wait(bar, phase=1)
+        elif INVALIDATE:
+            mbarrier.arrive(bar)
+            if not BUGGY:
+                mbarrier.wait(bar, phase=0)
+            mbarrier.invalidate(bar)
+        elif REINIT:
+            if BUGGY:
+                mbarrier.init(bar, count=1)
+            else:
+                mbarrier.arrive(bar)
+                mbarrier.wait(bar, phase=0)
+                mbarrier.invalidate(bar)
+                mbarrier.init(bar, count=1)
+        elif PARITY_WRAP or STALE_WAIT:
+            mbarrier.arrive(bar)
+            mbarrier.wait(bar, phase=0)
+            mbarrier.arrive(bar)
+            mbarrier.wait(bar, phase=1)
+            mbarrier.arrive(bar)
+            mbarrier.wait(bar, phase=1 if PARITY_WRAP and BUGGY else 0)
+            if STALE_WAIT and BUGGY:
+                mbarrier.wait(bar, phase=0)
+        else:
+            mbarrier.arrive(bar)
+            mbarrier.wait(bar, phase=0)
+            if TWO_GENERATIONS:
+                mbarrier.arrive(bar)
+                mbarrier.wait(bar, phase=1)
+
+    return kernel
+
+
+def _named_cp_async_kernel(scenario: str, threads: int):
+    THREADS = ttgl.constexpr(threads)
+    WAIT_BEFORE_COMMIT = ttgl.constexpr(scenario == "CP-ASYNC:WAIT-BEFORE-COMMIT")
+    TWO_GROUPS = ttgl.constexpr(scenario == "CP-ASYNC:TWO-GROUP-WAIT-ONE")
+
+    @gluon.jit
+    def kernel(source, BUGGY: ttgl.constexpr):
+        layout: ttgl.constexpr = _blocked_1d(THREADS)
+        offsets = ttgl.arange(0, THREADS, layout)
+        shared = ttgl.allocate_shared_memory(
+            ttgl.int32,
+            [2, THREADS],
+            ttgl.SwizzledSharedLayout(
+                vec=1, per_phase=1, max_phase=1, order=[0], cga_layout=_cga_layout()
+            ),
+        )
+        ampere.async_copy.async_load(shared.index(0), source + offsets)
+        if WAIT_BEFORE_COMMIT:
+            ampere.async_copy.wait_group(0)
+            shared.index(0).store(ttgl.full([THREADS], 0, ttgl.int32, layout))
+        elif TWO_GROUPS:
+            ampere.async_copy.commit_group()
+            ampere.async_copy.async_load(shared.index(1), source + offsets + THREADS)
+            ampere.async_copy.commit_group()
+            ampere.async_copy.wait_group(1)
+            shared.index(1 if BUGGY else 0).store(ttgl.full([THREADS], 0, ttgl.int32, layout))
+            ampere.async_copy.wait_group(0)
+        else:
+            ampere.async_copy.commit_group()
+            ampere.async_copy.wait_group(0)
+            shared.index(0).store(ttgl.full([THREADS], 0, ttgl.int32, layout))
+
+    return kernel
+
+
+def _named_tma_load_kernel(scenario: str):
+    IS_PROXY = ttgl.constexpr(scenario in {
+        "TMA-LOAD:GENERIC-SOURCE-NO-PROXY",
+        "TMA-LOAD:PROXY-AND-WAIT",
+    })
+    DO_PROXY = ttgl.constexpr(scenario == "TMA-LOAD:PROXY-AND-WAIT")
+    EARLY_READ = ttgl.constexpr(scenario == "TMA-LOAD:DESTINATION-BEFORE-WAIT")
+    BAD_BYTES = ttgl.constexpr(scenario in {
+        "TMA-LOAD:GROUPED-BYTES-MISMATCH",
+        "TMA-LOAD:MULTI-TRANSFER-ONE-COMPLETION",
+    })
+
+    @gluon.jit
+    def kernel(input_desc, input_ptr, output, BUGGY: ttgl.constexpr):
+        block: ttgl.constexpr = 32
+        layout: ttgl.constexpr = ttgl.BlockedLayout(
+            size_per_thread=[1, 1], threads_per_warp=[32, 1], warps_per_cta=[4, 1],
+            order=[0, 1], cga_layout=_cga_layout())
+        shared = ttgl.allocate_shared_memory(ttgl.float16, [block, block], input_desc.layout)
+        bar = mbarrier.allocate_mbarrier()
+        mbarrier.init(bar, count=1)
+        if IS_PROXY:
+            offsets = ttgl.arange(0, block, ttgl.SliceLayout(1, layout))
+            ttgl.store(input_ptr + offsets, 1.0, mask=offsets == 0)
+            if DO_PROXY:
+                hopper.fence_async_shared()
+        if BAD_BYTES and BUGGY:
+            mbarrier.expect(bar, 16)
+        else:
+            mbarrier.expect(bar, input_desc.nbytes_per_cta)
+        tma.async_load(input_desc, [0, 0], bar, shared)
+        if EARLY_READ and BUGGY:
+            value = shared.load(layout)
+            mbarrier.wait(bar, 0, deps=[shared])
+        else:
+            mbarrier.wait(bar, 0, deps=[shared])
+            value = shared.load(layout)
+        rows = ttgl.arange(0, block, ttgl.SliceLayout(1, layout))[:, None]
+        cols = ttgl.arange(0, block, ttgl.SliceLayout(0, layout))[None, :]
+        ttgl.store(output + rows * block + cols, value)
+        mbarrier.invalidate(bar)
+
+    return kernel
+
+
+def _named_wgmma_kernel(scenario: str):
+    TWO_GROUPS = ttgl.constexpr(scenario == "WGMMA:TWO-GROUP-WAIT-ONE")
+    DUAL = ttgl.constexpr(scenario == "WGMMA:DUAL-ENDPOINT")
+
+    @gluon.jit
+    def kernel(output, BUGGY: ttgl.constexpr):
+        block: ttgl.constexpr = 128
+        shared_layout: ttgl.constexpr = ttgl.NVMMASharedLayout(
+            swizzle_byte_width=128, element_bitwidth=16, rank=2, cga_layout=_cga_layout())
+        blocked: ttgl.constexpr = ttgl.BlockedLayout(
+            size_per_thread=[1, 1], threads_per_warp=[32, 1], warps_per_cta=[4, 1],
+            order=[0, 1], cga_layout=_cga_layout())
+        mma_layout: ttgl.constexpr = ttgl.NVMMADistributedLayout(
+            version=[3, 0], warps_per_cta=[4, 1], instr_shape=[16, 32, 16], cga_layout=_cga_layout())
+        a = ttgl.allocate_shared_memory(ttgl.float16, [block, 64], shared_layout)
+        b = ttgl.allocate_shared_memory(ttgl.float16, [64, block], shared_layout)
+        acc0 = hopper.warpgroup_mma_init(ttgl.zeros([block, block], ttgl.float32, mma_layout))
+        acc0 = hopper.warpgroup_mma(a, b, acc0, is_async=True)
+        if TWO_GROUPS:
+            acc1 = hopper.warpgroup_mma_init(
+                ttgl.full([block, block], 1.0, ttgl.float32, mma_layout)
+            )
+            acc1 = hopper.warpgroup_mma(a, b, acc1, is_async=True)
+            ready0, pending1 = hopper.warpgroup_mma_wait(
+                num_outstanding=1,
+                deps=[acc0, acc1],
+            )
+            chosen = pending1 if BUGGY else ready0
+            result = ttgl.convert_layout(chosen, blocked)
+            hopper.warpgroup_mma_wait(num_outstanding=0, deps=[pending1])
+        elif DUAL:
+            hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc0])
+            a.store(ttgl.zeros([block, 64], ttgl.float16, blocked))
+            chosen = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc0])
+        else:
+            if not BUGGY:
+                hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc0])
+            a.store(ttgl.zeros([block, 64], ttgl.float16, blocked))
+            chosen = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc0])
+        if not TWO_GROUPS:
+            result = ttgl.convert_layout(chosen, blocked)
+        rows = ttgl.arange(0, block, ttgl.SliceLayout(1, blocked))[:, None]
+        cols = ttgl.arange(0, block, ttgl.SliceLayout(0, blocked))[None, :]
+        ttgl.store(output + rows * block + cols, result)
+
+    return kernel
+
+
+def _named_tma_store_kernel(scenario: str):
+    TWO_GROUPS = ttgl.constexpr(scenario == "TMA-STORE:TWO-GROUP-WAIT-ONE")
+    WAIT_BEFORE_COMMIT = ttgl.constexpr(scenario == "TMA-STORE:STORE-WAIT-BEFORE-COMMIT")
+    INVALID_SOURCE = ttgl.constexpr(scenario == "TMA-STORE:STORE-INVALID-SOURCE")
+
+    @gluon.jit
+    def kernel(output_desc, output_ptr, sink, BUGGY: ttgl.constexpr):
+        block: ttgl.constexpr = 32
+        layout: ttgl.constexpr = ttgl.BlockedLayout(
+            size_per_thread=[1, 1], threads_per_warp=[32, 1], warps_per_cta=[4, 1],
+            order=[0, 1], cga_layout=_cga_layout())
+        shared_layout: ttgl.constexpr = ttgl.NVMMASharedLayout(
+            swizzle_byte_width=32, element_bitwidth=16, rank=2, cga_layout=_cga_layout())
+        shared = ttgl.allocate_shared_memory(ttgl.float16, [block, block], shared_layout)
+        if INVALID_SOURCE:
+            tma.async_store(output_desc, [0, 0], output_ptr)
+        elif WAIT_BEFORE_COMMIT:
+            tma.store_wait(pendings=0)
+            tma.async_store(output_desc, [0, 0], shared)
+            shared.store(ttgl.zeros([block, block], ttgl.float16, layout))
+        elif TWO_GROUPS:
+            tma.async_store(output_desc, [0, 0], shared)
+            tma.async_store(output_desc, [block, 0], shared)
+            tma.store_wait(pendings=1)
+            value = ttgl.load(output_ptr + (block * block if BUGGY else 0))
+            ttgl.store(sink, value)
+            tma.store_wait(pendings=0)
+        else:
+            tma.async_store(output_desc, [0, 0], shared)
+            tma.store_wait(pendings=0)
+            shared.store(ttgl.zeros([block, block], ttgl.float16, layout))
+
+    return kernel
+
+def compile_triton_case(family: str, scenario_id: str, variant: int, polarity: str) -> str:
     buggy = polarity == "BUG"
     elements = (1, 2, 4, 8)[variant % 4]
     threads = 128 if family == "WGMMA-ENDPOINT" else (32, 64)[variant % 2]
     num_warps = max(1, threads // 32)
 
-    if family in {"MEM-RAW", "MEM-WAW", "CTA-HANDOFF"}:
+    if family == "MEMORY":
+        kernel = _named_memory_kernel(scenario_id, threads)
+        data = torch.empty((128,), device="cuda", dtype=torch.int32)
+        other = torch.empty((128,), device="cuda", dtype=torch.int32)
+        compiled = kernel.warmup(data, other, BUGGY=buggy, grid=(1,), num_warps=num_warps, num_ctas=1)
+    elif family == "CTA-BARRIER":
+        kernel = _named_cta_kernel(scenario_id, threads)
+        data = torch.empty((128,), device="cuda", dtype=torch.int32)
+        out = torch.empty((128,), device="cuda", dtype=torch.int32)
+        compiled = kernel.warmup(data, out, BUGGY=buggy, grid=(1,), num_warps=num_warps, num_ctas=1)
+    elif family == "MBARRIER":
+        compiled = _named_mbarrier_kernel(scenario_id).warmup(
+            BUGGY=buggy, grid=(1,), num_warps=num_warps, num_ctas=1)
+    elif family == "CP-ASYNC":
+        source = torch.empty((2 * threads,), device="cuda", dtype=torch.int32)
+        compiled = _named_cp_async_kernel(scenario_id, threads).warmup(
+            source, BUGGY=buggy, grid=(1,), num_warps=num_warps, num_ctas=1)
+    elif family == "TMA-LOAD":
+        block = 32
+        tensor = torch.empty((block, block), device="cuda", dtype=torch.float16)
+        output = torch.empty_like(tensor)
+        shared_layout = ttgl.NVMMASharedLayout(
+            swizzle_byte_width=32, element_bitwidth=16, rank=2, cga_layout=())
+        descriptor = gluon.nvidia.hopper.TensorDescriptor.from_tensor(tensor, [block, block], shared_layout)
+        compiled = _named_tma_load_kernel(scenario_id).warmup(
+            descriptor, tensor, output, BUGGY=buggy, grid=(1,), num_warps=4, num_ctas=1)
+    elif family == "WGMMA":
+        output = torch.empty((128, 128), device="cuda", dtype=torch.float32)
+        named_num_warps = 2 if scenario_id == "WGMMA:INVALID-WARPGROUP-SHAPE" else 4
+        compiled = _named_wgmma_kernel(scenario_id).warmup(
+            output, BUGGY=buggy, grid=(1,), num_warps=named_num_warps, num_ctas=1)
+    elif family == "TMA-STORE":
+        block = 32
+        output = torch.empty((2 * block, block), device="cuda", dtype=torch.float16)
+        sink = torch.empty((1,), device="cuda", dtype=torch.float16)
+        shared_layout = ttgl.NVMMASharedLayout(
+            swizzle_byte_width=32, element_bitwidth=16, rank=2, cga_layout=())
+        descriptor = gluon.nvidia.hopper.TensorDescriptor.from_tensor(output, [block, block], shared_layout)
+        compiled = _named_tma_store_kernel(scenario_id).warmup(
+            descriptor, output, sink, BUGGY=buggy, grid=(1,), num_warps=4, num_ctas=1)
+    elif family in {"MEM-RAW", "MEM-WAW", "CTA-HANDOFF"}:
         kernel = _memory_kernel(family, elements, threads)
         data = torch.empty((max(16, elements + 1),), device="cuda", dtype=torch.int32)
         out = torch.empty((threads,), device="cuda", dtype=torch.int32)
@@ -232,5 +553,13 @@ def compile_triton_case(family: str, variant: int, polarity: str) -> str:
     return str(compiled.asm["ttgir"])
 
 
-def write_triton_case(path: str | Path, family: str, variant: int, polarity: str) -> None:
-    Path(path).write_text(compile_triton_case(family, variant, polarity))
+def write_triton_case(
+    path: str | Path,
+    family: str,
+    scenario_id: str,
+    variant: int,
+    polarity: str,
+) -> None:
+    Path(path).write_text(compile_triton_case(
+        family, scenario_id, variant, polarity
+    ))

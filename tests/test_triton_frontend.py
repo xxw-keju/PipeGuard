@@ -79,15 +79,19 @@ def test_live_triton_cp_async_capture_fixture_is_safe():
         "triton.cp_async.issue",
         "triton.cp_async.commit_group",
         "triton.cp_async.wait_group",
+        "triton.barrier.arrive",
+        "triton.barrier.observe",
         "triton.mem.read",
     ]
-    result = check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")
+    issue = snapshot["operations"][0]
+    assert issue["lane_effects"]["lanes"] == list(range(16))
+    assert issue["execution_evidence"]["transition"] == "PER_INSTANCE"
+    assert issue["execution_evidence"]["rendezvous"] == "NONE"
+    result = check_module(triton_snapshot_to_module(snapshot), engine="maximal")
     assert result["verdict"] == "SAFE"
-    assert result["artifacts"]["normalized_sha256"] == (
-        "121737f2d83625c91d84a4c8d03316c5f567b6ac3abce460bd3a616e640b351d"
-    )
-    assert result["statistics"]["n_ext"] == 5
-    assert result["statistics"]["t_eff"] == 2
+    assert result["statistics"]["representation"] == "parametric-protocol"
+    assert result["statistics"]["logical_events"] == 656
+    assert result["statistics"]["materialized_event_objects"] == 0
 
 
 @pytest.mark.parametrize("command", ["validate", "normalize", "check", "explain"])

@@ -21,6 +21,83 @@ def _snapshot() -> dict:
     return json.loads(SNAPSHOT.read_text())
 
 
+def _parametric_snapshot() -> dict:
+    digest = "0" * 64
+    return {
+        "snapshot_version": "tilelang-snapshot-v3",
+        "profile": {
+            "id": "sm90-single-cta-static-v1",
+            "source_ir_sha256": digest,
+            "compiler_ir_stage": "post-inject-fence-proxy",
+            "target_rule": "tilelang-cuda-sm_90a-v1",
+        },
+        "producer": {
+            "dsl_version": "test",
+            "dsl_commit": "test",
+            "backend_commit": "test",
+            "adapter_version": "tilelang-pgir-v3",
+            "command": "compile-only-test",
+        },
+        "target": {
+            "architecture": "sm90",
+            "warp_size": 32,
+            "cta_threads": 2,
+            "shared_memory_bytes": 0,
+            "grid_scope": "single_cta",
+            "launch_grid": [1, 1, 1],
+            "selected_cta": [0, 0, 0],
+        },
+        "extraction": {
+            "complete": True,
+            "stage": "post-inject-fence-proxy",
+            "source": "parametric-tilelang-test",
+            "finite_control_flow": True,
+            "statically_known_participants": True,
+            "fair_async_completion": True,
+            "no_cluster_effects": True,
+            "alias_precision": "EXACT",
+            "parity_normalization_status": "RESOLVED",
+            "static_expansions": 0,
+            "executable_nodes_seen": 1,
+            "classified_nodes": 1,
+            "emitting_nodes": 1,
+            "elided_nodes": 0,
+            "operation_records": 1,
+            "logical_events_emitted": 2,
+            "allocation_identity_evidence": "tir-buffer-data-object-and-actor-identity-v1",
+            "alias_evidence": "tirx.noalias-v1",
+            "participant_evidence": "primfunc-thread-extent-lane-enumeration-v1",
+            "lane_ownership_evidence": "tir-thread-binding-active-lane-evaluation-v1",
+            "predicate_evidence": "tir-static-predicate-active-lane-splitting-v1",
+        },
+        "actors": [
+            {"id": "lane:0000", "kind": "LANE", "participants": [0]},
+            {"id": "lane:0001", "kind": "LANE", "participants": [1]},
+        ],
+        "resources": [],
+        "regions": [
+            {"id": "a:0", "allocation_id": "A", "address_space": "GLOBAL", "offset": 0, "extent": 4},
+            {"id": "a:1", "allocation_id": "A", "address_space": "GLOBAL", "offset": 4, "extent": 4},
+        ],
+        "operations": [{
+            "id": "tl:template:0",
+            "op": "tilelang.mem.write",
+            "order": 0,
+            "execution_scope": "INSTANCE",
+            "instances": [0, 1],
+            "fields": {},
+            "instance_fields": {"region": ["a:0", "a:1"]},
+            "evidence": {
+                "source_location": "root/store",
+                "activation_path": ["root", "store"],
+                "recognizer_rule": "BufferStore->tilelang.mem.write:v1",
+                "ir_operation": "BufferStore",
+            },
+        }],
+        "unsupported_constructs": [],
+    }
+
+
 def test_tilelang_snapshot_normalizes_to_dsl_neutral_pgir():
     module = load_tilelang_snapshot(SNAPSHOT)
     normalized = normalize_module(module)
@@ -49,6 +126,38 @@ def test_tilelang_snapshot_normalizes_to_dsl_neutral_pgir():
         "stream_rank": 0,
         "polling_coalesced": True,
     }
+
+
+def test_tilelang_v3_snapshot_preserves_parameterized_lanes():
+    module = tilelang_snapshot_to_module(_parametric_snapshot())
+    normalized = normalize_module(module)
+    assert normalized["schema_version"] == "pgir-parametric-v1"
+    assert normalized["program_streams"] == [{
+        "id": "program:tilelang:lanes",
+        "kind": "LANE",
+        "instances": [0, 1],
+    }]
+    template = normalized["event_templates"][0]
+    assert template["program_instances"] == [0, 1]
+    assert template["executors"] == [0, 1]
+    assert template["transition"] == "PER_INSTANCE"
+    assert template["rendezvous"] == "NONE"
+    assert template["instance_fields"] == {
+        "region": ["a:0", "a:1"],
+    }
+    result = check_module(module, engine="maximal")
+    assert result["verdict"] == "SAFE"
+    assert result["statistics"]["representation"] == "parametric-protocol"
+    assert result["statistics"]["events"] == 2
+    assert result["statistics"]["materialized_event_objects"] == 0
+
+
+def test_tilelang_v3_rejects_misaligned_instance_fields():
+    raw = _parametric_snapshot()
+    raw["operations"][0]["instance_fields"]["region"] = ["a:0"]
+    with pytest.raises(FrontendError) as caught:
+        tilelang_snapshot_to_module(raw)
+    assert caught.value.code == "FRONTEND_INSTANCE_FIELDS_INVALID"
 
 
 def test_tilelang_snapshot_runs_through_crosschecked_checker():

@@ -36,6 +36,8 @@ from pipeguard.model import (
     stable_phase_id,
 )
 
+from suite.pgir_direct.cases.catalog import CASES
+
 FIXTURES = Path(__file__).parent / "fixtures"
 
 
@@ -1832,6 +1834,72 @@ def cp_async_module(
     return module_from_dict(raw)
 
 
+def serial_cp_async_wait_module(group_count: int):
+    raw = json.loads(json.dumps(cp_async_module(1, overwrite_group=None).raw))
+    events = []
+    for group in range(group_count):
+        events.extend([
+            {
+                "id": f"issue{group}",
+                "type": "CpAsyncIssue",
+                "actor": "owner",
+                "seq": 3 * group,
+                "resource": "copies",
+                "source_region": "source",
+                "destination_region": "tile0",
+                "bytes": 16,
+                "group_owner": "owner",
+            },
+            {
+                "id": f"commit{group}",
+                "type": "CpAsyncCommitGroup",
+                "actor": "owner",
+                "seq": 3 * group + 1,
+                "resource": "copies",
+                "group_owner": "owner",
+                "group_seq": group,
+            },
+            {
+                "id": f"wait{group}",
+                "type": "CpAsyncWaitGroup",
+                "actor": "owner",
+                "seq": 3 * group + 2,
+                "resource": "copies",
+                "group_owner": "owner",
+                "wait_group_count": 0,
+            },
+        ])
+    raw["events"] = events
+    return module_from_dict(raw)
+
+
+def test_commit_group_frontier_work_scales_linearly():
+    reports = {
+        groups: check_module(serial_cp_async_wait_module(groups), engine="maximal")
+        for groups in (16, 32, 64, 128)
+    }
+    keys = (
+        "group_frontier_queries",
+        "group_frontier_advances",
+        "group_wait_probes",
+        "group_capacity_probes",
+        "group_uniqueness_probes",
+    )
+    for groups, report in reports.items():
+        assert report["verdict"] == "SAFE"
+        statistics = report["statistics"]
+        assert statistics["group_frontier_queries"] == 15 * groups + 3
+        assert statistics["group_frontier_advances"] == 3 * groups
+        assert statistics["group_wait_probes"] == 15 * groups
+        assert statistics["group_capacity_probes"] == 3 * groups
+        assert statistics["group_uniqueness_probes"] == 3 * groups
+        assert all(statistics[key] <= 16 * groups for key in keys)
+    for smaller, larger in zip((16, 32, 64), (32, 64, 128)):
+        small = reports[smaller]["statistics"]
+        large = reports[larger]["statistics"]
+        assert large["scheduler_work_units"] <= 2 * small["scheduler_work_units"]
+
+
 @pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
 def test_cp_async_wait_zero_closes_copy_window(engine):
     module = cp_async_module()
@@ -2711,6 +2779,43 @@ def test_proxy_region_must_cover_async_source():
     })
     result = check_module(module_from_dict(raw), engine="crosscheck")
     assert result["verdict"] == "DATA_HAZARD"
+
+
+@pytest.mark.parametrize(
+    ("fragments", "expected"),
+    [
+        (((0, 112, "same"),), "SAFE"),
+        (((0, 56, "same"), (56, 56, "same")), "SAFE"),
+        (((40, 72, "same"), (0, 56, "same")), "SAFE"),
+        (((0, 56, "same"), (57, 55, "same")), "DATA_HAZARD"),
+        (((0, 56, "same"), (56, 56, "other")), "DATA_HAZARD"),
+    ],
+)
+def test_proxy_region_union_exactly_covers_async_source(fragments, expected):
+    raw = json.loads(json.dumps(next(
+        case.raw
+        for case in CASES
+        if case.label == "PGIR-TMA-06-NAMED-PROXY-AND-WAIT-CORRECT"
+    )))
+    source = next(region for region in raw["regions"] if region["id"] == "source")
+    fragment_ids = []
+    for index, (offset, extent, allocation_id) in enumerate(fragments):
+        identifier = f"source_fragment_{index}"
+        raw["regions"].append({
+            **source,
+            "id": identifier,
+            "allocation_id": (
+                source["allocation_id"]
+                if allocation_id == "same"
+                else allocation_id
+            ),
+            "offset": offset,
+            "extent": extent,
+        })
+        fragment_ids.append(identifier)
+    next(event for event in raw["events"] if event["id"] == "proxy")["regions"] = fragment_ids
+
+    assert check_module(module_from_dict(raw), engine="crosscheck")["verdict"] == expected
 
 
 def test_proxy_reverse_direction_and_mask_mismatch_fail_closed():

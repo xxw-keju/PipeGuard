@@ -163,6 +163,9 @@ class Executor:
     def __init__(self, module: Module):
         self.module = module
         self.events = module.event_map
+        self.record_trace = getattr(module, "record_trace", True)
+        self._frontier_cache: dict[str, tuple[int, Event]] = {}
+        self.incremental_counters: Any | None = None
         self.required_logical_waits = module.required_logical_waits
         self.tma_issues_by_phase: dict[tuple[str, int, int], tuple[Event, ...]] = {}
         issue_buckets: dict[tuple[str, int, int], list[Event]] = {}
@@ -192,16 +195,39 @@ class Executor:
             for predecessor, items in sorted(successors.items())
         }
 
+    def event_executed(self, state: ExecutionState, identifier: str) -> bool:
+        position_lookup = getattr(self.module, "program_event_position", None)
+        if position_lookup is not None:
+            position = position_lookup(identifier)
+            if position is not None:
+                actor, sequence = position
+                return state.frontiers[actor] > sequence
+        return identifier in state.executed
+
+    def transition_completed(self, state: ExecutionState, identifier: str) -> bool:
+        position_lookup = getattr(self.module, "program_event_position", None)
+        if position_lookup is not None:
+            position = position_lookup(identifier)
+            if position is not None:
+                actor, sequence = position
+                return state.frontiers[actor] > sequence
+        return identifier in state.completed_transitions
+
+    def _count_group_work(self, field: str, amount: int = 1) -> None:
+        counters = self.incremental_counters
+        if counters is not None:
+            setattr(counters, field, getattr(counters, field) + amount)
+
     def _engine_completion_ready(self, state: ExecutionState, completion: str) -> bool:
         predecessor = self.engine_predecessors.get(completion)
-        return predecessor is None or predecessor in state.completed_transitions
+        return predecessor is None or self.transition_completed(state, predecessor)
 
     def _engine_order_state(self, state: ExecutionState, completion: str) -> dict[str, Any]:
         predecessor = self.engine_predecessors.get(completion)
         return {
             "completion": completion,
             "required_predecessor": predecessor,
-            "predecessor_completed": predecessor in state.completed_transitions if predecessor else True,
+            "predecessor_completed": self.transition_completed(state, predecessor) if predecessor else True,
         }
 
     def initial_state(self) -> ExecutionState:
@@ -247,7 +273,14 @@ class Executor:
     def _frontier_event(self, state: ExecutionState, actor: str) -> Event | None:
         index = state.frontiers[actor]
         trace = self.module.events_by_actor[actor]
-        return trace[index] if index < len(trace) else None
+        if index >= len(trace):
+            return None
+        cached = self._frontier_cache.get(actor)
+        if cached is not None and cached[0] == index:
+            return cached[1]
+        event = trace[index]
+        self._frontier_cache[actor] = (index, event)
+        return event
 
     def _phase_transition(
         self,
@@ -353,10 +386,10 @@ class Executor:
         group_state: CommitGroupState,
         state: ExecutionState,
     ) -> Transition | None:
-        pending = group_state.pending(owner, completion_kind)
-        if not pending:
+        self._count_group_work("group_frontier_queries")
+        group = group_state.next_pending_group(owner, completion_kind)
+        if group is None:
             return None
-        group = pending[0]
         if (
             group_state.protocol == "TMA_STORE"
             and completion_kind == "GLOBAL_COMPLETE"
@@ -383,16 +416,44 @@ class Executor:
         assert event.group_owner is not None and event.wait_group_count is not None
         if group_state.staged.get(event.group_owner):
             return "INVALID"
-        required = group_state.required_for_wait(
+        self._count_group_work("group_wait_probes")
+        return (
+            "READY"
+            if group_state.wait_is_satisfied(
+                event.group_owner,
+                event.wait_group_count,
+                completion_kind,
+            )
+            else "BLOCKED"
+        )
+
+    def _observe_group_wait(
+        self,
+        event: Event,
+        group_state: CommitGroupState,
+        completion_kind: str,
+    ) -> tuple[tuple[str, str, str], ...]:
+        assert event.group_owner is not None and event.wait_group_count is not None
+        self._count_group_work("group_wait_probes")
+        group = group_state.required_frontier_group(
             event.group_owner,
             event.wait_group_count,
             completion_kind,
         )
-        return (
-            "READY"
-            if all(group.is_completed(completion_kind) for group in required)
-            else "BLOCKED"
+        if group is None:
+            return ()
+        old_frontier = group_state.observed_frontier(
+            event.group_owner,
+            completion_kind,
         )
+        if group.sequence <= old_frontier:
+            return ()
+        group_state.set_observed_frontier(
+            event.group_owner,
+            completion_kind,
+            group.sequence,
+        )
+        return ((group.completion_id(completion_kind), event.id, "COMPLETION_TO_WAIT"),)
 
     def _wait_status(self, event: Event, barrier: BarrierState) -> Literal["READY", "BLOCKED", "INVALID"]:
         assert event.generation is not None and event.raw_parity is not None and event.parity_evidence is not None
@@ -438,7 +499,11 @@ class Executor:
                         result.append(transition)
         for actor in sorted(state.frontiers):
             event = self._frontier_event(state, actor)
-            if event is None or event.id == hold or not set(event.depends_on).issubset(state.executed):
+            if (
+                event is None
+                or event.id == hold
+                or not all(self.event_executed(state, item) for item in event.depends_on)
+            ):
                 continue
             if (
                 event.type == "MBarrierInvalidate"
@@ -564,11 +629,14 @@ class Executor:
         barrier.expected_tx += event.bytes
 
     def _advance_program(self, state: ExecutionState, event: Event) -> None:
-        state.executed.add(event.id)
+        if not getattr(self.module, "implicit_program_completion", False):
+            state.executed.add(event.id)
+            state.completed_transitions.add(event.id)
         state.frontiers[event.actor] += 1
-        state.completed_transitions.add(event.id)
 
     def _record(self, state: ExecutionState, transition: Transition) -> None:
+        if not self.record_trace:
+            return
         state.trace.append({
             "step": len(state.trace), "transition": transition.id, "kind": transition.kind,
         })
@@ -615,10 +683,13 @@ class Executor:
                     transition.id,
                     snapshot,
                 )
-            group = group_state.pending(
+            self._count_group_work("group_frontier_queries")
+            group = group_state.next_pending_group(
                 transition.owner,
                 transition.completion_kind,
-            )[0]
+            )
+            if group is None:
+                raise AssertionError("validated group completion lost its frontier")
             edges = [(group.group_id, transition.id, "GROUP_TO_COMPLETION")]
             if (
                 group_state.protocol == "TMA_STORE"
@@ -629,7 +700,12 @@ class Executor:
                     transition.id,
                     "ENDPOINT_ORDER",
                 ))
-            group.mark_completed(transition.completion_kind)
+            _completed_group, frontier_advances = group_state.mark_completed(
+                transition.owner,
+                transition.completion_kind,
+                group,
+            )
+            self._count_group_work("group_frontier_advances", frontier_advances)
             state.completed_transitions.add(transition.id)
             state.dynamic_edges.update(edges)
             self._record(state, transition)
@@ -753,7 +829,7 @@ class Executor:
                     (transition.resource, lifecycle_epoch, generation),
                     (),
                 )
-                if issue.id in state.executed
+                if self.event_executed(state, issue.id)
             )
             edges = tuple(
                 (issue.id, transition.id, "ISSUE_TO_PHASE")
@@ -805,10 +881,11 @@ class Executor:
                         event.id,
                         collective.snapshot(),
                     )
-                if event.actor in collective.arrivals:
+                owner = event.execution_owner
+                if owner in collective.arrivals:
                     raise ProtocolError(
                         "DUPLICATE_BARRIER_ARRIVAL",
-                        "actor arrived more than once for one collective invocation",
+                        "execution owner arrived more than once for one collective invocation",
                         event.id,
                         collective.snapshot(),
                     )
@@ -821,7 +898,7 @@ class Executor:
                         event.id,
                         snapshot,
                     )
-                collective.arrivals[event.actor] = (event.id, event.count)
+                collective.arrivals[owner] = (event.id, event.count)
                 changed_collectives.add(event.resource)
         elif event.type == "BarrierObserve":
             assert event.resource is not None and event.invocation_id is not None
@@ -837,14 +914,15 @@ class Executor:
             if status == "BLOCKED":
                 raise AssertionError("blocked collective observe was applied")
             observed = collective.observations.setdefault(event.invocation_id, set())
-            if event.actor in observed:
+            owner = event.execution_owner
+            if owner in observed:
                 raise ProtocolError(
                     "DUPLICATE_BARRIER_OBSERVE",
-                    "actor observed one collective invocation more than once",
+                    "execution owner observed one collective invocation more than once",
                     event.id,
                     collective.snapshot(),
                 )
-            observed.add(event.actor)
+            observed.add(owner)
             release = stable_collective_release_id(event.resource, event.invocation_id)
             edge = (release, event.id, "BARRIER_RELEASE")
             state.dynamic_edges.add(edge)
@@ -871,7 +949,8 @@ class Executor:
                     event.id,
                     snapshot,
                 )
-            if len(group_state.pending_groups(event.group_owner)) >= group_state.capacity:
+            self._count_group_work("group_capacity_probes")
+            if group_state.unfinished_count(event.group_owner) >= group_state.capacity:
                 raise ProtocolError(
                     "COMMIT_GROUP_CAPACITY_EXCEEDED",
                     "cp.async cannot retain more uncompleted groups than its resource capacity",
@@ -885,12 +964,10 @@ class Executor:
                 event.group_seq,
                 "GROUP_COMPLETE",
             )
+            self._count_group_work("group_uniqueness_probes")
             if (
-                completion_id in state.completed_transitions
-                or any(
-                    completion_id in group.completion_ids.values()
-                    for group in group_state.groups(event.group_owner)
-                )
+                self.transition_completed(state, completion_id)
+                or group_state.duplicate_completion_ids({"GROUP_COMPLETE": completion_id})
             ):
                 raise ProtocolError(
                     "DUPLICATE_GROUP_COMPLETION",
@@ -912,7 +989,8 @@ class Executor:
                 + [(issue, group_id, "ISSUE_TO_GROUP") for issue in issues]
                 + ([(group_id, completion_id, "GROUP_TO_COMPLETION")] if not issues else [])
             )
-            group_state.groups(event.group_owner).append(group)
+            frontier_advances = group_state.append_group(event.group_owner, group)
+            self._count_group_work("group_frontier_advances", frontier_advances)
             group_state.staged[event.group_owner] = []
             group_state.next_group_seq[event.group_owner] = expected + 1
             if not issues:
@@ -939,27 +1017,11 @@ class Executor:
             if status == "BLOCKED":
                 raise AssertionError("blocked cp.async wait was applied")
             completion_kind = "GROUP_COMPLETE"
-            old_frontier = group_state.observed_frontier(
-                event.group_owner,
+            edges = self._observe_group_wait(
+                event,
+                group_state,
                 completion_kind,
             )
-            required = group_state.required_for_wait(
-                event.group_owner,
-                event.wait_group_count,
-                completion_kind,
-            )
-            newly_observed = [group for group in required if group.sequence > old_frontier]
-            frontier = newly_observed[-1:]
-            edges = tuple(
-                (group.completion_id(completion_kind), event.id, "COMPLETION_TO_WAIT")
-                for group in frontier
-            )
-            if required:
-                group_state.set_observed_frontier(
-                    event.group_owner,
-                    completion_kind,
-                    max(old_frontier, required[-1].sequence),
-                )
             state.dynamic_edges.update(edges)
             added_edges = edges
         elif event.type == "WgmmaFenceOperand":
@@ -1003,7 +1065,8 @@ class Executor:
                     event.id,
                     snapshot,
                 )
-            if len(group_state.pending_groups(event.group_owner)) >= group_state.capacity:
+            self._count_group_work("group_capacity_probes")
+            if group_state.unfinished_count(event.group_owner) >= group_state.capacity:
                 raise ProtocolError(
                     "COMMIT_GROUP_CAPACITY_EXCEEDED",
                     "WGMMA cannot retain more result-pending groups than its resource capacity",
@@ -1020,15 +1083,16 @@ class Executor:
                 )
                 for kind in group_state.completion_kinds
             }
-            known_ids = {
-                identifier
-                for group in group_state.committed.get(event.group_owner, ())
-                for identifier in group.completion_ids.values()
-            }
+            self._count_group_work(
+                "group_uniqueness_probes",
+                len(completion_ids),
+            )
             duplicates = sorted(
                 identifier for identifier in completion_ids.values()
-                if identifier in state.completed_transitions or identifier in known_ids
+                if self.transition_completed(state, identifier)
             )
+            duplicates.extend(group_state.duplicate_completion_ids(completion_ids))
+            duplicates = sorted(set(duplicates))
             if duplicates:
                 snapshot = group_state.snapshot(event.group_owner)
                 snapshot["duplicate_completion_ids"] = duplicates
@@ -1059,7 +1123,8 @@ class Executor:
                     if not issues else []
                 )
             )
-            group_state.groups(event.group_owner).append(group)
+            frontier_advances = group_state.append_group(event.group_owner, group)
+            self._count_group_work("group_frontier_advances", frontier_advances)
             group_state.staged[event.group_owner] = []
             group_state.next_group_seq[event.group_owner] = expected + 1
             if not issues:
@@ -1082,24 +1147,11 @@ class Executor:
                 )
             if status == "BLOCKED":
                 raise AssertionError("blocked WGMMA wait was applied")
-            old_frontier = group_state.observed_frontier(event.group_owner, completion_kind)
-            required = group_state.required_for_wait(
-                event.group_owner,
-                event.wait_group_count,
+            edges = self._observe_group_wait(
+                event,
+                group_state,
                 completion_kind,
             )
-            newly_observed = [group for group in required if group.sequence > old_frontier]
-            frontier = newly_observed[-1:]
-            edges = tuple(
-                (group.completion_id(completion_kind), event.id, "COMPLETION_TO_WAIT")
-                for group in frontier
-            )
-            if required:
-                group_state.set_observed_frontier(
-                    event.group_owner,
-                    completion_kind,
-                    max(old_frontier, required[-1].sequence),
-                )
             state.dynamic_edges.update(edges)
             added_edges = edges
         elif event.type == "TmaStoreIssue":
@@ -1122,7 +1174,8 @@ class Executor:
                     event.id,
                     snapshot,
                 )
-            if len(group_state.pending_groups(event.group_owner)) >= group_state.capacity:
+            self._count_group_work("group_capacity_probes")
+            if group_state.unfinished_count(event.group_owner) >= group_state.capacity:
                 raise ProtocolError(
                     "COMMIT_GROUP_CAPACITY_EXCEEDED",
                     "TMA store cannot retain more unfinished groups than its resource capacity",
@@ -1139,15 +1192,16 @@ class Executor:
                 )
                 for kind in group_state.completion_kinds
             }
-            known_ids = {
-                identifier
-                for group in group_state.committed.get(event.group_owner, ())
-                for identifier in group.completion_ids.values()
-            }
+            self._count_group_work(
+                "group_uniqueness_probes",
+                len(completion_ids),
+            )
             duplicates = sorted(
                 identifier for identifier in completion_ids.values()
-                if identifier in state.completed_transitions or identifier in known_ids
+                if self.transition_completed(state, identifier)
             )
+            duplicates.extend(group_state.duplicate_completion_ids(completion_ids))
+            duplicates = sorted(set(duplicates))
             if duplicates:
                 snapshot = group_state.snapshot(event.group_owner)
                 snapshot["duplicate_completion_ids"] = duplicates
@@ -1169,7 +1223,8 @@ class Executor:
                 [(event.id, group_id, "COMMIT_TO_GROUP")]
                 + [(issue, group_id, "ISSUE_TO_GROUP") for issue in issues]
             )
-            group_state.groups(event.group_owner).append(group)
+            frontier_advances = group_state.append_group(event.group_owner, group)
+            self._count_group_work("group_frontier_advances", frontier_advances)
             group_state.staged[event.group_owner] = []
             group_state.next_group_seq[event.group_owner] = expected + 1
             state.dynamic_edges.update(edges)
@@ -1194,24 +1249,11 @@ class Executor:
                 )
             if status == "BLOCKED":
                 raise AssertionError("blocked TMA store wait was applied")
-            old_frontier = group_state.observed_frontier(event.group_owner, completion_kind)
-            required = group_state.required_for_wait(
-                event.group_owner,
-                event.wait_group_count,
+            edges = self._observe_group_wait(
+                event,
+                group_state,
                 completion_kind,
             )
-            newly_observed = [group for group in required if group.sequence > old_frontier]
-            frontier = newly_observed[-1:]
-            edges = tuple(
-                (group.completion_id(completion_kind), event.id, "COMPLETION_TO_WAIT")
-                for group in frontier
-            )
-            if required:
-                group_state.set_observed_frontier(
-                    event.group_owner,
-                    completion_kind,
-                    max(old_frontier, required[-1].sequence),
-                )
             state.dynamic_edges.update(edges)
             added_edges = edges
         elif event.type == "ChannelCreate":
@@ -1497,7 +1539,7 @@ class Executor:
         if any(
             bool(group_state.staged.get(owner))
             or any(
-                group_state.pending(owner, completion_kind)
+                group_state.has_pending(owner, completion_kind)
                 for completion_kind in group_state.completion_kinds
             )
             for group_state in state.groups.values()
@@ -1512,10 +1554,6 @@ class Executor:
             return True
         return any(
             barrier.generation_started
-            or (
-                barrier.generation > 0
-                and barrier.last_successfully_observed_generation != barrier.generation - 1
-            )
             for barrier in state.barriers.values()
             if barrier.lifecycle == "LIVE"
         )
@@ -1675,20 +1713,6 @@ class Executor:
                     return {"code": "MISSING_ARRIVAL", "message": "mbarrier phase cannot complete: arrivals are missing", "resource": resource_id, "protocol_state": barrier.snapshot()}
                 if barrier.issued_tx != barrier.expected_tx:
                     return {"code": "TX_BYTES_MISMATCH", "message": "mbarrier expected and issued transaction bytes do not match", "resource": resource_id, "protocol_state": barrier.snapshot()}
-            completed_target = barrier.generation - 1
-            if (
-                barrier.lifecycle == "LIVE"
-                and completed_target >= 0
-                and barrier.last_successfully_observed_generation != completed_target
-            ):
-                snapshot = barrier.snapshot()
-                snapshot["required_observed_generation"] = completed_target
-                return {
-                    "code": "INVALID_MBARRIER_UNOBSERVED_PHASE",
-                    "message": "completed mbarrier phase lacks a successful wait",
-                    "resource": resource_id,
-                    "protocol_state": snapshot,
-                }
         for resource_id in sorted(state.collectives):
             collective = state.collectives[resource_id]
             if collective.arrivals:
@@ -1714,7 +1738,7 @@ class Executor:
                         "protocol_state": group_state.snapshot(owner),
                     }
                 if any(
-                    group_state.pending(owner, completion_kind)
+                    group_state.has_pending(owner, completion_kind)
                     for completion_kind in group_state.completion_kinds
                 ):
                     return {

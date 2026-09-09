@@ -12,6 +12,8 @@ sys.path.insert(0, str(TESTS))
 sys.path.insert(0, str(ROOT / "src"))
 
 from pipeguard.checker import check_module  # noqa: E402
+from pipeguard.frontends.common import FrontendError  # noqa: E402
+from pipeguard.model import PGIRError  # noqa: E402
 from pipeguard.frontends.tilelang import tilelang_snapshot_to_module  # noqa: E402
 from pipeguard.frontends.triton import triton_snapshot_to_module  # noqa: E402
 from suite.frontend_pairs.catalog import PAIRS  # noqa: E402
@@ -32,6 +34,8 @@ def main() -> int:
     summaries: dict[str, list[dict]] = {}
 
     for dsl, converter in CONVERTERS.items():
+        pgir_root = root / "pgir" / dsl
+        pgir_root.mkdir(parents=True, exist_ok=True)
         capture_records = {
             record["label"]: record
             for record in json.loads((root / f"{dsl}-results.json").read_text())
@@ -39,39 +43,80 @@ def main() -> int:
         records = []
         for label, case in expected.items():
             capture = capture_records[label]
+            source_limitation = getattr(case, f"{dsl}_source_limitation")
             record = {
                 "label": label,
                 "pair_id": case.pair_id,
                 "rule_id": case.rule_id,
                 "polarity": case.polarity,
+                "expected_stage": case.expected_stage,
                 "expected_verdict": case.expected_verdict,
+                "expected_diagnostic": case.expected_diagnostic,
                 "capture_status": capture["status"],
             }
+            if source_limitation is not None:
+                record["source_limitation"] = source_limitation
             if capture["status"] != "CAPTURED":
-                record["status"] = "UNSUPPORTED"
+                record["status"] = (
+                    "SOURCE_UNREPRESENTABLE"
+                    if source_limitation is not None
+                    else "UNSUPPORTED"
+                )
+                record["matches_expected"] = False
                 record["diagnostic"] = capture["diagnostic"]
             else:
                 snapshot_path = root / capture["snapshot_path"]
                 try:
                     module = converter(json.loads(snapshot_path.read_text()))
+                    pgir_path = pgir_root / f"{label}.json"
+                    pgir_path.write_text(json.dumps(module.raw, indent=2, sort_keys=True))
                     report = check_module(module, engine="maximal")
+                    actual_diagnostic = (
+                        report.get("diagnostics", [{}])[0].get("code")
+                        if report.get("diagnostics") else None
+                    )
                     record.update({
-                        "status": "CHECKED",
-                        "actual_verdict": report["verdict"],
-                        "actual_diagnostic": (
-                            report.get("diagnostics", [{}])[0].get("code")
-                            if report.get("diagnostics") else None
+                        "status": (
+                            "SOURCE_UNREPRESENTABLE"
+                            if source_limitation is not None
+                            else "CHECKED"
                         ),
-                        "matches_expected": report["verdict"] == case.expected_verdict,
+                        "actual_verdict": report["verdict"],
+                        "actual_diagnostic": actual_diagnostic,
+                        "pgir_path": str(pgir_path.relative_to(root)),
+                        "matches_expected": (
+                            source_limitation is None
+                            and case.expected_stage == "CHECKER"
+                            and report["verdict"] == case.expected_verdict
+                            and (
+                                case.expected_diagnostic is None
+                                or actual_diagnostic == case.expected_diagnostic
+                            )
+                        ),
                         "events": report["statistics"]["events"],
                         "n_ext": report["statistics"]["n_ext"],
                         "t_eff": report["statistics"]["t_eff"],
                     })
-                except Exception as error:
+                except (PGIRError, FrontendError) as error:
+                    code = error.code
+                    model_rejected = isinstance(error, PGIRError)
+                    expected_rejection = (
+                        case.expected_stage == "MODEL"
+                        and code == case.expected_diagnostic
+                    )
                     record.update({
-                        "status": "ADAPTER_UNSUPPORTED",
+                        "status": (
+                            "MODEL_REJECTED"
+                            if expected_rejection
+                            else "SOURCE_UNREPRESENTABLE"
+                            if source_limitation is not None
+                            else "MODEL_REJECTED"
+                            if model_rejected
+                            else "ADAPTER_UNSUPPORTED"
+                        ),
+                        "matches_expected": expected_rejection,
                         "diagnostic": {
-                            "code": getattr(error, "code", type(error).__name__),
+                            "code": code,
                             "message": str(error),
                         },
                     })
@@ -98,9 +143,16 @@ def main() -> int:
 
     output = {}
     for dsl, records in summaries.items():
+        comparable = sum(
+            record["status"] in {"CHECKED", "MODEL_REJECTED"}
+            for record in records
+        )
+        expected_matches = sum(record.get("matches_expected", False) for record in records)
         output[dsl] = {
             "statuses": dict(Counter(record["status"] for record in records)),
-            "expected_matches": sum(record.get("matches_expected", False) for record in records),
+            "comparable": comparable,
+            "expected_matches": expected_matches,
+            "expected_mismatches": comparable - expected_matches,
         }
     output["paired"] = {
         "checked": len(paired),

@@ -388,6 +388,7 @@ class TritonCapture:
         self.pending_wgmma_owners: set[str] = set()
         self.register_regions: dict[int, str] = {}
         self.pending_proxy_fence: int | None = None
+        self.pending_shared_write_allocations: set[str] = set()
         self.executable_nodes_seen = 0
         self.classified_nodes = 0
         self.emitting_nodes = 0
@@ -419,6 +420,249 @@ class TritonCapture:
             if shape_match is not None:
                 shape = [int(item) for item in shape_match.group(1).split("x") if item]
         return shape
+
+    @staticmethod
+    def _blocked_layout(type_text: str) -> tuple[list[int], list[int], list[int], list[int]] | None:
+        match = re.search(r"#ttg\.blocked<\{([^}]*)\}>", type_text)
+        if match is None:
+            return None
+        body = match.group(1)
+
+        def array(name: str) -> list[int]:
+            field = re.search(rf"\b{name}\s*=\s*\[([^]]*)\]", body)
+            if field is None:
+                raise CaptureError(
+                    "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                    "blocked layout omits a required distribution field",
+                    {"field": name, "type": type_text},
+                )
+            try:
+                values = [int(item.strip()) for item in field.group(1).split(",")]
+            except ValueError as error:
+                raise CaptureError(
+                    "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                    "blocked layout distribution is not integral",
+                    {"field": name, "type": type_text},
+                ) from error
+            if not values or any(value <= 0 for value in values):
+                raise CaptureError(
+                    "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                    "blocked layout distribution must contain positive dimensions",
+                    {"field": name, "type": type_text},
+                )
+            return values
+
+        size_per_thread = array("sizePerThread")
+        threads_per_warp = array("threadsPerWarp")
+        warps_per_cta = array("warpsPerCTA")
+        order_match = re.search(r"\border\s*=\s*\[([^]]*)\]", body)
+        if order_match is None:
+            raise CaptureError(
+                "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                "blocked layout omits its dimension order",
+                {"type": type_text},
+            )
+        try:
+            order = [int(item.strip()) for item in order_match.group(1).split(",")]
+        except ValueError as error:
+            raise CaptureError(
+                "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                "blocked layout order is not integral",
+                {"type": type_text},
+            ) from error
+        rank = len(size_per_thread)
+        if (
+            len(threads_per_warp) != rank
+            or len(warps_per_cta) != rank
+            or sorted(order) != list(range(rank))
+        ):
+            raise CaptureError(
+                "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                "blocked layout dimensions or order are inconsistent",
+                {"type": type_text},
+            )
+
+        slice_match = re.search(r"#ttg\.slice<\{\s*dim\s*=\s*(\d+)", type_text)
+        if slice_match is not None:
+            dimension = int(slice_match.group(1))
+            if dimension >= rank:
+                raise CaptureError(
+                    "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                    "slice layout removes an out-of-range blocked-layout dimension",
+                    {"dimension": dimension, "rank": rank, "type": type_text},
+                )
+            removed_distribution = (
+                size_per_thread[dimension],
+                threads_per_warp[dimension],
+                warps_per_cta[dimension],
+            )
+            if removed_distribution != (1, 1, 1):
+                raise CaptureError(
+                    "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                    "slice layout removes a distributed dimension requiring replication evidence",
+                    {
+                        "dimension": dimension,
+                        "distribution": list(removed_distribution),
+                        "type": type_text,
+                    },
+                )
+            size_per_thread.pop(dimension)
+            threads_per_warp.pop(dimension)
+            warps_per_cta.pop(dimension)
+            order = [
+                item - 1 if item > dimension else item
+                for item in order
+                if item != dimension
+            ]
+        return size_per_thread, threads_per_warp, warps_per_cta, order
+
+    @staticmethod
+    def _is_power_of_two(value: int) -> bool:
+        return value > 0 and value & (value - 1) == 0
+
+    @classmethod
+    def _blocked_lane_elements(
+        cls,
+        type_text: str,
+        shape: list[int],
+        participants: list[int],
+        *,
+        representative_only: bool,
+    ) -> dict[int, tuple[int, ...]]:
+        layout = cls._blocked_layout(type_text)
+        if layout is None:
+            raise CaptureError(
+                "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                "tensor memory access requires an explicit blocked layout",
+                {"type": type_text},
+            )
+        size_per_thread, threads_per_warp, warps_per_cta, order = layout
+        if (
+            len(shape) != len(size_per_thread)
+            or any(not cls._is_power_of_two(value) for value in shape)
+            or any(not cls._is_power_of_two(value) for value in (*size_per_thread, *threads_per_warp, *warps_per_cta))
+        ):
+            raise CaptureError(
+                "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                "the supported exact blocked-layout inversion requires power-of-two static dimensions",
+                {"type": type_text, "shape": shape},
+            )
+
+        def product_of(values: list[int]) -> int:
+            result = 1
+            for value in values:
+                result *= value
+            return result
+
+        if product_of(threads_per_warp) != 32:
+            raise CaptureError(
+                "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                "blocked layout threadsPerWarp does not match SM90 warp size",
+                {"threads_per_warp": threads_per_warp},
+            )
+        expected_threads = 32 * product_of(warps_per_cta)
+        if len(participants) != expected_threads:
+            raise CaptureError(
+                "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                "blocked layout warp count does not match the active execution owner",
+                {
+                    "participants": len(participants),
+                    "layout_threads": expected_threads,
+                },
+            )
+
+        scales = [1] * len(shape)
+
+        def bases(extents: list[int]) -> list[tuple[int, ...]]:
+            result: list[tuple[int, ...]] = []
+            for dimension in order:
+                bits = extents[dimension].bit_length() - 1
+                for _ in range(bits):
+                    basis = [0] * len(shape)
+                    basis[dimension] = scales[dimension]
+                    scales[dimension] *= 2
+                    result.append(tuple(basis))
+            return result
+
+        register_bases = bases(size_per_thread)
+        lane_bases = bases(threads_per_warp)
+        warp_bases = bases(warps_per_cta)
+        for dimension, desired in enumerate(shape):
+            actual = scales[dimension]
+            if actual < desired:
+                if desired % actual or not cls._is_power_of_two(desired // actual):
+                    raise CaptureError(
+                        "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                        "blocked layout cannot be extended exactly to the tensor shape",
+                        {"dimension": dimension, "actual": actual, "desired": desired},
+                    )
+                while actual < desired:
+                    basis = [0] * len(shape)
+                    basis[dimension] = actual
+                    register_bases.append(tuple(basis))
+                    actual *= 2
+                    scales[dimension] = actual
+
+        def truncate(items: list[tuple[int, ...]]) -> list[tuple[int, ...]]:
+            return [
+                tuple(value if value < shape[dimension] else 0 for dimension, value in enumerate(basis))
+                for basis in items
+            ]
+
+        register_bases = truncate(register_bases)
+        lane_bases = truncate(lane_bases)
+        warp_bases = truncate(warp_bases)
+        unique_register_bases = [basis for basis in register_bases if any(basis)]
+        lane_free_mask = sum(
+            1 << bit for bit, basis in enumerate(lane_bases) if not any(basis)
+        )
+        warp_free_mask = sum(
+            1 << bit for bit, basis in enumerate(warp_bases) if not any(basis)
+        )
+
+        def apply(input_value: int, input_bases: list[tuple[int, ...]]) -> list[int]:
+            coordinates = [0] * len(shape)
+            for bit, basis in enumerate(input_bases):
+                if input_value & (1 << bit):
+                    coordinates = [
+                        coordinate ^ contribution
+                        for coordinate, contribution in zip(coordinates, basis)
+                    ]
+            return coordinates
+
+        result: dict[int, tuple[int, ...]] = {}
+        register_count = 1 << len(unique_register_bases)
+        for local_thread, physical_lane in enumerate(participants):
+            lane = local_thread % 32
+            warp = local_thread // 32
+            if representative_only and (lane & lane_free_mask or warp & warp_free_mask):
+                continue
+            lane_coordinates = apply(lane, lane_bases)
+            warp_coordinates = apply(warp, warp_bases)
+            elements: list[int] = []
+            for register in range(register_count):
+                register_coordinates = apply(register, unique_register_bases)
+                coordinates = [
+                    register_coordinate ^ lane_coordinate ^ warp_coordinate
+                    for register_coordinate, lane_coordinate, warp_coordinate in zip(
+                        register_coordinates,
+                        lane_coordinates,
+                        warp_coordinates,
+                    )
+                ]
+                if any(coordinate >= extent for coordinate, extent in zip(coordinates, shape)):
+                    raise CaptureError(
+                        "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                        "blocked layout inversion produced an out-of-range tensor coordinate",
+                        {"type": type_text, "coordinates": coordinates, "shape": shape},
+                    )
+                flat = 0
+                for coordinate, extent in zip(coordinates, shape):
+                    flat = flat * extent + coordinate
+                if flat not in elements:
+                    elements.append(flat)
+            result[physical_lane] = tuple(elements)
+        return result
 
     @staticmethod
     def _broadcast_values(
@@ -689,6 +933,226 @@ class TritonCapture:
             for start, end in merged
         )
 
+    def _regions_for_element_offsets(
+        self,
+        allocation: str,
+        width: int,
+        offsets: list[int],
+    ) -> tuple[str, ...]:
+        intervals = sorted({(offset * width, offset * width + width) for offset in offsets})
+        merged: list[list[int]] = []
+        for start, end in intervals:
+            if start < 0:
+                raise CaptureError(
+                    "TRITON_POINTER_PROVENANCE_UNRESOLVED",
+                    "pointer offset is negative relative to its external base",
+                    {"offset": start // width, "width": width},
+                )
+            if merged and start <= merged[-1][1]:
+                merged[-1][1] = max(merged[-1][1], end)
+            else:
+                merged.append([start, end])
+        return tuple(
+            self._region(allocation, "GLOBAL", start, end - start)
+            for start, end in merged
+        )
+
+    def _lane_memory_regions(
+        self,
+        operation: Any,
+        pointer_id: int,
+        mask: Any,
+        *,
+        is_store: bool,
+    ) -> dict[int, tuple[str, ...]]:
+        pointer = self.pointer_values.get(pointer_id)
+        if pointer is None:
+            return {}
+        allocation, width, offsets = pointer
+        participants = self.actor_specs[self.current_actor]["participants"]
+        if participants != list(range(len(participants))):
+            raise CaptureError(
+                "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                "nonzero warp-partition lane remapping requires explicit lowered thread-id evidence",
+                {"actor": self.current_actor, "participants": participants},
+            )
+        type_text = str(operation.get_operand(0).get_type())
+        shape = self._value_shape(operation.get_operand(0))
+        if shape:
+            elements = 1
+            for extent in shape:
+                elements *= extent
+            if elements != len(offsets):
+                raise CaptureError(
+                    "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                    "pointer tensor values do not match its static shape",
+                    {
+                        "operation": operation.get_name(),
+                        "pointer_elements": len(offsets),
+                        "shape": shape,
+                    },
+                )
+            lane_elements = self._blocked_lane_elements(
+                type_text,
+                shape,
+                participants,
+                representative_only=is_store,
+            )
+        else:
+            active = participants[:1] if is_store else participants
+            lane_elements = {lane: (0,) for lane in active}
+
+        if isinstance(mask, (bool, int)):
+            predicates = (bool(mask),) * len(offsets)
+        elif isinstance(mask, (tuple, list)) and len(mask) == len(offsets):
+            predicates = tuple(bool(value) for value in mask)
+        else:
+            raise CaptureError(
+                "TRITON_PREDICATE_UNRESOLVED",
+                "memory mask shape does not match the pointer tensor",
+                {"operation": operation.get_name(), "pointer_elements": len(offsets)},
+            )
+
+        result: dict[int, tuple[str, ...]] = {}
+        for lane, element_indices in sorted(lane_elements.items()):
+            lane_offsets = [
+                offsets[element]
+                for element in element_indices
+                if predicates[element]
+            ]
+            if lane_offsets:
+                result[lane] = self._regions_for_element_offsets(
+                    allocation,
+                    width,
+                    lane_offsets,
+                )
+        return result
+
+    def _lane_memdesc_regions(
+        self,
+        value: Any,
+        region_id: str,
+        *,
+        representative_only: bool,
+    ) -> dict[int, tuple[str, ...]]:
+        region = self.regions[region_id]
+        shape = self._value_shape(value)
+        elements, width = self._value_extent(value)
+        if elements * width != region["extent"]:
+            raise CaptureError(
+                "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                "distributed tensor and memdesc byte extents differ",
+                {"type": str(value.get_type()), "region": region_id},
+            )
+        participants = self.actor_specs[self.current_actor]["participants"]
+        lane_elements = self._blocked_lane_elements(
+            str(value.get_type()),
+            shape,
+            participants,
+            representative_only=representative_only,
+        )
+        result: dict[int, tuple[str, ...]] = {}
+        for lane, indices in lane_elements.items():
+            intervals: list[list[int]] = []
+            for element in sorted(indices):
+                offset = region["offset"] + element * width
+                if intervals and offset == intervals[-1][0] + intervals[-1][1]:
+                    intervals[-1][1] += width
+                else:
+                    intervals.append([offset, width])
+            if intervals:
+                result[lane] = tuple(
+                    self._region(
+                        region["allocation_id"],
+                        region["address_space"],
+                        offset,
+                        extent,
+                    )
+                    for offset, extent in intervals
+                )
+        return result
+
+    def _cp_async_lane_effects(
+        self,
+        operation: Any,
+        pointer_id: int,
+        destination: str,
+        predicates: tuple[bool, ...],
+    ) -> dict[str, Any]:
+        pointer = self.pointer_values.get(pointer_id)
+        if pointer is None:
+            raise CaptureError(
+                "TRITON_CP_ASYNC_LANE_TRANSFER_UNRESOLVED",
+                "cp.async source pointer values are unresolved",
+            )
+        allocation, width, offsets = pointer
+        if width not in {4, 8, 16}:
+            raise CaptureError(
+                "TRITON_CP_ASYNC_TRANSFER_WIDTH_UNSUPPORTED",
+                "SM90 cp.async requires an exact per-thread width of 4, 8, or 16 bytes",
+                {"width": width},
+            )
+        shape = self._value_shape(operation.get_operand(0))
+        elements = 1
+        for extent in shape:
+            elements *= extent
+        if not shape or elements != len(offsets) or len(predicates) != len(offsets):
+            raise CaptureError(
+                "TRITON_CP_ASYNC_LANE_TRANSFER_UNRESOLVED",
+                "cp.async pointer shape, offsets, and mask must agree exactly",
+                {
+                    "shape": shape,
+                    "pointer_elements": len(offsets),
+                    "mask_elements": len(predicates),
+                },
+            )
+        participants = self.actor_specs[self.current_actor]["participants"]
+        lane_elements = self._blocked_lane_elements(
+            str(operation.get_operand(0).get_type()),
+            shape,
+            participants,
+            representative_only=True,
+        )
+        destination_region = self.regions[destination]
+        lanes: list[int] = []
+        transfer_offsets = [0]
+        source_regions: list[str] = []
+        destination_regions: list[str] = []
+        byte_counts: list[int] = []
+        for lane, element_indices in sorted(lane_elements.items()):
+            selected = [
+                element for element in element_indices if predicates[element]
+            ]
+            if not selected:
+                continue
+            lanes.append(lane)
+            for element in selected:
+                source_offset = offsets[element] * width
+                if source_offset < 0:
+                    raise CaptureError(
+                        "TRITON_POINTER_PROVENANCE_UNRESOLVED",
+                        "cp.async source offset is negative relative to its allocation",
+                        {"element": element, "offset": source_offset},
+                    )
+                source_regions.append(
+                    self._region(allocation, "GLOBAL", source_offset, width)
+                )
+                destination_regions.append(self._region(
+                    destination_region["allocation_id"],
+                    destination_region["address_space"],
+                    destination_region["offset"] + element * width,
+                    width,
+                ))
+                byte_counts.append(width)
+            transfer_offsets.append(len(source_regions))
+        return {
+            "lanes": lanes,
+            "transfer_offsets": transfer_offsets,
+            "source_regions": source_regions,
+            "destination_regions": destination_regions,
+            "bytes": byte_counts,
+        }
+
     def _resolve_addptr(self, operation: Any, index: int) -> bool:
         if operation.get_num_operands() != 2 or operation.get_num_results() != 1:
             raise CaptureError(
@@ -727,21 +1191,11 @@ class TritonCapture:
         )
         return True
 
-    def _capture_collective_barrier(self, operation: Any, index: int) -> None:
-        if (
-            operation.get_num_operands() != 0
-            or operation.get_num_results() != 0
-            or operation.get_str_attr("scope") not in {None, "local"}
-        ):
-            raise CaptureError(
-                "TRITON_COLLECTIVE_BARRIER_UNRESOLVED",
-                "ttg.barrier must be an operand-free local barrier",
-                {"operation_index": index},
-            )
+    def _emit_shared_membar(self, index: int) -> None:
         participants = self.actor_specs[self.current_actor]["participants"]
         complete_cta = participants == list(range(self.cta_threads))
         kind = "cta_barrier" if complete_cta else "named_barrier"
-        identifier = f"{kind}:{self.current_actor}"
+        identifier = f"{kind}:{self.current_actor}:membar"
         self.resources.setdefault(identifier, {
             "id": identifier,
             "kind": kind,
@@ -772,6 +1226,54 @@ class TritonCapture:
             resource=identifier,
             invocation_id=invocation,
         )
+        self.pending_shared_write_allocations.clear()
+
+    def _capture_collective_barrier(self, operation: Any, index: int) -> None:
+        if (
+            operation.get_num_operands() != 0
+            or operation.get_num_results() != 0
+            or operation.get_str_attr("scope") not in {None, "local"}
+        ):
+            raise CaptureError(
+                "TRITON_COLLECTIVE_BARRIER_UNRESOLVED",
+                "ttg.barrier must be an operand-free local barrier",
+                {"operation_index": index},
+            )
+        participants = self.actor_specs[self.current_actor]["participants"]
+        complete_cta = participants == list(range(self.cta_threads))
+        kind = "cta_barrier" if complete_cta else "named_barrier"
+        identifier = f"{kind}:{self.current_actor}"
+        self.resources.setdefault(identifier, {
+            "id": identifier,
+            "kind": kind,
+            "participants": [self.current_actor],
+            "capacity": len(participants),
+            "scope": "CTA",
+            "visibility_mask": {
+                "shared": True,
+                "global_read": True,
+                "global_write": True,
+                "tensor_read": False,
+                "tensor_write": False,
+                "control_only": False,
+            },
+        })
+        invocation = self.collective_barrier_invocations.get(identifier, 0)
+        self.collective_barrier_invocations[identifier] = invocation + 1
+        self._emit(
+            "triton.barrier.arrive",
+            index,
+            resource=identifier,
+            invocation_id=invocation,
+            count=len(participants),
+        )
+        self._emit(
+            "triton.barrier.observe",
+            index,
+            resource=identifier,
+            invocation_id=invocation,
+        )
+        self.pending_shared_write_allocations.clear()
 
     def _async_resource(self) -> str:
         identifier = f"cp_async:{self.current_actor}"
@@ -779,7 +1281,7 @@ class TritonCapture:
             "id": identifier,
             "kind": "async_group",
             "participants": [self.current_actor],
-            "capacity": 16,
+            "capacity": 8,
             "protocol": "CP_ASYNC",
             "scope": "CTA",
         })
@@ -1052,6 +1554,40 @@ class TritonCapture:
             self.resources[identifier]["participants"].append(self.current_actor)
         return identifier
 
+    def _protocol_execution_evidence(self, op: str) -> dict[str, Any]:
+        participants = list(self.actor_specs[self.current_actor]["participants"])
+        if op.startswith("triton.wgmma.") or op.startswith("triton.barrier."):
+            executors = participants
+            transition = "ONCE"
+            rendezvous = "ALL_PROGRAM_INSTANCES"
+        elif op == "triton.mbarrier.wait_parity":
+            executors = participants[:1]
+            transition = "ONCE"
+            rendezvous = "ALL_PROGRAM_INSTANCES"
+        elif op.startswith("triton.cp_async."):
+            executors = participants
+            transition = "PER_INSTANCE"
+            rendezvous = "NONE"
+        elif op == "triton.proxy_fence":
+            executors = participants
+            transition = "ONCE"
+            rendezvous = "ALL_PROGRAM_INSTANCES"
+        else:
+            executors = participants[:1]
+            transition = "ONCE"
+            rendezvous = "NONE"
+        return {
+            "program_instances": participants,
+            "executors": executors,
+            "transition": transition,
+            "rendezvous": rendezvous,
+            "method": (
+                "ttgir-final-nvvm-cp-async-per-thread-v1"
+                if op.startswith("triton.cp_async.")
+                else f"ttgir-{op}-lowering-contract-v1"
+            ),
+        }
+
     def _emit(self, op: str, operation_index: int, **fields: Any) -> None:
         ir_operation = self.operations[operation_index].get_name()
         activation_path = (*self.current_activation_path, operation_index)
@@ -1062,6 +1598,11 @@ class TritonCapture:
             dependencies.extend(fields.pop("depends_on", []))
             fields["depends_on"] = sorted(set(dependencies))
         identifier = f"triton:{actor}:e{sequence:05d}:op{operation_index:05d}"
+        if (
+            "execution_evidence" not in fields
+            and op not in {"triton.mem.read", "triton.mem.write"}
+        ):
+            fields["execution_evidence"] = self._protocol_execution_evidence(op)
         self.output_operations.append({
             "id": identifier,
             "op": op,
@@ -1487,6 +2028,27 @@ class TritonCapture:
                 destination,
                 is_load=True,
             )
+            if self.pending_proxy_fence is not None:
+                self._emit(
+                    "triton.proxy_fence",
+                    self.pending_proxy_fence,
+                    from_domain="GENERIC",
+                    to_domain="TMA",
+                    scope="CTA",
+                    regions=sorted({
+                        source_region
+                        for source_region, _destination, _bytes in segments
+                    }),
+                    visibility_mask={
+                        "shared": False,
+                        "global_read": False,
+                        "global_write": True,
+                        "tensor_read": False,
+                        "tensor_write": False,
+                        "control_only": False,
+                    },
+                )
+                self.pending_proxy_fence = None
             self._emit(
                 "triton.tma_load.issue",
                 index,
@@ -1669,6 +2231,7 @@ class TritonCapture:
                 {"operation": name, "operation_index": index},
             )
         mask_position = 1 if name == "tt.load" and operand_count >= 2 else 2 if name == "tt.store" and operand_count == 3 else None
+        mask: Any = True
         if mask_position is not None:
             mask_id = operation.get_operand(mask_position).id()
             if mask_id not in self.static_values:
@@ -1677,12 +2240,57 @@ class TritonCapture:
                     "ordinary memory mask is not statically resolved",
                     {"operation": name, "operation_index": index},
                 )
-            regions = self._masked_pointer_regions(pointer_id, self.static_values[mask_id])
+            mask = self.static_values[mask_id]
+            regions = self._masked_pointer_regions(pointer_id, mask)
+        lane_regions = self._lane_memory_regions(
+            operation,
+            pointer_id,
+            mask,
+            is_store=name == "tt.store",
+        )
         for region in regions:
+            coarse = self.regions[region]
+            lanes: list[int] = []
+            region_offsets = [0]
+            exact_region_ids: list[str] = []
+            for lane, exact_regions in lane_regions.items():
+                selected = []
+                for exact_region in exact_regions:
+                    exact = self.regions[exact_region]
+                    if (
+                        exact["allocation_id"] == coarse["allocation_id"]
+                        and exact["address_space"] == coarse["address_space"]
+                        and exact["offset"] < coarse["offset"] + coarse["extent"]
+                        and coarse["offset"] < exact["offset"] + exact["extent"]
+                    ):
+                        selected.append(exact_region)
+                if selected:
+                    lanes.append(lane)
+                    exact_region_ids.extend(selected)
+                    region_offsets.append(len(exact_region_ids))
+            if not lanes:
+                raise CaptureError(
+                    "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                    "memory region has no statically identified executing lane",
+                    {"operation": name, "operation_index": index, "region": region},
+                )
             self._emit(
                 "triton.mem.read" if name == "tt.load" else "triton.mem.write",
                 index,
                 region=region,
+                lane_effects={
+                    "lanes": lanes,
+                    "region_offsets": region_offsets,
+                    "regions": exact_region_ids,
+                },
+                execution_evidence={
+                    "scope": "INSTANCE",
+                    "method": "ttg-blocked-linear-layout-v1",
+                    "source": str(operation.get_operand(0).get_type()),
+                    "redundant_policy": (
+                        "STORE_REPRESENTATIVE" if name == "tt.store" else "LOAD_ALL"
+                    ),
+                },
             )
 
     def _capture_async(self, operation: Any, index: int) -> None:
@@ -1737,56 +2345,68 @@ class TritonCapture:
                     "async copy mask shape does not match the source pointer tensor",
                     {"operation_index": index},
                 )
-            source = self.pointer_regions.get(pointer_id)
-            if source is not None and all(predicates):
+            lane_effects = self._cp_async_lane_effects(
+                operation,
+                pointer_id,
+                destination,
+                predicates,
+            )
+            if lane_effects["lanes"]:
+                selected = [
+                    element for element, predicate in enumerate(predicates) if predicate
+                ]
+                selected_offsets = [offsets[element] for element in selected]
+                if (
+                    selected != list(range(selected[0], selected[-1] + 1))
+                    or any(
+                        second != first + 1
+                        for first, second in zip(
+                            selected_offsets, selected_offsets[1:]
+                        )
+                    )
+                ):
+                    raise CaptureError(
+                        "TRITON_CP_ASYNC_LANE_TRANSFER_UNRESOLVED",
+                        "noncontiguous cp.async masks or addresses require multiple exact coarse regions",
+                        {
+                            "operation_index": index,
+                            "selected_elements": selected,
+                            "selected_offsets": selected_offsets,
+                        },
+                    )
+                source_region = self._region(
+                    allocation,
+                    "GLOBAL",
+                    offsets[selected[0]] * width,
+                    len(selected) * width,
+                )
+                destination_region_id = self._region(
+                    destination_region["allocation_id"],
+                    destination_region["address_space"],
+                    destination_region["offset"] + selected[0] * width,
+                    len(selected) * width,
+                )
                 self._emit(
                     "triton.cp_async.issue",
                     index,
                     resource=resource,
-                    source_region=source,
-                    destination_region=destination,
-                    bytes=expected_extent,
+                    source_region=source_region,
+                    destination_region=destination_region_id,
+                    bytes=len(selected) * width,
                     group_owner=self.current_actor,
                     predicate=True,
+                    lane_effects=lane_effects,
+                    execution_evidence={
+                        "program_instances": lane_effects["lanes"],
+                        "executors": lane_effects["lanes"],
+                        "transition": "PER_INSTANCE",
+                        "rendezvous": "NONE",
+                        "method": "ttgir-final-nvvm-cp-async-per-thread-v1",
+                    },
                 )
-            else:
-                runs: list[list[int]] = []
-                for element, (offset, predicate) in enumerate(zip(offsets, predicates)):
-                    if not predicate:
-                        continue
-                    source_offset = offset * width
-                    destination_offset = destination_region["offset"] + element * width
-                    if (
-                        runs
-                        and source_offset == runs[-1][0] + runs[-1][2]
-                        and destination_offset == runs[-1][1] + runs[-1][2]
-                    ):
-                        runs[-1][2] += width
-                    else:
-                        runs.append([source_offset, destination_offset, width])
-                for source_offset, destination_offset, extent in runs:
-                    source_element = self._region(
-                        allocation,
-                        "GLOBAL",
-                        source_offset,
-                        extent,
-                    )
-                    destination_element = self._region(
-                        destination_region["allocation_id"],
-                        destination_region["address_space"],
-                        destination_offset,
-                        extent,
-                    )
-                    self._emit(
-                        "triton.cp_async.issue",
-                        index,
-                        resource=resource,
-                        source_region=source_element,
-                        destination_region=destination_element,
-                        bytes=extent,
-                        group_owner=self.current_actor,
-                        predicate=True,
-                    )
+                self.pending_shared_write_allocations.add(
+                    destination_region["allocation_id"]
+                )
             self.staged_tokens.add(operation.get_result(0).id())
             return
         if name == "ttg.async_commit_group":
@@ -1864,6 +2484,9 @@ class TritonCapture:
                 "local load memdesc provenance is unresolved",
                 {"operation_index": index},
             )
+        allocation = self.regions[region]["allocation_id"]
+        if allocation in self.pending_shared_write_allocations:
+            self._emit_shared_membar(index)
         if (
             operation.get_num_operands() == 2
             and operation.get_operand(1).id() not in self.wait_tokens
@@ -1873,7 +2496,32 @@ class TritonCapture:
                 "local load completion token is unresolved",
                 {"operation_index": index},
             )
-        self._emit("triton.mem.read", index, region=region)
+        lane_regions = self._lane_memdesc_regions(
+            operation.get_result(0),
+            region,
+            representative_only=False,
+        )
+        lanes = sorted(lane_regions)
+        flattened = [item for lane in lanes for item in lane_regions[lane]]
+        offsets = [0]
+        for lane in lanes:
+            offsets.append(offsets[-1] + len(lane_regions[lane]))
+        self._emit(
+            "triton.mem.read",
+            index,
+            region=region,
+            lane_effects={
+                "lanes": lanes,
+                "region_offsets": offsets,
+                "regions": flattened,
+            },
+            execution_evidence={
+                "scope": "INSTANCE",
+                "method": "ttg-blocked-linear-layout-v1",
+                "source": str(operation.get_result(0).get_type()),
+                "redundant_policy": "LOAD_ALL",
+            },
+        )
 
     def _capture_local_store(self, operation: Any, index: int) -> None:
         if operation.get_num_operands() != 2 or operation.get_num_results() != 0:
@@ -1901,7 +2549,35 @@ class TritonCapture:
                     "destination_extent": self.regions[region]["extent"],
                 },
             )
-        self._emit("triton.mem.write", index, region=region)
+        lane_regions = self._lane_memdesc_regions(
+            value,
+            region,
+            representative_only=True,
+        )
+        lanes = sorted(lane_regions)
+        flattened = [item for lane in lanes for item in lane_regions[lane]]
+        offsets = [0]
+        for lane in lanes:
+            offsets.append(offsets[-1] + len(lane_regions[lane]))
+        self._emit(
+            "triton.mem.write",
+            index,
+            region=region,
+            lane_effects={
+                "lanes": lanes,
+                "region_offsets": offsets,
+                "regions": flattened,
+            },
+            execution_evidence={
+                "scope": "INSTANCE",
+                "method": "ttg-blocked-linear-layout-v1",
+                "source": str(value.get_type()),
+                "redundant_policy": "STORE_REPRESENTATIVE",
+            },
+        )
+        self.pending_shared_write_allocations.add(
+            self.regions[region]["allocation_id"]
+        )
 
     def _region_block(self, region: Any, operation_index: int) -> int:
         blocks = sorted(self.region_blocks.get(region.id(), set()))
@@ -2968,6 +3644,9 @@ class TritonCapture:
                         {"operation_index": index},
                     )
                 self._emit("triton.mem.write", index, region=region)
+                self.pending_shared_write_allocations.add(
+                    self.regions[region]["allocation_id"]
+                )
                 self.emitting_nodes += 1
             else:
                 self.elided_nodes += 1
@@ -3178,10 +3857,11 @@ class TritonCapture:
                     predicate=bool(predicate_value),
                 )
             else:
-                if operation.get_num_operands() != 2:
+                operand_count = operation.get_num_operands()
+                if operand_count < 2:
                     raise CaptureError(
                         "TRITON_WAIT_PHASE_UNRESOLVED",
-                        "ttng.wait_barrier requires one scalar phase SSA operand",
+                        "ttng.wait_barrier requires a barrier and scalar phase SSA operand",
                     )
                 parity = self._constant(operation.get_operand(1), "wait phase")
                 if not isinstance(parity, int) or isinstance(parity, bool):
@@ -3190,6 +3870,25 @@ class TritonCapture:
                         "ttng.wait_barrier phase must be a scalar integer constant",
                         {"value": str(parity)},
                     )
+                predicate_value: Any = True
+                if operand_count >= 3:
+                    predicate_operand = operation.get_operand(2)
+                    predicate_value = self._constant(predicate_operand, "wait predicate")
+                    if (
+                        str(predicate_operand.get_type()) != "i1"
+                        or predicate_value not in {0, 1, -1, False, True}
+                    ):
+                        raise CaptureError(
+                            "TRITON_PREDICATE_UNRESOLVED",
+                            "ttng.wait_barrier predicate must be a scalar i1 constant",
+                            {
+                                "value": str(predicate_value),
+                                "type": str(predicate_operand.get_type()),
+                            },
+                        )
+                if not predicate_value:
+                    self.elided_nodes += 1
+                    return
                 parity_bit = parity & 1
                 wait_key = (resource, lifecycle, self.current_actor)
                 generation = self.wait_rank.get(wait_key, 0)
@@ -3199,12 +3898,6 @@ class TritonCapture:
                     and self.arrival_rank.get(barrier_key, 0) == 0
                     and self.tma_expect_rank.get(barrier_key, 0) == 0
                 )
-                if parity_bit != generation % 2 and not priming_wait:
-                    raise CaptureError(
-                        "TRITON_PARITY_UNRESOLVED",
-                        "wait phase SSA disagrees with the recovered gap-free stream rank",
-                        {"resource": resource, "rank": generation, "parity": parity_bit},
-                    )
                 if not priming_wait:
                     self.wait_rank[wait_key] = generation + 1
                     self._emit(
@@ -3243,7 +3936,7 @@ class TritonCapture:
         return {
             "snapshot_version": SNAPSHOT_VERSION,
             "profile": {
-                "id": "sm90-single-cta-static-v1",
+                "id": "sm90-single-cta-static-parametric-v1",
                 "source_ir_sha256": self.source_ir_sha256,
                 "compiler_ir_stage": "post-ttgir-pipeline",
                 "target_rule": "triton-cuda-90-selected-cta-grid-v1",

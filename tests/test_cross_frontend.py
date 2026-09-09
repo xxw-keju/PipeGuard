@@ -420,14 +420,18 @@ def test_equivalent_missing_wait_frontends_have_same_hazard_witness_shape():
         check_module(tilelang, engine="crosscheck"),
         check_module(triton, engine="crosscheck"),
     ]
-    assert [report["verdict"] for report in reports] == ["SYNC_HAZARD", "SYNC_HAZARD"]
+    assert [report["verdict"] for report in reports] == ["DATA_HAZARD", "DATA_HAZARD"]
     assert [report["diagnostics"][0]["code"] for report in reports] == [
-        "INVALID_MBARRIER_UNOBSERVED_PHASE",
-        "INVALID_MBARRIER_UNOBSERVED_PHASE",
+        "UNORDERED_CONFLICT",
+        "UNORDERED_CONFLICT",
     ]
+    assert _witness_shape(reports[0]) == _witness_shape(reports[1])
     for report in reports:
-        assert report["witness"]["category"] == "INVALID_MBARRIER_UNOBSERVED_PHASE"
-        assert report["witness"]["protocol_state"]["required_observed_generation"] == 0
+        assert report["witness"]["category"] == "UNORDERED_CONFLICT"
+        assert [effect["mode"] for effect in report["witness"]["effects"]] == [
+            "READ",
+            "WRITE",
+        ]
 
 
 def test_compare_cli_reports_cross_dsl_equivalence():

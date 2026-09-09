@@ -19,12 +19,14 @@ from suite.frontend_pairs.sources.triton_cases import compile_triton_case  # noq
 
 def _binding_evidence(raw_path: Path, family: str) -> dict:
     pointer_allocations = {}
-    if family in {"MEM-RAW", "CTA-HANDOFF"}:
+    if family in {"MEM-RAW", "MEM-WAW", "CTA-HANDOFF", "MEMORY", "CTA-BARRIER"}:
         pointer_allocations = {"0": "global:data", "1": "global:output"}
-    elif family in {"TMA-OBSERVE", "TMA-PROXY"}:
+    elif family in {"TMA-OBSERVE", "TMA-PROXY", "TMA-LOAD"}:
         # Gluon expands the descriptor into arguments 0..4; the ordinary
         # input/output pointers follow at positions 5 and 6.
         pointer_allocations = {"5": "global:input", "6": "global:output"}
+    elif family == "TMA-STORE":
+        pointer_allocations = {"5": "global:output", "6": "global:sink"}
     return {
         "evidence_version": "triton-binding-evidence-v1",
         "source_ir_sha256": hashlib.sha256(raw_path.read_bytes()).hexdigest(),
@@ -56,13 +58,14 @@ def _capture_with_evidence(raw_path: Path, evidence_path: Path, family: str, lab
                 continue
             if error.code != "TRITON_TMA_DESCRIPTOR_UNRESOLVED":
                 raise
-            allocation = "global:output" if family == "TMA-STORE-ENDPOINT" else "global:input"
+            is_named_store = family == "TMA-STORE"
+            allocation = "global:output" if family in {"TMA-STORE", "TMA-STORE-ENDPOINT"} else "global:input"
             evidence["array_attributes"][str(operation_index)] = {
                 "descriptor": {
                     "allocation_id": allocation,
                     "coordinate_order": [0, 1],
                     "element_bytes": 2,
-                    "shape": [32, 32],
+                    "shape": [64, 32] if is_named_store else [32, 32],
                     "strides": [32, 1],
                     "tile_shape": [32, 32],
                 }
@@ -75,6 +78,7 @@ def main() -> int:
     parser.add_argument("--output", required=True)
     parser.add_argument("--variant", action="append", type=int)
     parser.add_argument("--family", action="append")
+    parser.add_argument("--label", action="append")
     args = parser.parse_args()
 
     output = Path(args.output)
@@ -85,8 +89,9 @@ def main() -> int:
     raw_root.mkdir(parents=True, exist_ok=True)
     snapshot_root.mkdir(parents=True, exist_ok=True)
     evidence_root.mkdir(parents=True, exist_ok=True)
-    selected_variants = set(args.variant or range(12))
-    selected_families = set(args.family or (case.family for case in PAIRS))
+    selected_variants = set(args.variant) if args.variant else None
+    selected_families = set(args.family) if args.family else None
+    selected_labels = set(args.label) if args.label else None
     records_by_label = {
         record["label"]: record
         for record in (json.loads(result_path.read_text()) if result_path.exists() else [])
@@ -94,7 +99,11 @@ def main() -> int:
 
     processed = 0
     for case in PAIRS:
-        if case.variant not in selected_variants or case.family not in selected_families:
+        if selected_variants is not None and case.variant not in selected_variants:
+            continue
+        if selected_families is not None and case.family not in selected_families:
+            continue
+        if selected_labels is not None and case.label not in selected_labels:
             continue
         raw_path = raw_root / f"{case.label}.ttgir.mlir"
         snapshot_path = snapshot_root / f"{case.label}.json"
@@ -105,10 +114,12 @@ def main() -> int:
             "rule_id": case.rule_id,
             "polarity": case.polarity,
             "family": case.family,
+            "scenario_id": case.scenario_id,
+            "expected_stage": case.expected_stage,
             "shape": case.shape,
         }
         try:
-            raw_path.write_text(compile_triton_case(case.family, case.variant, case.polarity))
+            raw_path.write_text(compile_triton_case(case.family, case.scenario_id, case.variant, case.polarity))
             snapshot = _capture_with_evidence(
                 raw_path,
                 evidence_path,

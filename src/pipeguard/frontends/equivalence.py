@@ -5,6 +5,7 @@ from hashlib import sha256
 from typing import Any
 
 from ..model import Module
+from ..parametric import ParametricModule
 
 
 def _visibility(resource: Any) -> tuple[tuple[str, bool], ...]:
@@ -12,7 +13,9 @@ def _visibility(resource: Any) -> tuple[tuple[str, bool], ...]:
     return tuple(sorted(mask.artifact().items())) if mask is not None else ()
 
 
-def semantic_signature(module: Module) -> dict[str, Any]:
+def semantic_signature(module: Module | ParametricModule) -> dict[str, Any]:
+    if isinstance(module, ParametricModule):
+        module = module.expand_reference()
     actor_order = sorted(
         module.actors,
         key=lambda actor: (

@@ -22,6 +22,7 @@ def main() -> int:
     parser.add_argument("--output", required=True)
     parser.add_argument("--variant", action="append", type=int)
     parser.add_argument("--family", action="append")
+    parser.add_argument("--label", action="append")
     args = parser.parse_args()
 
     output = Path(args.output)
@@ -30,8 +31,9 @@ def main() -> int:
     result_path = output / "tilelang-results.json"
     raw_root.mkdir(parents=True, exist_ok=True)
     snapshot_root.mkdir(parents=True, exist_ok=True)
-    selected_variants = set(args.variant or range(12))
-    selected_families = set(args.family or (case.family for case in PAIRS))
+    selected_variants = set(args.variant) if args.variant else None
+    selected_families = set(args.family) if args.family else None
+    selected_labels = set(args.label) if args.label else None
     records_by_label = {
         record["label"]: record
         for record in (json.loads(result_path.read_text()) if result_path.exists() else [])
@@ -39,7 +41,11 @@ def main() -> int:
 
     processed = 0
     for case in PAIRS:
-        if case.variant not in selected_variants or case.family not in selected_families:
+        if selected_variants is not None and case.variant not in selected_variants:
+            continue
+        if selected_families is not None and case.family not in selected_families:
+            continue
+        if selected_labels is not None and case.label not in selected_labels:
             continue
         raw_path = raw_root / f"{case.label}.tvm.json"
         snapshot_path = snapshot_root / f"{case.label}.json"
@@ -49,11 +55,13 @@ def main() -> int:
             "rule_id": case.rule_id,
             "polarity": case.polarity,
             "family": case.family,
+            "scenario_id": case.scenario_id,
+            "expected_stage": case.expected_stage,
             "shape": case.shape,
         }
         try:
             raw_path.write_text(tvm.ir.save_json(
-                lower_tilelang_case(case.family, case.variant, case.polarity)
+                lower_tilelang_case(case.family, case.scenario_id, case.variant, case.polarity)
             ))
             snapshot = tilelang_capture.capture_file(
                 raw_path,

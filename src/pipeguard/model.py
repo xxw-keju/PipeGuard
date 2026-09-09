@@ -17,6 +17,7 @@ from .protocols import RESOURCE_KINDS, VisibilityMask
 IMPLEMENTED_RESOURCE_KINDS = frozenset({"mbarrier", "cta_barrier", "named_barrier", "cluster_barrier", "async_group"})
 IMPLEMENTED_ASYNC_PROTOCOLS = frozenset({"CP_ASYNC", "WGMMA", "TMA_STORE"})
 
+IMPLEMENTED_INTERNAL_EVENTS = frozenset({"ProgramPoint"})
 IMPLEMENTED_EVENTS = frozenset({
     "MemRead", "MemWrite", "BarrierArrive", "BarrierObserve",
     "MBarrierInit", "MBarrierInvalidate", "MBarrierArrive", "MBarrierExpectTx",
@@ -53,6 +54,15 @@ class Actor:
     kind: str
     participants: tuple[int, ...]
     cta_rank: int | None = None
+    role: str = "BOTH"
+
+    @property
+    def is_program_stream(self) -> bool:
+        return self.role in {"PROGRAM_STREAM", "BOTH"}
+
+    @property
+    def is_execution_owner(self) -> bool:
+        return self.role in {"EXECUTION_OWNER", "BOTH", "ASYNC_ENGINE"}
 
 
 @dataclass(frozen=True, slots=True)
@@ -127,6 +137,17 @@ class Event:
     regions: tuple[str, ...] = ()
     transfers: tuple[Transfer, ...] = ()
     visibility_mask: VisibilityMask | None = None
+    owner: str | None = None
+
+    @property
+    def execution_owner(self) -> str:
+        """Actor that owns a collective or protocol transition.
+
+        ``actor`` is always the scheduler program stream. Legacy PGIR omitted
+        ``owner`` and intentionally keeps the old actor-as-owner behavior.
+        """
+
+        return self.owner or self.actor
 
     @property
     def tma_transfers(self) -> tuple[Transfer, ...]:
@@ -149,6 +170,7 @@ class Module:
     _resource_map: dict[str, Resource] = field(compare=False, hash=False, repr=False)
     _region_map: dict[str, Region] = field(compare=False, hash=False, repr=False)
     _actor_map: dict[str, Actor] = field(compare=False, hash=False, repr=False)
+    _parametric: Any | None = field(default=None, compare=False, hash=False, repr=False)
 
     @property
     def event_map(self) -> dict[str, Event]:
@@ -165,6 +187,10 @@ class Module:
     @property
     def actor_map(self) -> dict[str, Actor]:
         return self._actor_map
+
+    @property
+    def parametric(self) -> Any | None:
+        return self._parametric
 
     @property
     def required_logical_waits(self) -> dict[tuple[str, int, int], frozenset[str]]:
@@ -762,6 +788,7 @@ def _semantic_validate(module: Module) -> None:
         )
 
     required_fields = {
+        "ProgramPoint": (),
         "MemRead": ("region",), "MemWrite": ("region",),
         "BarrierArrive": ("resource", "count", "invocation_id"),
         "BarrierObserve": ("resource", "invocation_id"),
@@ -788,8 +815,9 @@ def _semantic_validate(module: Module) -> None:
         "MBarrierWaitParity": ("resource", "lifecycle_epoch", "generation", "raw_parity", "parity_evidence"),
         "TmaLoadIssue": ("resource", "bytes", "lifecycle_epoch", "generation"),
     }
-    common = {"id", "type", "actor", "seq", "depends_on"}
+    common = {"id", "type", "actor", "seq", "depends_on", "owner"}
     specific = {
+        "ProgramPoint": set(),
         "MemRead": {"region"}, "MemWrite": {"region"},
         "BarrierArrive": {"resource", "count", "invocation_id", "predicate"},
         "BarrierObserve": {"resource", "invocation_id"},
@@ -838,7 +866,26 @@ def _semantic_validate(module: Module) -> None:
             raise PGIRError("RESERVED_ID_NAMESPACE", "real event ID uses a synthetic identity namespace", {"event": event.id})
         if event.actor not in actors:
             raise PGIRError("DANGLING_REFERENCE", "event references unknown actor", {"event": event.id, "actor": event.actor})
-        if event.type not in IMPLEMENTED_EVENTS:
+        if not actors[event.actor].is_program_stream:
+            raise PGIRError(
+                "EVENT_ACTOR_NOT_PROGRAM_STREAM",
+                "event actor must identify a scheduler program stream",
+                {"event": event.id, "actor": event.actor, "role": actors[event.actor].role},
+            )
+        owner = event.execution_owner
+        if owner not in actors:
+            raise PGIRError(
+                "DANGLING_REFERENCE",
+                "event references unknown execution owner",
+                {"event": event.id, "owner": owner},
+            )
+        if event.owner is not None and not actors[owner].is_execution_owner:
+            raise PGIRError(
+                "EVENT_OWNER_NOT_EXECUTION_OWNER",
+                "explicit event owner must identify a collective or protocol owner",
+                {"event": event.id, "owner": owner, "role": actors[owner].role},
+            )
+        if event.type not in IMPLEMENTED_EVENTS | IMPLEMENTED_INTERNAL_EVENTS:
             code = "KNOWN_EVENT_UNSUPPORTED" if event.type in KNOWN_UNSUPPORTED_EVENTS else "UNKNOWN_EVENT"
             raise PGIRError(code, f"event type is unsupported: {event.type}", {"event": event.id, "type": event.type})
         if event.type == "MBarrierInit" and event.layout != "V0":
@@ -910,8 +957,12 @@ def _semantic_validate(module: Module) -> None:
             raise PGIRError("DANGLING_REFERENCE", "event has dangling dependencies", {"event": event.id, "depends_on": dangling_dependencies})
         if event.id in event.depends_on:
             raise PGIRError("SELF_DEPENDENCY", "event cannot depend on itself", {"event": event.id})
-        if event.resource is not None and event.actor not in resources[event.resource].participants:
-            raise PGIRError("UNRESOLVED_PARTICIPANTS", "event actor is outside resource participant set", {"event": event.id, "resource": event.resource})
+        if event.resource is not None and owner not in resources[event.resource].participants:
+            raise PGIRError(
+                "UNRESOLVED_PARTICIPANTS",
+                "event execution owner is outside the resource participant set",
+                {"event": event.id, "resource": event.resource, "owner": owner},
+            )
         if event.type in {"BarrierArrive", "BarrierObserve"}:
             resource = resources[event.resource]
             if resource.kind not in {"cta_barrier", "named_barrier", "cluster_barrier"}:
@@ -920,11 +971,16 @@ def _semantic_validate(module: Module) -> None:
                     "collective barrier event must reference a CTA or named barrier resource",
                     {"event": event.id, "resource": event.resource, "kind": resource.kind},
                 )
-            if event.type == "BarrierArrive" and event.count != len(actors[event.actor].participants):
+            if event.type == "BarrierArrive" and event.count != len(actors[owner].participants):
                 raise PGIRError(
                     "COLLECTIVE_ARRIVAL_COUNT_MISMATCH",
-                    "collective arrival count must cover the actor's complete lane set",
-                    {"event": event.id, "count": event.count, "actor_lanes": list(actors[event.actor].participants)},
+                    "collective arrival count must cover the execution owner's complete lane set",
+                    {
+                        "event": event.id,
+                        "count": event.count,
+                        "owner": owner,
+                        "owner_lanes": list(actors[owner].participants),
+                    },
                 )
         elif event.type in {"CpAsyncIssue", "CpAsyncCommitGroup", "CpAsyncWaitGroup"}:
             resource = resources[event.resource]
@@ -934,7 +990,7 @@ def _semantic_validate(module: Module) -> None:
                     "cp.async event must reference a CP_ASYNC group resource",
                     {"event": event.id, "resource": event.resource, "kind": resource.kind, "protocol": resource.protocol},
                 )
-            if event.group_owner != event.actor:
+            if event.group_owner != owner:
                 raise PGIRError(
                     "GROUP_OWNER_MISMATCH",
                     "cp.async groups are owned by the issuing program actor",
@@ -981,7 +1037,7 @@ def _semantic_validate(module: Module) -> None:
                     "WGMMA event must reference a WGMMA group resource",
                     {"event": event.id, "resource": event.resource, "kind": resource.kind, "protocol": resource.protocol},
                 )
-            if event.group_owner != event.actor:
+            if event.group_owner != owner:
                 raise PGIRError(
                     "GROUP_OWNER_MISMATCH",
                     "WGMMA groups are owned by the issuing warpgroup actor",
@@ -1031,7 +1087,7 @@ def _semantic_validate(module: Module) -> None:
                     "TMA store event must reference a TMA_STORE group resource",
                     {"event": event.id, "resource": event.resource, "kind": resource.kind, "protocol": resource.protocol},
                 )
-            if event.group_owner != event.actor:
+            if event.group_owner != owner:
                 raise PGIRError(
                     "GROUP_OWNER_MISMATCH",
                     "TMA store groups are owned by the issuing program actor",
@@ -1263,14 +1319,14 @@ def _semantic_validate(module: Module) -> None:
                 )
             for invocation in invocations:
                 arrivals = sorted(
-                    event.actor
+                    event.execution_owner
                     for event in collective_events
                     if event.invocation_id == invocation
                     and event.type == "BarrierArrive"
                     and event.predicate
                 )
                 observes = sorted(
-                    event.actor
+                    event.execution_owner
                     for event in collective_events
                     if event.invocation_id == invocation
                     and event.type == "BarrierObserve"
@@ -1350,32 +1406,8 @@ def _semantic_validate(module: Module) -> None:
             raise PGIRError("NONCONTIGUOUS_SEQUENCE", "actor sequence numbers must start at zero and be contiguous", {"actor": actor_id, "sequence": seqs})
 
 
-def module_from_dict(data: dict[str, Any]) -> Module:
-    _schema_validate(data)
-    actors = tuple(Actor(
-        item["id"],
-        item["kind"],
-        tuple(sorted(item["participants"])),
-        cta_rank=item.get("cta_rank"),
-    ) for item in data["actors"])
-    resources = tuple(Resource(
-        item["id"],
-        item["kind"],
-        tuple(sorted(item["participants"])),
-        capacity=item.get("capacity"),
-        protocol=item.get("protocol"),
-        scope=item.get("scope"),
-        visibility_mask=VisibilityMask.from_mapping(item["visibility_mask"]) if "visibility_mask" in item else None,
-    ) for item in data["resources"])
-    regions = tuple(Region(
-        item["id"],
-        item["allocation_id"],
-        item["address_space"],
-        item["offset"],
-        item["extent"],
-        owner_cta_rank=item.get("owner_cta_rank"),
-    ) for item in data["regions"])
-    events = tuple(Event(
+def event_from_dict(item: Mapping[str, Any]) -> Event:
+    return Event(
         id=item["id"], type=item["type"], actor=item["actor"], seq=item["seq"],
         depends_on=tuple(sorted(item.get("depends_on", []))), resource=item.get("resource"),
         region=item.get("region"), source_region=item.get("source_region"), destination_region=item.get("destination_region"),
@@ -1398,7 +1430,41 @@ def module_from_dict(data: dict[str, Any]) -> Module:
             for transfer in item.get("transfers", [])
         ),
         visibility_mask=VisibilityMask.from_mapping(item["visibility_mask"]) if "visibility_mask" in item else None,
-    ) for item in data["events"])
+        owner=item.get("owner"),
+    )
+
+
+def module_from_dict(data: dict[str, Any]) -> Module:
+    if isinstance(data, dict) and data.get("schema_version") == "pgir-parametric-v1":
+        from .parametric import parametric_module_from_dict
+
+        return parametric_module_from_dict(data)
+    _schema_validate(data)
+    actors = tuple(Actor(
+        item["id"],
+        item["kind"],
+        tuple(sorted(item["participants"])),
+        cta_rank=item.get("cta_rank"),
+        role=item.get("role", "ASYNC_ENGINE" if item["kind"] == "ASYNC_ENGINE" else "BOTH"),
+    ) for item in data["actors"])
+    resources = tuple(Resource(
+        item["id"],
+        item["kind"],
+        tuple(sorted(item["participants"])),
+        capacity=item.get("capacity"),
+        protocol=item.get("protocol"),
+        scope=item.get("scope"),
+        visibility_mask=VisibilityMask.from_mapping(item["visibility_mask"]) if "visibility_mask" in item else None,
+    ) for item in data["resources"])
+    regions = tuple(Region(
+        item["id"],
+        item["allocation_id"],
+        item["address_space"],
+        item["offset"],
+        item["extent"],
+        owner_cta_rank=item.get("owner_cta_rank"),
+    ) for item in data["regions"])
+    events = tuple(event_from_dict(item) for item in data["events"])
     grouped = _bucket_events_by_actor(actors, events)
     module = Module(
         raw=data,
@@ -1427,6 +1493,10 @@ def load_module(path: str | Path) -> Module:
 
 
 def normalize_module(module: Module) -> dict[str, Any]:
+    if module.raw.get("schema_version") == "pgir-parametric-v1":
+        from .parametric import normalize_parametric_module
+
+        return normalize_parametric_module(module)
     normalized = json.loads(json.dumps(module.raw))
     normalized["actors"] = sorted(normalized["actors"], key=lambda item: item["id"])
     normalized["resources"] = sorted(normalized["resources"], key=lambda item: item["id"])

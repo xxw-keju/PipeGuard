@@ -143,5 +143,8 @@ def test_exact_tilelang_effect_classification_is_narrow():
     assert not valid_set_max_nreg((Scalar(40), Scalar(2)), _scalar)
     assert not valid_set_max_nreg((Scalar(40),), _scalar)
     assert is_pure_payload_call("tl.fast_rcp", 1)
+    assert is_pure_payload_call("tirx.reinterpret", 1)
+    assert is_pure_payload_call("tir.reinterpret", 1)
     assert not is_pure_payload_call("tl.fast_rcp", 2)
+    assert not is_pure_payload_call("tirx.reinterpret", 2)
     assert not is_pure_payload_call("tirx.call_extern", 1)

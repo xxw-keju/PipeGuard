@@ -65,7 +65,8 @@
         "id": {"type": "string", "minLength": 1},
         "kind": {"enum": ["LANE", "WARP", "WARPGROUP", "PARTITION", "ASYNC_ENGINE"]},
         "participants": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "integer", "minimum": 0}},
-        "cta_rank": {"type": "integer", "minimum": 0}
+        "cta_rank": {"type": "integer", "minimum": 0},
+        "role": {"enum": ["PROGRAM_STREAM", "EXECUTION_OWNER", "BOTH", "ASYNC_ENGINE"]}
       }
     },
     "resource": {
@@ -126,6 +127,7 @@
       "properties": {
         "id": {"type": "string", "minLength": 1}, "type": {"type": "string", "minLength": 1},
         "actor": {"type": "string", "minLength": 1}, "seq": {"type": "integer", "minimum": 0},
+        "owner": {"type": "string", "minLength": 1},
         "depends_on": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
         "resource": {"type": "string", "minLength": 1}, "region": {"type": "string", "minLength": 1},
         "source_region": {"type": "string", "minLength": 1}, "destination_region": {"type": "string", "minLength": 1},
