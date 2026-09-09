@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-hoist-with-else-when-enabled-expected-ec8891dad634",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "42d5c0820adcd6416dfd014fd0da9b60432645702d68e2b36266b05d52a4b704"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      580,
+      591
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_loop_unswitching.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_loop_unswitching.py#L580-L591",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "1b7eb1b183233a70a02374a99113db0abc09f0b79182c7aefc69c42d753426e6",
+    "symbol": "test_hoist_with_else_when_enabled.expected"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

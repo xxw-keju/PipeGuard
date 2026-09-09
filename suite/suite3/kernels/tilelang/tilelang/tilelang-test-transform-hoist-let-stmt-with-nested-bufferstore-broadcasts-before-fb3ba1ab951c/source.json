@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-transform-hoist-let-stmt-with-nested-bufferstore-broadcasts-before-fb3ba1ab951c",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "fe67c2576df9ed876199556b98b698780a4e1e929ae7e0a3b2ba9e9990ce81fb"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      112,
+      119
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_hoist_broadcast_values.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_hoist_broadcast_values.py#L112-L119",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "88883957af0627424b5e37cdd2f490557627d4819c8967870bb4884eab046d91",
+    "symbol": "test_transform_hoist_let_stmt_with_nested_bufferstore_broadcasts.before"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

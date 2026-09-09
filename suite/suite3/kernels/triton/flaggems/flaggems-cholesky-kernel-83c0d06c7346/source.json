@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-cholesky-kernel-83c0d06c7346",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "d110cf64346cf496be9ccfd7acb46f7fff88bd380cc434c729423535eb678e4b"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      28,
+      64
+    ],
+    "path": "src/flag_gems/ops/linalg_cholesky.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/linalg_cholesky.py#L28-L64",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "8b1511aeccd741afd311a1ab9945b298553366310088bcc714563c30e8afeaf2",
+    "symbol": "cholesky_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

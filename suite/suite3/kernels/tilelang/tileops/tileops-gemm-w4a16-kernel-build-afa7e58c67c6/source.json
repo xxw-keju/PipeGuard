@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-gemm-w4a16-kernel-build-afa7e58c67c6",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "9c9c0f915bce2fb206f1e920363aaf6969f208bcaf8b4293d4de50b3f2ef242f"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      29,
+      165
+    ],
+    "path": "src/tileops/kernels/gemm/w4a16.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/gemm/w4a16.py#L29-L165",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "ef0b04336292be7e1b1cbaa57b8f08662ef34cfb3dd91fa5da2d41c4d0cb2b9c",
+    "symbol": "_gemm_w4a16_kernel.build"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-transform-hoist-let-stmt-after-240f35931904",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "d8712863aa219b285ab5e06f279a171c760124b4881ea4c5ae2080430531e13c"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      93,
+      100
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_hoist_broadcast_values.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_hoist_broadcast_values.py#L93-L100",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "572aa6c6c086df1f0852fd7687f052b4571628794d23a6081c7329c2a7f49ab4",
+    "symbol": "test_transform_hoist_let_stmt.after"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

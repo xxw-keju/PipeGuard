@@ -1,0 +1,112 @@
+{
+  "arguments": {
+    "dtype": "torch.bfloat16",
+    "k": 3,
+    "m": 5,
+    "n": 17
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 3,
+        "before": 1,
+        "path": "/bindings/k"
+      },
+      {
+        "after": 5,
+        "before": 1,
+        "path": "/bindings/m"
+      },
+      {
+        "after": 17,
+        "before": 1,
+        "path": "/bindings/n"
+      }
+    ],
+    "dimensions": [
+      "k",
+      "m",
+      "n"
+    ],
+    "transition": "Official test-matrix variation across: k, m, n"
+  },
+  "build": {},
+  "case_id": "flaggems-compute-linear-combination-kernel-c916dce0d6c8-boundary-229f8e95b3-config-405102be55",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-71686bb0d1b6aec2"
+      ],
+      "test_end_line": 42,
+      "test_function": "test_compute_linear_combination",
+      "test_path": "tests/test_compute_linear_combination.py",
+      "test_source_sha256": "2b017d6292bc06e7fb74db90ad283d434c026bafe4439f835d362b5c31f9f734",
+      "test_start_line": 29
+    },
+    "config_index": 8,
+    "config_source": "src/flag_gems/runtime/backend/_nvidia/hopper/tune_configs.yaml#mm",
+    "constexprs": {
+      "BLOCK_K": 32,
+      "BLOCK_M": 128,
+      "BLOCK_N": 128
+    },
+    "options": {
+      "maxnreg": null,
+      "num_ctas": 1,
+      "num_stages": 4,
+      "num_warps": 8
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-71686bb0d1b6aec2",
+    "flaggems-test-ea00cd8757b85b99",
+    "source-cfa2978d164b119e"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-compute-linear-combination-kernel-c916dce0d6c8",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_compute_linear_combination.py:29-42#test_compute_linear_combination",
+  "parent_case_id": "flaggems-compute-linear-combination-kernel-c916dce0d6c8-original-ed1c7f20a6-config-fad00ca7b5",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned. Autotune candidate 8 from src/flag_gems/runtime/backend/_nvidia/hopper/tune_configs.yaml#mm.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

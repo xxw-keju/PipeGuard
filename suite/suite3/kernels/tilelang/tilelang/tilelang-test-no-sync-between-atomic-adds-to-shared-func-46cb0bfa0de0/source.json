@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-no-sync-between-atomic-adds-to-shared-func-46cb0bfa0de0",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "4092dc6299a613cd7530f85310ac53fb0f9b4211525090ff376497ee9bd1ce9a"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      33,
+      55
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_thread_sync.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_thread_sync.py#L33-L55",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "bfdc78ca487ad358920c642214b7dfc9194ecd4a6da24a8cbb937e44e9cc6d3e",
+    "symbol": "test_no_sync_between_atomic_adds_to_shared.func"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

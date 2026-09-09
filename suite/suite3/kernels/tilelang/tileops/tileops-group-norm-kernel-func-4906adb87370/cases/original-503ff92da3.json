@@ -1,0 +1,93 @@
+{
+  "arguments": {
+    "bias_shape": {
+      "__pipeguard_missing__": true
+    },
+    "dtype": "float16",
+    "label": "image-g32",
+    "manifest": "src/tileops/manifest/normalization.yaml",
+    "num_groups": 32,
+    "operator": "GroupNormFwdOp",
+    "row_index": 0,
+    "weight_shape": {
+      "__pipeguard_missing__": true
+    },
+    "x_shape": [
+      8,
+      128,
+      32,
+      32
+    ]
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "D": 4096,
+      "M": 256,
+      "channels_per_group": 4,
+      "dtype": "float16",
+      "eps": 1e-05,
+      "num_groups": 32
+    }
+  },
+  "case_id": "tileops-group-norm-kernel-func-4906adb87370-original-503ff92da3",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 473,
+      "function": "GroupNormFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/normalization.yaml",
+      "source_sha256": "eac57f8436f58b179cd25ddfb270714a547ac889489aa62f857cda8d53e1785e",
+      "start_line": 414
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-d0983ba12b8e5b43",
+    "tileops-6a4085cd-spec-evidence-eb1ebfd3a0f46178"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-group-norm-kernel-func-4906adb87370",
+  "kind": "ORIGINAL",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/normalization.yaml:414-473#GroupNormFwdOp",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

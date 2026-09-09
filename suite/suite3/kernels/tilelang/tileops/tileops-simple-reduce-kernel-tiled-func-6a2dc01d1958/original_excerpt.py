@@ -1,0 +1,79 @@
+        @tilelang.jit(out_idx=[1])
+        def _func(block_m, threads):
+            @T.prim_func
+            def main(
+                x: T.Tensor[(M, N), dtype],
+                out: T.Tensor[(M,), out_dtype],
+            ):
+                with T.Kernel(T.ceildiv(M, block_m), threads=threads) as pid_m:
+                    shared_buf = T.alloc_shared((block_m, tile_n), dtype)
+                    tile_f32 = T.alloc_fragment((block_m, tile_n), "float32")
+                    acc = T.alloc_fragment((block_m,), "float32")
+                    tile_acc = T.alloc_fragment((block_m,), "float32")
+                    out_local = T.alloc_fragment((block_m,), out_dtype)
+
+                    # Initialize accumulator
+                    if op_kind in ("sum", "mean"):
+                        T.fill(acc, 0.0)
+                    elif op_kind == "amax":
+                        T.fill(acc, -T.infinity("float32"))
+                    elif op_kind == "amin":
+                        T.fill(acc, T.infinity("float32"))
+
+                    for t in T.Serial(num_tiles):
+                        if _needs_mask:
+                            with T.If(t < num_tiles - 1):
+                                with T.Then():
+                                    T.copy(x[pid_m * block_m, t * tile_n], shared_buf)
+                                    for i in T.serial(block_m):
+                                        for j in T.Parallel(tile_n):
+                                            tile_f32[i, j] = T.cast(shared_buf[i, j], "float32")
+                                with T.Else():
+                                    for i in T.serial(block_m):
+                                        for j in T.Parallel(tile_n):
+                                            tile_f32[i, j] = T.if_then_else(
+                                                T.And(
+                                                    pid_m * block_m + i < M,
+                                                    t * tile_n + j < N,
+                                                ),
+                                                T.cast(
+                                                    x[pid_m * block_m + i, t * tile_n + j],
+                                                    "float32",
+                                                ),
+                                                T.cast(_pad_val, "float32"),
+                                            )
+                        else:
+                            T.copy(x[pid_m * block_m, t * tile_n], shared_buf)
+                            for i in T.serial(block_m):
+                                for j in T.Parallel(tile_n):
+                                    tile_f32[i, j] = T.cast(shared_buf[i, j], "float32")
+
+                        # Tile-local reduce
+                        if op_kind in ("sum", "mean"):
+                            T.reduce_sum(tile_f32, tile_acc, dim=1)
+                            for i in T.Parallel(block_m):
+                                acc[i] = acc[i] + tile_acc[i]
+                        elif op_kind == "amax":
+                            T.reduce_max(tile_f32, tile_acc, dim=1)
+                            for i in T.Parallel(block_m):
+                                acc[i] = T.max(acc[i], tile_acc[i])
+                        elif op_kind == "amin":
+                            # Negate, reduce_max, negate back
+                            for i in T.serial(block_m):
+                                for j in T.Parallel(tile_n):
+                                    tile_f32[i, j] = -tile_f32[i, j]
+                            T.reduce_max(tile_f32, tile_acc, dim=1)
+                            for i in T.Parallel(block_m):
+                                acc[i] = T.min(acc[i], -tile_acc[i])
+
+                    # Finalize
+                    if op_kind == "mean":
+                        for i in T.Parallel(block_m):
+                            out_local[i] = T.cast(acc[i] / float(N), out_dtype)
+                    else:
+                        for i in T.Parallel(block_m):
+                            out_local[i] = T.cast(acc[i], out_dtype)
+
+                    T.copy(out_local, out[pid_m * block_m])
+
+            return main

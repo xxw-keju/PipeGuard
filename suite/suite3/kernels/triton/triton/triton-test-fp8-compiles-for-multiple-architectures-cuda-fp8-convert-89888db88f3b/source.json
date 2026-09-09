@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-fp8-compiles-for-multiple-architectures-cuda-fp8-convert-89888db88f3b",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "5d049d60943faef0a8cc86769d81c0da718f56b6e79be5bf068918dc59236648"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      402,
+      405
+    ],
+    "path": "python/test/unit/language/test_compile_only.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_compile_only.py#L402-L405",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "8bd94f0c7bc7f65bcc0cc7fb8c904a58ad27a90470c389da10a6c9b8a4a1b116",
+    "symbol": "test_fp8_compiles_for_multiple_architectures_cuda.fp8_convert"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

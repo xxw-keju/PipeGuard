@@ -1,0 +1,49 @@
+# Normalized device code for PipeGuard Suite 3.
+# Exact upstream code and provenance are stored beside this file.
+
+import triton
+import triton.language as tl
+
+@triton.jit
+def bilinear_kernel(input1_ptr, input2_ptr, weight_ptr, bias_ptr, output_ptr, M, N, K1, K2, stride_i1m, stride_i1k, stride_i2m, stride_i2k, stride_wn, stride_wk1, stride_wk2, stride_om, stride_on, BIAS: tl.constexpr, BLOCK_K1: tl.constexpr, BLOCK_K2: tl.constexpr):
+    """
+    Bilinear kernel: y[m, o] = sum_{i, j} x1[m, i] * W[o, i, j] * x2[m, j] + b[o]
+    - input1: (M, K1) where M is the flattened batch size, K1 is in1_features
+    - input2: (M, K2) where K2 is in2_features
+    - weight: (N, K1, K2) where N is out_features
+    - bias: (N,) optional
+    - output: (M, N)
+
+    Each program computes a single output element (m, o), reducing over the
+    in1_features x in2_features grid in tiles to keep memory bounded.
+    """
+    pid_m = tl.program_id(0)
+    pid_n = tl.program_id(1)
+    acc = 0.0
+    for k1 in range(0, tl.cdiv(K1, BLOCK_K1)):
+        offs_k1 = k1 * BLOCK_K1 + tl.arange(0, BLOCK_K1)
+        mask_k1 = offs_k1 < K1
+        x1 = tl.load(input1_ptr + pid_m * stride_i1m + offs_k1 * stride_i1k, mask=mask_k1, other=0.0).to(tl.float32)
+        for k2 in range(0, tl.cdiv(K2, BLOCK_K2)):
+            offs_k2 = k2 * BLOCK_K2 + tl.arange(0, BLOCK_K2)
+            mask_k2 = offs_k2 < K2
+            x2 = tl.load(input2_ptr + pid_m * stride_i2m + offs_k2 * stride_i2k, mask=mask_k2, other=0.0).to(tl.float32)
+            w_ptrs = weight_ptr + pid_n * stride_wn + offs_k1[:, None] * stride_wk1 + offs_k2[None, :] * stride_wk2
+            w_mask = mask_k1[:, None] & mask_k2[None, :]
+            w = tl.load(w_ptrs, mask=w_mask, other=0.0).to(tl.float32)
+            prod = x1[:, None] * w * x2[None, :]
+            acc += tl.sum(prod)
+    if BIAS:
+        acc += tl.load(bias_ptr + pid_n).to(tl.float32)
+    output = acc.to(output_ptr.dtype.element_ty)
+    tl.store(output_ptr + pid_m * stride_om + pid_n * stride_on, output)
+
+def _resolve_kernel(**pipeguard_bindings):
+    return bilinear_kernel
+
+def build_kernel(case):
+    """Construct the DSL-native device entry without compiling or launching it."""
+    arguments = dict(case.get('arguments', {}))
+    build = case.get('build', {})
+    arguments.update(build.get('resolver_kwargs', {}))
+    return _resolve_kernel(**arguments)

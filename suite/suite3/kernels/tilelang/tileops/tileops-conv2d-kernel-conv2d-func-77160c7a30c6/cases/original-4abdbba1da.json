@@ -1,0 +1,130 @@
+{
+  "arguments": {
+    "C_out": 64,
+    "bias_shape": {
+      "__pipeguard_missing__": true
+    },
+    "dilation": {
+      "__pipeguard_missing__": true
+    },
+    "dtype": "float16",
+    "groups": {
+      "__pipeguard_missing__": true
+    },
+    "input_shape": [
+      2,
+      64,
+      56,
+      56
+    ],
+    "kH": 3,
+    "kW": 3,
+    "label": "resnet-3x3",
+    "manifest": "src/tileops/manifest/convolution.yaml",
+    "operator": "Conv2dFwdOp",
+    "padding": [
+      1,
+      1
+    ],
+    "row_index": 0,
+    "stride": [
+      1,
+      1
+    ]
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "accum_dtype": "float32",
+      "c_in": 64,
+      "c_in_g": 64,
+      "c_out": 64,
+      "c_out_g": 64,
+      "dilation": 1,
+      "dilation_h": 1,
+      "dilation_w": 1,
+      "dtype": "float16",
+      "groups": 1,
+      "h": 56,
+      "h_in": 56,
+      "has_bias": false,
+      "hw": 3136,
+      "k_total": 576,
+      "kernel_h": 3,
+      "kernel_size": 3,
+      "kernel_w": 3,
+      "n": 2,
+      "out_h": 56,
+      "out_hw": 3136,
+      "out_w": 56,
+      "pad": 1,
+      "pad_h": 1,
+      "pad_w": 1,
+      "stride": 1,
+      "stride_h": 1,
+      "stride_w": 1,
+      "w": 56,
+      "w_in": 56
+    }
+  },
+  "case_id": "tileops-conv2d-kernel-conv2d-func-77160c7a30c6-original-4abdbba1da",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 185,
+      "function": "Conv2dFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/convolution.yaml",
+      "source_sha256": "c0a81ca773962995fdb0cb29d90e38c3ad18dab30ccf00e4f1454a5aa1438922",
+      "start_line": 79
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-cd1fcdbe4e9a170f",
+    "tileops-6a4085cd-spec-evidence-382641710da7ddc3"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-conv2d-kernel-conv2d-func-77160c7a30c6",
+  "kind": "ORIGINAL",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/convolution.yaml:79-185#Conv2dFwdOp",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

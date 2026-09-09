@@ -1,0 +1,12 @@
+    @T.prim_func
+    def before(
+        A: T.Tensor((64,), T.float16),
+        B: T.Tensor((64,), T.float16),
+        C: T.Tensor((64,), T.float16),
+    ):
+        with T.Kernel(1, threads=16):
+            A_shared = T.alloc_shared((16,), T.float16)
+            for i in T.Pipelined(4, order=[1, 0], stage=[0, 1]):
+                base: T.int32 = i * 16
+                T.copy(A[base], A_shared)
+                T.copy(A_shared, C[base])

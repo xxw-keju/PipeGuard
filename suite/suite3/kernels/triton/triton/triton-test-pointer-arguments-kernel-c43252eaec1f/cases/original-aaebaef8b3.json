@@ -1,0 +1,69 @@
+{
+  "arguments": {},
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-test-pointer-arguments-kernel-c43252eaec1f-original-aaebaef8b3",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {},
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "x": "*fp32"
+    }
+  },
+  "evidence": [
+    "source-5ca017b14ca9428e",
+    "launch-348546754e6e7e93"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-test-pointer-arguments-kernel-c43252eaec1f",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:5340;pytest-param:device=cuda;tensor-default=float32",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-launch:python/test/unit/language/test_core.py:5340;pytest-param:device=cuda;tensor-default=float32",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

@@ -1,0 +1,97 @@
+{
+  "arguments": {
+    "dim": [
+      0,
+      2
+    ],
+    "dtype": "bfloat16",
+    "label": "dispatch-middle",
+    "manifest": "src/tileops/manifest/reduction.yaml",
+    "operator": "InfNormFwdOp",
+    "x_shape": [
+      4,
+      128,
+      4096
+    ]
+  },
+  "boundary": {
+    "dimensions": [
+      "shape",
+      "dtype"
+    ],
+    "position": "middle",
+    "transition": "inf_merge source dispatch region"
+  },
+  "build": {
+    "factory_arguments": {
+      "A": 4,
+      "B": 128,
+      "out_dtype": "bfloat16",
+      "threads": 256
+    },
+    "kernel_arguments": {}
+  },
+  "case_id": "tileops-inf-merge-kernel-func-5c3e9edb945c-boundary-b1ae1297ad",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 927,
+      "function": "InfNormFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/reduction.yaml",
+      "source_sha256": "9761ad6a2c97b4b3143a80f0df61da9e4726754dabc504cfe3dbd6189a26a277",
+      "start_line": 879
+    },
+    "dispatch": {
+      "predicate": "inf_merge source dispatch region",
+      "strategy": "inf_merge"
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-34700d42c7188c12",
+    "tileops-6a4085cd-spec-evidence-383fc6c7600a8371"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-inf-merge-kernel-func-5c3e9edb945c",
+  "kind": "BOUNDARY",
+  "origin": "upstream-dispatch:src/tileops/kernels/reduction",
+  "reason": "Source-condition witness for inf_merge (middle).",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [
+    "tileops-dispatch-witness"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

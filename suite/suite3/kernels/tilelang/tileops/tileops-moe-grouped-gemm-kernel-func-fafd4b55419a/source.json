@@ -1,0 +1,32 @@
+{
+  "case_count": 3,
+  "changes": [
+    "retained the TileLang device factory and its in-file helper closure",
+    "removed unrelated upstream host definitions and decorators",
+    "inlined required TileOPs helper functions and constants",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-moe-grouped-gemm-kernel-func-fafd4b55419a",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "99a76da4f8ac89ec86ca07645b435e430d36a07bbaf3f3e951841fc2d9ea86df"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      148,
+      246
+    ],
+    "path": "src/tileops/kernels/moe/moe_grouped_gemm_nopad.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/moe/moe_grouped_gemm_nopad.py#L148-L246",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "256f56464f5416c6f64914902ceb9fec37fe032b9b549a323415e622492714d7",
+    "symbol": "_moe_grouped_gemm_kernel._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 3,
+  "variant": ""
+}

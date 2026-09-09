@@ -1,0 +1,195 @@
+{
+  "arguments": {
+    "C_out": 256,
+    "bias_shape": {
+      "__pipeguard_missing__": true
+    },
+    "dilation": [
+      6,
+      6,
+      6
+    ],
+    "dtype": "float16",
+    "groups": {
+      "__pipeguard_missing__": true
+    },
+    "input_shape": [
+      1,
+      256,
+      8,
+      16,
+      16
+    ],
+    "kD": 3,
+    "kH": 3,
+    "kW": 3,
+    "label": "3d-unet-aspp-3x3x3-rate6",
+    "manifest": "src/tileops/manifest/convolution.yaml",
+    "operator": "Conv3dFwdOp",
+    "padding": [
+      6,
+      6,
+      6
+    ],
+    "row_index": 3,
+    "stride": [
+      1,
+      1,
+      1
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 256,
+        "before": 64,
+        "path": "/bindings/C_out"
+      },
+      {
+        "after": [
+          6,
+          6,
+          6
+        ],
+        "before": {
+          "__pipeguard_missing__": true
+        },
+        "path": "/bindings/dilation"
+      },
+      {
+        "after": 256,
+        "before": 3,
+        "path": "/bindings/input_shape/1"
+      },
+      {
+        "after": 8,
+        "before": 16,
+        "path": "/bindings/input_shape/2"
+      },
+      {
+        "after": 16,
+        "before": 112,
+        "path": "/bindings/input_shape/3"
+      },
+      {
+        "after": 16,
+        "before": 112,
+        "path": "/bindings/input_shape/4"
+      },
+      {
+        "after": "3d-unet-aspp-3x3x3-rate6",
+        "before": "r3d-stem-k3-s1",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 6,
+        "before": 1,
+        "path": "/bindings/padding/0"
+      },
+      {
+        "after": 6,
+        "before": 1,
+        "path": "/bindings/padding/1"
+      },
+      {
+        "after": 6,
+        "before": 1,
+        "path": "/bindings/padding/2"
+      },
+      {
+        "after": 3,
+        "before": 0,
+        "path": "/bindings/row_index"
+      }
+    ],
+    "dimensions": [
+      "C_out",
+      "dilation",
+      "input_shape",
+      "padding"
+    ],
+    "transition": "Official source-matrix variation across: C_out, dilation, input_shape, padding"
+  },
+  "build": {
+    "factory_arguments": {
+      "c_in": 256,
+      "c_out": 256,
+      "d_in": 8,
+      "dilation_d": 6,
+      "dilation_h": 6,
+      "dilation_w": 6,
+      "dtype": "float16",
+      "h_in": 16,
+      "has_bias": false,
+      "kernel_d": 3,
+      "kernel_h": 3,
+      "kernel_w": 3,
+      "n": 1,
+      "pad_d": 6,
+      "pad_h": 6,
+      "pad_w": 6,
+      "stride_d": 1,
+      "stride_h": 1,
+      "stride_w": 1,
+      "w_in": 16
+    }
+  },
+  "case_id": "tileops-conv3d-kernel-conv3d-func-b8d515a5828e-boundary-fe2f0ce4a5",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 271,
+      "function": "Conv3dFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/convolution.yaml",
+      "source_sha256": "d942836582e95fd1dd7e720c3b01801e0048ef4811704e521c59ec4d9a0669a2",
+      "start_line": 186
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-5429ca842353941e",
+    "tileops-6a4085cd-spec-evidence-083929c01c7c17ed"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-conv3d-kernel-conv3d-func-b8d515a5828e",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/convolution.yaml:186-271#Conv3dFwdOp",
+  "parent_case_id": "tileops-conv3d-kernel-conv3d-func-b8d515a5828e-original-0dcf848d5d",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

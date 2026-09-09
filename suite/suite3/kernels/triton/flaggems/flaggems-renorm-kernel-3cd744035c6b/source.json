@@ -1,0 +1,33 @@
+{
+  "case_count": 20,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-renorm-kernel-3cd744035c6b",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "3bd5f85f3e5ea604a98872a75f86fb179e4896df8c617363576b1e6c446df8be"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      28,
+      47
+    ],
+    "path": "src/flag_gems/ops/renorm_.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/renorm_.py#L28-L47",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "ea5ea89305668c0ec1a2b401637abebd58b4d6d04060b70a0d2e28591c3554c9",
+    "symbol": "renorm_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

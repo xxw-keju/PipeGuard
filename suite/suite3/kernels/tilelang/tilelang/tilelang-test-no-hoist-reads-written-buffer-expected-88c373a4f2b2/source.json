@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-no-hoist-reads-written-buffer-expected-88c373a4f2b2",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "30e66e2cd275206ffa541b5f204d21baf206dccdcbf71e8e6a44ff6608d1dcec"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      160,
+      169
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_loop_unswitching.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_loop_unswitching.py#L160-L169",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "61abd367bfb755d26879918ab97816154d1cefeb3e1ca85f459358c86ca512dc",
+    "symbol": "test_no_hoist_reads_written_buffer.expected"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

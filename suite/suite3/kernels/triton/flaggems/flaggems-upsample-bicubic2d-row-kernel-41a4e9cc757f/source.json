@@ -1,0 +1,33 @@
+{
+  "case_count": 20,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-upsample-bicubic2d-row-kernel-41a4e9cc757f",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "6d240a588f48fa915429e56f18d4f1a3587ca5f451894a00ea6598036cc3c64f"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      36,
+      168
+    ],
+    "path": "src/flag_gems/ops/upsample_bicubic2d.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/upsample_bicubic2d.py#L36-L168",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "6c6bc80c1af71375fc203ddb3a7de2e4a81498658712663c0edaa2383bdfd08a",
+    "symbol": "_upsample_bicubic2d_row_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

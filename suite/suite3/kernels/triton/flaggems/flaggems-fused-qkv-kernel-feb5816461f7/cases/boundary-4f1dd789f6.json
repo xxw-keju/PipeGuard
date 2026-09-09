@@ -1,0 +1,86 @@
+{
+  "arguments": {
+    "block_size": 16,
+    "n_heads": 8,
+    "num_tokens": 17
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 17,
+        "before": 1,
+        "path": "/bindings/num_tokens"
+      }
+    ],
+    "dimensions": [
+      "num_tokens"
+    ],
+    "transition": "Official test-matrix variation across: num_tokens"
+  },
+  "build": {},
+  "case_id": "flaggems-fused-qkv-kernel-feb5816461f7-boundary-4f1dd789f6",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-e0828569dbbbc1d4"
+      ],
+      "test_end_line": 227,
+      "test_function": "test_combined",
+      "test_path": "tests/test_fused_deepseek_v4_qnorm_rope_kv_rope_insert.py",
+      "test_source_sha256": "dffdbccb7e87c9de7f8f48f2b69efec3f63e8f262933117067d016aa0fc0eb4c",
+      "test_start_line": 188
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-e0828569dbbbc1d4",
+    "flaggems-test-69c488c99d271b9e",
+    "source-274e00da976946bc"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-fused-qkv-kernel-feb5816461f7",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_fused_deepseek_v4_qnorm_rope_kv_rope_insert.py:188-227#test_combined",
+  "parent_case_id": "flaggems-fused-qkv-kernel-feb5816461f7-original-2595ce23e0",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

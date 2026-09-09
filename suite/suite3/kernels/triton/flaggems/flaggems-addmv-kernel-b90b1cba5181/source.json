@@ -1,0 +1,33 @@
+{
+  "case_count": 48,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-addmv-kernel-b90b1cba5181",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "7b1a187f0d006fb20c7311ebe1863e3ee5582bb9f09a4cfc5f86a688bf240e73"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      28,
+      82
+    ],
+    "path": "src/flag_gems/ops/addmv.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/addmv.py#L28-L82",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "cf62ef71b0fc0b2650eaf70da81540bcceb0d7028b33b72549c781318afd2f2c",
+    "symbol": "addmv_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

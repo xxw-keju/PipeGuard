@@ -1,0 +1,78 @@
+{
+  "arguments": {
+    "mhc_mult": 4,
+    "n0": 1,
+    "n1": 1024
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "mhc_mult": 4,
+      "mhc_post_mult_value": 2.0,
+      "num_sms": 132,
+      "token_block_size": 32
+    }
+  },
+  "case_id": "tilekernels-mhc-pre-split-mixes-bwd-3c8024c64e9f-original-9d92f3241e",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 103,
+      "function": "test_pre_split_mixes_comprehensive",
+      "kind": "UPSTREAM_TEST",
+      "path": "tests/mhc/test_pre_split_mixes.py",
+      "source_sha256": "753bfda63e3600ca5afa95251a6dade1c1d3be55177ad4e2122b47edc593e1bd",
+      "start_line": 74
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-aabad961a871f04d",
+    "tilekernels-36d9e45d-spec-evidence-8fee5332e4db16b1"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tilekernels-mhc-pre-split-mixes-bwd-3c8024c64e9f",
+  "kind": "ORIGINAL",
+  "origin": "upstream-upstream_test:tests/mhc/test_pre_split_mixes.py:74-103#test_pre_split_mixes_comprehensive",
+  "reason": "Source-derived TileKernels specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "device": "NVIDIA H100 80GB HBM3",
+    "sm_count": 132,
+    "warp_size": 32
+  },
+  "unresolved": []
+}

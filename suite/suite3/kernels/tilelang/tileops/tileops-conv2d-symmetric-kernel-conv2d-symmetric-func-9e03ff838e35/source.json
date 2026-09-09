@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the TileLang device factory and its in-file helper closure",
+    "removed unrelated upstream host definitions and decorators",
+    "inlined required TileOPs helper functions and constants",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-conv2d-symmetric-kernel-conv2d-symmetric-func-9e03ff838e35",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "518fef3b7de8146979e8865302ac50145c6fdb518a5d814f62b3110306a5f999"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      543,
+      691
+    ],
+    "path": "src/tileops/kernels/convolution/conv2d.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/convolution/conv2d.py#L543-L691",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "caa578b139f09e9b983e0a164c7e0c9e67e5ec68e5db098bf7c081102322e32f",
+    "symbol": "_conv2d_symmetric_kernel._conv2d_symmetric_func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

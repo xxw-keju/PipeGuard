@@ -1,0 +1,93 @@
+{
+  "arguments": {},
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-test-jit-warmup-cache-kernel-add-98aebc64604b-original-458abc34ad",
+  "compile": {
+    "attrs": {
+      "a": [
+        [
+          "tt.divisibility",
+          16
+        ]
+      ],
+      "b": [
+        [
+          "tt.divisibility",
+          16
+        ]
+      ],
+      "o": [
+        [
+          "tt.divisibility",
+          16
+        ]
+      ]
+    },
+    "binding_evidence": null,
+    "constexprs": {
+      "N": 32
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "N": "constexpr",
+      "a": "*fp32",
+      "b": "*fp32",
+      "o": "*fp32"
+    }
+  },
+  "evidence": [
+    "source-9af593e09ea25fe9",
+    "launch-a2c8f335139e1c8a"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-test-jit-warmup-cache-kernel-add-98aebc64604b",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-warmup:python/test/unit/runtime/test_cache.py:651",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-warmup:python/test/unit/runtime/test_cache.py:651",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

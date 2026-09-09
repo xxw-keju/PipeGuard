@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-silent-when-shared-buffer-is-written-by-a-later-branch-kernel-5d9fb53c4b0c",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "764d3483ab654c9905ce5f664ba3abbd50aa9937e602cf0a005a0cc35ab7e75f"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      226,
+      235
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_verify_buffer_init.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_verify_buffer_init.py#L226-L235",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "dffca0e0b403be0ebf77000bd7d6b6fbfc33c1338c4e232ab3487aca3d22a16a",
+    "symbol": "test_silent_when_shared_buffer_is_written_by_a_later_branch.kernel"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

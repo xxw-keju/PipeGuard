@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-dh-segment-boundary-scan-tl-func-36e8842bebeb",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "1da987b1c05a80a158042b963c6a67f8778ddd6ed7706802e0da4eb14829ff19"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      833,
+      874
+    ],
+    "path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py#L833-L874",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "07c3f012c9ce66eb7fb5e2ee8d29ef556167f7e0e9d069763afb1f7a08f1e6c8",
+    "symbol": "_dh_segment_boundary_scan_tl._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

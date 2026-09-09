@@ -1,0 +1,181 @@
+# Normalized device code for PipeGuard Suite 3.
+# Source: https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_inject_fence_proxy.py#L671-L833
+# The exact upstream excerpt is stored in original_excerpt.py.
+
+import tilelang.language as T
+
+from tvm import tirx
+
+def _resolve_kernel(**pipeguard_bindings):
+    @T.prim_func
+    def after(
+        A_desc: T.handle("uint8x128", "grid_constant"),
+        B_desc: T.handle("uint8x128", "grid_constant"),
+        C: T.handle("float16", "global"),
+    ):
+        T.func_attr(
+            {
+                "target": T.target(
+                    {
+                        "arch": "sm_90a",
+                        "keys": ["cuda", "gpu"],
+                        "kind": "cuda",
+                        "max_num_threads": 1024,
+                        "tag": "",
+                        "thread_warp_size": 32,
+                    }
+                ),
+                "tirx.is_global_func": True,
+                "tirx.noalias": True,
+                "tl.non_restrict_params": [],
+                "tl.readonly_param_indices": [0, 1],
+            }
+        )
+        bx = T.launch_thread("blockIdx.x", 8)
+        buf_dyn_shmem = T.alloc_buffer((49152,), "uint8", scope="shared.dyn")
+        C_local = T.alloc_buffer((128,), "float32", scope="local")
+        desc_a = T.alloc_buffer((1,), "uint64", scope="local.descriptor.wgmma")
+        desc_b = T.alloc_buffer((1,), "uint64", scope="local.descriptor.wgmma")
+        C_local_cast = T.alloc_buffer((2,), "float16", scope="local")
+        by = T.launch_thread("blockIdx.y", 8)
+        tx = T.launch_thread("threadIdx.x", 256)
+        mbarrier = T.decl_buffer((6,), "uint64", scope="shared.barrier")
+        if T.shuffle_elect(0):
+            T.call_intrin("handle", tirx.op.Op.get("tl.prefetch_tma_descriptor"), A_desc)
+            T.call_intrin("handle", tirx.op.Op.get("tl.prefetch_tma_descriptor"), B_desc)
+            T.ptx_init_barrier_thread_count(mbarrier[0], 128)
+            T.ptx_init_barrier_thread_count(mbarrier[1], 128)
+            T.ptx_init_barrier_thread_count(mbarrier[2], 128)
+            T.ptx_init_barrier_thread_count(mbarrier[3], 128)
+            T.ptx_init_barrier_thread_count(mbarrier[4], 128)
+            T.ptx_init_barrier_thread_count(mbarrier[5], 128)
+        T.ptx_fence_barrier_init()
+        T.tvm_storage_sync("shared")
+        ty = T.launch_thread("threadIdx.y", 1)
+        tz = T.launch_thread("threadIdx.z", 1)
+        T.attr([128, 128], "kWarpSpecializationScope", 0)
+        if tx >= 128:
+            for ko in range(32):
+                T.mbarrier_wait_parity(mbarrier[ko % 3 + 3], T.bitwise_xor(ko % 6 // 3, 1))
+                if T.shuffle_elect(128):
+                    T.mbarrier_expect_tx(mbarrier[ko % 3], 8192)
+                    T.tma_load(
+                        A_desc,
+                        mbarrier[ko % 3],
+                        T.tvm_access_ptr(T.type_annotation("float16"), buf_dyn_shmem.data, ko % 3 * 4096, 4096, 2),
+                        ko * 32,
+                        by * 128,
+                        0,
+                    )
+                if T.shuffle_elect(128):
+                    T.mbarrier_expect_tx(mbarrier[ko % 3], 8192)
+                    T.tma_load(
+                        B_desc,
+                        mbarrier[ko % 3],
+                        T.tvm_access_ptr(
+                            T.type_annotation("float16"),
+                            buf_dyn_shmem.data,
+                            12288 + ko % 3 * 4096,
+                            2048,
+                            2,
+                        ),
+                        bx * 128,
+                        ko * 32,
+                        0,
+                    )
+                    T.tma_load(
+                        B_desc,
+                        mbarrier[ko % 3],
+                        T.tvm_access_ptr(
+                            T.type_annotation("float16"),
+                            buf_dyn_shmem.data,
+                            12288 + (ko % 3 * 4096 + 2048),
+                            2048,
+                            2,
+                        ),
+                        bx * 128 + 64,
+                        ko * 32,
+                        0,
+                    )
+                T.ptx_arrive_barrier(mbarrier[ko % 3])
+        else:
+            C_local_2 = T.decl_buffer((128,), data=C_local.data, scope="local")
+            for i in T.unroll(32):
+                C_local_2[i * 4 : i * 4 + 4] = T.Broadcast(T.float32(0.0), 4)
+            for ko in range(32):
+                T.mbarrier_wait_parity(mbarrier[ko % 3], ko % 6 // 3)
+                desc_a_2 = T.decl_buffer((1,), "uint64", data=desc_a.data, scope="local.descriptor.wgmma")
+                T.initialize_wgmma_descriptor(
+                    desc_a_2[0],
+                    T.tvm_access_ptr(T.type_annotation("float16"), buf_dyn_shmem.data, ko % 3 * 4096, 4096, 1),
+                    2,
+                    1,
+                    32,
+                )
+                desc_b_2 = T.decl_buffer((1,), "uint64", data=desc_b.data, scope="local.descriptor.wgmma")
+                T.initialize_wgmma_descriptor(
+                    desc_b_2[0],
+                    T.tvm_access_ptr(T.type_annotation("float16"), buf_dyn_shmem.data, 12288 + ko % 3 * 4096, 4096, 1),
+                    1,
+                    256,
+                    64,
+                )
+                T.warpgroup_fence_operand(C_local, num_regs=128)
+                T.warpgroup_arrive()
+                for i in T.unroll(2):
+                    for ki in T.unroll(2):
+                        T.ptx_wgmma_ss(
+                            "float32",
+                            "m64n128k16",
+                            T.bool(True),
+                            T.bool(False),
+                            "fp16",
+                            "fp16",
+                            "fp32",
+                            desc_a.data,
+                            T.shift_right(i * 4096 + ki * 32, 4),
+                            desc_b.data,
+                            T.shift_right(ki * 2048, 4),
+                            C_local.data,
+                            i * 64,
+                            1,
+                            1,
+                            1,
+                        )
+                T.warpgroup_commit_batch()
+                T.warpgroup_wait(0)
+                T.warpgroup_fence_operand(C_local, num_regs=128)
+                T.ptx_arrive_barrier(mbarrier[ko % 3 + 3])
+            for i in T.unroll(128):
+                C_local_2[i] = T.max(C_local_2[i], T.float32(0.0))
+            for i in T.unroll(64):
+                C_local_cast_2 = T.decl_buffer((2,), "float16", data=C_local_cast.data, scope="local")
+                C_local_cast_2[0:2] = T.Cast("float16x2", C_local_2[i * 2 : i * 2 + 2])
+                C_2 = T.decl_buffer((1048576,), "float16", data=C)
+                C_2[
+                    by * 131072
+                    + i // 32 * 65536
+                    + tx // 32 * 16384
+                    + i % 2 * 8192
+                    + tx % 32 // 4 * 1024
+                    + bx * 128
+                    + i % 32 // 2 * 8
+                    + tx % 4 * 2 : by * 131072
+                    + i // 32 * 65536
+                    + tx // 32 * 16384
+                    + i % 2 * 8192
+                    + tx % 32 // 4 * 1024
+                    + bx * 128
+                    + i % 32 // 2 * 8
+                    + tx % 4 * 2
+                    + 2
+                ] = C_local_cast_2[0:2]
+    return after
+
+
+def build_kernel(case):
+    """Construct the DSL-native device entry without compiling or launching it."""
+    arguments = dict(case.get("arguments", {}))
+    build = case.get("build", {})
+    arguments.update(build.get("resolver_kwargs", {}))
+    return _resolve_kernel(**arguments)

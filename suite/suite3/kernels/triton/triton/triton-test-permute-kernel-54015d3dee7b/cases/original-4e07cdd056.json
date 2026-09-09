@@ -1,0 +1,86 @@
+{
+  "arguments": {
+    "BLOCK_M": 64,
+    "BLOCK_N": 64,
+    "stride_xm": 64,
+    "stride_xn": 1,
+    "stride_zm": 1,
+    "stride_zn": 64
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-test-permute-kernel-54015d3dee7b-original-4e07cdd056",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "BLOCK_M": 64,
+      "BLOCK_N": 64
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "BLOCK_M": "constexpr",
+      "BLOCK_N": "constexpr",
+      "X": "*fp32",
+      "Z": "*fp32",
+      "stride_xm": "i32",
+      "stride_xn": "i32",
+      "stride_zm": "i32",
+      "stride_zn": "i32"
+    }
+  },
+  "evidence": [
+    "source-6280418ca3050174",
+    "launch-9a44e952a646bf28"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-test-permute-kernel-54015d3dee7b",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:3641;pytest-param:dtype_str=float32,shape=(64,64);layout=transpose",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-launch:python/test/unit/language/test_core.py:3641;pytest-param:dtype_str=float32,shape=(64,64);layout=transpose",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

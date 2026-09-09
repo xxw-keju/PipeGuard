@@ -1,0 +1,73 @@
+{
+  "bindings": {
+    "A_shape": [
+      64,
+      64,
+      128
+    ],
+    "B_in_shape": [
+      1,
+      1,
+      128
+    ],
+    "C_in_shape": [
+      1,
+      1,
+      128
+    ],
+    "dt_shape": [
+      1,
+      64,
+      64
+    ],
+    "dtype": "bfloat16",
+    "label": "mamba2-1p3b-decode-b1",
+    "manifest": "src/tileops/manifest/mamba.yaml",
+    "operator": "SSDDecodeFwdOp",
+    "row_index": 0,
+    "state_shape": [
+      1,
+      64,
+      64,
+      128
+    ],
+    "x_shape": [
+      1,
+      64,
+      64
+    ]
+  },
+  "candidate_id": "000e690263ca382b",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 268,
+      "function": "SSDDecodeFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/mamba.yaml",
+      "source_sha256": "70b79456bdefe906b48d34c671e57d15b93e26618d2df7406ae78f4869125ee6",
+      "start_line": 230
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/mamba.yaml:230-268#SSDDecodeFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-000e690263ca382b-boundary-5a295afb0b-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

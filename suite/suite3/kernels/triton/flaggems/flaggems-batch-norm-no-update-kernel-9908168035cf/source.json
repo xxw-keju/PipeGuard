@@ -1,0 +1,33 @@
+{
+  "case_count": 12,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-batch-norm-no-update-kernel-9908168035cf",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "1bf25469bd86b43c7ba6e963d56b7c5c265ca44f34f79b054675007d8dcc30a6"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      50,
+      124
+    ],
+    "path": "src/flag_gems/ops/_batch_norm_no_update.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/_batch_norm_no_update.py#L50-L124",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "e180c06d2dfdcc2699f2c42913f644eb7d29cf950897445b3ce79852a9324a6e",
+    "symbol": "batch_norm_no_update_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

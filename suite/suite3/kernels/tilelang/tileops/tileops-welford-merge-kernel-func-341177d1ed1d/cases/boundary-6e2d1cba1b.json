@@ -1,0 +1,100 @@
+{
+  "arguments": {
+    "dim": [
+      0,
+      2
+    ],
+    "dtype": "bfloat16",
+    "label": "dispatch-middle",
+    "manifest": "src/tileops/manifest/reduction.yaml",
+    "operator": "VarFwdOp",
+    "x_shape": [
+      4,
+      128,
+      4096
+    ]
+  },
+  "boundary": {
+    "dimensions": [
+      "shape",
+      "dtype"
+    ],
+    "position": "middle",
+    "transition": "welford_merge source dispatch region"
+  },
+  "build": {
+    "factory_arguments": {
+      "A": 4,
+      "B": 128,
+      "correction": 1,
+      "count_per": 4096,
+      "dtype": "bfloat16",
+      "op_kind": "var",
+      "threads": 256
+    },
+    "kernel_arguments": {}
+  },
+  "case_id": "tileops-welford-merge-kernel-func-341177d1ed1d-boundary-6e2d1cba1b",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 304,
+      "function": "AmaxFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/reduction.yaml",
+      "source_sha256": "4a0bc517bb80c291609ee2cf310c5328394f10e27ac9ec48f027a7cfc5811661",
+      "start_line": 261
+    },
+    "dispatch": {
+      "predicate": "welford_merge source dispatch region",
+      "strategy": "welford_merge"
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-b145cee70216cbb0",
+    "tileops-6a4085cd-spec-evidence-e93a13cc8ebff7a1"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-welford-merge-kernel-func-341177d1ed1d",
+  "kind": "BOUNDARY",
+  "origin": "upstream-dispatch:src/tileops/kernels/reduction",
+  "reason": "Source-condition witness for welford_merge (middle).",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [
+    "tileops-dispatch-witness"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

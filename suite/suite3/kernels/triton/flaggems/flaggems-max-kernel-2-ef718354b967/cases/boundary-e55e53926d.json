@@ -1,0 +1,90 @@
+{
+  "arguments": {
+    "dim": 1,
+    "dtype": "torch.bfloat16",
+    "keepdim": true,
+    "shape": [
+      1,
+      32
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 1,
+        "before": 0,
+        "path": "/bindings/dim"
+      }
+    ],
+    "dimensions": [
+      "dim"
+    ],
+    "transition": "Official test-matrix variation across: dim"
+  },
+  "build": {},
+  "case_id": "flaggems-max-kernel-2-ef718354b967-boundary-e55e53926d",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-7d87cc60075e145d"
+      ],
+      "test_end_line": 125,
+      "test_function": "test_max_dim",
+      "test_path": "tests/test_max.py",
+      "test_source_sha256": "107c1aa29c97f7a69fb04bef3bfbe758ebb447b25b81e11dbff88911147efad1",
+      "test_start_line": 106
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-7d87cc60075e145d",
+    "flaggems-test-100aebfe77995ed5",
+    "source-11e92dd62d9918c7"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-max-kernel-2-ef718354b967",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_max.py:106-125#test_max_dim",
+  "parent_case_id": "flaggems-max-kernel-2-ef718354b967-original-e2232c07e6",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

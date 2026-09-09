@@ -1,0 +1,16 @@
+@libentry()
+@triton.jit
+def sum_kernel_2(mid, out, mid_size, BLOCK_MID: tl.constexpr):
+    if tl.constexpr(mid.dtype.element_ty == tl.float16) or tl.constexpr(
+        mid.dtype.element_ty == tl.bfloat16
+    ):
+        cdtype = tl.float32
+    else:
+        cdtype = mid.dtype.element_ty
+
+    offset = tl.arange(0, BLOCK_MID)
+    mid_ptrs = mid + offset
+    mask = offset < mid_size
+    mid_val = tl.load(mid_ptrs, mask=mask, other=0).to(cdtype)
+    sum_val = tl.sum(mid_val)
+    tl.store(out, sum_val)

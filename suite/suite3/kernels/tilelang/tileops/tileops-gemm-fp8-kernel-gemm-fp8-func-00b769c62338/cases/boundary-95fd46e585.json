@@ -1,0 +1,126 @@
+{
+  "arguments": {
+    "bias_shape": {
+      "__pipeguard_missing__": true
+    },
+    "dtype": "float8_e4m3fn",
+    "k": 16384,
+    "label": "k-dominant-7168x16384-block128",
+    "m": 4096,
+    "manifest": "src/tileops/manifest/gemm.yaml",
+    "n": 7168,
+    "operator": "GemmFp8FwdOp",
+    "row_index": 9,
+    "scale_mode": "block128"
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 16384,
+        "before": 7168,
+        "path": "/bindings/k"
+      },
+      {
+        "after": "k-dominant-7168x16384-block128",
+        "before": "ds-v3-decode-gate-up-per-tensor",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 4096,
+        "before": 128,
+        "path": "/bindings/m"
+      },
+      {
+        "after": 7168,
+        "before": 2112,
+        "path": "/bindings/n"
+      },
+      {
+        "after": 9,
+        "before": 0,
+        "path": "/bindings/row_index"
+      },
+      {
+        "after": "block128",
+        "before": "per_tensor",
+        "path": "/bindings/scale_mode"
+      }
+    ],
+    "dimensions": [
+      "k",
+      "m",
+      "n",
+      "scale_mode"
+    ],
+    "transition": "Official source-matrix variation across: k, m, n, scale_mode"
+  },
+  "build": {
+    "factory_arguments": {
+      "block_scaled": false,
+      "dtype": "float8_e4m3fn",
+      "has_bias": false,
+      "k": 16384,
+      "m": 4096,
+      "n": 7168,
+      "out_dtype": "bfloat16"
+    }
+  },
+  "case_id": "tileops-gemm-fp8-kernel-gemm-fp8-func-00b769c62338-boundary-95fd46e585",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 119,
+      "function": "GemmFp8FwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/gemm.yaml",
+      "source_sha256": "ea873b2449037ee740e55a7fed2bae69df713e0d6e002ef583537cf555d4aaa7",
+      "start_line": 69
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-3cad75a760ccfbd0",
+    "tileops-6a4085cd-spec-evidence-93251d9c8ffc4c7c"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-gemm-fp8-kernel-gemm-fp8-func-00b769c62338",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/gemm.yaml:69-119#GemmFp8FwdOp",
+  "parent_case_id": "tileops-gemm-fp8-kernel-gemm-fp8-func-00b769c62338-original-5848302201",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

@@ -1,0 +1,115 @@
+{
+  "arguments": {
+    "K": 512,
+    "M": 128,
+    "N": 256,
+    "dtype": "torch.bfloat16",
+    "scalar": 0.001
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 512,
+        "before": 32,
+        "path": "/bindings/K"
+      },
+      {
+        "after": 128,
+        "before": 1,
+        "path": "/bindings/M"
+      },
+      {
+        "after": 256,
+        "before": 1,
+        "path": "/bindings/N"
+      }
+    ],
+    "dimensions": [
+      "K",
+      "M",
+      "N"
+    ],
+    "transition": "Official test-matrix variation across: K, M, N"
+  },
+  "build": {},
+  "case_id": "flaggems-addbmm-kernel-6dbb2cb1ea46-boundary-1956570e1d-config-fc9d51ee14",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-34f7a33c874dbe1c",
+        "launch-eb13687058fb4c51"
+      ],
+      "test_end_line": 57,
+      "test_function": "test_accuracy_addbmm",
+      "test_path": "tests/test_addbmm.py",
+      "test_source_sha256": "9d3770308df614d55eec609ea30a8e4e532e9cab23c042453a1927bc14e8047c",
+      "test_start_line": 30
+    },
+    "config_index": 1,
+    "config_source": "src/flag_gems/runtime/backend/_nvidia/tune_configs.yaml#addmm",
+    "constexprs": {
+      "BLOCK_SIZE_K": 32,
+      "BLOCK_SIZE_M": 64,
+      "BLOCK_SIZE_N": 256
+    },
+    "options": {
+      "maxnreg": null,
+      "num_ctas": 1,
+      "num_stages": 4,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-34f7a33c874dbe1c",
+    "flaggems-launch-eb13687058fb4c51",
+    "flaggems-test-ada8917fab1d44c2",
+    "source-68aceb9b90e6d994"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-addbmm-kernel-6dbb2cb1ea46",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_addbmm.py:30-57#test_accuracy_addbmm",
+  "parent_case_id": "flaggems-addbmm-kernel-6dbb2cb1ea46-original-1565e53b15-config-f986a7b23c",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned. Autotune candidate 1 from src/flag_gems/runtime/backend/_nvidia/tune_configs.yaml#addmm.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

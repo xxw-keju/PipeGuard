@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-split-to-scalar-kernel-5642e07b84c8",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "ea2d40d3bb54a8f695bbee9a1eab2ea0fde661dbd0cb90c38d00b138f2941683"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      2610,
+      2620
+    ],
+    "path": "python/test/unit/language/test_core.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_core.py#L2610-L2620",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "6d3c386f06c2656cfacd48bd35c752bec3442073c1ed72d868113243fab11254",
+    "symbol": "test_split_to_scalar.kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

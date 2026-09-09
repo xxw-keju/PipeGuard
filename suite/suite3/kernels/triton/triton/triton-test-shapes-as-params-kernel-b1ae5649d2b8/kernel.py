@@ -1,0 +1,40 @@
+# Normalized device code for PipeGuard Suite 3.
+# Source: https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_core.py#L1342-L1363
+# The exact upstream excerpt is stored in original_excerpt.py.
+
+import triton
+
+import triton.language as tl
+
+def _resolve_kernel(**pipeguard_bindings):
+    @triton.jit
+    def kernel():
+        a = tl.arange(0, 32).expand_dims(-1).broadcast_to(32, 32)
+        tl.static_assert(a.shape == [tl.constexpr(32), tl.constexpr(32)])
+
+        a = tl.arange(0, 32).reshape(4, 8).permute(1, 0)
+        tl.static_assert(a.shape == [tl.constexpr(8), tl.constexpr(4)])
+
+        a = tl.arange(0, 32).reshape(4, 8).trans()
+        tl.static_assert(a.shape == [tl.constexpr(8), tl.constexpr(4)])
+
+        a = tl.arange(0, 32).reshape(4, 8).reshape(32)
+        tl.static_assert(a.shape == [tl.constexpr(32)])
+
+        a = tl.arange(0, 64).reshape(2, 4, 8).trans(2, 1, 0)
+        tl.static_assert(a.shape == [tl.constexpr(8), tl.constexpr(4), tl.constexpr(2)])
+
+        a = tl.arange(0, 64).reshape(2, 4, 8).trans((2, 1, 0))
+        tl.static_assert(a.shape == [tl.constexpr(8), tl.constexpr(4), tl.constexpr(2)])
+
+        a = tl.reshape(tl.arange(0, 64), 2, 4, 8, can_reorder=True)
+        tl.static_assert(a.shape == [tl.constexpr(2), tl.constexpr(4), tl.constexpr(8)])
+    return kernel
+
+
+def build_kernel(case):
+    """Construct the DSL-native device entry without compiling or launching it."""
+    arguments = dict(case.get("arguments", {}))
+    build = case.get("build", {})
+    arguments.update(build.get("resolver_kwargs", {}))
+    return _resolve_kernel(**arguments)

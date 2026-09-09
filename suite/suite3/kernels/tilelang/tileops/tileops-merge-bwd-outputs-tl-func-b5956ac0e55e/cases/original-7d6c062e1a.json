@@ -1,0 +1,122 @@
+{
+  "arguments": {
+    "S_shape": [
+      2,
+      4,
+      33,
+      64,
+      64
+    ],
+    "beta_shape": [
+      2,
+      4,
+      2048
+    ],
+    "chunk_size": 64,
+    "do_shape": [
+      2,
+      4,
+      2048,
+      64
+    ],
+    "dtype": "float16",
+    "g_shape": [
+      2,
+      4,
+      2048
+    ],
+    "k_shape": [
+      2,
+      4,
+      2048,
+      64
+    ],
+    "label": "gdn-bwd-b2-s2k-h4-d64",
+    "manifest": "src/tileops/manifest/linear_attention.yaml",
+    "operator": "GatedDeltaNetBwdOp",
+    "q_shape": [
+      2,
+      4,
+      2048,
+      64
+    ],
+    "row_index": 0,
+    "v_shape": [
+      2,
+      4,
+      2048,
+      64
+    ]
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "batch": 2,
+      "chunk_size": 64,
+      "dim_k": 64,
+      "dtype": "float16",
+      "head": 4,
+      "seq_len": 2048
+    }
+  },
+  "case_id": "tileops-merge-bwd-outputs-tl-func-b5956ac0e55e-original-7d6c062e1a",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 389,
+      "function": "GatedDeltaNetBwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/linear_attention.yaml",
+      "source_sha256": "a72bc04f4b9e262fd2e0b9e38b42ddc572d40e079134bac5aaa73141264d6d8e",
+      "start_line": 351
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-919418eae0d3bac7",
+    "tileops-6a4085cd-spec-evidence-a6c11e9c34345c7e"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-merge-bwd-outputs-tl-func-b5956ac0e55e",
+  "kind": "ORIGINAL",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/linear_attention.yaml:351-389#GatedDeltaNetBwdOp",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

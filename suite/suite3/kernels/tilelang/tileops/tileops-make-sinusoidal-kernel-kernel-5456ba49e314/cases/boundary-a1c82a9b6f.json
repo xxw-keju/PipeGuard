@@ -1,0 +1,105 @@
+{
+  "arguments": {
+    "d_model": 4096,
+    "dtype": "bfloat16",
+    "label": "transformer-4k-4k",
+    "manifest": "src/tileops/manifest/elementwise_generative.yaml",
+    "operator": "SinusoidalFwdOp",
+    "row_index": 3,
+    "seq_len": 4096
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": "bfloat16",
+        "before": "float16",
+        "path": "/bindings/dtype"
+      },
+      {
+        "after": "transformer-4k-4k",
+        "before": "transformer-2k-4k",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 3,
+        "before": 0,
+        "path": "/bindings/row_index"
+      },
+      {
+        "after": 4096,
+        "before": 2048,
+        "path": "/bindings/seq_len"
+      }
+    ],
+    "dimensions": [
+      "dtype",
+      "seq_len"
+    ],
+    "transition": "Official source-matrix variation across: dtype, seq_len"
+  },
+  "build": {
+    "factory_arguments": {
+      "d_model": 4096,
+      "dtype": "bfloat16",
+      "seq_len": 4096
+    }
+  },
+  "case_id": "tileops-make-sinusoidal-kernel-kernel-5456ba49e314-boundary-a1c82a9b6f",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 96,
+      "function": "SinusoidalFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/elementwise_generative.yaml",
+      "source_sha256": "693bfb532ba9a1c4d3b41c0243d8fa8ebe67ad0b0f35b1b2ef87fa8e42c7f463",
+      "start_line": 49
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-c955c279da83cca6",
+    "tileops-6a4085cd-spec-evidence-6d05a2b0dd539189"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-make-sinusoidal-kernel-kernel-5456ba49e314",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/elementwise_generative.yaml:49-96#SinusoidalFwdOp",
+  "parent_case_id": "tileops-make-sinusoidal-kernel-kernel-5456ba49e314-original-f8f700fbb4",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

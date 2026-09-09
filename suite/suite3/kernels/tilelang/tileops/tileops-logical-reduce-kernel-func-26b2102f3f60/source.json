@@ -1,0 +1,32 @@
+{
+  "case_count": 3,
+  "changes": [
+    "retained the TileLang device factory and its in-file helper closure",
+    "removed unrelated upstream host definitions and decorators",
+    "inlined required TileOPs helper functions and constants",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-logical-reduce-kernel-func-26b2102f3f60",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "47d309c7352dfc726c93441ed0818a3328a671d08452ee68d3419799fce78da5"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      231,
+      291
+    ],
+    "path": "src/tileops/kernels/reduction/logical_reduce.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/reduction/logical_reduce.py#L231-L291",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "8e66fa0630fd8c5a61cb3edb56e8a7dc51ff6aa56715e728a2107ee249b78702",
+    "symbol": "_logical_reduce_kernel._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 3,
+  "variant": ""
+}

@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-explicit-deallocate-only-suppresses-matching-buffer-func-6ae020bed637",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "9cb505c597f374270e52b01caa7419f588e69a7091e15162905a4c0ac543be45"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      60,
+      65
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_lower_shared_tmem.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_lower_shared_tmem.py#L60-L65",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "bfb1bc2d1419fd9ec28c0542e278b6e5667d039d1ad736620ca494f66b9abb98",
+    "symbol": "test_explicit_deallocate_only_suppresses_matching_buffer.func"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

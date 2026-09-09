@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-prefill-recompute-w-u-from-a-bthd-tl-func-7d270dfdbac0",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "7adf3705e18d7035776421d655db39339c339d1c9d2a072ce90910e8d7e653ce"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      898,
+      1002
+    ],
+    "path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py#L898-L1002",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "7f23e36ff89760966dbbc96e8d05493e060e86b75b872742a1a858ad9c40a327",
+    "symbol": "_prefill_recompute_w_u_from_A_bthd_tl._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

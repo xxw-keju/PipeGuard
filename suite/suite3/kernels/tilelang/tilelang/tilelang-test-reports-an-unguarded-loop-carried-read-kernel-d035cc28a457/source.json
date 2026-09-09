@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-reports-an-unguarded-loop-carried-read-kernel-d035cc28a457",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "b4c96b9c7d2fdcabafe0530993555e02607e891afa5f182cd49f97c13e7e817e"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      305,
+      311
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_verify_buffer_init.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_verify_buffer_init.py#L305-L311",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "b7954da74735905a3c4d093a7ebc44e4f6f33e17c6b8d70edb94b94028816be9",
+    "symbol": "test_reports_an_unguarded_loop_carried_read.kernel"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

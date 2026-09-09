@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-no-sync-for-thread-private-write-read-by-if-condition-in-loop-func-dd2515210b92",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "1f4f00b8d8b1649b6979bd09fd5c85b2a60f424652ffc9fb2877f9de92af8041"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      753,
+      767
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_thread_sync.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_thread_sync.py#L753-L767",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "ddf487d0e084266202493eee4ed997b7fc085ee9c5556e36bd997306d02c553c",
+    "symbol": "test_no_sync_for_thread_private_write_read_by_if_condition_in_loop.func"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

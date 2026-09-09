@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-remark-vectorization-ldst-vec-8814520c104c",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "07e19111396ac1af63ebe5d73fcb0355832db6a7126f0965a74ead50753e6a65"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      99,
+      120
+    ],
+    "path": "python/test/unit/test_perf_warning.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/test_perf_warning.py#L99-L120",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "bea1ce716e5c63d1d6a9a5784fa4a0f01a2391ba5537186487ef6e0aabdc817d",
+    "symbol": "test_remark_vectorization.ldst_vec"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

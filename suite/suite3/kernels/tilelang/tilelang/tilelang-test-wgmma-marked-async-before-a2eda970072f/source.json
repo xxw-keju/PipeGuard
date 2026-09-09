@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-wgmma-marked-async-before-a2eda970072f",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "04a5a4d86f4f8062ea1ec3a211d0f3516ae0d78d1a85f1d96141f412abd56e08"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      339,
+      365
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_inject_fence_proxy.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_inject_fence_proxy.py#L339-L365",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "8f1ad4c74d5fc4cb9a69912f823a823bdc9db498b075e1cd020fd423e7be2e03",
+    "symbol": "test_wgmma_marked_async.before"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

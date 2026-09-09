@@ -1,0 +1,91 @@
+{
+  "arguments": {
+    "mhc_mult": 4,
+    "n0": 2,
+    "n1": 4096
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 2,
+        "before": 1,
+        "path": "/bindings/n0"
+      },
+      {
+        "after": 4096,
+        "before": 1024,
+        "path": "/bindings/n1"
+      }
+    ],
+    "dimensions": [
+      "n0",
+      "n1"
+    ],
+    "transition": "Official source-matrix variation across: n0, n1"
+  },
+  "build": {
+    "factory_arguments": {
+      "mhc_mult": 4,
+      "mhc_pre_eps": 0.01,
+      "token_block_size": 32
+    }
+  },
+  "case_id": "tilekernels-mhc-head-compute-mix-fwd-6f37a407a242-boundary-1dfafab400",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 54,
+      "function": "test_head_compute_mix_comprehensive",
+      "kind": "UPSTREAM_TEST",
+      "path": "tests/mhc/test_head_compute_mix.py",
+      "source_sha256": "31333d18931ac5868b2f26137bb09240d08c14f69e384e8189775c1b7269bb05",
+      "start_line": 38
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-c92aac561a362982",
+    "tilekernels-36d9e45d-spec-evidence-8553bb8207c06257"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tilekernels-mhc-head-compute-mix-fwd-6f37a407a242",
+  "kind": "BOUNDARY",
+  "origin": "upstream-upstream_test:tests/mhc/test_head_compute_mix.py:38-54#test_head_compute_mix_comprehensive",
+  "parent_case_id": "tilekernels-mhc-head-compute-mix-fwd-6f37a407a242-original-8b4703850b",
+  "reason": "Source-derived TileKernels specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

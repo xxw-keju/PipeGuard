@@ -1,0 +1,80 @@
+{
+  "bindings": {
+    "C_shape": [
+      1,
+      4096,
+      1,
+      128
+    ],
+    "cb_shape": [
+      1,
+      16,
+      1,
+      256,
+      256
+    ],
+    "dA_cumsum_shape": [
+      1,
+      48,
+      16,
+      256
+    ],
+    "dt_shape": [
+      1,
+      48,
+      16,
+      256
+    ],
+    "dtype": "bfloat16",
+    "label": "mamba2-780m-b1-s4k",
+    "manifest": "src/tileops/manifest/mamba.yaml",
+    "operator": "SSDChunkScanFwdOp",
+    "prev_states_shape": [
+      1,
+      16,
+      48,
+      64,
+      128
+    ],
+    "row_index": 0,
+    "x_shape": [
+      1,
+      4096,
+      48,
+      64
+    ]
+  },
+  "candidate_id": "5b64cce665470f8c",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 229,
+      "function": "SSDChunkScanFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/mamba.yaml",
+      "source_sha256": "3ec42f89a9a72c57de01d3aee7fb0358dbd56cbcda15fa4aa5c1e90296fd5eac",
+      "start_line": 191
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/mamba.yaml:191-229#SSDChunkScanFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-5b64cce665470f8c-boundary-d04fafc72d-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

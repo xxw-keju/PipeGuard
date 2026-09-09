@@ -1,0 +1,185 @@
+{
+  "arguments": {
+    "beta_shape": [
+      1,
+      64,
+      131072
+    ],
+    "chunk_size": 64,
+    "dtype": "bfloat16",
+    "g_shape": [
+      1,
+      64,
+      131072
+    ],
+    "k_shape": [
+      1,
+      64,
+      131072,
+      128
+    ],
+    "label": "bhtd-qwen35-gdn-prefill-b1-s128k-h64-d128",
+    "manifest": "src/tileops/manifest/linear_attention.yaml",
+    "operator": "GatedDeltaNetPrefillBHTDFwdOp",
+    "q_shape": [
+      1,
+      64,
+      131072,
+      128
+    ],
+    "row_index": 1,
+    "v_shape": [
+      1,
+      64,
+      131072,
+      128
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 64,
+        "before": 16,
+        "path": "/bindings/beta_shape/1"
+      },
+      {
+        "after": 131072,
+        "before": 4096,
+        "path": "/bindings/beta_shape/2"
+      },
+      {
+        "after": "bfloat16",
+        "before": "float16",
+        "path": "/bindings/dtype"
+      },
+      {
+        "after": 64,
+        "before": 16,
+        "path": "/bindings/g_shape/1"
+      },
+      {
+        "after": 131072,
+        "before": 4096,
+        "path": "/bindings/g_shape/2"
+      },
+      {
+        "after": 64,
+        "before": 16,
+        "path": "/bindings/k_shape/1"
+      },
+      {
+        "after": 131072,
+        "before": 4096,
+        "path": "/bindings/k_shape/2"
+      },
+      {
+        "after": "bhtd-qwen35-gdn-prefill-b1-s128k-h64-d128",
+        "before": "bhtd-fallback-gdn-prefill-b1-s4k-h16-d128",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 64,
+        "before": 16,
+        "path": "/bindings/q_shape/1"
+      },
+      {
+        "after": 131072,
+        "before": 4096,
+        "path": "/bindings/q_shape/2"
+      },
+      {
+        "after": 1,
+        "before": 0,
+        "path": "/bindings/row_index"
+      },
+      {
+        "after": 64,
+        "before": 16,
+        "path": "/bindings/v_shape/1"
+      },
+      {
+        "after": 131072,
+        "before": 4096,
+        "path": "/bindings/v_shape/2"
+      }
+    ],
+    "dimensions": [
+      "beta_shape",
+      "dtype",
+      "g_shape",
+      "k_shape",
+      "q_shape",
+      "v_shape"
+    ],
+    "transition": "Official source-matrix variation across: beta_shape, dtype, g_shape, k_shape, q_shape, v_shape"
+  },
+  "build": {
+    "factory_arguments": {
+      "batch": 1,
+      "chunk_size": 64,
+      "dim_k": 128,
+      "dim_v": 128,
+      "dtype": "bfloat16",
+      "head": 64,
+      "seq_len": 131072
+    }
+  },
+  "case_id": "tileops-prefill-h-recurrence-bthd-tl-func-52062b7f4c14-boundary-004d3f8458",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 112,
+      "function": "GatedDeltaNetPrefillBHTDFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/linear_attention.yaml",
+      "source_sha256": "0215399314392eca9231e1bde590488889a3c3c9ca20585394ca6cb215ab0d68",
+      "start_line": 65
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-f8c35dbab78acf51",
+    "tileops-6a4085cd-spec-evidence-07aac141ec318a35"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-prefill-h-recurrence-bthd-tl-func-52062b7f4c14",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/linear_attention.yaml:65-112#GatedDeltaNetPrefillBHTDFwdOp",
+  "parent_case_id": "tileops-prefill-h-recurrence-bthd-tl-func-52062b7f4c14-original-4f2e1c0a8f",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

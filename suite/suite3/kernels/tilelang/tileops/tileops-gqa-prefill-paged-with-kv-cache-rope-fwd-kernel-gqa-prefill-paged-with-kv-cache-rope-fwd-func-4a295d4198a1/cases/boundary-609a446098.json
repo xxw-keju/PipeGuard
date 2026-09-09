@@ -1,0 +1,133 @@
+{
+  "arguments": {
+    "batch": 1,
+    "cache_dtype": "float16",
+    "cache_lens": [
+      32768
+    ],
+    "dim": 256,
+    "dtype": "float16",
+    "fuse_rope": true,
+    "heads": 32,
+    "heads_kv": 8,
+    "is_causal": true,
+    "label": "rope_fwd-lower",
+    "manifest": "src/tileops/manifest/attention.yaml",
+    "max_pages_per_req": 528,
+    "max_position": 33792,
+    "max_seqlen_q": 1024,
+    "operator": "GroupedQueryAttentionPrefillPagedWithKVCacheFwdOp",
+    "page_size": 64,
+    "physical_tokens": 33792,
+    "q_lens": [
+      1024
+    ],
+    "rotary_dim": 64,
+    "softcap": 0.0,
+    "total_q": 1024
+  },
+  "boundary": {
+    "dimensions": [
+      "batch",
+      "total_q",
+      "physical_tokens"
+    ],
+    "position": "lower",
+    "transition": "rope_fwd cache/RoPE branch"
+  },
+  "build": {
+    "factory_arguments": {
+      "accum_dtype": "float32",
+      "batch": 1,
+      "cache_dtype": "float16",
+      "dim": 256,
+      "dtype": "float16",
+      "groups": 4,
+      "half": 32,
+      "heads": 32,
+      "heads_kv": 8,
+      "is_causal": true,
+      "max_pages_per_req": 528,
+      "max_position": 33792,
+      "page_size": 64,
+      "physical_tokens": 33792,
+      "rotary_dim": 64,
+      "scale": 0.0625,
+      "score_scale": 0.0625,
+      "softcap": 0.0,
+      "total_q": 1024,
+      "use_softcap": false
+    },
+    "kernel_arguments": {
+      "block_m": 64,
+      "block_n": 64,
+      "num_stages": 3,
+      "threads": 128
+    }
+  },
+  "case_id": "tileops-gqa-prefill-paged-with-kv-cache-rope-fwd-kernel-gqa-prefill-paged-with-kv-cache-rope-fwd-func-4a295d4198a1-boundary-609a446098",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 371,
+      "function": "GroupedQueryAttentionPrefillPagedWithKVCacheFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/attention.yaml",
+      "source_sha256": "3d8867ed58f1b99418e7bf753f3ebe99036c8bb1776d81c5cbf5d85a2594b5b2",
+      "start_line": 289
+    },
+    "dispatch": {
+      "predicate": "fuse_rope",
+      "strategy": "rope_fwd"
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-86b03d4268d95ab1",
+    "tileops-6a4085cd-spec-evidence-a8cf406ac9826916"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-gqa-prefill-paged-with-kv-cache-rope-fwd-kernel-gqa-prefill-paged-with-kv-cache-rope-fwd-func-4a295d4198a1",
+  "kind": "BOUNDARY",
+  "origin": "upstream-dispatch:paged GQA cache/RoPE branch",
+  "reason": "H100 dispatch witness for paged GQA rope_fwd branch.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [
+    "tileops-dispatch-witness"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "device": "NVIDIA H100 80GB HBM3",
+    "sm_count": 132,
+    "warp_size": 32
+  },
+  "unresolved": []
+}

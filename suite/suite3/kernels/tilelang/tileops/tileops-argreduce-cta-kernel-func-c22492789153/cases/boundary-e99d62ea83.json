@@ -1,0 +1,101 @@
+{
+  "arguments": {
+    "dim": -1,
+    "dtype": "float16",
+    "label": "dispatch-lower-m64-n4096",
+    "manifest": "src/tileops/manifest/reduction.yaml",
+    "operator": "ArgmaxFwdOp",
+    "x_shape": [
+      64,
+      4096
+    ]
+  },
+  "boundary": {
+    "dimensions": [
+      "M",
+      "N",
+      "inner_stride"
+    ],
+    "position": "lower",
+    "transition": "ArgreduceKernel cta branch: not output and not multi_cta and N >= 4096"
+  },
+  "build": {
+    "factory_arguments": {
+      "M": 64,
+      "N": 4096,
+      "dtype": "float16",
+      "op_kind": "argmax"
+    },
+    "kernel_arguments": {
+      "threads": 256
+    }
+  },
+  "case_id": "tileops-argreduce-cta-kernel-func-c22492789153-boundary-e99d62ea83",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 590,
+      "function": "ArgmaxFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/reduction.yaml",
+      "source_sha256": "c850a52b359bc1d96a8155e7e7f560b9cb0263a793316523dea19d4ca54cbf63",
+      "start_line": 546
+    },
+    "dispatch": {
+      "lines": [
+        630,
+        643
+      ],
+      "path": "src/tileops/kernels/reduction/argreduce.py",
+      "predicate": "not output and not multi_cta and N >= 4096",
+      "strategy": "cta"
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-bc05e93c60bde923",
+    "tileops-6a4085cd-spec-evidence-c01b4192979051e2"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-argreduce-cta-kernel-func-c22492789153",
+  "kind": "BOUNDARY",
+  "origin": "upstream-dispatch:src/tileops/kernels/reduction/argreduce.py:630-643",
+  "reason": "Dispatch witness for ArgreduceKernel strategy=cta; parameters satisfy not output and not multi_cta and N >= 4096.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [
+    "tileops-dispatch-witness"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

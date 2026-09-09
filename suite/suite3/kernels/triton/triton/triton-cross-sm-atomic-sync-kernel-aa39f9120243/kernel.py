@@ -1,0 +1,48 @@
+# Normalized device code for PipeGuard Suite 3.
+# Source: https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/gsan/test_gsan_failures.py#L122-L136
+# The exact upstream excerpt is stored in original_excerpt.py.
+
+from __future__ import annotations
+
+import triton
+
+import triton.language as tl
+
+# dependency slice: triton.experimental.gsan._testing_utils
+@triton.jit
+def nanosleep(duration):
+    duration = tl.to_tensor(duration)
+    tl.inline_asm_elementwise("nanosleep.u32 $1; mov.b32 $0, 0;", "=r, r", [duration], tl.int32, is_pure=False, pack=1)
+
+@triton.jit
+def atomic_poll(ptr, expect, sem: tl.constexpr = "relaxed", scope: tl.constexpr = "gpu"):
+    while tl.atomic_add(ptr, 0, sem=sem, scope=scope) != expect:
+        nanosleep(100)
+
+@triton.jit
+def _cross_sm_atomic_sync_kernel(payload_ptr, flag_ptr, counter_ptr, scratch_ptr, producer_sem: tl.constexpr,
+                                 consumer_sem: tl.constexpr, scope: tl.constexpr):
+    pid = tl.program_id(0)
+    if pid == 0:
+        tl.store(payload_ptr, 1000)
+        tl.atomic_xchg(flag_ptr, 1, sem=producer_sem, scope=scope)
+        tl.atomic_add(counter_ptr, 1, sem="relaxed")
+    elif pid == 1:
+        atomic_poll(counter_ptr, 1)
+        ready = 0
+        while ready != 1:
+            ready = tl.atomic_add(flag_ptr, 0, sem=consumer_sem, scope=scope)
+        result = tl.load(payload_ptr)
+        tl.store(scratch_ptr, result)
+
+
+def _resolve_kernel(**pipeguard_bindings):
+    return _cross_sm_atomic_sync_kernel
+
+
+def build_kernel(case):
+    """Construct the DSL-native device entry without compiling or launching it."""
+    arguments = dict(case.get("arguments", {}))
+    build = case.get("build", {})
+    arguments.update(build.get("resolver_kwargs", {}))
+    return _resolve_kernel(**arguments)

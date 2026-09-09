@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the TileLang device factory and its in-file helper closure",
+    "removed unrelated upstream host definitions and decorators",
+    "inlined required TileOPs helper functions and constants",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-conv1d-kernel-conv1d-func-e7c5ac1ee87b",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "1bd14ba3e4fce20cc0a0d11705c8cd825a8b090449861677e1d5ff073883986e"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      45,
+      141
+    ],
+    "path": "src/tileops/kernels/convolution/conv1d.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/convolution/conv1d.py#L45-L141",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "6360c04f6e27890f028918c30b570111a5ba9231b5149d558d6eb4fa2027af35",
+    "symbol": "_conv1d_kernel._conv1d_func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

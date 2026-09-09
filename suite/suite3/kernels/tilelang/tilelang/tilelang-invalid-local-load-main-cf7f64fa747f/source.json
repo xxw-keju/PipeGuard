@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-invalid-local-load-main-cf7f64fa747f",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "f68dc69a0cc413fbcec9570f891dcf51fe532c20204b4198a41e19512ff1399b"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      21,
+      28
+    ],
+    "path": "testing/python/analysis/test_tilelang_parallel_local_index_checker.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/analysis/test_tilelang_parallel_local_index_checker.py#L21-L28",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "5a564d5d8bc88c72bed275142e7aed221328ddaa27e51c2e792bd85694a98d74",
+    "symbol": "invalid_local_load.main"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

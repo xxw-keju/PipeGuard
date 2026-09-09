@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-ssd-chunk-scan-fwd-kernel-kernel-func-6c5227ec4dbb",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "c3224a2b322b926453682a28b45249bc85abbeec5242b3377ef182fe370e1556"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      91,
+      467
+    ],
+    "path": "src/tileops/kernels/mamba/ssd_chunk_scan.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/mamba/ssd_chunk_scan.py#L91-L467",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "8320628c440b9a76e8e18b23c33b7150d1079544c984d642bf5a3d510b2d4ab8",
+    "symbol": "_ssd_chunk_scan_fwd_kernel.kernel_func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

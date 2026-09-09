@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-flatten-buffer-promotes-tvm-access-ptr-offset-to-int64-before-d81146d92457",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "376c59e99bd50a7b496b31c7b1dacc2dc03e7df24f9318e0fcc17079ae1837e4"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      19,
+      30
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_flatten_buffer.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_flatten_buffer.py#L19-L30",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "a9344ef65a764d78f7d263d44fb827fa18a0c5b3a8e50ce8cc60b156aa5be918",
+    "symbol": "test_flatten_buffer_promotes_tvm_access_ptr_offset_to_int64.before"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

@@ -1,0 +1,64 @@
+{
+  "schema_version": "pipeguard-upstream-evidence-v1",
+  "evidence_id": "flaggems-w8a8-persistent-phase-proof",
+  "project": "FlagGems",
+  "repository_url": "https://github.com/flagos-ai/FlagGems",
+  "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+  "kernel": {
+    "path": "src/flag_gems/runtime/backend/_nvidia/hopper/ops/w8a8_block_fp8_bmm.py",
+    "qualname": "w8a8_block_fp8_bmm_kernel",
+    "lines": [273, 402],
+    "helpers": [
+      {"qualname": "_tle_w8a8_block_fp8_bmm_compute_partition", "lines": [107, 210]},
+      {"qualname": "_tle_w8a8_block_fp8_bmm_load_partition", "lines": [214, 268]}
+    ],
+    "launch_lines": [640, 779]
+  },
+  "upstream_test": {
+    "path": "tests/test_fp8_einsum.py",
+    "configuration_lines": [48, 60],
+    "oracle_lines": [163, 198],
+    "official_shapes": {
+      "flash": {"b": 128, "h": 8, "r": 4096, "d": 1024},
+      "pro": {"b": 128, "h": 16, "r": 7168, "d": 1024}
+    }
+  },
+  "protocol_trace": {
+    "block_k": 128,
+    "num_stages": 4,
+    "source_facts": [
+      "Both compute and load partitions derive phase solely as k_block_idx // num_stages inside the persistent tile loop.",
+      "The persistent outer loop may assign more than one output tile to the same CTA.",
+      "Each completed use of a barrier slot advances that slot's generation/parity state."
+    ],
+    "boundary": {
+      "b": 128,
+      "h": 16,
+      "B": 16,
+      "M": 128,
+      "N": 1024,
+      "K": 1536,
+      "num_k_blocks": 12,
+      "uses_per_slot_per_tile": 3,
+      "grid": [132, 1, 1],
+      "selected_cta": [0, 0, 0]
+    },
+    "failure": "After three uses per slot in the first persistent tile, the next tile restarts phaseIdx at zero even though the physical barrier slot has advanced by an odd number of generations. The stale parity can release loader or consumer work before the matching TMA/WGMMA phase.",
+    "repair": "Carry a monotonically increasing per-slot generation across persistent tile iterations instead of resetting phase at each tile."
+  },
+  "historical_observations": [
+    {
+      "configuration": "B=16,M=128,N=1024,K=1536,BLOCK_M=64,BLOCK_N=128,BLOCK_K=128,num_stages=4,grid=132",
+      "unmodified_source": "CUDA launch failure with CUDA_LAUNCH_BLOCKING=1",
+      "repaired_source": "Two consecutive executions completed; 2097152 outputs were finite; maximum absolute error 0.015625; zero elements had error greater than 1."
+    },
+    {
+      "configuration": "K=4096 with the official block size and four stages",
+      "unmodified_source": "Completed correctly; each slot is reused eight times per tile, so resetting parity does not expose the odd-generation mismatch."
+    }
+  ],
+  "limitations": [
+    "The earlier generated TTGIR, snapshots, and hardware logs were temporary and are not treated as durable artifacts by this record.",
+    "The source proof is independently auditable from the pinned code, but native replay remains blocked until the exact FlagTree/TLE compiler dependency is locked."
+  ]
+}

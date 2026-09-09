@@ -1,0 +1,109 @@
+{
+  "arguments": {
+    "BLOCK_SIZE_N": 8192,
+    "GROUP_SIZE_M": 96,
+    "M": 1151,
+    "N": 8192,
+    "stride": 8192
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-layer-norm-bwd-dx-fused-e51720eda042-original-35b028299d",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:dx",
+        "1": "global:dy",
+        "2": "global:partial_dw",
+        "3": "global:partial_db",
+        "4": "global:x",
+        "5": "global:w",
+        "6": "global:mean",
+        "7": "global:rstd",
+        "8": "global:locks"
+      },
+      "scalar_values": {
+        "10": 8192,
+        "9": 8192
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "BLOCK_SIZE_N": 8192,
+      "GROUP_SIZE_M": 96
+    },
+    "grid_ctas": 1151,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 8
+    },
+    "signature": {
+      "BLOCK_SIZE_N": "constexpr",
+      "DB": "*fp16",
+      "DW": "*fp16",
+      "DX": "*fp16",
+      "DY": "*fp16",
+      "GROUP_SIZE_M": "constexpr",
+      "Lock": "*i32",
+      "Mean": "*fp32",
+      "N": "i32",
+      "Rstd": "*fp32",
+      "W": "*fp16",
+      "X": "*fp16",
+      "stride": "i32"
+    }
+  },
+  "evidence": [
+    "source-02a01b31d816ac75",
+    "launch-27345e125c7b63f0"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-layer-norm-bwd-dx-fused-e51720eda042",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-launch:python/tutorials/05-layer-norm.py:282;tutorial-test:M=1151,N=8192,dtype=fp16",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-launch:python/tutorials/05-layer-norm.py:282;tutorial-test:M=1151,N=8192,dtype=fp16",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

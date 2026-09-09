@@ -1,0 +1,50 @@
+@triton.jit
+def _paged_mqa_logits_metadata_kernel(
+    context_lens_ptr,
+    context_lens_stride,
+    schedule_metadata_ptr,
+    batch_size,
+    split_kv,
+    num_sms,
+    BLOCK_SIZE: tl.constexpr,
+):
+    sm_idx = tl.program_id(0)
+
+    # 1. Create offsets and mask
+    offsets = tl.arange(0, BLOCK_SIZE)
+    mask = offsets < batch_size
+
+    # 2. Load effective context lengths from global memory to SRAM
+    ctx_lens = tl.load(
+        context_lens_ptr + offsets * context_lens_stride, mask=mask, other=0
+    )
+
+    # 3. Compute num_segs and mask out-of-bounds
+    num_segs = (ctx_lens + split_kv - 1) // split_kv
+    num_segs = tl.where(mask, num_segs, 0)
+
+    # 4. Compute Inclusive Prefix Sum
+    prefix_sum = tl.cumsum(num_segs, axis=0)
+
+    # 5. Total segment count is the max value of prefix sum
+    total_segs = tl.max(prefix_sum)
+
+    # 6. Compute each SM's work allocation boundary
+    q = total_segs // num_sms
+    r = total_segs % num_sms
+    min_r = sm_idx if sm_idx < r else r
+    seg_starts = sm_idx * q + min_r
+
+    # 7. Compute q_idx using inclusive prefix sum with <= comparison
+    is_le = (prefix_sum <= seg_starts) & mask
+    q_idx = tl.sum(tl.where(is_le, 1, 0))
+
+    # 8. Compute kv_split_idx
+    prev_mask = offsets < q_idx
+    prev_prefix = tl.max(tl.where(prev_mask, prefix_sum, 0))
+    kv_split_idx = seg_starts - prev_prefix
+
+    # 9. Write back results
+    out_idx = sm_idx * 2
+    tl.store(schedule_metadata_ptr + out_idx, q_idx)
+    tl.store(schedule_metadata_ptr + out_idx + 1, kv_split_idx)

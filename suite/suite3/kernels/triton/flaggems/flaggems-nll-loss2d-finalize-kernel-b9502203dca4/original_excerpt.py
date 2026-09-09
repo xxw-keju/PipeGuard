@@ -1,0 +1,23 @@
+@triton.jit
+def _nll_loss2d_finalize_kernel(
+    partial_loss_ptr,
+    partial_weight_ptr,
+    out_ptr,
+    num_blocks,
+    REDUCTION: tl.constexpr,
+    OUT_DTYPE: tl.constexpr,
+    BLOCK: tl.constexpr,
+):
+    # Single-program-block finalize: sum the stage-1 partials, divide by the
+    # total weight for the mean case, cast, and write the scalar output. Doing
+    # the divide/cast in-kernel avoids the chained per-scalar torch ops that
+    # otherwise dominate this operator's latency.
+    offsets = tl.arange(0, BLOCK)
+    mask = offsets < num_blocks
+    loss = tl.sum(tl.load(partial_loss_ptr + offsets, mask=mask, other=0.0))
+    if REDUCTION == 2:
+        result = loss
+    else:
+        tw = tl.sum(tl.load(partial_weight_ptr + offsets, mask=mask, other=0.0))
+        result = loss / tw
+    tl.store(out_ptr, result.to(OUT_DTYPE))

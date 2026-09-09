@@ -1,0 +1,98 @@
+{
+  "arguments": {
+    "consumer_sem": "acquire",
+    "producer_sem": "release",
+    "scope": "cta"
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-cross-sm-atomic-sync-kernel-aa39f9120243-original-64760fae42",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:payload",
+        "1": "global:flag",
+        "2": "global:counter",
+        "3": "global:scratch"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "consumer_sem": "acquire",
+      "producer_sem": "release",
+      "scope": "cta"
+    },
+    "grid": [
+      2,
+      1,
+      1
+    ],
+    "grid_ctas": 2,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 1
+    },
+    "signature": {
+      "consumer_sem": "constexpr",
+      "counter_ptr": "*i32",
+      "flag_ptr": "*i32",
+      "payload_ptr": "*i32",
+      "producer_sem": "constexpr",
+      "scope": "constexpr",
+      "scratch_ptr": "*i32"
+    }
+  },
+  "evidence": [
+    "source-8a26c63d09839623",
+    "launch-d62adb52b25e0166"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-cross-sm-atomic-sync-kernel-aa39f9120243",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-launch:python/test/gsan/test_gsan_failures.py:565;producer=release,consumer=acquire,scope=cta",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-launch:python/test/gsan/test_gsan_failures.py:565;producer=release,consumer=acquire,scope=cta",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

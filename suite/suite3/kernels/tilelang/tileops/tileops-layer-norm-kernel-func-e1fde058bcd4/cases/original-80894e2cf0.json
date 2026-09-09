@@ -1,0 +1,93 @@
+{
+  "arguments": {
+    "dtype": "float16",
+    "label": "llama-8b-prefill",
+    "manifest": "src/tileops/manifest/normalization.yaml",
+    "normalized_shape": [
+      4096
+    ],
+    "operator": "LayerNormFwdOp",
+    "row_index": 0,
+    "x_shape": [
+      2048,
+      4096
+    ]
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "M": 2048,
+      "N": 4096,
+      "N_padded": 4096,
+      "_needs_pad": false,
+      "dtype": "float16",
+      "eps": 1e-05,
+      "needs_pad": false,
+      "pad_count": 0,
+      "partial_min_elements": 64,
+      "sm_count": 132
+    }
+  },
+  "case_id": "tileops-layer-norm-kernel-func-e1fde058bcd4-original-80894e2cf0",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 108,
+      "function": "LayerNormFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/normalization.yaml",
+      "source_sha256": "7781ec61047ade6f3226ea60f52b0cb9b026872ce3ca1736365483432bf23c0c",
+      "start_line": 57
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-174c56dd4b98cfe6",
+    "tileops-6a4085cd-spec-evidence-2aabbdd76e043844"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-layer-norm-kernel-func-e1fde058bcd4",
+  "kind": "ORIGINAL",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/normalization.yaml:57-108#LayerNormFwdOp",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "device": "NVIDIA H100 80GB HBM3",
+    "sm_count": 132,
+    "warp_size": 32
+  },
+  "unresolved": []
+}

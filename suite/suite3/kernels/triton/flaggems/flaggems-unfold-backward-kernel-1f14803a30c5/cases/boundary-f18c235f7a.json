@@ -1,0 +1,114 @@
+{
+  "arguments": {
+    "dim": 1,
+    "dtype": "torch.bfloat16",
+    "input_sizes": [
+      2,
+      17
+    ],
+    "size": 4,
+    "step": 6
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": "torch.bfloat16",
+        "before": "torch.float16",
+        "path": "/bindings/dtype"
+      },
+      {
+        "after": 2,
+        "before": 32,
+        "path": "/bindings/input_sizes/0"
+      },
+      {
+        "after": 17,
+        "before": 64,
+        "path": "/bindings/input_sizes/1"
+      },
+      {
+        "after": 4,
+        "before": 16,
+        "path": "/bindings/size"
+      },
+      {
+        "after": 6,
+        "before": 16,
+        "path": "/bindings/step"
+      }
+    ],
+    "dimensions": [
+      "dtype",
+      "input_sizes",
+      "size",
+      "step"
+    ],
+    "transition": "Official test-matrix variation across: dtype, input_sizes, size, step"
+  },
+  "build": {},
+  "case_id": "flaggems-unfold-backward-kernel-1f14803a30c5-boundary-f18c235f7a",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-b4471f95f7808da7"
+      ],
+      "test_end_line": 52,
+      "test_function": "test_unfold_backward",
+      "test_path": "tests/test_unfold_backward.py",
+      "test_source_sha256": "2b8dc050b95fc903311ca8513df86a35078b94f426d6c0f24046155dd15124d0",
+      "test_start_line": 23
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-b4471f95f7808da7",
+    "flaggems-test-333e0c344a35b42b",
+    "source-82ba0c059ee4a364"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-unfold-backward-kernel-1f14803a30c5",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_unfold_backward.py:23-52#test_unfold_backward",
+  "parent_case_id": "flaggems-unfold-backward-kernel-1f14803a30c5-original-626df1d264",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

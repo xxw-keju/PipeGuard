@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-fused-add-rms-norm-kernel-func-f68501636be9",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "b9e486a5ff9dc13df1bec1ab38067219edff88481e81f66b307476edee89a2f6"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      236,
+      342
+    ],
+    "path": "src/tileops/kernels/norm/fused_add_norm.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/norm/fused_add_norm.py#L236-L342",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "2e49cb292f2f903dba74b214fe9d9052538b3bc9524f4c785c27392615f4101d",
+    "symbol": "_fused_add_rms_norm_kernel._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

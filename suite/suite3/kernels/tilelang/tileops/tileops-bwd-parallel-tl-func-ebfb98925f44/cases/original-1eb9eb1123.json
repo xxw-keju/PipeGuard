@@ -1,0 +1,142 @@
+{
+  "arguments": {
+    "Au_shape": [
+      2,
+      4,
+      2048,
+      64
+    ],
+    "Aw_shape": [
+      2,
+      4,
+      2048,
+      64
+    ],
+    "S_shape": [
+      2,
+      4,
+      33,
+      64,
+      64
+    ],
+    "beta_shape": [
+      2,
+      4,
+      2048
+    ],
+    "chunk_size": 64,
+    "do_shape": [
+      2,
+      4,
+      2048,
+      64
+    ],
+    "dtype": "float16",
+    "k_shape": [
+      2,
+      4,
+      2048,
+      64
+    ],
+    "label": "dn-bwd-b2-s2k-h4-d64",
+    "manifest": "src/tileops/manifest/linear_attention.yaml",
+    "operator": "DeltaNetBwdOp",
+    "q_shape": [
+      2,
+      4,
+      2048,
+      64
+    ],
+    "row_index": 0,
+    "u_shape": [
+      2,
+      4,
+      2048,
+      64
+    ],
+    "v_shape": [
+      2,
+      4,
+      2048,
+      64
+    ],
+    "w_shape": [
+      2,
+      4,
+      2048,
+      64
+    ]
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "batch": 2,
+      "chunk_size": 64,
+      "dim_k": 64,
+      "dim_v": 64,
+      "dtype": "float16",
+      "head": 4,
+      "seq_len": 2048
+    }
+  },
+  "case_id": "tileops-bwd-parallel-tl-func-ebfb98925f44-original-1eb9eb1123",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 537,
+      "function": "DeltaNetBwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/linear_attention.yaml",
+      "source_sha256": "fd6c9d87448bf4ecb532de15498b365384536c4df0b0253c6b353bc25ae67a31",
+      "start_line": 496
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-c17266c652bbbd08",
+    "tileops-6a4085cd-spec-evidence-8563c65d1d05df92"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-bwd-parallel-tl-func-ebfb98925f44",
+  "kind": "ORIGINAL",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/linear_attention.yaml:496-537#DeltaNetBwdOp",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

@@ -1,0 +1,42 @@
+# Normalized device code for PipeGuard Suite 3.
+# Source: https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/language/test_tilelang_language_reduce.py#L256-L281
+# The exact upstream excerpt is stored in original_excerpt.py.
+
+import tilelang.language as T
+
+def _resolve_kernel(**pipeguard_bindings):
+    @T.prim_func
+    def warp_misaligned_base_reduce(
+        x: T.Tensor((1, 512), "float32"),
+        out: T.Tensor((1,), "float32"),
+    ) -> None:
+        with T.Kernel(1, threads=128):
+            x_frag = T.alloc_fragment((1, 512), "float32")
+            sum_frag = T.alloc_fragment((1,), "float32")
+            T.annotate_layout(
+                {
+                    x_frag: T.Fragment(
+                        x_frag.shape,
+                        forward_fn=lambda i, j: (16 + j // 8, j % 8),
+                    ),
+                    sum_frag: T.Fragment(
+                        sum_frag.shape,
+                        forward_fn=lambda i, rep: (16 + rep, 0),
+                        replicate=64,
+                    ),
+                }
+            )
+            for i, j in T.Parallel(1, 512):
+                x_frag[i, j] = x[i, j]
+            T.reduce_sum(x_frag, sum_frag, dim=1)
+            for i in T.Parallel(1):
+                out[i] = sum_frag[i]
+    return warp_misaligned_base_reduce
+
+
+def build_kernel(case):
+    """Construct the DSL-native device entry without compiling or launching it."""
+    arguments = dict(case.get("arguments", {}))
+    build = case.get("build", {})
+    arguments.update(build.get("resolver_kwargs", {}))
+    return _resolve_kernel(**arguments)

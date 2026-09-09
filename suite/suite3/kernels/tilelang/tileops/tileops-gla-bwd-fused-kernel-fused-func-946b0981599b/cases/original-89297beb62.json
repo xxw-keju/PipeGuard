@@ -1,0 +1,128 @@
+{
+  "arguments": {
+    "chunk_size": 64,
+    "dht_shape": [
+      2,
+      4,
+      64,
+      64
+    ],
+    "do_shape": [
+      2,
+      2048,
+      4,
+      64
+    ],
+    "dtype": "float16",
+    "g_shape": [
+      2,
+      2048,
+      4,
+      64
+    ],
+    "h_shape": [
+      2,
+      33,
+      4,
+      64,
+      64
+    ],
+    "has_initial_state": false,
+    "k_shape": [
+      2,
+      2048,
+      4,
+      64
+    ],
+    "label": "gla-bwd-b2-s2k-h4-d64",
+    "manifest": "src/tileops/manifest/linear_attention.yaml",
+    "operator": "GLABwdOp",
+    "q_shape": [
+      2,
+      2048,
+      4,
+      64
+    ],
+    "row_index": 0,
+    "scale": 0.125,
+    "v_shape": [
+      2,
+      2048,
+      4,
+      64
+    ]
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "batch": 2,
+      "chunk_size": 64,
+      "dim_k": 64,
+      "dim_v": 64,
+      "dtype": "float16",
+      "heads": 4,
+      "scale": 0.125,
+      "seq_len": 2048
+    }
+  },
+  "case_id": "tileops-gla-bwd-fused-kernel-fused-func-946b0981599b-original-89297beb62",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 614,
+      "function": "GLABwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/linear_attention.yaml",
+      "source_sha256": "6187f312b86312ba647b9d3967519346d9bd221ffc8bd6663aae4800eb254be5",
+      "start_line": 575
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-9a3b0bdce0541a8b",
+    "tileops-6a4085cd-spec-evidence-a222ac4758f1a2af"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-gla-bwd-fused-kernel-fused-func-946b0981599b",
+  "kind": "ORIGINAL",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/linear_attention.yaml:575-614#GLABwdOp",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

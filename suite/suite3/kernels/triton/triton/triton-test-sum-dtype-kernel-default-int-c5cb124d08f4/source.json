@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-sum-dtype-kernel-default-int-c5cb124d08f4",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "d37fb19471a8d634c54d8c7a2c5a623d287bc5868917260644ecf8e933564249"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      3106,
+      3110
+    ],
+    "path": "python/test/unit/language/test_core.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_core.py#L3106-L3110",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "881073701471e5a9741bbf71325564de026e3a82ec60c5dc5f1f2d3af0da778f",
+    "symbol": "test_sum_dtype.kernel_default_int"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

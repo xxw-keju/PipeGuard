@@ -1,0 +1,75 @@
+{
+  "arguments": {
+    "cst": {
+      "__pipeguard_triton_constexpr__": 42
+    }
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {
+      "cst": {
+        "__pipeguard_triton_constexpr__": 42
+      }
+    }
+  },
+  "case_id": "triton-test-cache-closure-make-closure-closure-695a7c92e7a3-original-39f5e6d0e9",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {},
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {}
+  },
+  "evidence": [
+    "source-de1342393bd70d5e",
+    "launch-1fda319024df676e"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-test-cache-closure-make-closure-closure-695a7c92e7a3",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-launch:python/test/unit/runtime/test_cache.py:559;closure-binding:cst=tl.constexpr(42)@556-557",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-launch:python/test/unit/runtime/test_cache.py:559;closure-binding:cst=tl.constexpr(42)@556-557",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

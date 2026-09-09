@@ -1,0 +1,113 @@
+{
+  "arguments": {
+    "alignment": 32,
+    "dtype": "bfloat16",
+    "hidden_states_shape": [
+      512,
+      256
+    ],
+    "label": "aligned-middle",
+    "layout": "aligned_per_row",
+    "local_expert_ids_shape": [
+      512,
+      2
+    ],
+    "manifest": "src/tileops/manifest/moe.yaml",
+    "num_local_experts": 8,
+    "num_tokens": 512,
+    "operator": "MoePrePermuteFwdOp",
+    "top_k": 2
+  },
+  "boundary": {
+    "dimensions": [
+      "alignment",
+      "dtype",
+      "hidden_states_shape",
+      "layout",
+      "local_expert_ids_shape",
+      "num_local_experts",
+      "num_tokens",
+      "top_k"
+    ],
+    "position": "middle",
+    "transition": "layout == aligned_per_row; H100 uses aligned scan then gather"
+  },
+  "build": {
+    "factory_arguments": {
+      "alignment": 32,
+      "capacity": 1272,
+      "num_experts": 8,
+      "num_tokens": 512,
+      "numel": 1024,
+      "top_k": 2
+    },
+    "kernel_arguments": {
+      "threads": 1024
+    }
+  },
+  "case_id": "tileops-make-aligned-per-row-scan-scan-e7b8b2479207-boundary-047f1c0db9",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 367,
+      "function": "MoePrePermuteFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/moe.yaml",
+      "source_sha256": "12e9b4c4c4927ea0ffe388c3a95517fb344d44a818bde9a8de65762b8055440e",
+      "start_line": 332
+    },
+    "dispatch": {
+      "predicate": "layout == aligned_per_row; H100 uses aligned scan then gather",
+      "strategy": "aligned"
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-3a669c7977de3b47",
+    "tileops-6a4085cd-spec-evidence-74b424a9c020974e"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-make-aligned-per-row-scan-scan-e7b8b2479207",
+  "kind": "BOUNDARY",
+  "origin": "upstream-dispatch:layout == aligned_per_row; H100 uses aligned scan then gather",
+  "reason": "H100 source-condition witness for aligned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [
+    "tileops-dispatch-witness"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "device": "NVIDIA H100 80GB HBM3",
+    "sm_count": 132,
+    "warp_size": 32
+  },
+  "unresolved": []
+}

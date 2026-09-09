@@ -1,0 +1,82 @@
+{
+  "arguments": {
+    "dtype": "float16",
+    "label": "dit-xl-2",
+    "manifest": "src/tileops/manifest/normalization.yaml",
+    "operator": "AdaLayerNormFwdOp",
+    "row_index": 0,
+    "x_shape": [
+      1024,
+      1152
+    ]
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "M": 1024,
+      "N": 1152,
+      "dtype": "float16",
+      "eps": 1e-05
+    }
+  },
+  "case_id": "tileops-ada-layer-norm-kernel-func-27c954c0d48a-original-8250f10e50",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 153,
+      "function": "AdaLayerNormFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/normalization.yaml",
+      "source_sha256": "19108a87380dc1e6fc3ea75aa27b27d4dc24951e842fd44556d25751751fe09a",
+      "start_line": 109
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-258582c4f5b23afe",
+    "tileops-6a4085cd-spec-evidence-8e074b52d36f78ea"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-ada-layer-norm-kernel-func-27c954c0d48a",
+  "kind": "ORIGINAL",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/normalization.yaml:109-153#AdaLayerNormFwdOp",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

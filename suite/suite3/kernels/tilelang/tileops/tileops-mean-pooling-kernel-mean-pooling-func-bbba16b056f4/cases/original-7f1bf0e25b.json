@@ -1,0 +1,97 @@
+{
+  "arguments": {
+    "accum_dtype": "float32",
+    "batch": 1,
+    "chunk_size": 64,
+    "dim": 128,
+    "dtype": "float16",
+    "heads": 64,
+    "indices_shape": {
+      "__pipeguard_missing__": true
+    },
+    "label": "uniform-8k",
+    "manifest": "src/tileops/manifest/pool.yaml",
+    "offsets_shape": {
+      "__pipeguard_missing__": true
+    },
+    "operator": "MeanPoolingFwdOp",
+    "row_index": 0,
+    "seq_len": 8192,
+    "seq_lens": null
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "accum_dtype": "float32",
+      "batch_size": 1,
+      "chunk_size": 64,
+      "chunks_per_batch": 128,
+      "dim": 128,
+      "dtype": "float16",
+      "heads": 64,
+      "seq_len": 8192,
+      "seq_num": 1,
+      "use_offsets": false
+    }
+  },
+  "case_id": "tileops-mean-pooling-kernel-mean-pooling-func-bbba16b056f4-original-7f1bf0e25b",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 840,
+      "function": "MeanPoolingFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/pool.yaml",
+      "source_sha256": "e5ee3b01a4554df4373871dd8d732565cdda53d40e4e6278923fefc11fde1f58",
+      "start_line": 788
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-05a55a596ba52a99",
+    "tileops-6a4085cd-spec-evidence-0df294bbbb81dc94"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-mean-pooling-kernel-mean-pooling-func-bbba16b056f4",
+  "kind": "ORIGINAL",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/pool.yaml:788-840#MeanPoolingFwdOp",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

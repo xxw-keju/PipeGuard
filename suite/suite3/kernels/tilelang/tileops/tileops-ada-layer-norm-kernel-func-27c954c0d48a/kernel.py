@@ -1,0 +1,149 @@
+# Normalized device code for PipeGuard Suite 3.
+# Exact upstream code and provenance are stored beside this file.
+
+import tilelang.language as T
+import tilelang
+ALIGNMENT = 256
+
+def align_up(n: int, alignment: int) -> int:
+    """Round *n* up to the nearest multiple of *alignment*, which must be positive."""
+    if alignment <= 0:
+        raise ValueError(f'alignment must be positive, got {alignment}')
+    return (n + alignment - 1) // alignment * alignment
+
+def make_row_reduce(block_m, n, n_padded, eps):
+    """Create the macro reducing a loaded fp32 row block to mean and rstd.
+
+    Consumes ``x_f32`` and overwrites it with the centered squares. The load
+    stays at the call sites, which read the row block in the dtype the tensor
+    holds and keep it for the output pass.
+
+    Args:
+        block_m: Rows per block.
+        n: Row length.
+        n_padded: *n* rounded up to :data:`ALIGNMENT`.
+        eps: Epsilon for numerical stability.
+
+    Returns:
+        A ``@T.macro`` taking ``(x_f32, acc, mean_val, rstd)``.
+    """
+    pad_count = n_padded - n
+
+    @T.macro
+    def row_reduce(x_f32, acc, mean_val, rstd):
+        T.reduce_sum(x_f32, acc, dim=1)
+        for i in T.Parallel(block_m):
+            mean_val[i] = acc[i] / float(n)
+        for i, j in T.Parallel(block_m, n_padded):
+            x_f32[i, j] = (x_f32[i, j] - mean_val[i]) * (x_f32[i, j] - mean_val[i])
+        T.reduce_sum(x_f32, acc, dim=1)
+        for i in T.Parallel(block_m):
+            rstd[i] = T.rsqrt((acc[i] - float(pad_count) * mean_val[i] * mean_val[i]) / float(n) + eps)
+    return row_reduce
+
+def _kernel_factory(M, N, eps, dtype, has_gate=False, use_cp_async=False):
+    N_padded = align_up(N, ALIGNMENT)
+    needs_pad = N_padded != N
+    async_copy_elems = 1 if dtype == 'float32' else 2
+
+    @tilelang.jit(out_idx=[4] if not has_gate else [5])
+    def _func(block_m, threads):
+
+        @T.macro
+        def load_x_padded(x, shared_buf, x_f32, pid_m):
+            for i, j in T.Parallel(block_m, N_padded):
+                shared_buf[i, j] = T.if_then_else(T.And(pid_m * block_m + i < M, j < N), x[pid_m * block_m + i, j], T.cast(0.0, dtype))
+                x_f32[i, j] = T.cast(shared_buf[i, j], 'float32')
+
+        @T.macro
+        def load_x_aligned(x, shared_buf, x_local, x_f32, pid_m):
+            T.copy(x[pid_m * block_m, 0], shared_buf)
+            T.copy(shared_buf, x_local)
+            for i, j in T.Parallel(block_m, N_padded):
+                x_f32[i, j] = T.cast(x_local[i, j], 'float32')
+        compute_mean_rstd = make_row_reduce(block_m, N, N_padded, eps)
+
+        @T.macro
+        def prefetch_modulation(src, dst, pid_m):
+            for i, j in T.Parallel(block_m, N_padded // async_copy_elems):
+                row = pid_m * block_m + i
+                col = j * async_copy_elems
+                T.ptx_cp_async(T.tvm_access_ptr(T.type_annotation(dtype), dst.data, i * N_padded + col, async_copy_elems, 2), T.tvm_access_ptr(T.type_annotation(dtype), src.data, row * N + col, async_copy_elems, 1), async_copy_elems, predicate=T.And(row < M, col + async_copy_elems <= N))
+            T.ptx_commit_group()
+
+        @T.macro
+        def load_aligned_modulation(src, shared_buf, local, pid_m):
+            T.copy(src[pid_m * block_m, 0], shared_buf)
+            T.copy(shared_buf, local)
+
+        @T.macro
+        def kernel_body(x, scale, shift, gate, y):
+            with T.Kernel(T.ceildiv(M, block_m), threads=threads) as pid_m:
+                shared_buf = T.alloc_shared((block_m, N_padded), dtype)
+                x_f32 = T.alloc_fragment((block_m, N_padded), 'float32')
+                acc = T.alloc_fragment((block_m,), 'float32')
+                mean_val = T.alloc_fragment((block_m,), 'float32')
+                rstd = T.alloc_fragment((block_m,), 'float32')
+                if needs_pad:
+                    if use_cp_async:
+                        scale_shared = T.alloc_shared((block_m, N_padded), dtype)
+                        shift_shared = T.alloc_shared((block_m, N_padded), dtype)
+                        if has_gate:
+                            gate_shared = T.alloc_shared((block_m, N_padded), dtype)
+                    load_x_padded(x, shared_buf, x_f32, pid_m)
+                else:
+                    x_local = T.alloc_fragment((block_m, N_padded), dtype)
+                    scale_local = T.alloc_fragment((block_m, N_padded), dtype)
+                    shift_local = T.alloc_fragment((block_m, N_padded), dtype)
+                    if has_gate:
+                        gate_local = T.alloc_fragment((block_m, N_padded), dtype)
+                    load_x_aligned(x, shared_buf, x_local, x_f32, pid_m)
+                if needs_pad and use_cp_async:
+                    prefetch_modulation(scale, scale_shared, pid_m)
+                    prefetch_modulation(shift, shift_shared, pid_m)
+                    if has_gate:
+                        prefetch_modulation(gate, gate_shared, pid_m)
+                compute_mean_rstd(x_f32, acc, mean_val, rstd)
+                if needs_pad:
+                    if use_cp_async:
+                        T.ptx_wait_group(0)
+                        T.sync_threads()
+                    for i, j in T.Parallel(block_m, N_padded):
+                        if T.And(pid_m * block_m + i < M, j < N):
+                            if use_cp_async:
+                                value = T.cast(scale_shared[i, j], 'float32') * (T.cast(shared_buf[i, j], 'float32') - mean_val[i]) * rstd[i] + T.cast(shift_shared[i, j], 'float32')
+                                if has_gate:
+                                    value *= T.cast(gate_shared[i, j], 'float32')
+                            else:
+                                value = T.cast(scale[pid_m * block_m + i, j], 'float32') * (T.cast(shared_buf[i, j], 'float32') - mean_val[i]) * rstd[i] + T.cast(shift[pid_m * block_m + i, j], 'float32')
+                                if has_gate:
+                                    value *= T.cast(gate[pid_m * block_m + i, j], 'float32')
+                            y[pid_m * block_m + i, j] = value
+                else:
+                    load_aligned_modulation(scale, shared_buf, scale_local, pid_m)
+                    load_aligned_modulation(shift, shared_buf, shift_local, pid_m)
+                    if has_gate:
+                        load_aligned_modulation(gate, shared_buf, gate_local, pid_m)
+                    for i, j in T.Parallel(block_m, N_padded):
+                        value = T.cast(scale_local[i, j], 'float32') * (T.cast(x_local[i, j], 'float32') - mean_val[i]) * rstd[i] + T.cast(shift_local[i, j], 'float32')
+                        if has_gate:
+                            value *= T.cast(gate_local[i, j], 'float32')
+                        x_local[i, j] = value
+                    T.copy(x_local, shared_buf)
+                    T.copy(shared_buf, y[pid_m * block_m, 0])
+        if not has_gate:
+
+            @T.prim_func
+            def main(x: T.Tensor[(M, N), dtype], scale: T.Tensor[(M, N), dtype], shift: T.Tensor[(M, N), dtype], _dummy: T.Tensor[(1,), dtype], y: T.Tensor[(M, N), dtype]):
+                kernel_body(x, scale, shift, _dummy, y)
+            return main
+
+        @T.prim_func
+        def main_gated(x: T.Tensor[(M, N), dtype], scale: T.Tensor[(M, N), dtype], shift: T.Tensor[(M, N), dtype], gate: T.Tensor[(M, N), dtype], _dummy: T.Tensor[(1,), dtype], y: T.Tensor[(M, N), dtype]):
+            kernel_body(x, scale, shift, gate, y)
+        return main_gated
+    return _func
+
+def build_kernel(case):
+    """Construct the TileLang device entry without launching it."""
+    return _kernel_factory(**case['build']['factory_arguments'])

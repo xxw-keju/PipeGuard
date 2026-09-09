@@ -1,0 +1,96 @@
+{
+  "arguments": {
+    "generate_normw": true,
+    "hidden_size": 7168,
+    "n1": 8192
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": true,
+        "before": false,
+        "path": "/bindings/generate_normw"
+      },
+      {
+        "after": 7168,
+        "before": 1280,
+        "path": "/bindings/hidden_size"
+      },
+      {
+        "after": 8192,
+        "before": 4096,
+        "path": "/bindings/n1"
+      }
+    ],
+    "dimensions": [
+      "generate_normw",
+      "hidden_size",
+      "n1"
+    ],
+    "transition": "Official source-matrix variation across: generate_normw, hidden_size, n1"
+  },
+  "build": {
+    "factory_arguments": {
+      "m": 24,
+      "n": 28672
+    }
+  },
+  "case_id": "tilekernels-mhc-fn-normw-merge-bwd-0953aa0f3678-boundary-a370ad229d",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 92,
+      "function": "test_correctness",
+      "kind": "UPSTREAM_TEST",
+      "path": "tests/mhc/test_norm_fn.py",
+      "source_sha256": "229b74c69f9cca3a46463ce037180cbb25b6aec5756387925676ebc8a94b9d84",
+      "start_line": 46
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-060a25f48480593c",
+    "tilekernels-36d9e45d-spec-evidence-a565fddd9563e054"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tilekernels-mhc-fn-normw-merge-bwd-0953aa0f3678",
+  "kind": "BOUNDARY",
+  "origin": "upstream-upstream_test:tests/mhc/test_norm_fn.py:46-92#test_correctness",
+  "parent_case_id": "tilekernels-mhc-fn-normw-merge-bwd-0953aa0f3678-original-01d5210946",
+  "reason": "Source-derived TileKernels specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-seeded-dropout-c0bdb7fcf7f0",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "3d1ddd5b3fe70d03dae187be80a9d0d4956775ab6643b1baa4ee5501382e5a58"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      110,
+      131
+    ],
+    "path": "python/tutorials/04-low-memory-dropout.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/tutorials/04-low-memory-dropout.py#L110-L131",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "d6c9df41b2423bcb6f9b0305f94f9aaaf73782e7d841497f8d53f6d17fee86ef",
+    "symbol": "_seeded_dropout"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

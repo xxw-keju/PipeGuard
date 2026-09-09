@@ -1,0 +1,28 @@
+# Normalized device code for PipeGuard Suite 3.
+# Exact upstream code and provenance are stored beside this file.
+
+import triton
+import triton.language as tl
+
+@triton.jit
+def _hypot_inplace_kernel(x_ptr, y_ptr, out_ptr, n_elements, BLOCK_SIZE: tl.constexpr):
+    pid = tl.program_id(axis=0)
+    block_start = pid * BLOCK_SIZE
+    offsets = block_start + tl.arange(0, BLOCK_SIZE)
+    mask = offsets < n_elements
+    x = tl.load(x_ptr + offsets, mask=mask)
+    y = tl.load(y_ptr + offsets, mask=mask)
+    x32 = x.to(tl.float32)
+    y32 = y.to(tl.float32)
+    out32 = tl.sqrt(x32 * x32 + y32 * y32)
+    tl.store(out_ptr + offsets, out32.to(x.dtype), mask=mask)
+
+def _resolve_kernel(**pipeguard_bindings):
+    return _hypot_inplace_kernel
+
+def build_kernel(case):
+    """Construct the DSL-native device entry without compiling or launching it."""
+    arguments = dict(case.get('arguments', {}))
+    build = case.get('build', {})
+    arguments.update(build.get('resolver_kwargs', {}))
+    return _resolve_kernel(**arguments)

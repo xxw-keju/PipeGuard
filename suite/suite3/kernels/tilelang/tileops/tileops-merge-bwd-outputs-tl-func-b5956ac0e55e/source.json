@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-merge-bwd-outputs-tl-func-b5956ac0e55e",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "ef09b05f9f0b505a5c900761c3374298cefad3e0b24358d64dbe94697f17601f"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      567,
+      607
+    ],
+    "path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py#L567-L607",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "e40034b73a82bbb0840fdcc7f5c84051002b80562408be25f88cdd35ff393d3b",
+    "symbol": "_merge_bwd_outputs_tl._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

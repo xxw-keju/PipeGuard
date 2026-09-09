@@ -1,0 +1,85 @@
+{
+  "arguments": {
+    "use_1d_tile": false,
+    "use_block_pointer": true
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": false,
+        "before": true,
+        "path": "/bindings/use_1d_tile"
+      }
+    ],
+    "dimensions": [
+      "use_1d_tile"
+    ],
+    "transition": "Official test-matrix variation across: use_1d_tile"
+  },
+  "build": {},
+  "case_id": "flaggems-permute-kernel-7633b1b369a4-boundary-ca75cc3fcd",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-80786a68a09fe9da"
+      ],
+      "test_end_line": 547,
+      "test_function": "test_dynamic_function_with_nd_buffer_out_permute",
+      "test_path": "tests/test_pointwise_dynamic.py",
+      "test_source_sha256": "d570bcbca73cb4e030ce0557d0dce022c576eedd5b1c7f4f24a16687896a964a",
+      "test_start_line": 513
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-80786a68a09fe9da",
+    "flaggems-test-6f48a439ffe304ed",
+    "source-5dcaeb89b25e7bc4"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-permute-kernel-7633b1b369a4",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_pointwise_dynamic.py:513-547#test_dynamic_function_with_nd_buffer_out_permute",
+  "parent_case_id": "flaggems-permute-kernel-7633b1b369a4-original-cba3312bc2",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

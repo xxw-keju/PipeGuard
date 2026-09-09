@@ -1,0 +1,28 @@
+# Normalized device code for PipeGuard Suite 3.
+# Source: https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_thread_sync.py#L1120-L1131
+# The exact upstream excerpt is stored in original_excerpt.py.
+
+from tvm.script import tirx as T
+
+def _resolve_kernel(**pipeguard_bindings):
+    @T.prim_func(private=True)
+    def func(n: T.int32):
+        s = T.alloc_buffer((256,), dtype="float32", scope="shared")
+        l = T.alloc_buffer((1,), dtype="float32", scope="local")
+        bx = T.launch_thread("blockIdx.x", 1)
+        tx = T.launch_thread("threadIdx.x", 128)
+        ty = T.launch_thread("threadIdx.y", 2)
+        tz = T.launch_thread("threadIdx.z", 1)
+        with T.Assert(n % 128 == 0, "n must be a multiple of the x extent"):
+            if tx < n:
+                s[ty * 128 + tx] = T.cast(tx, "float32")
+                l[0] = s[ty * 128 + (tx + 64) % 128]
+    return func
+
+
+def build_kernel(case):
+    """Construct the DSL-native device entry without compiling or launching it."""
+    arguments = dict(case.get("arguments", {}))
+    build = case.get("build", {})
+    arguments.update(build.get("resolver_kwargs", {}))
+    return _resolve_kernel(**arguments)

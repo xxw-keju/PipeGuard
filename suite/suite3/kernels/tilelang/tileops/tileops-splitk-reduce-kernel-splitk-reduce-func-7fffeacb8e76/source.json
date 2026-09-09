@@ -1,0 +1,32 @@
+{
+  "case_count": 3,
+  "changes": [
+    "retained the TileLang device factory and its in-file helper closure",
+    "removed unrelated upstream host definitions and decorators",
+    "inlined required TileOPs helper functions and constants",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-splitk-reduce-kernel-splitk-reduce-func-7fffeacb8e76",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "3c45cf2037ba72d9bf06880e385a51f1fbfd41e1689b7970cf7372e708ed9a79"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      804,
+      827
+    ],
+    "path": "src/tileops/kernels/gemm/dense.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/gemm/dense.py#L804-L827",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "67f5abb033b5a7ec8706f6738c0fcda286d3efd6961ef26677655840dccc0648",
+    "symbol": "_splitk_reduce_kernel._splitk_reduce_func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 3,
+  "variant": ""
+}

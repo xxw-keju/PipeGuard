@@ -1,0 +1,142 @@
+{
+  "arguments": {
+    "Bmat_shape": [
+      1,
+      4096,
+      1,
+      128
+    ],
+    "dA_cumsum_shape": [
+      1,
+      48,
+      16,
+      256
+    ],
+    "dt_shape": [
+      1,
+      48,
+      16,
+      256
+    ],
+    "dtype": "bfloat16",
+    "label": "mamba2-780m-b1-s4k-seq-idx",
+    "manifest": "src/tileops/manifest/mamba.yaml",
+    "operator": "SSDChunkStateFwdOp",
+    "row_index": 2,
+    "seq_idx_shape": [
+      1,
+      4096
+    ],
+    "x_shape": [
+      1,
+      4096,
+      48,
+      64
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": "bfloat16",
+        "before": "float16",
+        "path": "/bindings/dtype"
+      },
+      {
+        "after": "mamba2-780m-b1-s4k-seq-idx",
+        "before": "mamba2-780m-b1-s4k",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 2,
+        "before": 0,
+        "path": "/bindings/row_index"
+      },
+      {
+        "after": [
+          1,
+          4096
+        ],
+        "before": {
+          "__pipeguard_missing__": true
+        },
+        "path": "/bindings/seq_idx_shape"
+      }
+    ],
+    "dimensions": [
+      "dtype",
+      "seq_idx_shape"
+    ],
+    "transition": "Official source-matrix variation across: dtype, seq_idx_shape"
+  },
+  "build": {
+    "factory_arguments": {
+      "batch": 1,
+      "chunk_len": 256,
+      "d_head": 64,
+      "d_state": 128,
+      "dtype": "bfloat16",
+      "has_seq_idx": true,
+      "n_groups": 1,
+      "n_heads": 48,
+      "num_chunks": 16
+    }
+  },
+  "case_id": "tileops-ssd-chunk-state-fwd-kernel-kernel-func-6e8c968444ec-boundary-3ab2c97ee7",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 151,
+      "function": "SSDChunkStateFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/mamba.yaml",
+      "source_sha256": "1c7193d796d4d563ac9bf3201655f2594fa49a5d6f52014e4243c530ed9edf57",
+      "start_line": 113
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-90cf3d0be3ba256a",
+    "tileops-6a4085cd-spec-evidence-4b093510bc04fbcc"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-ssd-chunk-state-fwd-kernel-kernel-func-6e8c968444ec",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/mamba.yaml:113-151#SSDChunkStateFwdOp",
+  "parent_case_id": "tileops-ssd-chunk-state-fwd-kernel-kernel-func-6e8c968444ec-original-76903257f8",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

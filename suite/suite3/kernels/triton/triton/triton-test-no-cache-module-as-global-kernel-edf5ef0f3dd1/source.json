@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-no-cache-module-as-global-kernel-edf5ef0f3dd1",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "905d3576d8723e39b4a0acdddc2c62d7705e91696799d35d5c196cc818a11144"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      518,
+      520
+    ],
+    "path": "python/test/unit/runtime/test_cache.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/runtime/test_cache.py#L518-L520",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "08c2d6f3a30e93196c5beaf76b277b9864cd94c61ea308cd428030bb7b716e3b",
+    "symbol": "test_no_cache_module_as_global.kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

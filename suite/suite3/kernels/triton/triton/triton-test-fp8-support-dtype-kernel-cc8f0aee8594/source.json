@@ -1,0 +1,31 @@
+{
+  "case_count": 3,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-fp8-support-dtype-kernel-cc8f0aee8594",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "95884be26e0fac2351476c54f9bf533cce1928b60026f759005749497cdf3eba"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      373,
+      376
+    ],
+    "path": "python/test/unit/language/test_compile_errors.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_compile_errors.py#L373-L376",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "bd5b4d662000ae67a162be490d30c632306bef2aeac3732b302ff3e4d13e5bb1",
+    "symbol": "test_fp8_support.dtype_kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 3,
+  "variant": ""
+}

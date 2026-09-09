@@ -1,0 +1,111 @@
+{
+  "arguments": {
+    "dtype": "bfloat16",
+    "label": "llama-70b-prefill",
+    "manifest": "src/tileops/manifest/normalization.yaml",
+    "operator": "FusedAddRMSNormFwdOp",
+    "row_index": 2,
+    "x_shape": [
+      2048,
+      8192
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": "bfloat16",
+        "before": "float16",
+        "path": "/bindings/dtype"
+      },
+      {
+        "after": "llama-70b-prefill",
+        "before": "llama-8b-prefill",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 2,
+        "before": 0,
+        "path": "/bindings/row_index"
+      },
+      {
+        "after": 8192,
+        "before": 4096,
+        "path": "/bindings/x_shape/1"
+      }
+    ],
+    "dimensions": [
+      "dtype",
+      "x_shape"
+    ],
+    "transition": "Official source-matrix variation across: dtype, x_shape"
+  },
+  "build": {
+    "factory_arguments": {
+      "M": 2048,
+      "N": 8192,
+      "dtype": "bfloat16",
+      "eps": 1e-06,
+      "sm_count": 132
+    }
+  },
+  "case_id": "tileops-fused-add-rms-norm-kernel-func-f68501636be9-boundary-d975fd8486",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 305,
+      "function": "FusedAddRMSNormFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/normalization.yaml",
+      "source_sha256": "2014865a3a11f935287359fb59d8bbb68a304c58c6944a81b59b250960bcc9db",
+      "start_line": 251
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-257362afe1bdc04a",
+    "tileops-6a4085cd-spec-evidence-614e8d0eb7d09955"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-fused-add-rms-norm-kernel-func-f68501636be9",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/normalization.yaml:251-305#FusedAddRMSNormFwdOp",
+  "parent_case_id": "tileops-fused-add-rms-norm-kernel-func-f68501636be9-original-89f33aff51",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "device": "NVIDIA H100 80GB HBM3",
+    "sm_count": 132,
+    "warp_size": 32
+  },
+  "unresolved": []
+}

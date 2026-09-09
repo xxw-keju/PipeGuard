@@ -1,0 +1,31 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the TileLang device factory and its PrimFunc body",
+    "removed unrelated upstream host and test context",
+    "mapped official test parameters through build_kernel(case)"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilekernels-mhc-fn-normw-merge-fwd-dd3312bc4cec",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "aaa25b35a205f291d82eb8c9ac7216c006a30ea3d739d4400626f93a0a435e80"
+  },
+  "original": {
+    "commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+    "file": "original_excerpt.py",
+    "lines": [
+      11,
+      28
+    ],
+    "path": "tile_kernels/mhc/norm_fn_kernel.py",
+    "permalink": "https://github.com/deepseek-ai/TileKernels/blob/36d9e45d38e204ebb87e6f6e833821eee0482fe5/tile_kernels/mhc/norm_fn_kernel.py#L11-L28",
+    "repository": "https://github.com/deepseek-ai/TileKernels",
+    "sha256": "4f64a812229faed0ced0751f7a5a614f3ff34883de9bd0be437fe4b5ae82dc38",
+    "symbol": "_mhc_fn_normw_merge_fwd"
+  },
+  "project": "tilekernels",
+  "runnable_case_count": 4,
+  "variant": ""
+}

@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-no-hoist-loop-variant-expected-4a85402c71ce",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "24143decf2202df951b03cc737e35c0cfb821a4c58494c3edeef06fbe6a92540"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      134,
+      142
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_loop_unswitching.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_loop_unswitching.py#L134-L142",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "0ec3a13e4642a7556784b3362b854d7fd2aa632a0cae49b8b6d2df89f54e233c",
+    "symbol": "test_no_hoist_loop_variant.expected"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

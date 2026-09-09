@@ -1,0 +1,78 @@
+{
+  "arguments": {
+    "cond": false,
+    "mode": "static"
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-test-if-return-kernel-7084784de573-original-9791cede29",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "cond": false,
+      "mode": "static"
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "ExitEarly": "*i32",
+      "Out": "*i32",
+      "cond": "constexpr",
+      "mode": "constexpr"
+    }
+  },
+  "evidence": [
+    "source-f717038529532342",
+    "launch-93049414d2c0e516"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-test-if-return-kernel-7084784de573",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:6027;pytest-param:mode=static;cond=false",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-launch:python/test/unit/language/test_core.py:6027;pytest-param:mode=static;cond=false",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

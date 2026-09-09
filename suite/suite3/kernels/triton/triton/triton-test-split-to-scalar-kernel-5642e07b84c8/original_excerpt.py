@@ -1,0 +1,11 @@
+    @triton.jit
+    def kernel(X, Z1, Z2):
+        offs = tl.arange(0, 2)
+        x = tl.load(X + offs)
+        z1, z2 = tl.split(x)
+        tl.static_assert(isinstance(z1, tl.tensor))
+        tl.static_assert(isinstance(z2, tl.tensor))
+        tl.static_assert(z1.shape == [])
+        tl.static_assert(z2.shape == [])
+        tl.store(Z1, z1)
+        tl.store(Z2, z2)

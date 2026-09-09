@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-memory-leak-kernel-5083d452b196",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "6729400de1c8a623a5fdb5d025f54ee954dc6c82d366cc478a3edc02bbfe5b28"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      44,
+      52
+    ],
+    "path": "python/test/unit/runtime/test_launch.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/runtime/test_launch.py#L44-L52",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "cdd2d86648caa356aa9dbad4473fd5e64db1d1a57e6b94548dea23990fabb46c",
+    "symbol": "test_memory_leak.kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

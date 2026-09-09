@@ -1,0 +1,32 @@
+{
+  "case_count": 3,
+  "changes": [
+    "retained the TileLang device factory and its in-file helper closure",
+    "removed unrelated upstream host definitions and decorators",
+    "inlined required TileOPs helper functions and constants",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-softmax-kernel-single-func-78903faa8392",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "18d3f132723b9d36463e4f1a2d70d7a402d7ebe55ba02ab6d09b315784547ca2"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      81,
+      152
+    ],
+    "path": "src/tileops/kernels/reduction/softmax.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/reduction/softmax.py#L81-L152",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "473464a86aa604ae3a8f339941b8e87286610861f8d1cb3cbfa43ba25e072fec",
+    "symbol": "_softmax_kernel_single._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 3,
+  "variant": ""
+}

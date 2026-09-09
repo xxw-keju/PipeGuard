@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-same-shape-different-buffer-conditions-are-not-collapsed-before-d87207421070",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "c700b72965196191bf1a31be7e44e17cd49f8e5142f6e5d7f2daca27031722ea"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      406,
+      418
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_loop_unswitching.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_loop_unswitching.py#L406-L418",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "c97ab5e9283346987a48e3c3bab692caa87ca319277594024f79320462eaa8a8",
+    "symbol": "test_same_shape_different_buffer_conditions_are_not_collapsed.before"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

@@ -1,0 +1,33 @@
+    @T.prim_func
+    def after():
+        with T.Kernel(1):
+            A_shared = T.decl_buffer((1024,), T.uint8, scope="shared.dyn")
+            B_global = T.decl_buffer((1024,), T.uint8, scope="global")
+            desc_a = T.decl_buffer((1,), T.uint64, scope="local.descriptor.wgmma")
+            desc_b = T.decl_buffer((1,), T.uint64, scope="local.descriptor.wgmma")
+            C_local = T.decl_buffer((32,), T.float16, scope="local")
+            T.ptx_cp_async(
+                T.tvm_access_ptr(T.type_annotation(T.uint8), A_shared.data, 0, 16, 2),
+                T.tvm_access_ptr(T.type_annotation(T.uint8), B_global.data, 0, 16, 1),
+                16,
+            )
+            T.warpgroup_arrive()
+            T.fence_proxy_async()
+            T.ptx_wgmma_ss(
+                T.float16,
+                "m64n64k16",
+                T.bool(True),
+                T.bool(True),
+                "fp16",
+                "fp16",
+                "fp16",
+                desc_a.data,
+                T.int32(0),
+                desc_b.data,
+                T.int32(0),
+                C_local.data,
+                T.int32(0),
+                T.bool(True),
+                1,
+                1,
+            )

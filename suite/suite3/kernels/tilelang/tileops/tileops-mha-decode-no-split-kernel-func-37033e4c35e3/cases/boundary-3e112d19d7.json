@@ -1,0 +1,141 @@
+{
+  "arguments": {
+    "dtype": "float16",
+    "kv_shape": [
+      1024,
+      8,
+      64
+    ],
+    "label": "longer-cache",
+    "manifest": "src/tileops/manifest/attention.yaml",
+    "operator": "MultiHeadAttentionDecodePagedWithKVCacheFwdOp",
+    "page_size": 256,
+    "q_shape": [
+      1,
+      1,
+      8,
+      64
+    ],
+    "row_index": 2
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 1024,
+        "before": 512,
+        "path": "/bindings/kv_shape/0"
+      },
+      {
+        "after": 8,
+        "before": 16,
+        "path": "/bindings/kv_shape/1"
+      },
+      {
+        "after": 64,
+        "before": 128,
+        "path": "/bindings/kv_shape/2"
+      },
+      {
+        "after": "longer-cache",
+        "before": "single-token-page128",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 256,
+        "before": 128,
+        "path": "/bindings/page_size"
+      },
+      {
+        "after": 8,
+        "before": 16,
+        "path": "/bindings/q_shape/2"
+      },
+      {
+        "after": 64,
+        "before": 128,
+        "path": "/bindings/q_shape/3"
+      },
+      {
+        "after": 2,
+        "before": 0,
+        "path": "/bindings/row_index"
+      }
+    ],
+    "dimensions": [
+      "kv_shape",
+      "page_size",
+      "q_shape"
+    ],
+    "transition": "Official source-matrix variation across: kv_shape, page_size, q_shape"
+  },
+  "build": {
+    "factory_arguments": {
+      "batch": 1,
+      "dim": 64,
+      "dtype": "float16",
+      "heads": 8,
+      "is_causal": false,
+      "page_size": 256,
+      "seqlen_kv": 1024,
+      "seqlen_q": 1
+    }
+  },
+  "case_id": "tileops-mha-decode-no-split-kernel-func-37033e4c35e3-boundary-3e112d19d7",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 470,
+      "function": "MultiHeadAttentionDecodePagedWithKVCacheFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/attention.yaml",
+      "source_sha256": "e4d1f6022026f42cc13f7be474325e4a843034587f5dfbc750ad527a86488132",
+      "start_line": 428
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-21c7ff087a7e268a",
+    "tileops-6a4085cd-spec-evidence-4240e990a4b33716"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-mha-decode-no-split-kernel-func-37033e4c35e3",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/attention.yaml:428-470#MultiHeadAttentionDecodePagedWithKVCacheFwdOp",
+  "parent_case_id": "tileops-mha-decode-no-split-kernel-func-37033e4c35e3-original-650f1b152e",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-no-barrier-is-noop-func-5aea1ac525a1",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "d7f29d2aaf09c64a21f373ded11d67e08200a072a7191cabe3472817bfa66220"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      114,
+      118
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_lower_shared_barrier.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_lower_shared_barrier.py#L114-L118",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "37d68972551043c8f30c2e66725860e65a9475db37f442be22b06155a2821752",
+    "symbol": "test_no_barrier_is_noop.func"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

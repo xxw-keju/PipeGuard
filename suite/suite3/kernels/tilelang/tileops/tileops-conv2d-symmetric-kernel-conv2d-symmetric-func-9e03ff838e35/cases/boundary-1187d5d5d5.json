@@ -1,0 +1,194 @@
+{
+  "arguments": {
+    "C_out": 256,
+    "bias_shape": {
+      "__pipeguard_missing__": true
+    },
+    "dilation": [
+      12,
+      12
+    ],
+    "dtype": "float16",
+    "groups": {
+      "__pipeguard_missing__": true
+    },
+    "input_shape": [
+      1,
+      2048,
+      32,
+      32
+    ],
+    "kH": 3,
+    "kW": 3,
+    "label": "deeplabv3-aspp-3x3-rate12",
+    "manifest": "src/tileops/manifest/convolution.yaml",
+    "operator": "Conv2dFwdOp",
+    "padding": [
+      12,
+      12
+    ],
+    "row_index": 12,
+    "stride": [
+      1,
+      1
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 256,
+        "before": 64,
+        "path": "/bindings/C_out"
+      },
+      {
+        "after": [
+          12,
+          12
+        ],
+        "before": {
+          "__pipeguard_missing__": true
+        },
+        "path": "/bindings/dilation"
+      },
+      {
+        "after": 1,
+        "before": 2,
+        "path": "/bindings/input_shape/0"
+      },
+      {
+        "after": 2048,
+        "before": 64,
+        "path": "/bindings/input_shape/1"
+      },
+      {
+        "after": 32,
+        "before": 56,
+        "path": "/bindings/input_shape/2"
+      },
+      {
+        "after": 32,
+        "before": 56,
+        "path": "/bindings/input_shape/3"
+      },
+      {
+        "after": "deeplabv3-aspp-3x3-rate12",
+        "before": "resnet-3x3",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 12,
+        "before": 1,
+        "path": "/bindings/padding/0"
+      },
+      {
+        "after": 12,
+        "before": 1,
+        "path": "/bindings/padding/1"
+      },
+      {
+        "after": 12,
+        "before": 0,
+        "path": "/bindings/row_index"
+      }
+    ],
+    "dimensions": [
+      "C_out",
+      "dilation",
+      "input_shape",
+      "padding"
+    ],
+    "transition": "Official source-matrix variation across: C_out, dilation, input_shape, padding"
+  },
+  "build": {
+    "factory_arguments": {
+      "accum_dtype": "float32",
+      "c_in": 2048,
+      "c_in_g": 2048,
+      "c_out": 256,
+      "c_out_g": 256,
+      "dilation": 12,
+      "dilation_h": 12,
+      "dilation_w": 12,
+      "dtype": "float16",
+      "groups": 1,
+      "h": 32,
+      "h_in": 32,
+      "has_bias": false,
+      "hw": 1024,
+      "k_total": 18432,
+      "kernel_h": 3,
+      "kernel_size": 3,
+      "kernel_w": 3,
+      "n": 1,
+      "out_h": 32,
+      "out_hw": 1024,
+      "out_w": 32,
+      "pad": 12,
+      "pad_h": 12,
+      "pad_w": 12,
+      "stride": 1,
+      "stride_h": 1,
+      "stride_w": 1,
+      "w": 32,
+      "w_in": 32
+    }
+  },
+  "case_id": "tileops-conv2d-symmetric-kernel-conv2d-symmetric-func-9e03ff838e35-boundary-1187d5d5d5",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 185,
+      "function": "Conv2dFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/convolution.yaml",
+      "source_sha256": "c0a81ca773962995fdb0cb29d90e38c3ad18dab30ccf00e4f1454a5aa1438922",
+      "start_line": 79
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-77913143e74c037d",
+    "tileops-6a4085cd-spec-evidence-382641710da7ddc3"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-conv2d-symmetric-kernel-conv2d-symmetric-func-9e03ff838e35",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/convolution.yaml:79-185#Conv2dFwdOp",
+  "parent_case_id": "tileops-conv2d-symmetric-kernel-conv2d-symmetric-func-9e03ff838e35-original-97bb65e04a",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

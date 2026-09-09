@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-not-const-annotate-no-err-kernel-1d5cfa57c5c8",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "2ac779847b117ae9fcc91e32fb1cc44813f648fcde89fc2cd86dd505fddf35ac"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      187,
+      189
+    ],
+    "path": "python/test/unit/language/test_compile_errors.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_compile_errors.py#L187-L189",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "84d8511d618d6e4ed13e55bf4d91c4ba8cf75408b149565d6716ac44f49eaf64",
+    "symbol": "test_not_const_annotate_no_err.kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

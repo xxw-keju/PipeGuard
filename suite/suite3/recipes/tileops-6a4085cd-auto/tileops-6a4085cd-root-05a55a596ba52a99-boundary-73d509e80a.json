@@ -1,0 +1,59 @@
+{
+  "bindings": {
+    "accum_dtype": "float32",
+    "batch": 2,
+    "chunk_size": 64,
+    "dim": 128,
+    "dtype": "float16",
+    "heads": 64,
+    "indices_shape": [
+      32,
+      2
+    ],
+    "label": "ragged-batched",
+    "manifest": "src/tileops/manifest/pool.yaml",
+    "offsets_shape": [
+      3
+    ],
+    "operator": "MeanPoolingFwdOp",
+    "row_index": 4,
+    "seq_len": 2048,
+    "seq_lens": [
+      1024,
+      1024
+    ]
+  },
+  "candidate_id": "05a55a596ba52a99",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 840,
+      "function": "MeanPoolingFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/pool.yaml",
+      "source_sha256": "e5ee3b01a4554df4373871dd8d732565cdda53d40e4e6278923fefc11fde1f58",
+      "start_line": 788
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/pool.yaml:788-840#MeanPoolingFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-05a55a596ba52a99-boundary-73d509e80a-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

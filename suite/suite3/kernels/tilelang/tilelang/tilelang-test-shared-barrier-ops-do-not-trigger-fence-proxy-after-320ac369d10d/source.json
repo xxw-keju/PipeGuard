@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-shared-barrier-ops-do-not-trigger-fence-proxy-after-320ac369d10d",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "2c4289d5e1add68936f1e2b2dad4c36e9cb9c6c87ef29dc8e85d197015b0a5a0"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      442,
+      489
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_inject_fence_proxy.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_inject_fence_proxy.py#L442-L489",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "2567626ffe5abf555e411223d67cfbdccf258e8c4603de7dd265842cbd8c9999",
+    "symbol": "test_shared_barrier_ops_do_not_trigger_fence_proxy.after"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

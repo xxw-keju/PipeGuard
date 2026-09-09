@@ -1,0 +1,96 @@
+{
+  "arguments": {
+    "dim": -1,
+    "dtype": "float16",
+    "label": "dispatch-upper-m8-n131072",
+    "manifest": "src/tileops/manifest/reduction.yaml",
+    "operator": "LogSoftmaxFwdOp",
+    "x_shape": [
+      8,
+      131072
+    ]
+  },
+  "boundary": {
+    "dimensions": [
+      "M",
+      "N",
+      "dtype"
+    ],
+    "position": "upper",
+    "transition": "seg_n > 0 and fused_split_plan(...) returns threads"
+  },
+  "build": {
+    "factory_arguments": {
+      "M": 8,
+      "N": 131072,
+      "dtype": "float16",
+      "op_kind": "log_softmax",
+      "seg_n": 4096,
+      "threads": 128
+    },
+    "kernel_arguments": {}
+  },
+  "case_id": "tileops-softmax-fused-split-kernel-func-c6fe64baa981-boundary-6dec57c46e",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 108,
+      "function": "LogSoftmaxFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/reduction.yaml",
+      "source_sha256": "85b6232a47432a58c4b2fd4b57b16dd5d0fb6741bb26f91edce76cff37b549fc",
+      "start_line": 56
+    },
+    "dispatch": {
+      "predicate": "seg_n > 0 and fused_split_plan(...) returns threads",
+      "strategy": "soft_fused"
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-3aefa2de5e53a17d",
+    "tileops-6a4085cd-spec-evidence-eb4908558cc37683"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-softmax-fused-split-kernel-func-c6fe64baa981",
+  "kind": "BOUNDARY",
+  "origin": "upstream-dispatch:src/tileops/kernels/reduction/softmax.py and logsumexp.py",
+  "reason": "Dispatch witness for soft_fused: seg_n > 0 and fused_split_plan(...) returns threads.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [
+    "tileops-dispatch-witness"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

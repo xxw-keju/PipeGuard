@@ -1,0 +1,94 @@
+{
+  "arguments": {
+    "dtype": "float16",
+    "is_causal": true,
+    "kv_shape": [
+      4,
+      512,
+      8,
+      128
+    ],
+    "label": "llama-8b-short",
+    "manifest": "src/tileops/manifest/attention.yaml",
+    "operator": "GroupedQueryAttentionBwdOp",
+    "q_shape": [
+      4,
+      512,
+      32,
+      128
+    ],
+    "row_index": 0
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "batch": 4,
+      "dim": 128,
+      "dtype": "float16",
+      "heads": 32,
+      "heads_kv": 8,
+      "is_causal": true,
+      "seq_len": 512
+    }
+  },
+  "case_id": "tileops-gqa-bwd-wgmma-pipelined-kernel-gqa-bwd-wgmma-pipelined-func-7affb34879d1-original-d1ff53bb1b",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 427,
+      "function": "GroupedQueryAttentionBwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/attention.yaml",
+      "source_sha256": "aa6ac23bc48239a9858b0c078402077e89628e4fa26148d2e09d5a8fd01be286",
+      "start_line": 372
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-8decb85a7714a960",
+    "tileops-6a4085cd-spec-evidence-261f116b7fc42c8d"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-gqa-bwd-wgmma-pipelined-kernel-gqa-bwd-wgmma-pipelined-func-7affb34879d1",
+  "kind": "ORIGINAL",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/attention.yaml:372-427#GroupedQueryAttentionBwdOp",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

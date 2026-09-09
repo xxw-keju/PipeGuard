@@ -1,0 +1,27 @@
+@triton.jit
+def prelu_kernel(
+    x_ptr,  # *Pointer* to input tensor.
+    w_ptr,  # *Pointer* to weight tensor (scalar or per-channel vector).
+    out_ptr,  # *Pointer* to output tensor.
+    n_elements,  # Total number of elements in input.
+    S,  # Spatial size = product of dims after channel dim (or 1 if none).
+    C,  # Number of channels (or 1).
+    w_is_scalar: tl.constexpr,  # Whether weight is a single scalar.
+    BLOCK_SIZE: tl.constexpr,
+):
+    pid = tl.program_id(axis=0)
+    block_start = pid * BLOCK_SIZE
+    offsets = block_start + tl.arange(0, BLOCK_SIZE)
+    mask = offsets < n_elements
+
+    x = tl.load(x_ptr + offsets, mask=mask)
+
+    if w_is_scalar:
+        alpha = tl.load(w_ptr)  # scalar
+        y = tl.where(x >= 0, x, alpha * x)
+    else:
+        c = (offsets // S) % C
+        alpha = tl.load(w_ptr + c, mask=mask)
+        y = tl.where(x >= 0, x, alpha * x)
+
+    tl.store(out_ptr + offsets, y, mask=mask)

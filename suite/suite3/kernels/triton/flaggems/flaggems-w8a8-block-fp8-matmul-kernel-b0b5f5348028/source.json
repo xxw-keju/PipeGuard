@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-w8a8-block-fp8-matmul-kernel-b0b5f5348028",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "cd2258f563ce9390b98f1156f4994f22fd55c699cca11b7370a41c52b8a00371"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      51,
+      122
+    ],
+    "path": "src/flag_gems/ops/w8a8_block_fp8_matmul.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/w8a8_block_fp8_matmul.py#L51-L122",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "ee1655962b40e50595c4ba140d461005444c9833bd11459be86a6084abd86b48",
+    "symbol": "w8a8_block_fp8_matmul_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

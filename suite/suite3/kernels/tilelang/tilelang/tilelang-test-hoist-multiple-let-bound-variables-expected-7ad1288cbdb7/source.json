@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-hoist-multiple-let-bound-variables-expected-7ad1288cbdb7",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "4cd84c5f22016ecb631a53e0f6f76dae9e1cdfa2ec733e23d2f3640ac34e7675"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      314,
+      328
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_loop_unswitching.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_loop_unswitching.py#L314-L328",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "c60baf05310b6e1b3d287e8a90b874aedb4d0b251323fbe89d2d941ef31869d2",
+    "symbol": "test_hoist_multiple_let_bound_variables.expected"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

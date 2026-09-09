@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-moe-align-block-size-stage3-c289b3c2336c",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "d5d2b383b58c81514a84aa988b1e1717db63816e90f981118fd2f67e1b510a0a"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      465,
+      485
+    ],
+    "path": "src/flag_gems/fused/moe_align_block_size.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/fused/moe_align_block_size.py#L465-L485",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "6eae1a6f8a57a8489b63e348296bc25638b945d0d70477b43ffc2bfcf43c8b3a",
+    "symbol": "moe_align_block_size_stage3"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

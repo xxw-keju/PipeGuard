@@ -1,0 +1,270 @@
+{
+  "arguments": {
+    "A_USE_TMA": true,
+    "BLOCK_SIZE_K": 64,
+    "BLOCK_SIZE_M": 128,
+    "BLOCK_SIZE_N": 128,
+    "B_USE_TMA": true,
+    "GROUP_SIZE_M": 8,
+    "K": 512,
+    "M": 2048,
+    "N": 2048,
+    "USE_FP8": false,
+    "a_stride0": 512,
+    "a_stride1": 1,
+    "b_stride0": 512,
+    "b_stride1": 1,
+    "c_stride0": 2048,
+    "c_stride1": 1,
+    "num_stages": 2
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-matmul-tma-ws-kernel-f158c6944df3-original-ece7bdf4cf",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {
+        "118": {
+          "descriptor": {
+            "allocation_id": "global:a",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              2048,
+              512
+            ],
+            "strides": [
+              512,
+              1
+            ],
+            "tile_shape": [
+              64,
+              64
+            ]
+          }
+        },
+        "126": {
+          "descriptor": {
+            "allocation_id": "global:b",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              2048,
+              512
+            ],
+            "strides": [
+              512,
+              1
+            ],
+            "tile_shape": [
+              128,
+              64
+            ]
+          }
+        },
+        "132": {
+          "descriptor": {
+            "allocation_id": "global:a",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              2048,
+              512
+            ],
+            "strides": [
+              512,
+              1
+            ],
+            "tile_shape": [
+              64,
+              64
+            ]
+          }
+        },
+        "197": {
+          "descriptor": {
+            "allocation_id": "global:c",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              2048,
+              2048
+            ],
+            "strides": [
+              2048,
+              1
+            ],
+            "tile_shape": [
+              64,
+              128
+            ]
+          }
+        },
+        "261": {
+          "descriptor": {
+            "allocation_id": "global:c",
+            "coordinate_order": [
+              0,
+              1
+            ],
+            "element_bytes": 2,
+            "shape": [
+              2048,
+              2048
+            ],
+            "strides": [
+              2048,
+              1
+            ],
+            "tile_shape": [
+              64,
+              128
+            ]
+          }
+        },
+        "265": {
+          "partition_num_warps": [
+            4,
+            4
+          ],
+          "warp_group_start_ids": [
+            4,
+            8
+          ]
+        }
+      },
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:a",
+        "1": "global:b",
+        "2": "global:c"
+      },
+      "scalar_values": {
+        "3": 512,
+        "4": 512,
+        "5": 2048,
+        "6": 2048,
+        "7": 2048,
+        "8": 512
+      },
+      "unit_attributes": {
+        "188": [
+          "implicit_wgmma_wait_group_0"
+        ],
+        "198": [],
+        "252": [
+          "implicit_wgmma_wait_group_0"
+        ],
+        "262": []
+      }
+    },
+    "constexprs": {
+      "A_USE_TMA": true,
+      "BLOCK_SIZE_K": 64,
+      "BLOCK_SIZE_M": 128,
+      "BLOCK_SIZE_N": 128,
+      "B_USE_TMA": true,
+      "GROUP_SIZE_M": 8,
+      "USE_FP8": false,
+      "a_stride1": 1,
+      "b_stride1": 1,
+      "c_stride1": 1,
+      "num_stages": 2
+    },
+    "grid": [
+      256,
+      1,
+      1
+    ],
+    "grid_ctas": 256,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "A_USE_TMA": "constexpr",
+      "BLOCK_SIZE_K": "constexpr",
+      "BLOCK_SIZE_M": "constexpr",
+      "BLOCK_SIZE_N": "constexpr",
+      "B_USE_TMA": "constexpr",
+      "GROUP_SIZE_M": "constexpr",
+      "K": "i32",
+      "M": "i32",
+      "N": "i32",
+      "USE_FP8": "constexpr",
+      "a_ptr": "*fp16",
+      "a_stride0": "i32",
+      "a_stride1": "constexpr",
+      "b_ptr": "*fp16",
+      "b_stride0": "i32",
+      "b_stride1": "constexpr",
+      "c_ptr": "*fp16",
+      "c_stride0": "i32",
+      "c_stride1": "constexpr",
+      "num_stages": "constexpr"
+    }
+  },
+  "evidence": [
+    "source-eb083ac05e70b7a6",
+    "launch-22c4050b97f58b34"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-matmul-tma-ws-kernel-f158c6944df3",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_warp_specialization.py:306;pytest:M=2048,N=2048,K=512,blocks=128x128x64,stages=2,warps=4,fp16,tma=true",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-launch:python/test/unit/language/test_warp_specialization.py:306;pytest:M=2048,N=2048,K=512,blocks=128x128x64,stages=2,warps=4,fp16,tma=true",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

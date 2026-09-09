@@ -1,0 +1,47 @@
+{
+  "bindings": {
+    "dtype": "torch.float32",
+    "median": 0.0,
+    "shape": [
+      256,
+      256
+    ],
+    "sigma": 1.0
+  },
+  "candidate_id": "ec6c4dbc9a1c104a",
+  "compiler": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-ce7ff60d3132578d"
+      ],
+      "test_end_line": 110,
+      "test_function": "test_cauchy_accuracy",
+      "test_path": "tests/test_cauchy.py",
+      "test_source_sha256": "6416fd9248dfcc3c0bde265f22dfced363f85cc6d28c9a21a03ad1a587c9f02b",
+      "test_start_line": 36
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "triton",
+  "lowerable": false,
+  "origin": "upstream-test:tests/test_cauchy.py:36-110#test_cauchy_accuracy",
+  "recipe_id": "flaggems-root-ec6c4dbc9a1c104a-boundary-a11ce7653e-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

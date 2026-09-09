@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-tuple-float-namedtuple-float-tuple-kernel-b9c3c66f6abc",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "974a4e3e593d18ba5a5e51eab2521541c649541690bd00bce682b373a9348e91"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      375,
+      377
+    ],
+    "path": "python/test/unit/language/test_tuple.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_tuple.py#L375-L377",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "036d5d95f9967b424a2c65e2ad4c2a970b4f71e38e94b6bf37de67e5bde80765",
+    "symbol": "test_tuple_float._namedtuple_float_tuple_kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

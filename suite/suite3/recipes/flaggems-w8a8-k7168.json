@@ -1,0 +1,33 @@
+{
+  "bindings": {
+    "B": 16,
+    "BLOCK_K": 128,
+    "BLOCK_M": 64,
+    "BLOCK_N": 128,
+    "K": 7168,
+    "M": 128,
+    "M_aligned": 128,
+    "N": 1024,
+    "SWAP_AB": 0,
+    "TILE_ORDER": 0,
+    "X_ELEM_BYTES": 1,
+    "Y_ELEM_BYTES": 1,
+    "num_sms": 132,
+    "num_stages": 4
+  },
+  "candidate_id": "ba1565da9110dd54",
+  "dsl": "triton",
+  "lowerable": false,
+  "origin": "upstream-test:tests/test_fp8_einsum.py:48-60,163-198;pro-shape:b=128,h=16,r=7168,d=1024",
+  "recipe_id": "flaggems-w8a8-b16-m128-n1024-k7168-stages4",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flagtree_tle_toolchain_commit",
+    "native_materialization"
+  ]
+}

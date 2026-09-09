@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-async-pipeline-does-not-mark-non-cp-async-compatible-copy-before-4ae1c3cc185d",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "0a74c64bdca1ac1c7455382ba8727befd8ca650ab16804dff156bf2462a93dad"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      393,
+      412
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_Inject_software_pipeline.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_Inject_software_pipeline.py#L393-L412",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "e883fe9d93285a32225bb92b1d0b8d7b046d627981709b5bcb6af86ba9d8e380",
+    "symbol": "test_async_pipeline_does_not_mark_non_cp_async_compatible_copy.before"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

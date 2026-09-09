@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-no-plain-sync-inside-divergent-symbolic-guard-func-173aadf0e801",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "73baec55024e95b746c28dc605dbce3b77afc1ba3fc1de14d4f28f49ee8276e6"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      906,
+      915
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_thread_sync.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_thread_sync.py#L906-L915",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "f1e3e194f4e7fd0b4b3b62cfbb313f27600bdc4186e2f8c05eff295a2757d50f",
+    "symbol": "test_no_plain_sync_inside_divergent_symbolic_guard.func"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

@@ -1,0 +1,139 @@
+{
+  "arguments": {
+    "A_shape": [
+      64
+    ],
+    "chunk_len": 256,
+    "dt_bias_shape": {
+      "__pipeguard_missing__": true
+    },
+    "dt_shape": [
+      8,
+      2048,
+      64
+    ],
+    "dt_softplus": true,
+    "dtype": "bfloat16",
+    "label": "mamba2-1p3b-b8-s2k",
+    "manifest": "src/tileops/manifest/mamba.yaml",
+    "operator": "DaCumsumFwdOp",
+    "row_index": 1
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 64,
+        "before": 48,
+        "path": "/bindings/A_shape/0"
+      },
+      {
+        "after": 8,
+        "before": 1,
+        "path": "/bindings/dt_shape/0"
+      },
+      {
+        "after": 2048,
+        "before": 4096,
+        "path": "/bindings/dt_shape/1"
+      },
+      {
+        "after": 64,
+        "before": 48,
+        "path": "/bindings/dt_shape/2"
+      },
+      {
+        "after": "bfloat16",
+        "before": "float16",
+        "path": "/bindings/dtype"
+      },
+      {
+        "after": "mamba2-1p3b-b8-s2k",
+        "before": "mamba2-780m-b1-s4k",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 1,
+        "before": 0,
+        "path": "/bindings/row_index"
+      }
+    ],
+    "dimensions": [
+      "A_shape",
+      "dt_shape",
+      "dtype"
+    ],
+    "transition": "Official source-matrix variation across: A_shape, dt_shape, dtype"
+  },
+  "build": {
+    "factory_arguments": {
+      "batch": 8,
+      "chunk_len": 256,
+      "dt_max": Infinity,
+      "dt_min": 0.0,
+      "dt_softplus": true,
+      "dtype": "bfloat16",
+      "has_dt_bias": false,
+      "n_heads": 64,
+      "num_chunks": 8,
+      "seq_len": 2048
+    }
+  },
+  "case_id": "tileops-da-cumsum-fwd-placed-kernel-kernel-func-0a8d13b1c3dd-boundary-35980c2565",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 69,
+      "function": "DaCumsumFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/mamba.yaml",
+      "source_sha256": "6e8980f246a7dea4cbc207ac0d876df4b04acdac2b225749c8c57536022b7dea",
+      "start_line": 25
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-0ae000af32e96ae4",
+    "tileops-6a4085cd-spec-evidence-27881329b5fb2a94"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-da-cumsum-fwd-placed-kernel-kernel-func-0a8d13b1c3dd",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/mamba.yaml:25-69#DaCumsumFwdOp",
+  "parent_case_id": "tileops-da-cumsum-fwd-placed-kernel-kernel-func-0a8d13b1c3dd-original-6b668a347c",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

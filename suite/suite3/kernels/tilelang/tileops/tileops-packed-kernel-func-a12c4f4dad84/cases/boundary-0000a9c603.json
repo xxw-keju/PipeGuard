@@ -1,0 +1,95 @@
+{
+  "arguments": {
+    "dim": -1,
+    "dtype": "bool",
+    "label": "dispatch-lower",
+    "manifest": "src/tileops/manifest/reduction.yaml",
+    "operator": "AnyFwdOp",
+    "x_shape": [
+      256,
+      4
+    ]
+  },
+  "boundary": {
+    "dimensions": [
+      "shape",
+      "dtype"
+    ],
+    "position": "lower",
+    "transition": "logical_packed source dispatch region"
+  },
+  "build": {
+    "factory_arguments": {
+      "M": 256,
+      "N": 4,
+      "op_kind": "any"
+    },
+    "kernel_arguments": {
+      "threads": 32,
+      "vec": 4
+    }
+  },
+  "case_id": "tileops-packed-kernel-func-a12c4f4dad84-boundary-0000a9c603",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 778,
+      "function": "CountNonzeroFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/reduction.yaml",
+      "source_sha256": "86e481940cda19a6f80df7a4b966cd4a6d278bc69c5f8284cf169db385da9268",
+      "start_line": 731
+    },
+    "dispatch": {
+      "predicate": "logical_packed source dispatch region",
+      "strategy": "logical_packed"
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-b40825a24e33ded3",
+    "tileops-6a4085cd-spec-evidence-10e298ae02311d90"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-packed-kernel-func-a12c4f4dad84",
+  "kind": "BOUNDARY",
+  "origin": "upstream-dispatch:src/tileops/kernels/reduction",
+  "reason": "Source-condition witness for logical_packed (lower).",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [
+    "tileops-dispatch-witness"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

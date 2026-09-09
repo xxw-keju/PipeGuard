@@ -1,0 +1,90 @@
+{
+  "arguments": {
+    "h": 7168,
+    "n0": 2,
+    "n1": 4096
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 7168,
+        "before": 1280,
+        "path": "/bindings/h"
+      },
+      {
+        "after": 2,
+        "before": 1,
+        "path": "/bindings/n0"
+      }
+    ],
+    "dimensions": [
+      "h",
+      "n0"
+    ],
+    "transition": "Official source-matrix variation across: h, n0"
+  },
+  "build": {
+    "factory_arguments": {
+      "hidden": 7168,
+      "mhc": 4
+    }
+  },
+  "case_id": "tilekernels-mhc-post-bwd-0e249cd746e1-boundary-88c9596d88",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 72,
+      "function": "test_mhc_post_comprehensive",
+      "kind": "UPSTREAM_TEST",
+      "path": "tests/mhc/test_post.py",
+      "source_sha256": "310c06a2ffae01f18800076d7ef51605cac6070cab851e91886e2f0e0cb1fbd9",
+      "start_line": 45
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-9b264da9fd49061a",
+    "tilekernels-36d9e45d-spec-evidence-64d02cdf7a2c915e"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tilekernels-mhc-post-bwd-0e249cd746e1",
+  "kind": "BOUNDARY",
+  "origin": "upstream-upstream_test:tests/mhc/test_post.py:45-72#test_mhc_post_comprehensive",
+  "parent_case_id": "tilekernels-mhc-post-bwd-0e249cd746e1-original-47a879f068",
+  "reason": "Source-derived TileKernels specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

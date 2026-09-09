@@ -1,0 +1,31 @@
+{
+  "case_count": 2,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-matmul-tma-ws-kernel-f158c6944df3",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "8cf9fe9269114fa7b8f3071eb814d4a501d08834485096c3ca0f2f0cf8e076f3"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      222,
+      262
+    ],
+    "path": "python/test/unit/language/test_warp_specialization.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_warp_specialization.py#L222-L262",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "88f71a3148070dfc562e61555d5df406d3392893d27ff1838ef17550bb8e533d",
+    "symbol": "matmul_tma_ws_kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 2,
+  "variant": ""
+}

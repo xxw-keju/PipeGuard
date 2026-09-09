@@ -1,0 +1,163 @@
+{
+  "arguments": {
+    "C_out": 512,
+    "bias_shape": [
+      512
+    ],
+    "dtype": "bfloat16",
+    "input_shape": [
+      1,
+      1,
+      16000
+    ],
+    "kW": 10,
+    "label": "wav2vec2-layer1-bias",
+    "manifest": "src/tileops/manifest/convolution.yaml",
+    "operator": "Conv1dFwdOp",
+    "row_index": 5,
+    "stride": 5
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 512,
+        "before": 1280,
+        "path": "/bindings/C_out"
+      },
+      {
+        "after": [
+          512
+        ],
+        "before": {
+          "__pipeguard_missing__": true
+        },
+        "path": "/bindings/bias_shape"
+      },
+      {
+        "after": "bfloat16",
+        "before": "float16",
+        "path": "/bindings/dtype"
+      },
+      {
+        "after": 1,
+        "before": 80,
+        "path": "/bindings/input_shape/1"
+      },
+      {
+        "after": 16000,
+        "before": 3000,
+        "path": "/bindings/input_shape/2"
+      },
+      {
+        "after": 10,
+        "before": 3,
+        "path": "/bindings/kW"
+      },
+      {
+        "after": "wav2vec2-layer1-bias",
+        "before": "whisper-large-conv1",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 5,
+        "before": 0,
+        "path": "/bindings/row_index"
+      },
+      {
+        "after": 5,
+        "before": {
+          "__pipeguard_missing__": true
+        },
+        "path": "/bindings/stride"
+      }
+    ],
+    "dimensions": [
+      "C_out",
+      "bias_shape",
+      "dtype",
+      "input_shape",
+      "kW",
+      "stride"
+    ],
+    "transition": "Official source-matrix variation across: C_out, bias_shape, dtype, input_shape, kW, stride"
+  },
+  "build": {
+    "factory_arguments": {
+      "accum_dtype": "float32",
+      "c_in": 1,
+      "c_in_g": 1,
+      "c_out": 512,
+      "c_out_g": 512,
+      "dilation_l": 1,
+      "dtype": "bfloat16",
+      "groups": 1,
+      "has_bias": true,
+      "k_total": 10,
+      "kernel_l": 10,
+      "l_in": 16000,
+      "n": 1,
+      "out_l": 3199,
+      "pad_left": 0,
+      "pad_right": 0,
+      "stride_l": 5
+    }
+  },
+  "case_id": "tileops-conv1d-group-kernel-conv1d-group-func-27e09d58ddb5-boundary-44961af55d",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 78,
+      "function": "Conv1dFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/convolution.yaml",
+      "source_sha256": "ae1edda18912f7dd5e086e94ac299b1f4e2c4315a8a073bf14ab102a75d20cda",
+      "start_line": 7
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-a1dfd3e2edccb982",
+    "tileops-6a4085cd-spec-evidence-5a5e041e8a352dc3"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-conv1d-group-kernel-conv1d-group-func-27e09d58ddb5",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/convolution.yaml:7-78#Conv1dFwdOp",
+  "parent_case_id": "tileops-conv1d-group-kernel-conv1d-group-func-27e09d58ddb5-original-7009da01ca",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

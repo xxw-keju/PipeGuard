@@ -1,0 +1,31 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the TileLang device factory and its PrimFunc body",
+    "removed unrelated upstream host and test context",
+    "mapped official test parameters through build_kernel(case)"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilekernels-mhc-sinkhorn-fwd-3eac1d486523",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "e21cd85ffd3c405b3d852406356cbf611bc4b77831f022a494a2379a4f6c6287"
+  },
+  "original": {
+    "commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+    "file": "original_excerpt.py",
+    "lines": [
+      10,
+      58
+    ],
+    "path": "tile_kernels/mhc/sinkhorn_kernel.py",
+    "permalink": "https://github.com/deepseek-ai/TileKernels/blob/36d9e45d38e204ebb87e6f6e833821eee0482fe5/tile_kernels/mhc/sinkhorn_kernel.py#L10-L58",
+    "repository": "https://github.com/deepseek-ai/TileKernels",
+    "sha256": "bc3d8a434b53ad3344b025e9bf04a6064bb21b26ade7ff0064523caac5a727ed",
+    "symbol": "_mhc_sinkhorn_fwd"
+  },
+  "project": "tilekernels",
+  "runnable_case_count": 4,
+  "variant": ""
+}

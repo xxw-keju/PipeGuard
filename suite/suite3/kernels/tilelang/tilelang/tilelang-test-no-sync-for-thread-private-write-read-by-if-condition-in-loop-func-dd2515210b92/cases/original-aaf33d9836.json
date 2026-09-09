@@ -1,0 +1,58 @@
+{
+  "arguments": {},
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "tilelang-test-no-sync-for-thread-private-write-read-by-if-condition-in-loop-func-dd2515210b92-original-aaf33d9836",
+  "compile": {
+    "pass_configs": {},
+    "target_host": null
+  },
+  "evidence": [
+    "source-77ac64a3906b5319"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tilelang-test-no-sync-for-thread-private-write-read-by-if-condition-in-loop-func-dd2515210b92",
+  "kind": "ORIGINAL",
+  "origin": "static-inference:no-unresolved-primfunc-bindings",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: static-inference:no-unresolved-primfunc-bindings",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

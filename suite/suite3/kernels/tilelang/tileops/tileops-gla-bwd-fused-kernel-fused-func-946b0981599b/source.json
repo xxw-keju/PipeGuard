@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-gla-bwd-fused-kernel-fused-func-946b0981599b",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "b12952a79622eb12dee2fa706831bc0b0e9f68b73d2e4f956a4de5158a6664a6"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      200,
+      521
+    ],
+    "path": "src/tileops/kernels/linear_attention/gla/gla_bwd.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/linear_attention/gla/gla_bwd.py#L200-L521",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "3e78c51e672fcd89e410c7aba1e72efcd0f8c845b099cf79bfa6ab6418a2b34b",
+    "symbol": "_gla_bwd_fused_kernel._fused_func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

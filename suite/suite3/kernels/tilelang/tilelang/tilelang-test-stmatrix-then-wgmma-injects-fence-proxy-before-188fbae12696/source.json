@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-stmatrix-then-wgmma-injects-fence-proxy-before-188fbae12696",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "08c78283ddc8ceeb06a4525521a156498f0b87b51f016f0c462ad3b95f596a33"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      883,
+      916
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_inject_fence_proxy.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_inject_fence_proxy.py#L883-L916",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "48512c7a4eb6cab8bb846b664891d1f0d0e7fbd4a57ab1e4f783ed9fe761064c",
+    "symbol": "test_stmatrix_then_wgmma_injects_fence_proxy.before"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

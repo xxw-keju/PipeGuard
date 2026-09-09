@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-mha-decode-split-kernel-func-a65064848753",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "075b156f5aed22454b6be82dacac39f3df50eebcb1cb49b38618950f5ae3dd51"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      134,
+      431
+    ],
+    "path": "src/tileops/kernels/attention/mha_decode_paged.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/attention/mha_decode_paged.py#L134-L431",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "ff67a3f4f3566366eeb62dc0ae28b7ea1c431bd515b291893c0ae1d3d5499a3c",
+    "symbol": "_mha_decode_split_kernel._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

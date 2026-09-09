@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-fused-topk-kernel-171d056b1d6f",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "304e190b96d24b7dbb44b409d814d3f84caf9d580e1939f161304881241158e9"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      33,
+      109
+    ],
+    "path": "src/flag_gems/fused/topk_softplus_sqrt.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/fused/topk_softplus_sqrt.py#L33-L109",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "30115626ccf5359d7f9e7d084b275fbd8b3b3b534873f9eb3e6171389fd1ca06",
+    "symbol": "_fused_topk_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

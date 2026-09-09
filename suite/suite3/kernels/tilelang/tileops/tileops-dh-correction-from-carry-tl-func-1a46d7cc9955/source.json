@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-dh-correction-from-carry-tl-func-1a46d7cc9955",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "2c093eb5ee1e491b94e0b917037d32db7def1465bcd054c0dd834c5a7016fa3a"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      630,
+      725
+    ],
+    "path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py#L630-L725",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "ddd5ea28e837c662703f42eb6c1450670d033b698b239d0d3a2081fe81d085db",
+    "symbol": "_dh_correction_from_carry_tl._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

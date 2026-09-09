@@ -1,0 +1,81 @@
+{
+  "bindings": {
+    "batch": 8,
+    "cache_dtype": {
+      "__pipeguard_missing__": true
+    },
+    "cache_lens": [
+      32768,
+      32768,
+      32768,
+      32768,
+      32768,
+      32768,
+      32768,
+      32768
+    ],
+    "dim": 256,
+    "dtype": "float16",
+    "fuse_rope": true,
+    "heads": 32,
+    "heads_kv": 8,
+    "is_causal": true,
+    "label": "qwen35-9b-prefill-paged-fullattn-b8-prefix32k-chunk1k-p64-partial-rope64",
+    "manifest": "src/tileops/manifest/attention.yaml",
+    "max_pages_per_req": 528,
+    "max_position": 33792,
+    "max_seqlen_q": 1024,
+    "operator": "GroupedQueryAttentionPrefillPagedWithKVCacheFwdOp",
+    "page_size": 64,
+    "physical_tokens": 270336,
+    "q_lens": [
+      1024,
+      1024,
+      1024,
+      1024,
+      1024,
+      1024,
+      1024,
+      1024
+    ],
+    "rotary_dim": 64,
+    "row_index": 0,
+    "softcap": {
+      "__pipeguard_missing__": true
+    },
+    "total_q": 8192
+  },
+  "candidate_id": "6d486ddf9b1ffdc8",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 371,
+      "function": "GroupedQueryAttentionPrefillPagedWithKVCacheFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/attention.yaml",
+      "source_sha256": "3d8867ed58f1b99418e7bf753f3ebe99036c8bb1776d81c5cbf5d85a2594b5b2",
+      "start_line": 289
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/attention.yaml:289-371#GroupedQueryAttentionPrefillPagedWithKVCacheFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-6d486ddf9b1ffdc8-original-c01f028dcd-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

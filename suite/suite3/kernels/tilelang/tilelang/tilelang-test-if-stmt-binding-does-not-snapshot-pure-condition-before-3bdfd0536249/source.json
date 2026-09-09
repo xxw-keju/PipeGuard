@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-if-stmt-binding-does-not-snapshot-pure-condition-before-3bdfd0536249",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "42719cb3bd1340183dd88224bc711b74a606a522cabb5f1b5da645d936af616b"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      37,
+      41
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_if_stmt_binding.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_if_stmt_binding.py#L37-L41",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "764f65e56f7ae924b3edf3ff0379cb3bfd7a6824d95b7cb531d2d58669c3f306",
+    "symbol": "test_if_stmt_binding_does_not_snapshot_pure_condition.before"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

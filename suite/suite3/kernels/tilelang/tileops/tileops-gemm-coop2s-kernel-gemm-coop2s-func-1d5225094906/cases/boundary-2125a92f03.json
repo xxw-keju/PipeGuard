@@ -1,0 +1,104 @@
+{
+  "arguments": {
+    "dtype": "float16",
+    "k": 1024,
+    "label": "coop2s-lower",
+    "m": 512,
+    "manifest": "src/tileops/manifest/gemm.yaml",
+    "n": 512,
+    "operator": "GemmFwdOp",
+    "trans_a": false,
+    "trans_b": false
+  },
+  "boundary": {
+    "dimensions": [
+      "m",
+      "n",
+      "k",
+      "layout",
+      "config"
+    ],
+    "position": "lower",
+    "transition": "explicit coop2s config; NN layout"
+  },
+  "build": {
+    "factory_arguments": {
+      "dtype": "float16",
+      "k": 1024,
+      "m": 512,
+      "n": 512,
+      "trans_a": false,
+      "trans_b": false
+    },
+    "kernel_arguments": {
+      "block_k": 128,
+      "block_n": 64,
+      "num_stages": 4
+    }
+  },
+  "case_id": "tileops-gemm-coop2s-kernel-gemm-coop2s-func-1d5225094906-boundary-2125a92f03",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 68,
+      "function": "GemmFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/gemm.yaml",
+      "source_sha256": "6b38222bae27173626d40742bf23f4908df86ca2d73cfa887944584e229763c7",
+      "start_line": 8
+    },
+    "dispatch": {
+      "predicate": "explicit coop2s config; NN layout",
+      "strategy": "coop2s"
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-fdfc7f80d3537cfd",
+    "tileops-6a4085cd-spec-evidence-d3513ef2d4fb3fed"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-gemm-coop2s-kernel-gemm-coop2s-func-1d5225094906",
+  "kind": "BOUNDARY",
+  "origin": "upstream-dispatch:src/tileops/kernels/gemm/dense.py:1862-1952",
+  "reason": "GemmKernel dispatch witness: explicit coop2s config; NN layout.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [
+    "tileops-dispatch-witness"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "device": "NVIDIA H100 80GB HBM3",
+    "sm_count": 132,
+    "warp_size": 32
+  },
+  "unresolved": []
+}

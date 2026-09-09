@@ -1,0 +1,45 @@
+{
+  "bindings": {
+    "dtype": "float16",
+    "k": 128,
+    "label": "compile-smoke-square-64x64x128",
+    "m": 64,
+    "manifest": "src/tileops/manifest/gemm.yaml",
+    "n": 64,
+    "operator": "GemmW4A16FwdOp",
+    "row_index": 0
+  },
+  "candidate_id": "4be1cd5414da0032",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 164,
+      "function": "GemmW4A16FwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/gemm.yaml",
+      "source_sha256": "781fe2ecf21fde8f9c70c47e871d10adc2f6958c7bb67dbe063f6290186a81fe",
+      "start_line": 120
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/gemm.yaml:120-164#GemmW4A16FwdOp",
+  "recipe_id": "tileops-6a4085cd-root-4be1cd5414da0032-original-e931223146-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

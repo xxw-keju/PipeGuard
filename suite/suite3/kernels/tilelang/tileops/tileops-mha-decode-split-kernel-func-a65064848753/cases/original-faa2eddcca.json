@@ -1,0 +1,94 @@
+{
+  "arguments": {
+    "dtype": "float16",
+    "kv_shape": [
+      512,
+      16,
+      128
+    ],
+    "label": "single-token-page128",
+    "manifest": "src/tileops/manifest/attention.yaml",
+    "operator": "MultiHeadAttentionDecodePagedWithKVCacheFwdOp",
+    "page_size": 128,
+    "q_shape": [
+      1,
+      1,
+      16,
+      128
+    ],
+    "row_index": 0
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "batch": 1,
+      "dim": 128,
+      "dtype": "float16",
+      "heads": 16,
+      "is_causal": false,
+      "page_size": 128,
+      "seqlen_kv": 512,
+      "seqlen_q": 1
+    }
+  },
+  "case_id": "tileops-mha-decode-split-kernel-func-a65064848753-original-faa2eddcca",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 470,
+      "function": "MultiHeadAttentionDecodePagedWithKVCacheFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/attention.yaml",
+      "source_sha256": "e4d1f6022026f42cc13f7be474325e4a843034587f5dfbc750ad527a86488132",
+      "start_line": 428
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-11cb4ee58385d9be",
+    "tileops-6a4085cd-spec-evidence-4240e990a4b33716"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-mha-decode-split-kernel-func-a65064848753",
+  "kind": "ORIGINAL",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/attention.yaml:428-470#MultiHeadAttentionDecodePagedWithKVCacheFwdOp",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

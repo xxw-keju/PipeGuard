@@ -1,0 +1,104 @@
+{
+  "arguments": {
+    "C_out": 1280,
+    "bias_shape": {
+      "__pipeguard_missing__": true
+    },
+    "dtype": "float16",
+    "input_shape": [
+      1,
+      80,
+      3000
+    ],
+    "kW": 3,
+    "label": "whisper-large-conv1",
+    "manifest": "src/tileops/manifest/convolution.yaml",
+    "operator": "Conv1dFwdOp",
+    "row_index": 0,
+    "stride": {
+      "__pipeguard_missing__": true
+    }
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "accum_dtype": "float32",
+      "c_in": 80,
+      "c_in_g": 80,
+      "c_out": 1280,
+      "c_out_g": 1280,
+      "dilation_l": 1,
+      "dtype": "float16",
+      "groups": 1,
+      "has_bias": false,
+      "k_total": 240,
+      "kernel_l": 3,
+      "l_in": 3000,
+      "n": 1,
+      "out_l": 2998,
+      "pad_left": 0,
+      "pad_right": 0,
+      "stride_l": 1
+    }
+  },
+  "case_id": "tileops-conv1d-pointwise-kernel-conv1d-pointwise-func-139d270751e1-original-facbb3e951",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 78,
+      "function": "Conv1dFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/convolution.yaml",
+      "source_sha256": "ae1edda18912f7dd5e086e94ac299b1f4e2c4315a8a073bf14ab102a75d20cda",
+      "start_line": 7
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-505d3c328736a1e7",
+    "tileops-6a4085cd-spec-evidence-5a5e041e8a352dc3"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-conv1d-pointwise-kernel-conv1d-pointwise-func-139d270751e1",
+  "kind": "ORIGINAL",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/convolution.yaml:7-78#Conv1dFwdOp",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

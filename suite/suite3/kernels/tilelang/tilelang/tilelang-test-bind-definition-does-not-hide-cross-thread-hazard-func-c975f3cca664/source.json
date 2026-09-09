@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-bind-definition-does-not-hide-cross-thread-hazard-func-c975f3cca664",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "093252dea374f81633e269e36978be697555e8d9455013c28d24744f409aa926"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      1210,
+      1220
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_thread_sync.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_thread_sync.py#L1210-L1220",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "1efc932f26b33c9a0195050e5176202ee120cbd6a78152fbce07465a1a18e6e0",
+    "symbol": "test_bind_definition_does_not_hide_cross_thread_hazard.func"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

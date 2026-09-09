@@ -1,0 +1,146 @@
+{
+  "arguments": {
+    "bias_shape": [
+      256
+    ],
+    "dtype": "float16",
+    "label": "wider-channel-g32-affine",
+    "manifest": "src/tileops/manifest/normalization.yaml",
+    "num_groups": 32,
+    "operator": "GroupNormFwdOp",
+    "row_index": 4,
+    "weight_shape": [
+      256
+    ],
+    "x_shape": [
+      4,
+      256,
+      28,
+      28
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": [
+          256
+        ],
+        "before": {
+          "__pipeguard_missing__": true
+        },
+        "path": "/bindings/bias_shape"
+      },
+      {
+        "after": "wider-channel-g32-affine",
+        "before": "image-g32",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 4,
+        "before": 0,
+        "path": "/bindings/row_index"
+      },
+      {
+        "after": [
+          256
+        ],
+        "before": {
+          "__pipeguard_missing__": true
+        },
+        "path": "/bindings/weight_shape"
+      },
+      {
+        "after": 4,
+        "before": 8,
+        "path": "/bindings/x_shape/0"
+      },
+      {
+        "after": 256,
+        "before": 128,
+        "path": "/bindings/x_shape/1"
+      },
+      {
+        "after": 28,
+        "before": 32,
+        "path": "/bindings/x_shape/2"
+      },
+      {
+        "after": 28,
+        "before": 32,
+        "path": "/bindings/x_shape/3"
+      }
+    ],
+    "dimensions": [
+      "bias_shape",
+      "weight_shape",
+      "x_shape"
+    ],
+    "transition": "Official source-matrix variation across: bias_shape, weight_shape, x_shape"
+  },
+  "build": {
+    "factory_arguments": {
+      "D": 6272,
+      "M": 128,
+      "dtype": "float16",
+      "eps": 1e-05
+    }
+  },
+  "case_id": "tileops-group-norm-no-affine-kernel-func-8da70c7adb09-boundary-26dc2fc735",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 473,
+      "function": "GroupNormFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/normalization.yaml",
+      "source_sha256": "eac57f8436f58b179cd25ddfb270714a547ac889489aa62f857cda8d53e1785e",
+      "start_line": 414
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-153634e92cc707cb",
+    "tileops-6a4085cd-spec-evidence-eb1ebfd3a0f46178"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-group-norm-no-affine-kernel-func-8da70c7adb09",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/normalization.yaml:414-473#GroupNormFwdOp",
+  "parent_case_id": "tileops-group-norm-no-affine-kernel-func-8da70c7adb09-original-15d517f14e",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

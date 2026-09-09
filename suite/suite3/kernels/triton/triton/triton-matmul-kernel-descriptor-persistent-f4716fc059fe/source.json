@@ -1,0 +1,31 @@
+{
+  "case_count": 2,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-matmul-kernel-descriptor-persistent-f4716fc059fe",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "ea99e25c3c55d4e37f7740ac75b3066f0e72dd7823b08eb9604f3235813f0083"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      585,
+      663
+    ],
+    "path": "python/tutorials/09-persistent-matmul.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/tutorials/09-persistent-matmul.py#L585-L663",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "e509533aae68f4bb9f94eb66c81324d0fb1534389dde15a4f0f2b9d5b8dce35d",
+    "symbol": "matmul_kernel_descriptor_persistent"
+  },
+  "project": "triton",
+  "runnable_case_count": 2,
+  "variant": ""
+}

@@ -1,0 +1,52 @@
+{
+  "bindings": {
+    "dtype": "float16",
+    "hidden_states_shape": [
+      32,
+      128
+    ],
+    "label": "small",
+    "layout": "tight_physical_psum",
+    "local_expert_ids_shape": [
+      32,
+      2
+    ],
+    "manifest": "src/tileops/manifest/moe.yaml",
+    "num_local_experts": 4,
+    "operator": "MoePrePermuteFwdOp",
+    "row_index": 0
+  },
+  "candidate_id": "3a669c7977de3b47",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 367,
+      "function": "MoePrePermuteFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/moe.yaml",
+      "source_sha256": "12e9b4c4c4927ea0ffe388c3a95517fb344d44a818bde9a8de65762b8055440e",
+      "start_line": 332
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/moe.yaml:332-367#MoePrePermuteFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-3a669c7977de3b47-original-c655c1f152-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

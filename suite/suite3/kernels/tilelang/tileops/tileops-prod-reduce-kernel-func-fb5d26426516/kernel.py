@@ -1,0 +1,83 @@
+# Normalized device code for PipeGuard Suite 3.
+# Exact upstream code and provenance are stored beside this file.
+
+from dataclasses import dataclass
+import tilelang
+import tilelang.language as T
+WARP_LANES: int = 32
+_WARP_STAGES = WARP_LANES.bit_length() - 1
+
+@dataclass(frozen=True)
+class ProductReducePolicy:
+    """Launch heuristics for product reductions."""
+    cols_per_thread: int = 8
+    min_rows_for_vectorized: int = 256
+_PROD_POLICY = ProductReducePolicy()
+
+def _resolve_kernel(**pipeguard_bindings):
+    M = pipeguard_bindings['M']
+    N = pipeguard_bindings['N']
+    chunk = pipeguard_bindings['chunk']
+    dtype = pipeguard_bindings['dtype']
+    exact = pipeguard_bindings['exact']
+    full_tiles = pipeguard_bindings['full_tiles']
+    num_warps = pipeguard_bindings['num_warps']
+    threads = pipeguard_bindings['threads']
+    tiles = pipeguard_bindings['tiles']
+    vec_elems = pipeguard_bindings['vec_elems']
+    vec_groups = pipeguard_bindings['vec_groups']
+    vectorized = pipeguard_bindings['vectorized']
+
+    @tilelang.jit(out_idx=[1])
+    def _func():
+
+        @T.prim_func
+        def main(x: T.Tensor[(M, N), dtype], out: T.Tensor[(M,), dtype]):
+            with T.Kernel(M, threads=threads) as row:
+                tx = T.get_thread_binding()
+                running = T.alloc_local((1,), 'float32')
+                warp_prod = T.alloc_shared((num_warps,), 'float32')
+                held = T.alloc_local((_PROD_POLICY.cols_per_thread,), dtype)
+                staged = T.alloc_shared((1 if vectorized else chunk,), dtype)
+                slots = T.alloc_local((_PROD_POLICY.cols_per_thread,), 'float32')
+                for c in T.serial(_PROD_POLICY.cols_per_thread):
+                    slots[c] = T.cast(1.0, 'float32')
+                if vectorized:
+                    for t in T.serial(full_tiles):
+                        for g in T.serial(vec_groups):
+                            for c in T.vectorized(vec_elems):
+                                held[g * vec_elems + c] = x[row, t * chunk + tx * _PROD_POLICY.cols_per_thread + g * vec_elems + c]
+                        for c in T.serial(_PROD_POLICY.cols_per_thread):
+                            slots[c] = slots[c] * T.cast(held[c], 'float32')
+                else:
+                    for t in T.serial(tiles):
+                        for i in T.Parallel(chunk):
+                            staged[i] = x[row, t * chunk + i]
+                        T.sync_threads()
+                        for c in T.serial(_PROD_POLICY.cols_per_thread):
+                            kept = staged[tx * _PROD_POLICY.cols_per_thread + c]
+                            if exact:
+                                slots[c] = slots[c] * T.cast(kept, 'float32')
+                            else:
+                                col = (t * threads + tx) * _PROD_POLICY.cols_per_thread + c
+                                slots[c] = slots[c] * T.if_then_else(col < N, T.cast(kept, 'float32'), T.cast(1.0, 'float32'))
+                        T.sync_threads()
+                running[0] = slots[0]
+                for c in T.serial(1, _PROD_POLICY.cols_per_thread):
+                    running[0] = running[0] * slots[c]
+                for stage in T.serial(_WARP_STAGES):
+                    running[0] = running[0] * T.shfl_xor(running[0], T.int32(WARP_LANES // 2) >> stage, width=WARP_LANES)
+                if tx % WARP_LANES == 0:
+                    warp_prod[tx // WARP_LANES] = running[0]
+                T.sync_threads()
+                if tx == 0:
+                    for w in T.serial(1, num_warps):
+                        warp_prod[0] = warp_prod[0] * warp_prod[w]
+                    out[row] = T.cast(warp_prod[0], dtype)
+        return main
+    return _func
+
+def build_kernel(case):
+    a=dict(case["build"]["factory_arguments"]); chunk=a["threads"]*8; vectorized=a["N"]%chunk==0 and a["M"]>=256; tiles=(a["N"]+chunk-1)//chunk; elem=2 if a["dtype"] in ("float16","bfloat16") else 4
+    a.update({"chunk":chunk,"vectorized":vectorized,"full_tiles":a["N"]//chunk if vectorized else 0,"tiles":tiles,"exact":tiles*chunk==a["N"],"num_warps":a["threads"]//32,"vec_elems":min(8,16//elem),"vec_groups":8//min(8,16//elem)})
+    return _resolve_kernel(**a)()

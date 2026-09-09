@@ -1,0 +1,329 @@
+{
+  "kernel_overrides": [
+    {
+      "exclusion_reason": "The kernel is source- and specification-complete for the K/parity dimension, but remains CANDIDATE until the exact FlagTree/TLE compiler commit is locked and a second independent boundary dimension is reviewed.",
+      "kernel_id": "triton-w8a8_block_fp8_bmm_kernel-3b449525",
+      "launch_root_rationale": "FlagGems directly launches this exported/libtuned Hopper TLE kernel from the public w8a8_block_fp8_bmm wrapper; the wrapper and official fp8_einsum test define its input contract.",
+      "primary_original_spec_id": "flaggems-w8a8-pro-k7168-original"
+    }
+  ],
+  "schema_version": "pipeguard-upstream-reviewed-specs-v1",
+  "source_evidence": [
+    {
+      "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+      "end_line": 779,
+      "evidence_id": "flaggems-w8a8-launch-wrapper",
+      "kind": "LAUNCH_CALLSITE",
+      "path": "src/flag_gems/runtime/backend/_nvidia/hopper/ops/w8a8_block_fp8_bmm.py",
+      "rationale": "The public wrapper defines the shape contract, 128x128 scale blocks, persistent grid, descriptors, and launch bindings.",
+      "repository_id": "flaggems-34bd6d68",
+      "sha256": "0fc13c9d104bafe065f9ef11e59da1920fac3dd01ef6af2917f781f3dfca4fb3",
+      "start_line": 640,
+      "url": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/runtime/backend/_nvidia/hopper/ops/w8a8_block_fp8_bmm.py#L640-L779"
+    },
+    {
+      "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+      "end_line": 60,
+      "evidence_id": "flaggems-w8a8-upstream-test-configs",
+      "kind": "UPSTREAM_TEST",
+      "path": "tests/test_fp8_einsum.py",
+      "rationale": "The official test matrix defines the flash/pro dimensions and batch sizes, including the original B=16, M=128, N=1024, K=7168 BMM specialization after wrapper reshaping.",
+      "repository_id": "flaggems-34bd6d68",
+      "sha256": "aef642dde818e716331e2f42098bb4ad30c63e2dc8bdb7c67d28552c570ac046",
+      "start_line": 48,
+      "url": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/tests/test_fp8_einsum.py#L48-L60"
+    },
+    {
+      "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+      "end_line": 198,
+      "evidence_id": "flaggems-w8a8-upstream-oracle",
+      "kind": "REFERENCE_ORACLE",
+      "path": "tests/test_fp8_einsum.py",
+      "rationale": "The official test compares the kernel result against an independently dequantized PyTorch einsum reference.",
+      "repository_id": "flaggems-34bd6d68",
+      "sha256": "1ca832dd968fc09ab84bdcaa75be50abd5e62c8296fc997d8830845500af0b4c",
+      "start_line": 163,
+      "url": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/tests/test_fp8_einsum.py#L163-L198"
+    },
+    {
+      "commit": null,
+      "end_line": null,
+      "evidence_id": "flaggems-w8a8-persistent-phase-proof",
+      "kind": "MANUAL_PROTOCOL_TRACE",
+      "path": "suite3/flaggems-w8a8-parity-evidence.json",
+      "rationale": "Auditable derivation of the odd per-slot generation mismatch, with the previously observed hardware and corrected-control outcomes clearly separated from durable artifacts.",
+      "repository_id": null,
+      "sha256": "42f3837cf5dddb3ba147729be83b17940378daf4e1c4728288a181db7a937e1c",
+      "start_line": null,
+      "url": "suite3://flaggems-w8a8-parity-evidence"
+    },
+    {
+      "commit": null,
+      "end_line": null,
+      "evidence_id": "nvidia-sm90-mbarrier-generation-rules",
+      "kind": "NORMATIVE_RULE",
+      "path": "suite3/normative-baseline.json",
+      "rationale": "Rules MB-07 through MB-10 and MEM-04 define generation completion, valid waits, observation, and asynchronous access windows.",
+      "repository_id": null,
+      "sha256": "64763262deeeecd05eda2ffb084355bfed902da8e1e31ddc1bafef244c4cb113",
+      "start_line": null,
+      "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/#parallel-synchronization-and-communication-instructions-mbarrier"
+    }
+  ],
+  "specifications": [
+    {
+      "boundary_dimensions": [],
+      "delta": [],
+      "evidence_ids": [
+        "source-ba1565da9110dd54",
+        "source-f148d02e60885c30",
+        "source-a568a6ed3d619255",
+        "flaggems-w8a8-launch-wrapper",
+        "flaggems-w8a8-upstream-test-configs",
+        "flaggems-w8a8-upstream-oracle",
+        "nvidia-sm90-mbarrier-generation-rules"
+      ],
+      "execution": {
+        "claim_scope": "SELECTED_CTA",
+        "engine": "maximal",
+        "selected_cta": [
+          0,
+          0,
+          0
+        ],
+        "symbol_policy": "EXACT",
+        "symbols": [
+          "w8a8_block_fp8_bmm_kernel"
+        ]
+      },
+      "expected_pipeline": {
+        "allowed_diagnostic_codes": [],
+        "status": "UNASSESSED"
+      },
+      "kernel_id": "triton-w8a8_block_fp8_bmm_kernel-3b449525",
+      "rationale": "Official pro-shape specialization: b=128,h=16,r=7168,d=1024 maps to B=16,M=128,N=1024,K=7168. Four stages give fourteen uses per barrier slot per persistent tile, an even parity cycle covered by the upstream numerical oracle.",
+      "recipe": {
+        "candidate_id": "ba1565da9110dd54",
+        "path": "suite3/recipes/flaggems-w8a8-k7168.json",
+        "recipe_id": "flaggems-w8a8-b16-m128-n1024-k7168-stages4",
+        "sha256": "d34ed0622cb86953cea44c2f9a767e59fa18cea28183b6c615afc5228349d1fd"
+      },
+      "revision_id": "triton-w8a8_block_fp8_bmm_kernel-3b449525@34bd6d68",
+      "role": "ORIGINAL",
+      "rule_ids": [
+        "MB-07",
+        "MB-08",
+        "MB-09",
+        "MB-10",
+        "TMA-03",
+        "MEM-04",
+        "WG-08"
+      ],
+      "semantic_ground_truth": {
+        "class": "CORRECT",
+        "evidence_ids": [
+          "flaggems-w8a8-upstream-oracle"
+        ],
+        "method": "UPSTREAM_REGRESSION",
+        "rationale": "This specialization belongs to the official parameter matrix and is compared with the PyTorch reference.",
+        "status": "CONFIRMED"
+      },
+      "spec_id": "flaggems-w8a8-pro-k7168-original"
+    },
+    {
+      "boundary_dimensions": [
+        "barrier_slot_reuse_parity"
+      ],
+      "boundary_transition": "Reduce from fourteen to eight uses per barrier slot per tile while preserving an even generation count.",
+      "delta": [
+        {
+          "after": 4096,
+          "before": 7168,
+          "path": "/bindings/K"
+        }
+      ],
+      "evidence_ids": [
+        "source-ba1565da9110dd54",
+        "source-f148d02e60885c30",
+        "source-a568a6ed3d619255",
+        "flaggems-w8a8-launch-wrapper",
+        "flaggems-w8a8-persistent-phase-proof",
+        "nvidia-sm90-mbarrier-generation-rules"
+      ],
+      "execution": {
+        "claim_scope": "SELECTED_CTA",
+        "engine": "maximal",
+        "selected_cta": [
+          0,
+          0,
+          0
+        ],
+        "symbol_policy": "EXACT",
+        "symbols": [
+          "w8a8_block_fp8_bmm_kernel"
+        ]
+      },
+      "expected_pipeline": {
+        "allowed_diagnostic_codes": [],
+        "status": "UNASSESSED"
+      },
+      "kernel_id": "triton-w8a8_block_fp8_bmm_kernel-3b449525",
+      "parent_spec_id": "flaggems-w8a8-pro-k7168-original",
+      "rationale": "K=4096 is divisible by BLOCK_K=128 and gives 32 K-blocks; with four stages each slot is used eight times, so the erroneous per-tile phase reset happens to preserve parity and serves as an even-cycle control.",
+      "recipe": {
+        "candidate_id": "ba1565da9110dd54",
+        "path": "suite3/recipes/flaggems-w8a8-k4096.json",
+        "recipe_id": "flaggems-w8a8-b16-m128-n1024-k4096-stages4",
+        "sha256": "674a623afa13dff3c8897fc2cfe36a00763a54262002b01b54b6f4710af032dc"
+      },
+      "revision_id": "triton-w8a8_block_fp8_bmm_kernel-3b449525@34bd6d68",
+      "role": "BOUNDARY",
+      "rule_ids": [
+        "MB-07",
+        "MB-09",
+        "MEM-04",
+        "WG-08"
+      ],
+      "semantic_ground_truth": {
+        "class": "CORRECT",
+        "evidence_ids": [
+          "flaggems-w8a8-persistent-phase-proof"
+        ],
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "The even number of per-slot uses preserves parity across persistent tiles; the earlier hardware control completed correctly.",
+        "status": "CONFIRMED"
+      },
+      "spec_id": "flaggems-w8a8-k4096-even-control"
+    },
+    {
+      "boundary_dimensions": [
+        "barrier_slot_reuse_parity"
+      ],
+      "boundary_transition": "Twelve K-blocks over four stages produce three uses per barrier slot per persistent tile, crossing from even to odd generation parity.",
+      "delta": [
+        {
+          "after": 1536,
+          "before": 7168,
+          "path": "/bindings/K"
+        }
+      ],
+      "evidence_ids": [
+        "source-ba1565da9110dd54",
+        "source-f148d02e60885c30",
+        "source-a568a6ed3d619255",
+        "flaggems-w8a8-launch-wrapper",
+        "flaggems-w8a8-persistent-phase-proof",
+        "nvidia-sm90-mbarrier-generation-rules"
+      ],
+      "execution": {
+        "claim_scope": "SELECTED_CTA",
+        "engine": "maximal",
+        "selected_cta": [
+          0,
+          0,
+          0
+        ],
+        "symbol_policy": "EXACT",
+        "symbols": [
+          "w8a8_block_fp8_bmm_kernel"
+        ]
+      },
+      "expected_pipeline": {
+        "allowed_diagnostic_codes": [],
+        "status": "UNASSESSED"
+      },
+      "kernel_id": "triton-w8a8_block_fp8_bmm_kernel-3b449525",
+      "parent_spec_id": "flaggems-w8a8-pro-k7168-original",
+      "rationale": "Both partitions recompute phase as k_block_idx // num_stages inside each persistent tile. After three uses, the next tile reuses phase zero against a slot whose generation parity has toggled, allowing stale synchronization and asynchronous shared-memory reuse.",
+      "recipe": {
+        "candidate_id": "ba1565da9110dd54",
+        "path": "suite3/recipes/flaggems-w8a8-k1536.json",
+        "recipe_id": "flaggems-w8a8-b16-m128-n1024-k1536-stages4",
+        "sha256": "b6dcad3943a667aef07722727309d66c19f0a9f5a541e43e3c183077f67f3ebe"
+      },
+      "revision_id": "triton-w8a8_block_fp8_bmm_kernel-3b449525@34bd6d68",
+      "role": "BOUNDARY",
+      "rule_ids": [
+        "MB-07",
+        "MB-09",
+        "MEM-04",
+        "WG-08"
+      ],
+      "semantic_ground_truth": {
+        "class": "DATA_HAZARD",
+        "evidence_ids": [
+          "flaggems-w8a8-persistent-phase-proof"
+        ],
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "The pinned source trace proves stale phase parity across persistent tiles; prior H100 execution independently produced a launch failure for this legal shape.",
+        "status": "CONFIRMED"
+      },
+      "spec_id": "flaggems-w8a8-k1536-odd-parity-bug"
+    },
+    {
+      "boundary_dimensions": [
+        "barrier_slot_reuse_parity"
+      ],
+      "boundary_transition": "Four K-blocks over four stages produce the smallest one-use-per-slot odd parity cycle.",
+      "delta": [
+        {
+          "after": 512,
+          "before": 7168,
+          "path": "/bindings/K"
+        }
+      ],
+      "evidence_ids": [
+        "source-ba1565da9110dd54",
+        "source-f148d02e60885c30",
+        "source-a568a6ed3d619255",
+        "flaggems-w8a8-launch-wrapper",
+        "flaggems-w8a8-persistent-phase-proof",
+        "nvidia-sm90-mbarrier-generation-rules"
+      ],
+      "execution": {
+        "claim_scope": "SELECTED_CTA",
+        "engine": "maximal",
+        "selected_cta": [
+          0,
+          0,
+          0
+        ],
+        "symbol_policy": "EXACT",
+        "symbols": [
+          "w8a8_block_fp8_bmm_kernel"
+        ]
+      },
+      "expected_pipeline": {
+        "allowed_diagnostic_codes": [],
+        "status": "UNASSESSED"
+      },
+      "kernel_id": "triton-w8a8_block_fp8_bmm_kernel-3b449525",
+      "parent_spec_id": "flaggems-w8a8-pro-k7168-original",
+      "rationale": "This is the smallest legal BLOCK_K-aligned K that exercises every stage once; a second persistent tile immediately exposes phase reset against generation one.",
+      "recipe": {
+        "candidate_id": "ba1565da9110dd54",
+        "path": "suite3/recipes/flaggems-w8a8-k512.json",
+        "recipe_id": "flaggems-w8a8-b16-m128-n1024-k512-stages4",
+        "sha256": "b4773ffc39104e34879f5e3168056ef496f95f45d6ccf85702af2173c69b72ec"
+      },
+      "revision_id": "triton-w8a8_block_fp8_bmm_kernel-3b449525@34bd6d68",
+      "role": "BOUNDARY",
+      "rule_ids": [
+        "MB-07",
+        "MB-09",
+        "MEM-04",
+        "WG-08"
+      ],
+      "semantic_ground_truth": {
+        "class": "DATA_HAZARD",
+        "evidence_ids": [
+          "flaggems-w8a8-persistent-phase-proof"
+        ],
+        "method": "MANUAL_PROTOCOL_TRACE",
+        "rationale": "One use per slot toggles parity before the next persistent tile, while the source restarts phaseIdx at zero.",
+        "status": "CONFIRMED"
+      },
+      "spec_id": "flaggems-w8a8-k512-first-odd-cycle"
+    }
+  ]
+}

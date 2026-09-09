@@ -1,0 +1,32 @@
+{
+  "case_count": 3,
+  "changes": [
+    "retained the TileLang device factory and its in-file helper closure",
+    "removed unrelated upstream host definitions and decorators",
+    "inlined required TileOPs helper functions and constants",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-softmax-split-finalize-kernel-func-7d3d23cb1a33",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "45ac5ef99b63b8dc7dc1d85182a4f02a16dfca91111f4533aac7a5c04278d42c"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      467,
+      506
+    ],
+    "path": "src/tileops/kernels/reduction/softmax.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/reduction/softmax.py#L467-L506",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "61cef867fbc3b0b39f03508cbb422cd0acaa23f128b35f2d8df3205bd21c3f15",
+    "symbol": "_softmax_split_finalize_kernel._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 3,
+  "variant": ""
+}

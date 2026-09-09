@@ -1,0 +1,85 @@
+{
+  "arguments": {},
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-raw-kernel-83e8b6cbec7a-original-4188877a14",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:target",
+        "1": "global:scratch",
+        "2": "global:counter"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {},
+    "grid": [
+      2,
+      1,
+      1
+    ],
+    "grid_ctas": 2,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 1
+    },
+    "signature": {
+      "counter_ptr": "*i32",
+      "ptr": "*i32",
+      "scratch_ptr": "*i32"
+    }
+  },
+  "evidence": [
+    "source-cff782d8e96e5e14",
+    "launch-440325ec05f88b90"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-raw-kernel-83e8b6cbec7a",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-launch:python/test/gsan/test_gsan_failures.py:374;case=raw",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-launch:python/test/gsan/test_gsan_failures.py:374;case=raw",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

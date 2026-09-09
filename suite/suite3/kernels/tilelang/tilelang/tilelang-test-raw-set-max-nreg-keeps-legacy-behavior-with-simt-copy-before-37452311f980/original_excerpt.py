@@ -1,0 +1,18 @@
+    @T.prim_func
+    def before(A: T.Tensor((512, 512), T.float16), B: T.Tensor((512, 512), T.float16)):
+        bx = T.launch_thread("blockIdx.x", 8)
+        v = T.launch_thread("threadIdx.x", 256)
+
+        with T.sblock(""):
+            T.reads(A[bx * 64, 0:64])
+            T.writes(B[bx * 64, 0:64])
+
+            A_shared = T.alloc_buffer((128,), T.float16, scope="shared")
+            T.attr([128, 128], "kWarpSpecializationScope", 0)
+
+            if v >= 128:
+                T.set_max_nreg(80, 0)
+                A_shared[v - 128] = A[bx * 64, v - 128]
+            else:
+                T.set_max_nreg(240, 1)
+                B[bx * 64, v] = A_shared[v]

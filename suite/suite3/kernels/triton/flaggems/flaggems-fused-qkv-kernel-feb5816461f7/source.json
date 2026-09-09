@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-fused-qkv-kernel-feb5816461f7",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "9a25867cb30fa3d08f41b0ec4d4be55e4b7b8de116daf3506f65fefa0a5692ce"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      36,
+      151
+    ],
+    "path": "src/flag_gems/fused/fused_deepseek_v4_qnorm_rope_kv_rope_insert.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/fused/fused_deepseek_v4_qnorm_rope_kv_rope_insert.py#L36-L151",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "55e04dfe81a6378fc1c58dbc59e1d694639813342f7cbbe346e9567bbefe62b1",
+    "symbol": "_fused_qkv_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

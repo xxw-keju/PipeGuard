@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-reject-read-before-finalize-make-kernel-f0e89e3f5350",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "0ea4b831dc9287c353c7d6360cdba67e68f0639e5b4ebeb2a9a7d4244d51e861"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      752,
+      764
+    ],
+    "path": "testing/python/language/test_tilelang_language_reducer_v2.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/language/test_tilelang_language_reducer_v2.py#L752-L764",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "5d05d1f5490911b8be33abbf267e83137bca2503071e3a05f1b469d34bf745df",
+    "symbol": "test_reject_read_before_finalize.make.kernel"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

@@ -1,0 +1,108 @@
+{
+  "arguments": {
+    "in_shape1": 4,
+    "in_shape2": 4,
+    "in_shape3": 4,
+    "in_shape4": 16,
+    "ou_shape1": 4,
+    "ou_shape2": 4,
+    "ou_shape3": 16,
+    "ou_shape4": 4,
+    "trans1": 1,
+    "trans2": 2,
+    "trans3": 3,
+    "trans4": 0
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-test-trans-4d-kernel-57dfdd3c8f16-original-d34075ebab",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "in_shape1": 4,
+      "in_shape2": 4,
+      "in_shape3": 4,
+      "in_shape4": 16,
+      "ou_shape1": 4,
+      "ou_shape2": 4,
+      "ou_shape3": 16,
+      "ou_shape4": 4,
+      "trans1": 1,
+      "trans2": 2,
+      "trans3": 3,
+      "trans4": 0
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 8
+    },
+    "signature": {
+      "In": "*i8",
+      "Out": "*i8",
+      "in_shape1": "constexpr",
+      "in_shape2": "constexpr",
+      "in_shape3": "constexpr",
+      "in_shape4": "constexpr",
+      "ou_shape1": "constexpr",
+      "ou_shape2": "constexpr",
+      "ou_shape3": "constexpr",
+      "ou_shape4": "constexpr",
+      "trans1": "constexpr",
+      "trans2": "constexpr",
+      "trans3": "constexpr",
+      "trans4": "constexpr"
+    }
+  },
+  "evidence": [
+    "source-f9f2c78e0785fd72",
+    "launch-8d092ea451303e12"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-test-trans-4d-kernel-57dfdd3c8f16",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:3721;pytest-param:dtype_str=int8,shape=(4, 4, 4, 16),perm=(1, 2, 3, 0)",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-launch:python/test/unit/language/test_core.py:3721;pytest-param:dtype_str=int8,shape=(4, 4, 4, 16),perm=(1, 2, 3, 0)",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-fuse-requires-same-barrier-before-fd620fab9ac8",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "269da20ab61c0f069cc2866cd121e4a1e207314e9ff270ec5d5ac93703c3c307"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      58,
+      73
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_fuse_mbarrier_arrive_expect_tx.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_fuse_mbarrier_arrive_expect_tx.py#L58-L73",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "b6a1df272cb8242efc349f00d5d17dd4b6853cbc485d43d5057aecc264d4bc59",
+    "symbol": "test_fuse_requires_same_barrier.before"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

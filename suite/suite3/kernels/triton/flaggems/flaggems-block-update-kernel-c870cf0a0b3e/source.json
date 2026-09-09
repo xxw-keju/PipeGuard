@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-block-update-kernel-c870cf0a0b3e",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "1232338beb4fbcea36c7b9ac5627ee83424bdf4d187a80c3184fc1266024972f"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      477,
+      531
+    ],
+    "path": "src/flag_gems/ops/cumsum.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/cumsum.py#L477-L531",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "30a2e4d3357b7c82d22ddda95140704fc7e33fe89d186d61e80cc961047f26cc",
+    "symbol": "block_update_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

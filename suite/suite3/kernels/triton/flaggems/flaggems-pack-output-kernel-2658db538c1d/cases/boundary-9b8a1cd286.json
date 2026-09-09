@@ -1,0 +1,115 @@
+{
+  "arguments": {
+    "bidirectional": false,
+    "dtype": "torch.float32",
+    "has_biases": false,
+    "hidden_size": 64,
+    "input_size": 10,
+    "lengths": [
+      7,
+      6,
+      5,
+      4,
+      3,
+      2
+    ],
+    "num_layers": 1
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": false,
+        "before": true,
+        "path": "/bindings/bidirectional"
+      },
+      {
+        "after": false,
+        "before": true,
+        "path": "/bindings/has_biases"
+      },
+      {
+        "after": 64,
+        "before": 6,
+        "path": "/bindings/hidden_size"
+      },
+      {
+        "after": 1,
+        "before": 2,
+        "path": "/bindings/num_layers"
+      }
+    ],
+    "dimensions": [
+      "bidirectional",
+      "has_biases",
+      "hidden_size",
+      "num_layers"
+    ],
+    "transition": "Official test-matrix variation across: bidirectional, has_biases, hidden_size, num_layers"
+  },
+  "build": {},
+  "case_id": "flaggems-pack-output-kernel-2658db538c1d-boundary-9b8a1cd286",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-0710fe89772b004c"
+      ],
+      "test_end_line": 204,
+      "test_function": "test_gru_data",
+      "test_path": "tests/test_gru.py",
+      "test_source_sha256": "c46a4356f536da977ded81b569353114f5aed65de61fe0cd60432655797baa17",
+      "test_start_line": 151
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-0710fe89772b004c",
+    "flaggems-test-a54487a6d3d47372",
+    "source-63cf05f4055b461d"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-pack-output-kernel-2658db538c1d",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_gru.py:151-204#test_gru_data",
+  "parent_case_id": "flaggems-pack-output-kernel-2658db538c1d-original-1238b7f727",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

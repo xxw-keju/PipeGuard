@@ -1,0 +1,96 @@
+{
+  "arguments": {
+    "hidden_size": 4096,
+    "mhc_mult": 4,
+    "n1": 8192
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 4096,
+        "before": 1280,
+        "path": "/bindings/hidden_size"
+      },
+      {
+        "after": 8192,
+        "before": 512,
+        "path": "/bindings/n1"
+      }
+    ],
+    "dimensions": [
+      "hidden_size",
+      "n1"
+    ],
+    "transition": "Official source-matrix variation across: hidden_size, n1"
+  },
+  "build": {
+    "factory_arguments": {
+      "hidden_size": 4096,
+      "mhc_mult": 4,
+      "mhc_post_mult_value": 1.0,
+      "mhc_pre_eps": 1e-06,
+      "mhc_sinkhorn_eps": 1e-06,
+      "n_splits": 16,
+      "rms_eps": 1e-06,
+      "sinkhorn_repeat": 10
+    }
+  },
+  "case_id": "tilekernels-mhc-pre-big-fuse-0cdd3da96f58-boundary-de55768039",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 138,
+      "function": "test_correctness",
+      "kind": "UPSTREAM_TEST",
+      "path": "tests/mhc/test_pre_big_fuse.py",
+      "source_sha256": "52ebac271a9fe7079a4402c111991d5434cb798cb58b8923433a4f04e425a2f4",
+      "start_line": 96
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-191c60b235a18906",
+    "tilekernels-36d9e45d-spec-evidence-329bd630d2c7e1ec"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tilekernels-mhc-pre-big-fuse-0cdd3da96f58",
+  "kind": "BOUNDARY",
+  "origin": "upstream-upstream_test:tests/mhc/test_pre_big_fuse.py:96-138#test_correctness",
+  "parent_case_id": "tilekernels-mhc-pre-big-fuse-0cdd3da96f58-original-fb4f3aef07",
+  "reason": "Source-derived TileKernels specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

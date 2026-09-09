@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-gqa-dense-causal-ws-kernel-4f39691367f7",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "9a1f557b5e7460a90cfc1434a2a9f79e3db3003ab294233d9a6970007ce1cb77"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      223,
+      602
+    ],
+    "path": "src/tileops/kernels/attention/gqa_dense.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/attention/gqa_dense.py#L223-L602",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "c8578ccbb64f51002fc9d635a1771256b2ccdcdd47a8e26899f0d99704e12f12",
+    "symbol": "_gqa_dense_causal_ws_kernel"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

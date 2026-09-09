@@ -1,0 +1,84 @@
+{
+  "arguments": {
+    "BLOCK_SIZE_M": 32,
+    "BLOCK_SIZE_N": 128,
+    "M": 96,
+    "N": 8192
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-layer-norm-bwd-dwdb-ca09c869e3a8-original-39301063bf",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "BLOCK_SIZE_M": 32,
+      "BLOCK_SIZE_N": 128
+    },
+    "grid_ctas": 64,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "BLOCK_SIZE_M": "constexpr",
+      "BLOCK_SIZE_N": "constexpr",
+      "DB": "*fp16",
+      "DW": "*fp16",
+      "FINAL_DB": "*fp16",
+      "FINAL_DW": "*fp16",
+      "M": "i32",
+      "N": "i32"
+    }
+  },
+  "evidence": [
+    "source-50d8d56cd9356f8a",
+    "launch-a11d96a5f272f36d"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-layer-norm-bwd-dwdb-ca09c869e3a8",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-launch:python/tutorials/05-layer-norm.py:290;tutorial-test:M=1151,N=8192,dtype=fp16;reduction-M=96",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-launch:python/tutorials/05-layer-norm.py:290;tutorial-test:M=1151,N=8192,dtype=fp16;reduction-M=96",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

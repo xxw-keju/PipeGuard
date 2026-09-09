@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-gated-deltanet-decode-raw-cuda-flastyle-tl-decode-func-a8146e620cc3",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "4cdef1ba0e7c05d3d8a7050d3007e860cf45d73e62780cb372b87647fa124011"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      70,
+      135
+    ],
+    "path": "src/tileops/kernels/linear_attention/gated_deltanet_recurrence.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/linear_attention/gated_deltanet_recurrence.py#L70-L135",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "0f84a9a52d315a846fe5fc2550043a1b27ea0939d8091c9f53dd2b0c6eec3f20",
+    "symbol": "_gated_deltanet_decode_raw_cuda_flastyle_tl._decode_func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

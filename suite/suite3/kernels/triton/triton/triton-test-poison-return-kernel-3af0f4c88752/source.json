@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-poison-return-kernel-3af0f4c88752",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "dce57fa694c219ab4affeabf8c2203c354a59f900994425becfc996c4ad0a066"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      6311,
+      6314
+    ],
+    "path": "python/test/unit/language/test_core.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_core.py#L6311-L6314",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "ee6f529cbc531c1d13dd53f8784c830f9a1164c91b0bae12b879098ea148f330",
+    "symbol": "test_poison_return.kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

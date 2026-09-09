@@ -1,0 +1,66 @@
+{
+  "schema_version": "pipeguard-upstream-normative-baseline-v1",
+  "baseline_id": "nvidia-sm90-ptx93-cuda133-v1",
+  "ptx_isa": "9.3",
+  "cuda_toolkit": "13.3 Update 1",
+  "retrieved": "2026-09-07",
+  "derived_mapping": {
+    "path": "checker-correctness/sm90-nvidia-validity-spec.md",
+    "sha256": "a33b905700cf73ffa841eca47c2ce2894fe7473a4cc9801779f2cf1dbde3af96"
+  },
+  "documents": [
+    {
+      "source_id": "S0",
+      "title": "PTX ISA 9.3",
+      "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/"
+    },
+    {
+      "source_id": "S1",
+      "title": "CUDA Toolkit 13.3 Update 1 Release Notes",
+      "url": "https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html"
+    },
+    {
+      "source_id": "S2",
+      "title": "CUDA Programming Guide: Asynchronous Barriers",
+      "url": "https://docs.nvidia.com/cuda/cuda-programming-guide/04-special-topics/async-barriers.html"
+    }
+  ],
+  "rules": [
+    {"rule_id": "BAR-01", "source_ids": ["SRC-BAR-CTA"], "section": "PTX 9.3 §9.7.14.1", "reason": "CTA barrier participant counts must satisfy the documented domain."},
+    {"rule_id": "BAR-02", "source_ids": ["SRC-BAR-CTA"], "section": "PTX 9.3 §9.7.14.1", "reason": "Aligned CTA barriers require converged participation."},
+    {"rule_id": "BAR-03", "source_ids": ["SRC-BAR-CTA"], "section": "PTX 9.3 §9.7.14.1", "reason": "Active CTA barrier invocations cannot be incompatibly reused before reset."},
+    {"rule_id": "BAR-04", "source_ids": ["SRC-BAR-CTA"], "section": "PTX 9.3 §9.7.14.1", "reason": "Completed CTA barriers establish the documented order and visibility."},
+    {"rule_id": "MB-01", "source_ids": ["SRC-MB-UNINIT", "SRC-MB-LIFECYCLE"], "section": "PTX 9.3 §9.7.14.16", "reason": "mbarrier operations require a live initialized object."},
+    {"rule_id": "MB-02", "source_ids": ["SRC-MB-LAYOUT-COUNTS"], "section": "PTX 9.3 §9.7.14.16.1-3,12", "reason": "mbarrier storage, layout, alignment, and count values must remain in range."},
+    {"rule_id": "MB-03", "source_ids": ["SRC-MB-LAYOUT-COUNTS", "SRC-MB-LIFECYCLE"], "section": "PTX 9.3 §9.7.14.16", "reason": "Initialization creates a fresh lifecycle and defined phase state."},
+    {"rule_id": "MB-04", "source_ids": ["SRC-MB-ARRIVE"], "section": "PTX 9.3 mbarrier.arrive", "reason": "Arrival updates the pending-arrival ledger without violating its domain."},
+    {"rule_id": "MB-05", "source_ids": ["SRC-MB-ARRIVE-DROP"], "section": "PTX 9.3 mbarrier.arrive_drop", "reason": "Arrive-drop updates current and subsequent phase arrival counts."},
+    {"rule_id": "MB-06", "source_ids": ["SRC-MB-TX", "SRC-MB-LAYOUT-COUNTS"], "section": "PTX 9.3 mbarrier transaction count", "reason": "Expected and completed transaction bytes share one bounded signed ledger."},
+    {"rule_id": "MB-07", "source_ids": ["SRC-MB-COMPLETE"], "section": "PTX 9.3 mbarrier phase completion", "reason": "A phase completes only when arrival and transaction ledgers both reach zero."},
+    {"rule_id": "MB-08", "source_ids": ["SRC-MB-PHASE-OBSERVE"], "section": "PTX 9.3 mbarrier phase reuse", "reason": "At least one successful wait must observe a completed phase before the next phase receives its first arrive-on."},
+    {"rule_id": "MB-09", "source_ids": ["SRC-MB-WAIT"], "section": "PTX 9.3 mbarrier wait/test", "reason": "Wait state and parity must resolve to the current or immediately previous supported generation."},
+    {"rule_id": "MB-10", "source_ids": ["SRC-MB-WAIT"], "section": "PTX 9.3 mbarrier wait/test", "reason": "Only a successful wait provides the specified acquire and visibility effect."},
+    {"rule_id": "CP-01", "source_ids": ["SRC-CP-ISSUE"], "section": "PTX 9.3 cp.async", "reason": "A cp.async issue opens source-read and destination-write windows until completion."},
+    {"rule_id": "CP-02", "source_ids": ["SRC-CP-COMMIT"], "section": "PTX 9.3 cp.async.commit_group", "reason": "Classic cp.async groups are formed per issuing thread, including legal empty groups."},
+    {"rule_id": "CP-03", "source_ids": ["SRC-CP-COMMIT"], "section": "PTX 9.3 cp.async.commit_group", "reason": "Writes within one cp.async group are unordered and overlapping destinations are invalid."},
+    {"rule_id": "CP-04", "source_ids": ["SRC-CP-WAIT"], "section": "PTX 9.3 cp.async.wait_group", "reason": "wait_group N closes all but the newest N group windows and provides only its documented visibility."},
+    {"rule_id": "TMA-01", "source_ids": ["SRC-BULK-PROXY", "SRC-BULK-COPY", "SRC-TMA-TENSOR"], "section": "PTX 9.3 cp.async.bulk/tensor", "reason": "TMA and bulk issues create async-proxy source and destination access windows."},
+    {"rule_id": "TMA-02", "source_ids": ["SRC-BULK-COPY"], "section": "PTX 9.3 cp.async.bulk", "reason": "Bulk transfer size, alignment, range, and descriptor constraints must be established."},
+    {"rule_id": "TMA-03", "source_ids": ["SRC-BULK-COPY", "SRC-TMA-TENSOR", "SRC-MB-TX"], "section": "PTX 9.3 bulk completion", "reason": "Each logical issue contributes its copied byte count once to the tracked mbarrier generation."},
+    {"rule_id": "TMA-04", "source_ids": ["SRC-BULK-PROXY", "SRC-MB-WAIT"], "section": "PTX 9.3 TMA mbarrier completion", "reason": "Generic consumers require successful observation of the corresponding TMA barrier phase."},
+    {"rule_id": "TMA-05", "source_ids": ["SRC-BULK-GROUP"], "section": "PTX 9.3 bulk-group wait", "reason": "Read-only and full bulk-group waits close different source and destination endpoints."},
+    {"rule_id": "TMA-06", "source_ids": ["SRC-BULK-PROXY", "SRC-PROXY-FENCE"], "section": "PTX 9.3 proxy fences", "reason": "Generic/async handoff requires matching fence direction, scope, state space, and region."},
+    {"rule_id": "WG-01", "source_ids": ["SRC-WG-ISSUE"], "section": "PTX 9.3 wgmma target notes", "reason": "WGMMA requires sm_90a and an exact warpgroup participant identity."},
+    {"rule_id": "WG-02", "source_ids": ["SRC-WG-ISSUE", "SRC-WG-FENCE", "SRC-WG-COMMIT", "SRC-WG-WAIT"], "section": "PTX 9.3 wgmma aligned operations", "reason": "WGMMA protocol operations require warpgroup convergence."},
+    {"rule_id": "WG-03", "source_ids": ["SRC-WG-ISSUE", "SRC-WG-FENCE"], "section": "PTX 9.3 wgmma.fence", "reason": "Register operands and accumulators require the documented WGMMA fence ordering."},
+    {"rule_id": "WG-04", "source_ids": ["SRC-WG-FENCE", "SRC-WG-PROXY", "SRC-PROXY-FENCE"], "section": "PTX 9.3 WGMMA proxy ordering", "reason": "A register fence does not replace the shared-memory generic-to-async proxy fence."},
+    {"rule_id": "WG-05", "source_ids": ["SRC-WG-COMMIT"], "section": "PTX 9.3 wgmma.commit_group", "reason": "WGMMA groups are monotonic per warpgroup and may be empty."},
+    {"rule_id": "WG-06", "source_ids": ["SRC-WG-WAIT"], "section": "PTX 9.3 wgmma.wait_group", "reason": "wait_group N establishes the result-ready frontier for older WGMMA groups."},
+    {"rule_id": "WG-07", "source_ids": ["SRC-WG-WAIT"], "section": "PTX 9.3 wgmma.wait_group", "reason": "Accumulator or register-A access before the covering result wait is invalid."},
+    {"rule_id": "WG-08", "source_ids": ["SRC-WG-PROXY", "SRC-MEM-CONFLICT", "SRC-MEM-CAUSALITY"], "section": "PTX 9.3 WGMMA async-proxy memory model", "reason": "Shared operands remain asynchronously readable until their group is covered by a legal wait."},
+    {"rule_id": "MEM-01", "source_ids": ["SRC-MEM-CONFLICT"], "section": "PTX 9.3 §8.7.1", "reason": "Overlapping operations conflict when at least one is a write."},
+    {"rule_id": "MEM-02", "source_ids": ["SRC-MEM-CONFLICT", "SRC-MEM-MORALLY-STRONG"], "section": "PTX 9.3 §8.7", "reason": "A conflicting pair is a data race when neither causality nor moral strength orders it."},
+    {"rule_id": "MEM-03", "source_ids": ["SRC-MEM-CAUSALITY", "SRC-PROXY-FENCE"], "section": "PTX 9.3 §8.9.5", "reason": "Cross-proxy causality is preserved only by a fence covering the relevant direction, scope, state space, and alias."},
+    {"rule_id": "MEM-04", "source_ids": ["SRC-CP-ISSUE", "SRC-BULK-COPY", "SRC-TMA-TENSOR", "SRC-WG-PROXY", "SRC-MEM-CONFLICT"], "section": "PTX 9.3 asynchronous memory operations", "reason": "Conflicts must be checked against complete asynchronous access windows rather than issue points."}
+  ]
+}

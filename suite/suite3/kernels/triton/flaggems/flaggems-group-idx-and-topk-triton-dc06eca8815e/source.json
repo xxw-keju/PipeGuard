@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-group-idx-and-topk-triton-dc06eca8815e",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "c048fcf78d4861a4b29778938c2b2f79bb9a56c5e4ec1a175cf18a7b95e93781"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      81,
+      242
+    ],
+    "path": "src/flag_gems/fused/grouped_topk.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/fused/grouped_topk.py#L81-L242",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "df8f2166b2006ef08550bbdd8b7bb457d6364d9a68569a71bd02107aba47924a",
+    "symbol": "group_idx_and_topk_triton"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

@@ -1,0 +1,33 @@
+{
+  "case_count": 16,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-replicationpad3d-kernel-eb665ffb2bd3",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "2c2fc78060ac1c58f0c34ccae31e504491c40104739ffba8d5ebf12598bf38e5"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      27,
+      92
+    ],
+    "path": "src/flag_gems/ops/replication_pad3d.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/replication_pad3d.py#L27-L92",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "c7d61a2e8a0b88bd1768e3077a3576ab7e11ba432dd055d7c8cbb3297ebeea8d",
+    "symbol": "replicationpad3d_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

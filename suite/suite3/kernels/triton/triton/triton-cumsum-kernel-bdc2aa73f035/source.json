@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-cumsum-kernel-bdc2aa73f035",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "e1bd66eedb7b53d58c7ae5607e3810b6d77d43cb32cb80891a6bb9c923b8bc7e"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      13,
+      17
+    ],
+    "path": "python/test/unit/runtime/test_compilation_listener.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/runtime/test_compilation_listener.py#L13-L17",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "722796667c3247f2e49de29fc203c148310843ae770514fd4e538309ee416805",
+    "symbol": "cumsum_kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

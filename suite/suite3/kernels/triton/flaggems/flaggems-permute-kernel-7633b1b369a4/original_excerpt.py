@@ -1,0 +1,30 @@
+@triton.jit
+def permute_kernel(
+    x_ptr,  # *Pointer* to input tensor
+    y_ptr,  # *Pointer* to output tensor
+    n_elements,  # total number of elements
+    ndim,  # number of dimensions
+    in_strides_perm_ptr,  # int64[ndim]: input strides permuted by dims
+    out_shape_ptr,  # int64[ndim]: output shape
+    out_postfix_ptr,  # int64[ndim]: product of sizes after each axis in output
+    BLOCK_SIZE: tl.constexpr,
+    MAX_DIMS: tl.constexpr,
+):
+    pid = tl.program_id(axis=0)
+    block_start = pid * BLOCK_SIZE
+    offs = block_start + tl.arange(0, BLOCK_SIZE)
+    mask = offs < n_elements
+
+    offs64 = offs.to(tl.int64)
+    in_index = tl.zeros([BLOCK_SIZE], dtype=tl.int64)
+
+    for k in range(MAX_DIMS):
+        cond = k < ndim
+        step_k = tl.load(out_postfix_ptr + k, mask=cond, other=1).to(tl.int64)
+        size_k = tl.load(out_shape_ptr + k, mask=cond, other=1).to(tl.int64)
+        stride_k = tl.load(in_strides_perm_ptr + k, mask=cond, other=0).to(tl.int64)
+        coord_k = (offs64 // step_k) % size_k
+        in_index += coord_k * stride_k
+
+    vals = tl.load(x_ptr + in_index, mask=mask)
+    tl.store(y_ptr + offs64, vals, mask=mask)

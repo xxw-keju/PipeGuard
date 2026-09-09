@@ -1,0 +1,176 @@
+{
+  "arguments": {
+    "A_shape": [
+      48,
+      64,
+      128
+    ],
+    "B_in_shape": [
+      32,
+      1,
+      128
+    ],
+    "C_in_shape": [
+      32,
+      1,
+      128
+    ],
+    "dt_shape": [
+      32,
+      48,
+      64
+    ],
+    "dtype": "float16",
+    "label": "mamba2-780m-decode-b32",
+    "manifest": "src/tileops/manifest/mamba.yaml",
+    "operator": "SSDDecodeFwdOp",
+    "row_index": 2,
+    "state_shape": [
+      32,
+      48,
+      64,
+      128
+    ],
+    "x_shape": [
+      32,
+      48,
+      64
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 48,
+        "before": 64,
+        "path": "/bindings/A_shape/0"
+      },
+      {
+        "after": 32,
+        "before": 1,
+        "path": "/bindings/B_in_shape/0"
+      },
+      {
+        "after": 32,
+        "before": 1,
+        "path": "/bindings/C_in_shape/0"
+      },
+      {
+        "after": 32,
+        "before": 1,
+        "path": "/bindings/dt_shape/0"
+      },
+      {
+        "after": 48,
+        "before": 64,
+        "path": "/bindings/dt_shape/1"
+      },
+      {
+        "after": "mamba2-780m-decode-b32",
+        "before": "mamba2-1p3b-decode-b1",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 2,
+        "before": 0,
+        "path": "/bindings/row_index"
+      },
+      {
+        "after": 32,
+        "before": 1,
+        "path": "/bindings/state_shape/0"
+      },
+      {
+        "after": 48,
+        "before": 64,
+        "path": "/bindings/state_shape/1"
+      },
+      {
+        "after": 32,
+        "before": 1,
+        "path": "/bindings/x_shape/0"
+      },
+      {
+        "after": 48,
+        "before": 64,
+        "path": "/bindings/x_shape/1"
+      }
+    ],
+    "dimensions": [
+      "A_shape",
+      "B_in_shape",
+      "C_in_shape",
+      "dt_shape",
+      "state_shape",
+      "x_shape"
+    ],
+    "transition": "Official source-matrix variation across: A_shape, B_in_shape, C_in_shape, dt_shape, state_shape, x_shape"
+  },
+  "build": {
+    "factory_arguments": {
+      "batch": 32,
+      "d_head": 64,
+      "d_state": 128,
+      "dtype": "float16",
+      "n_groups": 1,
+      "n_heads": 48
+    }
+  },
+  "case_id": "tileops-ssd-decode-kernel-kernel-func-925b7ae03703-boundary-74cd53f4b5",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 268,
+      "function": "SSDDecodeFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/mamba.yaml",
+      "source_sha256": "70b79456bdefe906b48d34c671e57d15b93e26618d2df7406ae78f4869125ee6",
+      "start_line": 230
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-000e690263ca382b",
+    "tileops-6a4085cd-spec-evidence-ee0c0d7b632aa650"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-ssd-decode-kernel-kernel-func-925b7ae03703",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/mamba.yaml:230-268#SSDDecodeFwdOp",
+  "parent_case_id": "tileops-ssd-decode-kernel-kernel-func-925b7ae03703-original-3b2e873b30",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

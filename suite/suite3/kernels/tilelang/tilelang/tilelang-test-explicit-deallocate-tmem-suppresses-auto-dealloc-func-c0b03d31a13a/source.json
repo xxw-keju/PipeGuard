@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-explicit-deallocate-tmem-suppresses-auto-dealloc-func-c0b03d31a13a",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "2fcf2a6ab7f89013ec201769bb96ae4364e3691240ef0ab1a69edeb2421dd8fa"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      38,
+      42
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_lower_shared_tmem.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_lower_shared_tmem.py#L38-L42",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "f23acba1b896b831c6f2bd1ce9c2fabfb49d908d99123c0fa2ec9947d9e876f7",
+    "symbol": "test_explicit_deallocate_tmem_suppresses_auto_dealloc.func"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

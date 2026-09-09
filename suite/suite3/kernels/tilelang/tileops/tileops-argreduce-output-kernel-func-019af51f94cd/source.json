@@ -1,0 +1,32 @@
+{
+  "case_count": 3,
+  "changes": [
+    "retained the TileLang device factory and its in-file helper closure",
+    "removed unrelated upstream host definitions and decorators",
+    "inlined required TileOPs helper functions and constants",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-argreduce-output-kernel-func-019af51f94cd",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "823d845f17435ecd380e47218d723f5641cf7031dabfcaedf4bed947dc7df251"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      304,
+      364
+    ],
+    "path": "src/tileops/kernels/reduction/argreduce.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/reduction/argreduce.py#L304-L364",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "ca27e21cf76ca15e3b9f14a875b6fc040c335df4752922a7ff74d571855f6032",
+    "symbol": "_argreduce_output_kernel._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 3,
+  "variant": ""
+}

@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-mma-remark-matmul-kernel-8942a8161702",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "8f8bc5d4f8818b8f13afd5b959c04a3f30005bd25f9d282141a9e65feac8953e"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      25,
+      58
+    ],
+    "path": "python/test/unit/test_perf_warning.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/test_perf_warning.py#L25-L58",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "34f64402936d0c4841af9ba3ebb5d5502e47239c7a155c341fc2ea7e5c3e10f8",
+    "symbol": "test_mma_remark.matmul_kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

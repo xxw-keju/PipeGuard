@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-prefill-chunk-local-cumsum-bthd-tl-func-63eca8d176ff",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "75a9f90b36b72a38831dc1bdc8fe03d05ed99f404e9d1a78c661d65ec792831d"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      366,
+      390
+    ],
+    "path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py#L366-L390",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "01c6ccdd044dd3e680b53b2231e8b2a6a06f81dd69f642a065aa191d9b43ab0d",
+    "symbol": "_prefill_chunk_local_cumsum_bthd_tl._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

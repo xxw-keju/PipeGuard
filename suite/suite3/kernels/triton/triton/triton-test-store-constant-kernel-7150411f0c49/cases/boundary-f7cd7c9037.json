@@ -1,0 +1,100 @@
+{
+  "arguments": {
+    "BLOCK_SIZE": 128,
+    "CONSTANT_FIELD": "mask",
+    "n_elements": 128
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": "*fp32",
+        "before": "*u8",
+        "path": "/compiler/signature/output_ptr"
+      }
+    ],
+    "dimensions": [
+      "element_dtype"
+    ],
+    "transition": "Cross from an 8-bit integer destination to a 32-bit floating-point destination while preserving the false-mask branch."
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-test-store-constant-kernel-7150411f0c49-boundary-f7cd7c9037",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "BLOCK_SIZE": 128,
+      "CONSTANT_FIELD": "mask"
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "BLOCK_SIZE": "constexpr",
+      "CONSTANT_FIELD": "constexpr",
+      "n_elements": "i32",
+      "output_ptr": "*fp32"
+    }
+  },
+  "evidence": [
+    "triton-store-constant-source",
+    "triton-store-constant-upstream-test",
+    "nvidia-sm90-memory-conflict-rules"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ONLY",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "CAPTURED"
+  },
+  "expected_result": {
+    "allowed_diagnostic_codes": [],
+    "verdict": "SAFE",
+    "witness_constraints": {}
+  },
+  "ground_truth": {
+    "class": "CORRECT",
+    "evidence_ids": [
+      "triton-store-constant-upstream-test"
+    ],
+    "method": "UPSTREAM_REGRESSION",
+    "rationale": "The official dtype × constant-field test expects an all-zero float32 result for this branch.",
+    "status": "CONFIRMED"
+  },
+  "kernel_id": "triton-test-store-constant-kernel-7150411f0c49",
+  "kind": "BOUNDARY",
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:2428;pytest-param:dtype_str=float32,constant_field=mask",
+  "parent_case_id": "triton-test-store-constant-kernel-7150411f0c49-original-229508cf1d",
+  "reason": "The integer-to-floating and 8-to-32-bit transition changes value typing and byte regions, exercising exact inactive-effect and address-range recovery.",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [
+    "MEM-01",
+    "MEM-02"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

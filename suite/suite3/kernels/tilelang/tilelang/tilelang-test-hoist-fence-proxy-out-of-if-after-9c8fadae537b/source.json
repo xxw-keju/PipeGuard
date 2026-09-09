@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-hoist-fence-proxy-out-of-if-after-9c8fadae537b",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "362818da2de5fde3e6026fc8916c41f4bcfef71a30fae1bbd75fd2fd8123dfef"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      1073,
+      1120
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_inject_fence_proxy.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_inject_fence_proxy.py#L1073-L1120",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "38fb0a7f466e6d984cf870724c10b5d49b88720fff2782fd6a2d9bfc2ee7fb03",
+    "symbol": "test_hoist_fence_proxy_out_of_if.after"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

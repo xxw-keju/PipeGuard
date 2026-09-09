@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-cross-thread-hazard-still-requires-sync-func-119b2476434a",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "df1eab2aa7448d1993174df51767f0ccd07719ecd64a66de0e1f8eafe54f4b24"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      1295,
+      1304
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_thread_sync.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_thread_sync.py#L1295-L1304",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "e29a33fec5c80f623ba8c212a731e1ea3d0b1eda4c11ee675058522fc605c201",
+    "symbol": "test_cross_thread_hazard_still_requires_sync.func"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

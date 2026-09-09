@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-explicit-deallocate-keeps-its-own-allocation-func-f3b991b20215",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "beed56073c87947a8c7e7ee9a8a5c1ce020ab0941436877285404784795d8c94"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      199,
+      206
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_tmem_arena_packing.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_tmem_arena_packing.py#L199-L206",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "ed78dcfd9c58d1b541e79044efa9b6f9ef98106cb635028b2c8679bd09fc75e2",
+    "symbol": "test_explicit_deallocate_keeps_its_own_allocation.func"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

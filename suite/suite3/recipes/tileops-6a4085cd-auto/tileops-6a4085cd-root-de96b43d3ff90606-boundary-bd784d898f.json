@@ -1,0 +1,51 @@
+{
+  "bindings": {
+    "dim": [
+      0,
+      2
+    ],
+    "dtype": "float16",
+    "label": "3d-multidim-reduce",
+    "manifest": "src/tileops/manifest/reduction.yaml",
+    "operator": "LogSumExpFwdOp",
+    "row_index": 3,
+    "x_shape": [
+      4,
+      128,
+      4096
+    ]
+  },
+  "candidate_id": "de96b43d3ff90606",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 160,
+      "function": "LogSumExpFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/reduction.yaml",
+      "source_sha256": "08c0a1cdd8b2068a3e54d3e6f54e105ebf6a9ab0c02eccf67f034500885a7235",
+      "start_line": 109
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/reduction.yaml:109-160#LogSumExpFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-de96b43d3ff90606-boundary-bd784d898f-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

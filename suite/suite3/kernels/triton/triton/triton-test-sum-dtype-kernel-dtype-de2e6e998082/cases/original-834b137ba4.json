@@ -1,0 +1,83 @@
+{
+  "arguments": {
+    "in_dtype": {
+      "__pipeguard_triton_dtype__": "int32"
+    },
+    "init": 1,
+    "out_dtype": null
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-test-sum-dtype-kernel-dtype-de2e6e998082-original-834b137ba4",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "in_dtype": {
+        "__pipeguard_triton_dtype__": "int32"
+      },
+      "out_dtype": null
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "in_dtype": "constexpr",
+      "init": "i32",
+      "out_dtype": "constexpr",
+      "out_ptr": "*i32"
+    }
+  },
+  "evidence": [
+    "source-d760505747f7eeea",
+    "launch-ed977f8c8015b2be"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-test-sum-dtype-kernel-dtype-de2e6e998082",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:3128;init=1;in_dtype=tl.int32;out_dtype=None",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-launch:python/test/unit/language/test_core.py:3128;init=1;in_dtype=tl.int32;out_dtype=None",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

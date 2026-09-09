@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-index-reduce-flat-kernel-8caf819ee6eb",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "d86262073dcfe111565a1628c6959e17d27c7a82bd414e35ea4169ff93621d86"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      118,
+      190
+    ],
+    "path": "src/flag_gems/ops/index_reduce.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/index_reduce.py#L118-L190",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "2f3d281322faca7eb91bf91b5d4b5949ba5a3a08450665da0c70f3da3027cd40",
+    "symbol": "_index_reduce_flat_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

@@ -1,0 +1,93 @@
+{
+  "arguments": {
+    "dtype": "torch.bfloat16",
+    "ignore_index": 1,
+    "reduction": "sum",
+    "shape": [
+      2,
+      4,
+      4,
+      8
+    ],
+    "weight": true
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": "sum",
+        "before": "mean",
+        "path": "/bindings/reduction"
+      }
+    ],
+    "dimensions": [
+      "reduction"
+    ],
+    "transition": "Official test-matrix variation across: reduction"
+  },
+  "build": {},
+  "case_id": "flaggems-nll-loss2d-finalize-kernel-b9502203dca4-boundary-17ef808dc7",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-f3ecced7360104ed"
+      ],
+      "test_end_line": 58,
+      "test_function": "test_nll_loss2d",
+      "test_path": "tests/test_nll_loss2d.py",
+      "test_source_sha256": "18af9858bbc5fbdab7eb88905dc92a8cc14c092061ecf4f237edda7ccda3ebee",
+      "test_start_line": 26
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-f3ecced7360104ed",
+    "flaggems-test-411434847d344bd0",
+    "source-c5c3887c7e588759"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-nll-loss2d-finalize-kernel-b9502203dca4",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_nll_loss2d.py:26-58#test_nll_loss2d",
+  "parent_case_id": "flaggems-nll-loss2d-finalize-kernel-b9502203dca4-original-54d6fe456b",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

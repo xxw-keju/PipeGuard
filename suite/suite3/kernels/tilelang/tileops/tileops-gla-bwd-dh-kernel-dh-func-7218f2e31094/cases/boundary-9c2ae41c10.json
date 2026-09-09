@@ -1,0 +1,185 @@
+{
+  "arguments": {
+    "chunk_size": 64,
+    "dht_shape": [
+      2,
+      4,
+      64,
+      64
+    ],
+    "do_shape": [
+      2,
+      4096,
+      4,
+      64
+    ],
+    "dtype": "bfloat16",
+    "g_shape": [
+      2,
+      4096,
+      4,
+      64
+    ],
+    "h_shape": [
+      2,
+      65,
+      4,
+      64,
+      64
+    ],
+    "has_initial_state": false,
+    "k_shape": [
+      2,
+      4096,
+      4,
+      64
+    ],
+    "label": "gla-bwd-b2-s4k-h4-d64",
+    "manifest": "src/tileops/manifest/linear_attention.yaml",
+    "operator": "GLABwdOp",
+    "q_shape": [
+      2,
+      4096,
+      4,
+      64
+    ],
+    "row_index": 1,
+    "scale": 0.125,
+    "v_shape": [
+      2,
+      4096,
+      4,
+      64
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 4096,
+        "before": 2048,
+        "path": "/bindings/do_shape/1"
+      },
+      {
+        "after": "bfloat16",
+        "before": "float16",
+        "path": "/bindings/dtype"
+      },
+      {
+        "after": 4096,
+        "before": 2048,
+        "path": "/bindings/g_shape/1"
+      },
+      {
+        "after": 65,
+        "before": 33,
+        "path": "/bindings/h_shape/1"
+      },
+      {
+        "after": 4096,
+        "before": 2048,
+        "path": "/bindings/k_shape/1"
+      },
+      {
+        "after": "gla-bwd-b2-s4k-h4-d64",
+        "before": "gla-bwd-b2-s2k-h4-d64",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 4096,
+        "before": 2048,
+        "path": "/bindings/q_shape/1"
+      },
+      {
+        "after": 1,
+        "before": 0,
+        "path": "/bindings/row_index"
+      },
+      {
+        "after": 4096,
+        "before": 2048,
+        "path": "/bindings/v_shape/1"
+      }
+    ],
+    "dimensions": [
+      "do_shape",
+      "dtype",
+      "g_shape",
+      "h_shape",
+      "k_shape",
+      "q_shape",
+      "v_shape"
+    ],
+    "transition": "Official source-matrix variation across: do_shape, dtype, g_shape, h_shape, k_shape, q_shape, v_shape"
+  },
+  "build": {
+    "factory_arguments": {
+      "batch": 2,
+      "chunk_size": 64,
+      "dim_k": 64,
+      "dim_v": 64,
+      "dtype": "bfloat16",
+      "has_initial_state": false,
+      "heads": 4,
+      "scale": 0.125,
+      "seq_len": 4096
+    }
+  },
+  "case_id": "tileops-gla-bwd-dh-kernel-dh-func-7218f2e31094-boundary-9c2ae41c10",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 614,
+      "function": "GLABwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/linear_attention.yaml",
+      "source_sha256": "6187f312b86312ba647b9d3967519346d9bd221ffc8bd6663aae4800eb254be5",
+      "start_line": 575
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-b4973a33de87bda8",
+    "tileops-6a4085cd-spec-evidence-a222ac4758f1a2af"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-gla-bwd-dh-kernel-dh-func-7218f2e31094",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/linear_attention.yaml:575-614#GLABwdOp",
+  "parent_case_id": "tileops-gla-bwd-dh-kernel-dh-func-7218f2e31094-original-441499e189",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

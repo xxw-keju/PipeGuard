@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-reports-an-uninitialized-local-buffer-kernel-0e4e02f58e96",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "8fcd05b0ee5670515cd27fc721b4d54197d261e333625109f43646c08bf04066"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      174,
+      178
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_verify_buffer_init.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_verify_buffer_init.py#L174-L178",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "631cac67dea4acaaea631b61a85727fae98ec85b1a5119486b8bfd56a68e23d2",
+    "symbol": "test_reports_an_uninitialized_local_buffer.kernel"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

@@ -1,0 +1,72 @@
+{
+  "bindings": {
+    "C_out": 64,
+    "bias_shape": {
+      "__pipeguard_missing__": true
+    },
+    "dilation": {
+      "__pipeguard_missing__": true
+    },
+    "dtype": "float16",
+    "groups": {
+      "__pipeguard_missing__": true
+    },
+    "input_shape": [
+      1,
+      3,
+      16,
+      112,
+      112
+    ],
+    "kD": 3,
+    "kH": 3,
+    "kW": 3,
+    "label": "r3d-stem-k3-s1",
+    "manifest": "src/tileops/manifest/convolution.yaml",
+    "operator": "Conv3dFwdOp",
+    "padding": [
+      1,
+      1,
+      1
+    ],
+    "row_index": 0,
+    "stride": [
+      1,
+      1,
+      1
+    ]
+  },
+  "candidate_id": "5429ca842353941e",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 271,
+      "function": "Conv3dFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/convolution.yaml",
+      "source_sha256": "d942836582e95fd1dd7e720c3b01801e0048ef4811704e521c59ec4d9a0669a2",
+      "start_line": 186
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/convolution.yaml:186-271#Conv3dFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-5429ca842353941e-original-c995541791-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

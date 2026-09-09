@@ -1,0 +1,33 @@
+{
+  "case_count": 16,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-adaptive-max-pool2d-backward-kernel-242b17f6c6c4",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "3bfd3ec433052297757957bb0921f219af10a09686c78a7140a3dd097a17ccba"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      28,
+      75
+    ],
+    "path": "src/flag_gems/ops/adaptive_max_pool2d_backward.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/adaptive_max_pool2d_backward.py#L28-L75",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "631b58cffddd75297474f28606149df8d11d7bbae67c16a171fc267f96cb17e2",
+    "symbol": "adaptive_max_pool2d_backward_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

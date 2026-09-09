@@ -1,0 +1,108 @@
+{
+  "arguments": {
+    "dtype": "torch.bfloat16",
+    "src_shape": [
+      1,
+      1
+    ],
+    "target_shape": [
+      4,
+      5
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": [
+          1,
+          1
+        ],
+        "before": [
+          1
+        ],
+        "path": "/bindings/src_shape"
+      },
+      {
+        "after": [
+          4,
+          5
+        ],
+        "before": [
+          3
+        ],
+        "path": "/bindings/target_shape"
+      }
+    ],
+    "dimensions": [
+      "src_shape",
+      "target_shape"
+    ],
+    "transition": "Official test-matrix variation across: src_shape, target_shape"
+  },
+  "build": {},
+  "case_id": "flaggems-broadcast-to-kernel-3d7e956f3aef-boundary-ac6490b45e",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-6e7bf81a9acfc348"
+      ],
+      "test_end_line": 63,
+      "test_function": "test_broadcast_to_shapes",
+      "test_path": "tests/test_broadcast_to.py",
+      "test_source_sha256": "d7f65b8eddd1bc5ec44ed8829aa337b41d5e9f0caf5c255ea5d823478477bf45",
+      "test_start_line": 52
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-6e7bf81a9acfc348",
+    "flaggems-test-a1d541cb3e94f3dc",
+    "source-e2bd74d2f83fb223"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-broadcast-to-kernel-3d7e956f3aef",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_broadcast_to.py:52-63#test_broadcast_to_shapes",
+  "parent_case_id": "flaggems-broadcast-to-kernel-3d7e956f3aef-original-3d41b1b537",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

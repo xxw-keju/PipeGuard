@@ -1,0 +1,105 @@
+{
+  "arguments": {
+    "M": 64,
+    "N": 4096,
+    "clean_logits": true
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 64,
+        "before": 1,
+        "path": "/bindings/M"
+      },
+      {
+        "after": 4096,
+        "before": 1024,
+        "path": "/bindings/N"
+      }
+    ],
+    "dimensions": [
+      "M",
+      "N"
+    ],
+    "transition": "Official test-matrix variation across: M, N"
+  },
+  "build": {},
+  "case_id": "flaggems-fp8-fp4-mqa-logits-kernel-1f446b51e2b6-boundary-01575a7013-config-6d4f45484d",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-59fa2e05483f750a"
+      ],
+      "test_end_line": 108,
+      "test_function": "test_fp8_fp4_mqa_logits",
+      "test_path": "tests/test_fp8_fp4_mqa_logits.py",
+      "test_source_sha256": "d358ddd484cf2c40d4418ba7a48d1df4814f2f1bdaa319fc1b413a313d0b10a9",
+      "test_start_line": 68
+    },
+    "config_index": 24,
+    "config_source": "src/flag_gems/runtime/backend/_nvidia/tune_configs.yaml#fp8_fp4_mqa_logits",
+    "constexprs": {
+      "BLOCK_M": 1,
+      "BLOCK_N": 128,
+      "HEAD_BLOCK": 32
+    },
+    "options": {
+      "maxnreg": null,
+      "num_ctas": 1,
+      "num_stages": 1,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-59fa2e05483f750a",
+    "flaggems-test-de9e019e1654b441",
+    "source-fea22172b94daba2"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-fp8-fp4-mqa-logits-kernel-1f446b51e2b6",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_fp8_fp4_mqa_logits.py:68-108#test_fp8_fp4_mqa_logits",
+  "parent_case_id": "flaggems-fp8-fp4-mqa-logits-kernel-1f446b51e2b6-original-df040872db-config-2de467c0f0",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned. Autotune candidate 24 from src/flag_gems/runtime/backend/_nvidia/tune_configs.yaml#fp8_fp4_mqa_logits.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

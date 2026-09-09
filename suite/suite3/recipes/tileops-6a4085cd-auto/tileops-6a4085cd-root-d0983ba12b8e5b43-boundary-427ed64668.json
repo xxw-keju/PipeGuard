@@ -1,0 +1,55 @@
+{
+  "bindings": {
+    "bias_shape": [
+      256
+    ],
+    "dtype": "float16",
+    "label": "wider-channel-g32-affine",
+    "manifest": "src/tileops/manifest/normalization.yaml",
+    "num_groups": 32,
+    "operator": "GroupNormFwdOp",
+    "row_index": 4,
+    "weight_shape": [
+      256
+    ],
+    "x_shape": [
+      4,
+      256,
+      28,
+      28
+    ]
+  },
+  "candidate_id": "d0983ba12b8e5b43",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 473,
+      "function": "GroupNormFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/normalization.yaml",
+      "source_sha256": "eac57f8436f58b179cd25ddfb270714a547ac889489aa62f857cda8d53e1785e",
+      "start_line": 414
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/normalization.yaml:414-473#GroupNormFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-d0983ba12b8e5b43-boundary-427ed64668-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

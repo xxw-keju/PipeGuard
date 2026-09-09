@@ -1,0 +1,54 @@
+{
+  "bindings": {
+    "dtype": "float16",
+    "kv_shape": [
+      1024,
+      8,
+      64
+    ],
+    "label": "batch2-page256",
+    "manifest": "src/tileops/manifest/attention.yaml",
+    "operator": "MultiHeadAttentionDecodePagedWithKVCacheFwdOp",
+    "page_size": 256,
+    "q_shape": [
+      2,
+      1,
+      8,
+      64
+    ],
+    "row_index": 1
+  },
+  "candidate_id": "21c7ff087a7e268a",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 470,
+      "function": "MultiHeadAttentionDecodePagedWithKVCacheFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/attention.yaml",
+      "source_sha256": "e4d1f6022026f42cc13f7be474325e4a843034587f5dfbc750ad527a86488132",
+      "start_line": 428
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/attention.yaml:428-470#MultiHeadAttentionDecodePagedWithKVCacheFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-21c7ff087a7e268a-boundary-c3ccb14202-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

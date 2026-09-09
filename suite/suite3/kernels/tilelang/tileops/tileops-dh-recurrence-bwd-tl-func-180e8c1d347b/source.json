@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-dh-recurrence-bwd-tl-func-180e8c1d347b",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "903bf7a235ead06e38838d8cf36363719191659c23382fa77b57724f56fda667"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      233,
+      312
+    ],
+    "path": "src/tileops/kernels/linear_attention/deltanet/deltanet_bwd.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/linear_attention/deltanet/deltanet_bwd.py#L233-L312",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "4b44145051519c21f1d9bd31d6eccdb7300af17381bba57f5be6d11158b0bf75",
+    "symbol": "_dh_recurrence_bwd_tl._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

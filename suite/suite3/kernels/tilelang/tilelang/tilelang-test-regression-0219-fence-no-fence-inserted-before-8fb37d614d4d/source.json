@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-regression-0219-fence-no-fence-inserted-before-8fb37d614d4d",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "5c50945de6f24f73b5ad72eaf4fa9280afaf365ef066af4d1b79c1e4035ca038"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      507,
+      669
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_inject_fence_proxy.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_inject_fence_proxy.py#L507-L669",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "11bc6a8ab77e33e8eb30b15a47932aff439ad50d622b297cef0057fad5868080",
+    "symbol": "test_regression_0219_fence_no_fence_inserted.before"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

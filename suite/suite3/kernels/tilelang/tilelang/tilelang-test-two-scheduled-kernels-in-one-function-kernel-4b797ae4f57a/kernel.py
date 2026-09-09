@@ -1,0 +1,38 @@
+# Normalized device code for PipeGuard Suite 3.
+# Source: https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_materialize_ws_schedule.py#L2002-L2023
+# The exact upstream excerpt is stored in original_excerpt.py.
+
+from tilelang import language as T
+
+def _resolve_kernel(**pipeguard_bindings):
+    @T.prim_func
+    def kernel(A: T.Tensor((64, 64), T.float16), B: T.Tensor((64, 64), T.float16)):
+        with T.Kernel(1, threads=128) as _:
+            T.annotate_ws_schedule(
+                T.WSSchedule(
+                    num_warps=4,
+                    roles=[T.WSRole("R", warps_lo=0, warps_hi=4, max_nreg=224)],
+                    pipelines=[],
+                    scopes=[T.WSScope(T.WSScope.ROOT, {"R": ["cp"]})],
+                )
+            )
+            T.copy(A, B, annotations={T.WSID: "cp"})
+        with T.Kernel(1, threads=128) as _:
+            T.annotate_ws_schedule(
+                T.WSSchedule(
+                    num_warps=8,
+                    roles=[T.WSRole("S", warps_lo=0, warps_hi=8, max_nreg=224)],
+                    pipelines=[],
+                    scopes=[T.WSScope(T.WSScope.ROOT, {"S": ["cp2"]})],
+                )
+            )
+            T.copy(B, A, annotations={T.WSID: "cp2"})
+    return kernel
+
+
+def build_kernel(case):
+    """Construct the DSL-native device entry without compiling or launching it."""
+    arguments = dict(case.get("arguments", {}))
+    build = case.get("build", {})
+    arguments.update(build.get("resolver_kwargs", {}))
+    return _resolve_kernel(**arguments)

@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-split-host-device-does-not-lift-conditional-device-assume-main-068dddac8964",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "cad70ff7a4f474f6d6577e1b8befb2f4b3d67d9f23538ce8e66a72fc113ec7f6"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      324,
+      329
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_split_host_device.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_split_host_device.py#L324-L329",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "fbeaeaad4fb4f2ab6d3021508a045e233d6e93a2926d5fcf1dd4202de4ea45c6",
+    "symbol": "test_split_host_device_does_not_lift_conditional_device_assume.main"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

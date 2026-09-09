@@ -1,0 +1,46 @@
+{
+  "bindings": {
+    "b": 8,
+    "dtype": "float16",
+    "k": 128,
+    "label": "small-b8-128",
+    "m": 128,
+    "manifest": "src/tileops/manifest/bmm.yaml",
+    "n": 128,
+    "operator": "BmmFwdOp",
+    "row_index": 0
+  },
+  "candidate_id": "c24b40b889b4d566",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 48,
+      "function": "BmmFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/bmm.yaml",
+      "source_sha256": "85ff320bb674a917fdc37d634cb13439d64982254dfbe9c266ae2fb182f89339",
+      "start_line": 5
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/bmm.yaml:5-48#BmmFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-c24b40b889b4d566-original-31023616ca-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

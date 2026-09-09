@@ -1,0 +1,42 @@
+    @tilelang.jit(
+        out_idx=[-1],
+        pass_configs={
+            tilelang.PassConfigKey.TL_ENABLE_FAST_MATH: False,
+        },
+        compile_flags=["-O3", "-DENABLE_BF16"],
+    )
+    def _func(num_stages, threads=256):
+        @T.prim_func
+        def dh_segment_boundary_scan_kernel(
+            segment_alpha: T.Tensor([batch, head, num_segments], "float32"),
+            segment_local: T.Tensor([batch, head, num_v_tiles, num_segments, dim_k, BV], dtype),
+            segment_carry_after: T.Tensor(
+                [batch, head, num_v_tiles, num_segments, dim_k, BV], dtype
+            ),
+        ):
+            with T.Kernel(num_v_tiles, batch, head, threads=threads) as (vid, bid, hid):
+                local = T.alloc_shared([dim_k, BV], dtype)
+                carry = T.alloc_shared([dim_k, BV], dtype)
+                carry_frag = T.alloc_fragment([dim_k, BV], accum_dtype)
+
+                for i, j in T.Parallel(dim_k, BV):
+                    carry[i, j] = T.float32(0.0)
+
+                for step in T.Pipelined(num_segments, num_stages=num_stages):
+                    sid = num_segments - 1 - step
+                    T.copy(
+                        carry,
+                        segment_carry_after[bid, hid, vid, sid, :, :],
+                        disable_tma=True,
+                    )
+                    T.copy(
+                        segment_local[bid, hid, vid, sid, :, :],
+                        local,
+                        disable_tma=True,
+                    )
+                    alpha = segment_alpha[bid, hid, sid]
+                    for i, j in T.Parallel(dim_k, BV):
+                        carry_frag[i, j] = local[i, j] + carry[i, j] * alpha
+                    T.copy(carry_frag, carry)
+
+        return dh_segment_boundary_scan_kernel

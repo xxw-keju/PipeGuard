@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-shared-load-does-not-trigger-fence-proxy-after-4beba07d154c",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "f9a471046f91e5c2a36c89156d3e835932094373cef60746c310273c7e34ccc6"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      1369,
+      1396
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_inject_fence_proxy.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_inject_fence_proxy.py#L1369-L1396",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "ff135673b7e0cf5a7887ee16edc7b2f8ba5289d3766dde8a07c3ecdd752f1caa",
+    "symbol": "test_shared_load_does_not_trigger_fence_proxy.after"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

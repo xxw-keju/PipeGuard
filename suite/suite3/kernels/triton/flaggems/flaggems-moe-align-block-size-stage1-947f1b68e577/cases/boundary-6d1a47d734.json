@@ -1,0 +1,89 @@
+{
+  "arguments": {
+    "block_size": 16,
+    "num_experts": 128,
+    "topk_ids_shape": [
+      1024,
+      10
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 128,
+        "before": 10,
+        "path": "/bindings/num_experts"
+      }
+    ],
+    "dimensions": [
+      "num_experts"
+    ],
+    "transition": "Official test-matrix variation across: num_experts"
+  },
+  "build": {},
+  "case_id": "flaggems-moe-align-block-size-stage1-947f1b68e577-boundary-6d1a47d734",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-d910dd4127882c6a"
+      ],
+      "test_end_line": 269,
+      "test_function": "test_accuracy_moe_align_block_size",
+      "test_path": "tests/test_moe_align_block_size.py",
+      "test_source_sha256": "1ea844d6a0d7ed1d4169fad68055deac8ceea92d50265a0bfb3d5cb68aaeaa8e",
+      "test_start_line": 204
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-d910dd4127882c6a",
+    "flaggems-test-602d312a3d50945a",
+    "source-648a8106a160f662"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-moe-align-block-size-stage1-947f1b68e577",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_moe_align_block_size.py:204-269#test_accuracy_moe_align_block_size",
+  "parent_case_id": "flaggems-moe-align-block-size-stage1-947f1b68e577-original-b5cf37c0d7",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

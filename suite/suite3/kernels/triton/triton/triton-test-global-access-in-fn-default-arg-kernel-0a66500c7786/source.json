@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-global-access-in-fn-default-arg-kernel-0a66500c7786",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "26167e4b41bfc6719bffa397f81b96b30991929f020089ede7b4312e02fd3217"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      323,
+      325
+    ],
+    "path": "python/test/unit/language/test_compile_errors.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_compile_errors.py#L323-L325",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "17d79ff5ae79a522c75791d1e6d39610153a873c6b035b07fe3cfe1efd1a7b3f",
+    "symbol": "test_global_access_in_fn_default_arg.kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

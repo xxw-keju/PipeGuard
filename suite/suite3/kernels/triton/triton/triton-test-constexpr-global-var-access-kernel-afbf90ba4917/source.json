@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-constexpr-global-var-access-kernel-afbf90ba4917",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "3f0e4a1a7a835f85c0f1fd376981268ba171d790ce4678a3bb134bdbff5df6bc"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      300,
+      302
+    ],
+    "path": "python/test/unit/language/test_compile_errors.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_compile_errors.py#L300-L302",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "1ab41a301f85ae09ed2db14b6c1bcdf3a6100b5f7fcd78f39b21095ac0633e8f",
+    "symbol": "test_constexpr_global_var_access.kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

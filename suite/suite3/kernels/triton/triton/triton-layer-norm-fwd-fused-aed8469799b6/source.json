@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-layer-norm-fwd-fused-aed8469799b6",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "880ce217099fbd7c8d71b60acc77d22596b863238e08a490f0fef2f7f12081b0"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      48,
+      95
+    ],
+    "path": "python/tutorials/05-layer-norm.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/tutorials/05-layer-norm.py#L48-L95",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "f9827efdc479bc6a1c746202e1e0a3b4923c58b74632e92e2a3e1dc440c0f176",
+    "symbol": "_layer_norm_fwd_fused"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

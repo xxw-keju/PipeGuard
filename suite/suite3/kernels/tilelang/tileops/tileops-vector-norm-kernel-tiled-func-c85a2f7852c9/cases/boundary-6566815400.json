@@ -1,0 +1,98 @@
+{
+  "arguments": {
+    "dim": -1,
+    "dtype": "float16",
+    "label": "dispatch-upper",
+    "manifest": "src/tileops/manifest/reduction.yaml",
+    "operator": "InfNormFwdOp",
+    "x_shape": [
+      512,
+      65536
+    ]
+  },
+  "boundary": {
+    "dimensions": [
+      "shape",
+      "dtype"
+    ],
+    "position": "upper",
+    "transition": "inf_tiled source dispatch region"
+  },
+  "build": {
+    "factory_arguments": {
+      "M": 512,
+      "N": 65536,
+      "dtype": "float16",
+      "op_kind": "inf",
+      "partial": false,
+      "tile_n": 12288
+    },
+    "kernel_arguments": {
+      "block_m": 1,
+      "threads": 256
+    }
+  },
+  "case_id": "tileops-vector-norm-kernel-tiled-func-c85a2f7852c9-boundary-6566815400",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 927,
+      "function": "InfNormFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/reduction.yaml",
+      "source_sha256": "9761ad6a2c97b4b3143a80f0df61da9e4726754dabc504cfe3dbd6189a26a277",
+      "start_line": 879
+    },
+    "dispatch": {
+      "predicate": "inf_tiled source dispatch region",
+      "strategy": "inf_tiled"
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-6b2ca798583d1be2",
+    "tileops-6a4085cd-spec-evidence-383fc6c7600a8371"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-vector-norm-kernel-tiled-func-c85a2f7852c9",
+  "kind": "BOUNDARY",
+  "origin": "upstream-dispatch:src/tileops/kernels/reduction",
+  "reason": "Source-condition witness for inf_tiled (upper).",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [
+    "tileops-dispatch-witness"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

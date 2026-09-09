@@ -1,0 +1,58 @@
+{
+  "arguments": {},
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "tilelang-test-simplify-lhs-of-boolean-and-using-rhs-before-40e50dee57cf-original-865546bf04",
+  "compile": {
+    "pass_configs": {},
+    "target_host": null
+  },
+  "evidence": [
+    "source-37dc3c0cde722a9e"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tilelang-test-simplify-lhs-of-boolean-and-using-rhs-before-40e50dee57cf",
+  "kind": "ORIGINAL",
+  "origin": "static-inference:no-unresolved-primfunc-bindings",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: static-inference:no-unresolved-primfunc-bindings",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

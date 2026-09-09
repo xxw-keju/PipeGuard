@@ -1,0 +1,44 @@
+{
+  "bindings": {
+    "d_model": 4096,
+    "dtype": "bfloat16",
+    "label": "transformer-2k-4k",
+    "manifest": "src/tileops/manifest/elementwise_generative.yaml",
+    "operator": "SinusoidalFwdOp",
+    "row_index": 1,
+    "seq_len": 2048
+  },
+  "candidate_id": "c955c279da83cca6",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 96,
+      "function": "SinusoidalFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/elementwise_generative.yaml",
+      "source_sha256": "693bfb532ba9a1c4d3b41c0243d8fa8ebe67ad0b0f35b1b2ef87fa8e42c7f463",
+      "start_line": 49
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/elementwise_generative.yaml:49-96#SinusoidalFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-c955c279da83cca6-boundary-4ea55f424e-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

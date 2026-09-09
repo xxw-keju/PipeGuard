@@ -1,0 +1,15 @@
+@triton.jit
+def _cross_sm_atomic_sync_kernel(payload_ptr, flag_ptr, counter_ptr, scratch_ptr, producer_sem: tl.constexpr,
+                                 consumer_sem: tl.constexpr, scope: tl.constexpr):
+    pid = tl.program_id(0)
+    if pid == 0:
+        tl.store(payload_ptr, 1000)
+        tl.atomic_xchg(flag_ptr, 1, sem=producer_sem, scope=scope)
+        tl.atomic_add(counter_ptr, 1, sem="relaxed")
+    elif pid == 1:
+        atomic_poll(counter_ptr, 1)
+        ready = 0
+        while ready != 1:
+            ready = tl.atomic_add(flag_ptr, 0, sem=consumer_sem, scope=scope)
+        result = tl.load(payload_ptr)
+        tl.store(scratch_ptr, result)

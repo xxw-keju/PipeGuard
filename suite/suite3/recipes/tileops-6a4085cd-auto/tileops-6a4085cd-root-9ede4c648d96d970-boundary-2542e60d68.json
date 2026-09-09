@@ -1,0 +1,84 @@
+{
+  "bindings": {
+    "S_shape": [
+      2,
+      4,
+      65,
+      64,
+      64
+    ],
+    "beta_shape": [
+      2,
+      4,
+      4096
+    ],
+    "chunk_size": 64,
+    "do_shape": [
+      2,
+      4,
+      4096,
+      64
+    ],
+    "dtype": "bfloat16",
+    "g_shape": [
+      2,
+      4,
+      4096
+    ],
+    "k_shape": [
+      2,
+      4,
+      4096,
+      64
+    ],
+    "label": "gdn-bwd-b2-s4k-h4-d64",
+    "manifest": "src/tileops/manifest/linear_attention.yaml",
+    "operator": "GatedDeltaNetBwdOp",
+    "q_shape": [
+      2,
+      4,
+      4096,
+      64
+    ],
+    "row_index": 1,
+    "v_shape": [
+      2,
+      4,
+      4096,
+      64
+    ]
+  },
+  "candidate_id": "9ede4c648d96d970",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 389,
+      "function": "GatedDeltaNetBwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/linear_attention.yaml",
+      "source_sha256": "a72bc04f4b9e262fd2e0b9e38b42ddc572d40e079134bac5aaa73141264d6d8e",
+      "start_line": 351
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/linear_attention.yaml:351-389#GatedDeltaNetBwdOp",
+  "recipe_id": "tileops-6a4085cd-root-9ede4c648d96d970-boundary-2542e60d68-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-bfloat16-mul-rounds-to-nearest-even-kernel-74eb52caad16",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "9fbd4b81993b92742a1a9388c7a696e14d01bee9d6c9e0aef4e0f4231324d811"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      450,
+      454
+    ],
+    "path": "python/test/unit/language/test_core.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_core.py#L450-L454",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "f8cb919e32799cf2f31c0b5ed2b676508358c3dc98105bcbebc086d97989cc57",
+    "symbol": "test_bfloat16_mul_rounds_to_nearest_even.kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

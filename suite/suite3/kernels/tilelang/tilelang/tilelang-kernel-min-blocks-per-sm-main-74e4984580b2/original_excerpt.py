@@ -1,0 +1,10 @@
+    @T.prim_func
+    def main(
+        A: T.Tensor((128, 128), "float32"),
+        B: T.Tensor((128, 128), "float32"),
+        C: T.Tensor((128, 128), "float32"),
+    ):
+        with T.Kernel(128, threads=128) as bx:
+            T.annotate_min_blocks_per_sm(2)
+            for i in T.serial(128):
+                C[bx, i] = A[bx, i] + B[bx, i]

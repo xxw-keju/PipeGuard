@@ -1,0 +1,140 @@
+{
+  "arguments": {
+    "dA_chunk_cumsum_shape": [
+      2,
+      80,
+      128
+    ],
+    "dtype": "float16",
+    "initial_states_shape": {
+      "__pipeguard_missing__": true
+    },
+    "label": "mamba2-2p7b-b2-s32k-dstate",
+    "manifest": "src/tileops/manifest/mamba.yaml",
+    "operator": "SSDStatePassingFwdOp",
+    "row_index": 1,
+    "states_shape": [
+      2,
+      128,
+      80,
+      128
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 2,
+        "before": 1,
+        "path": "/bindings/dA_chunk_cumsum_shape/0"
+      },
+      {
+        "after": 80,
+        "before": 64,
+        "path": "/bindings/dA_chunk_cumsum_shape/1"
+      },
+      {
+        "after": 128,
+        "before": 16,
+        "path": "/bindings/dA_chunk_cumsum_shape/2"
+      },
+      {
+        "after": "mamba2-2p7b-b2-s32k-dstate",
+        "before": "mamba2-1p3b-b1-s4k-dstate",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 1,
+        "before": 0,
+        "path": "/bindings/row_index"
+      },
+      {
+        "after": 2,
+        "before": 1,
+        "path": "/bindings/states_shape/0"
+      },
+      {
+        "after": 128,
+        "before": 16,
+        "path": "/bindings/states_shape/1"
+      },
+      {
+        "after": 80,
+        "before": 64,
+        "path": "/bindings/states_shape/2"
+      }
+    ],
+    "dimensions": [
+      "dA_chunk_cumsum_shape",
+      "states_shape"
+    ],
+    "transition": "Official source-matrix variation across: dA_chunk_cumsum_shape, states_shape"
+  },
+  "build": {
+    "factory_arguments": {
+      "batch": 2,
+      "d_state": 128,
+      "dtype": "float16",
+      "has_initial_states": false,
+      "n_heads": 80,
+      "num_chunks": 128
+    }
+  },
+  "case_id": "tileops-ssd-state-passing-fwd-kernel-kernel-func-c4d45dd0d81e-boundary-a45f10f1fe",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 190,
+      "function": "SSDStatePassingFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/mamba.yaml",
+      "source_sha256": "301eb768f68c89c9f0c0b0190d02e0c9132f67f75f665ec2afb269c82b8d6348",
+      "start_line": 152
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-2135bd40bb72dd0a",
+    "tileops-6a4085cd-spec-evidence-d03e3fb863923108"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-ssd-state-passing-fwd-kernel-kernel-func-c4d45dd0d81e",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/mamba.yaml:152-190#SSDStatePassingFwdOp",
+  "parent_case_id": "tileops-ssd-state-passing-fwd-kernel-kernel-func-c4d45dd0d81e-original-a358a8bf22",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

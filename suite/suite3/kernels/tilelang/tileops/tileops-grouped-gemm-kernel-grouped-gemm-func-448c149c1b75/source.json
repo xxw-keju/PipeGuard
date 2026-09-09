@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-grouped-gemm-kernel-grouped-gemm-func-448c149c1b75",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "03cb04af3f99bf75170c902b7de4bab270c7d6bd1ee39c83182335c90712866c"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      36,
+      182
+    ],
+    "path": "src/tileops/kernels/grouped_gemm/grouped_gemm.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/grouped_gemm/grouped_gemm.py#L36-L182",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "c8c7b363469c2f902267ee888dd10d1c8846ac8a75a398864ccc268153f24434",
+    "symbol": "_grouped_gemm_kernel._grouped_gemm_func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

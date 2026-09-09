@@ -1,0 +1,58 @@
+{
+  "arguments": {},
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "tilelang-make-static-sliced-wgmma-kernel-main-1d6b90bbc498-original-6b59c7fb92",
+  "compile": {
+    "pass_configs": {},
+    "target_host": null
+  },
+  "evidence": [
+    "source-330bb96ace1a21c2"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tilelang-make-static-sliced-wgmma-kernel-main-1d6b90bbc498",
+  "kind": "ORIGINAL",
+  "origin": "static-inference:no-unresolved-primfunc-bindings",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: static-inference:no-unresolved-primfunc-bindings",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

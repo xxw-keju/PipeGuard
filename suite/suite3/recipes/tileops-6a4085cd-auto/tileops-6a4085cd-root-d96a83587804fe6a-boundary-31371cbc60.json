@@ -1,0 +1,71 @@
+{
+  "bindings": {
+    "beta_shape": [
+      1,
+      32
+    ],
+    "dtype": "bfloat16",
+    "g_shape": [
+      1,
+      32
+    ],
+    "k_shape": [
+      1,
+      32,
+      128
+    ],
+    "label": "gdn-decode-serving-b1-h32-d128",
+    "manifest": "src/tileops/manifest/linear_attention.yaml",
+    "operator": "GatedDeltaNetDecodeFwdOp",
+    "q_shape": [
+      1,
+      32,
+      128
+    ],
+    "row_index": 2,
+    "state_shape": [
+      1,
+      32,
+      128,
+      128
+    ],
+    "v_shape": [
+      1,
+      32,
+      128
+    ]
+  },
+  "candidate_id": "d96a83587804fe6a",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 167,
+      "function": "GatedDeltaNetDecodeFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/linear_attention.yaml",
+      "source_sha256": "592277e5cc64a52533120c8067d1a0d06efa8e999025ce0f2660ecc69eaa61b6",
+      "start_line": 113
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/linear_attention.yaml:113-167#GatedDeltaNetDecodeFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-d96a83587804fe6a-boundary-31371cbc60-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

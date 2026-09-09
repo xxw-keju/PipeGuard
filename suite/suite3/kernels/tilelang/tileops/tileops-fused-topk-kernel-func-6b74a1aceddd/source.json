@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-fused-topk-kernel-func-6b74a1aceddd",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "34d90291e6dea9ea4c2d0231971843ec80b28d21bf941851a8cc60010e12a479"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      70,
+      300
+    ],
+    "path": "src/tileops/kernels/moe/fused_topk.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/moe/fused_topk.py#L70-L300",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "2141f8bb76a521f600dd6641e213b17884d95e19282d24e94fba871c05273d8c",
+    "symbol": "_fused_topk_kernel._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

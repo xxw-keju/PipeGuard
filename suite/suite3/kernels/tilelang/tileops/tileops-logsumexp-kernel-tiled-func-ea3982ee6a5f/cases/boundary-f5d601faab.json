@@ -1,0 +1,97 @@
+{
+  "arguments": {
+    "dim": -1,
+    "dtype": "float32",
+    "label": "dispatch-lower-m512-n16640",
+    "manifest": "src/tileops/manifest/reduction.yaml",
+    "operator": "LogSumExpFwdOp",
+    "x_shape": [
+      512,
+      16640
+    ]
+  },
+  "boundary": {
+    "dimensions": [
+      "M",
+      "N",
+      "dtype"
+    ],
+    "position": "lower",
+    "transition": "dtype=float32 excludes streaming, seg_n == 0, tile_n > 0"
+  },
+  "build": {
+    "factory_arguments": {
+      "M": 512,
+      "N": 16640,
+      "dtype": "float32",
+      "tile_n": 12288
+    },
+    "kernel_arguments": {
+      "block_m": 1,
+      "threads": 256
+    }
+  },
+  "case_id": "tileops-logsumexp-kernel-tiled-func-ea3982ee6a5f-boundary-f5d601faab",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 160,
+      "function": "LogSumExpFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/reduction.yaml",
+      "source_sha256": "08c0a1cdd8b2068a3e54d3e6f54e105ebf6a9ab0c02eccf67f034500885a7235",
+      "start_line": 109
+    },
+    "dispatch": {
+      "predicate": "dtype=float32 excludes streaming, seg_n == 0, tile_n > 0",
+      "strategy": "lse_tiled"
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-d251d9aad758d183",
+    "tileops-6a4085cd-spec-evidence-9e2fd7cee369d787"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-logsumexp-kernel-tiled-func-ea3982ee6a5f",
+  "kind": "BOUNDARY",
+  "origin": "upstream-dispatch:src/tileops/kernels/reduction/softmax.py and logsumexp.py",
+  "reason": "Dispatch witness for lse_tiled: dtype=float32 excludes streaming, seg_n == 0, tile_n > 0.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [
+    "tileops-dispatch-witness"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

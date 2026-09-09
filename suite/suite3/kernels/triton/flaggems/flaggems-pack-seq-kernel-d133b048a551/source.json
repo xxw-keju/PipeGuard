@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-pack-seq-kernel-d133b048a551",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "2ef14c1339e0a46d82455a6d09abde21238d5c4b134c0d1391886af29b212c4a"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      37,
+      90
+    ],
+    "path": "src/flag_gems/fused/pack_seq.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/fused/pack_seq.py#L37-L90",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "cbee9358d4f892c7758371053bfede4f860178f968768f63a52ae6a0fddc74c2",
+    "symbol": "_pack_seq_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

@@ -1,0 +1,52 @@
+{
+  "bindings": {
+    "dtype": "torch.bfloat16",
+    "kernel_size": 2,
+    "output_size": [
+      16,
+      16
+    ],
+    "shape": [
+      4,
+      3,
+      32,
+      32
+    ]
+  },
+  "candidate_id": "5d32ba19384dda27",
+  "compiler": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-5192427af5a5dcf6"
+      ],
+      "test_end_line": 59,
+      "test_function": "test_fractional_max_pool2d",
+      "test_path": "tests/test_fractional_max_pool2d.py",
+      "test_source_sha256": "763811c937fb69fe75927675a30ce2f7ebc7db36ee5f6d755d28fee15a2b5589",
+      "test_start_line": 25
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "triton",
+  "lowerable": false,
+  "origin": "upstream-test:tests/test_fractional_max_pool2d.py:25-59#test_fractional_max_pool2d",
+  "recipe_id": "flaggems-root-5d32ba19384dda27-original-59d5a4213c-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

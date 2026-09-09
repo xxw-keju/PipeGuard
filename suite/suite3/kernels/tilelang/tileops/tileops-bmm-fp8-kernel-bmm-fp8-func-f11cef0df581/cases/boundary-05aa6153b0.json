@@ -1,0 +1,122 @@
+{
+  "arguments": {
+    "b": 32,
+    "dtype": "float8_e4m3fn",
+    "k": 2048,
+    "label": "mha-decode-b32-pv-per-tensor",
+    "m": 128,
+    "manifest": "src/tileops/manifest/bmm.yaml",
+    "n": 128,
+    "operator": "BmmFp8KNFwdOp",
+    "row_index": 2
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 32,
+        "before": 4,
+        "path": "/bindings/b"
+      },
+      {
+        "after": 2048,
+        "before": 1024,
+        "path": "/bindings/k"
+      },
+      {
+        "after": "mha-decode-b32-pv-per-tensor",
+        "before": "square-b4-1k-per-tensor",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 128,
+        "before": 1024,
+        "path": "/bindings/m"
+      },
+      {
+        "after": 128,
+        "before": 1024,
+        "path": "/bindings/n"
+      },
+      {
+        "after": 2,
+        "before": 0,
+        "path": "/bindings/row_index"
+      }
+    ],
+    "dimensions": [
+      "b",
+      "k",
+      "m",
+      "n"
+    ],
+    "transition": "Official source-matrix variation across: b, k, m, n"
+  },
+  "build": {
+    "factory_arguments": {
+      "batch": 32,
+      "dtype": "float8_e4m3fn",
+      "k": 2048,
+      "m": 128,
+      "n": 128,
+      "out_dtype": "bfloat16"
+    }
+  },
+  "case_id": "tileops-bmm-fp8-kernel-bmm-fp8-func-f11cef0df581-boundary-05aa6153b0",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 97,
+      "function": "BmmFp8KNFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/bmm.yaml",
+      "source_sha256": "244bf9914ddc084c46076bf4c7f7f23b6dc5a8d5372847785db44ded75d52956",
+      "start_line": 49
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-971939b4659a4419",
+    "tileops-6a4085cd-spec-evidence-ffec1ac12fa74653"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-bmm-fp8-kernel-bmm-fp8-func-f11cef0df581",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/bmm.yaml:49-97#BmmFp8KNFwdOp",
+  "parent_case_id": "tileops-bmm-fp8-kernel-bmm-fp8-func-f11cef0df581-original-cc7a065566",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

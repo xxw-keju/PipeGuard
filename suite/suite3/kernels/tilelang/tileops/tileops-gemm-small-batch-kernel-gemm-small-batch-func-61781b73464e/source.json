@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-gemm-small-batch-kernel-gemm-small-batch-func-61781b73464e",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "5209f6dbdc13597384e52f55ddc8769100074fcbfb6b5f70a8ed94ccf70c55ce"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      2004,
+      2053
+    ],
+    "path": "src/tileops/kernels/gemm/dense.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/gemm/dense.py#L2004-L2053",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "05a01b2a7e17aa3b66b03ed50ee13e81fbd1d311ad3eb0c81352d176e89be935",
+    "symbol": "_gemm_small_batch_kernel._gemm_small_batch_func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

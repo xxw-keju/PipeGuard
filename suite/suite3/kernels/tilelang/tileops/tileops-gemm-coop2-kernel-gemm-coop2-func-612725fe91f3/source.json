@@ -1,0 +1,32 @@
+{
+  "case_count": 3,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-gemm-coop2-kernel-gemm-coop2-func-612725fe91f3",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "9e9d400d04a91f89b3a90ea42337a2f23f1350071101ffbb9f8f37ceb10f905a"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      884,
+      1074
+    ],
+    "path": "src/tileops/kernels/gemm/dense.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/gemm/dense.py#L884-L1074",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "ab3d1e9508e368cf0f7c47f5ce7800260391a09ecc7f30ca2551bcb95bc097b4",
+    "symbol": "_gemm_coop2_kernel._gemm_coop2_func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 3,
+  "variant": ""
+}

@@ -1,0 +1,87 @@
+{
+  "arguments": {
+    "bidirectional": true,
+    "dtype": "torch.float32",
+    "has_biases": true,
+    "hidden_size": 6,
+    "input_size": 10,
+    "lengths": [
+      7,
+      6,
+      5,
+      4,
+      3,
+      2
+    ],
+    "num_layers": 2
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-batch-offsets-kernel-dc494191d28a-original-fc15fa51b6",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-8106bf60b4e35bfa"
+      ],
+      "test_end_line": 204,
+      "test_function": "test_gru_data",
+      "test_path": "tests/test_gru.py",
+      "test_source_sha256": "c46a4356f536da977ded81b569353114f5aed65de61fe0cd60432655797baa17",
+      "test_start_line": 151
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-8106bf60b4e35bfa",
+    "flaggems-test-a54487a6d3d47372",
+    "source-02a8580a7a61a146"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-batch-offsets-kernel-dc494191d28a",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_gru.py:151-204#test_gru_data",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "catalog_sha256": "38d6cdff8af0b612eafcf055d129325cdd4fae30169aa09c463e8af5294ad460",
+  "checker_statuses": {
+    "CAPTURE_NOT_AVAILABLE": 1,
+    "CHECKED": 3
+  },
+  "checker_verdicts": {
+    "SAFE": 3
+  },
+  "counts": {
+    "admitted_kernels": 1,
+    "candidate_kernels": 5209,
+    "capture_unavailable_specs": 1,
+    "catalog_specifications": 1992,
+    "checked_specs": 3,
+    "expectation_matches": 4,
+    "expectation_mismatches": 0,
+    "selected_specifications": 4
+  },
+  "results": [
+    {
+      "capture_diagnostic_codes": [],
+      "checker_statuses": [
+        "CHECKED"
+      ],
+      "checker_verdicts": [
+        "SAFE"
+      ],
+      "claim_scope": "SINGLE_CTA",
+      "expectation_match": true,
+      "kernel_id": "triton-store-constant",
+      "pipeline_status": "CAPTURED",
+      "result_digests": [
+        "ec0382d6aa620389ee822d065416f4cbcbc60a180963a47cbfc541597a735066"
+      ],
+      "role": "BOUNDARY",
+      "semantic_adjudication": "CONFIRMED",
+      "semantic_agreement": "MATCH",
+      "semantic_ground_truth": "CORRECT",
+      "spec_id": "triton-store-constant-f32-mask"
+    },
+    {
+      "capture_diagnostic_codes": [],
+      "checker_statuses": [
+        "CHECKED"
+      ],
+      "checker_verdicts": [
+        "SAFE"
+      ],
+      "claim_scope": "SINGLE_CTA",
+      "expectation_match": true,
+      "kernel_id": "triton-store-constant",
+      "pipeline_status": "CAPTURED",
+      "result_digests": [
+        "82e589cd623b0a8c3702d214d0b791fb2dbaa8155171c7df6bc021008fa0d456"
+      ],
+      "role": "BOUNDARY",
+      "semantic_adjudication": "CONFIRMED",
+      "semantic_agreement": "MATCH",
+      "semantic_ground_truth": "CORRECT",
+      "spec_id": "triton-store-constant-i16-mask"
+    },
+    {
+      "capture_diagnostic_codes": [],
+      "checker_statuses": [
+        "CHECKED"
+      ],
+      "checker_verdicts": [
+        "SAFE"
+      ],
+      "claim_scope": "SINGLE_CTA",
+      "expectation_match": true,
+      "kernel_id": "triton-store-constant",
+      "pipeline_status": "CAPTURED",
+      "result_digests": [
+        "5dede2094fc349b139aa49b3ae929aed8ae1eaa5976f29981a75daf1bee0470b"
+      ],
+      "role": "ORIGINAL",
+      "semantic_adjudication": "CONFIRMED",
+      "semantic_agreement": "MATCH",
+      "semantic_ground_truth": "CORRECT",
+      "spec_id": "triton-store-constant-u8-mask"
+    },
+    {
+      "capture_diagnostic_codes": [
+        "TRITON_PREDICATE_UNRESOLVED"
+      ],
+      "checker_statuses": [
+        "CAPTURE_NOT_AVAILABLE"
+      ],
+      "checker_verdicts": [],
+      "claim_scope": "SINGLE_CTA",
+      "expectation_match": true,
+      "kernel_id": "triton-store-constant",
+      "pipeline_status": "UNSUPPORTED",
+      "result_digests": [
+        "5f4c133cc5cd1b446b239929d31955c521ecc5faa65f044fd1970df1a33db91d"
+      ],
+      "role": "BOUNDARY",
+      "semantic_adjudication": "CONFIRMED",
+      "semantic_agreement": "NOT_CHECKED",
+      "semantic_ground_truth": "CORRECT",
+      "spec_id": "triton-store-constant-u8-value"
+    }
+  ],
+  "schema_version": "pipeguard-upstream-baseline-index-v1",
+  "suite_id": "pipeguard-real-upstream-kernels-sm90-v1",
+  "suite_lock_sha256": "6cfbbb6e851606456fb1cd0230f14bcbd2af3a7d0d225f019c4165b71da2f1f6"
+}

@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-async-pipeline-relaxes-loop-wait-and-descends-trailing-drain-before-b475666014e0",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "24e293872a1c8a3279f8cc957b7e60325890c88399b8c84c832b34847a03769b"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      423,
+      445
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_Inject_software_pipeline.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_Inject_software_pipeline.py#L423-L445",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "a9cf3e662745a049bdffe616541553cfcf35f2ea400737d47e52eddf340d69b2",
+    "symbol": "test_async_pipeline_relaxes_loop_wait_and_descends_trailing_drain.before"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

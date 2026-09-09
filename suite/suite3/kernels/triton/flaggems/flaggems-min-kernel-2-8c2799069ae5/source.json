@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-min-kernel-2-8c2799069ae5",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "4d04059efc8a9642fb22f2ace9c38a14aad484dc7af838d28d65753f125195e9"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      51,
+      60
+    ],
+    "path": "src/flag_gems/ops/min.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/min.py#L51-L60",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "f8161cb2216b34fc184234bec32e079af61236f42586590f8558882331b538bb",
+    "symbol": "min_kernel_2"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

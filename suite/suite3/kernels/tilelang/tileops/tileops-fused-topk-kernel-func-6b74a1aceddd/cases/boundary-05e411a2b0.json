@@ -1,0 +1,125 @@
+{
+  "arguments": {
+    "correction_bias_shape": [
+      384
+    ],
+    "dtype": "bfloat16",
+    "label": "kimi-k2-t512-bias",
+    "manifest": "src/tileops/manifest/moe.yaml",
+    "num_experts": 384,
+    "num_tokens": 512,
+    "operator": "FusedTopKOp",
+    "renormalize": true,
+    "row_index": 3,
+    "scoring_func": "sigmoid",
+    "top_k": 8,
+    "with_correction_bias": true
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": [
+          384
+        ],
+        "before": {
+          "__pipeguard_missing__": true
+        },
+        "path": "/bindings/correction_bias_shape"
+      },
+      {
+        "after": "kimi-k2-t512-bias",
+        "before": "kimi-k2-t32",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 512,
+        "before": 32,
+        "path": "/bindings/num_tokens"
+      },
+      {
+        "after": 3,
+        "before": 0,
+        "path": "/bindings/row_index"
+      },
+      {
+        "after": true,
+        "before": false,
+        "path": "/bindings/with_correction_bias"
+      }
+    ],
+    "dimensions": [
+      "correction_bias_shape",
+      "num_tokens",
+      "with_correction_bias"
+    ],
+    "transition": "Official source-matrix variation across: correction_bias_shape, num_tokens, with_correction_bias"
+  },
+  "build": {
+    "factory_arguments": {
+      "num_experts": 384,
+      "num_tokens": 512,
+      "renormalize": true,
+      "scoring_func": "sigmoid",
+      "top_k": 8,
+      "with_correction_bias": true
+    }
+  },
+  "case_id": "tileops-fused-topk-kernel-func-6b74a1aceddd-boundary-05e411a2b0",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 269,
+      "function": "FusedTopKOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/moe.yaml",
+      "source_sha256": "5ea0f0e25b3b41ecd2924ff1f58fe2839bc39a905dfc72f09567d8f3cc27aa07",
+      "start_line": 219
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-0e6dc3744797a17a",
+    "tileops-6a4085cd-spec-evidence-addd759f139c0df0"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-fused-topk-kernel-func-6b74a1aceddd",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/moe.yaml:219-269#FusedTopKOp",
+  "parent_case_id": "tileops-fused-topk-kernel-func-6b74a1aceddd-original-9656f51195",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

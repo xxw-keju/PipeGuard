@@ -1,0 +1,102 @@
+{
+  "arguments": {
+    "BLOCK_SIZE": 128,
+    "CONSTANT_FIELD": "value",
+    "n_elements": 128
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": "value",
+        "before": "mask",
+        "path": "/bindings/CONSTANT_FIELD"
+      },
+      {
+        "after": "value",
+        "before": "mask",
+        "path": "/compiler/constexprs/CONSTANT_FIELD"
+      }
+    ],
+    "dimensions": [
+      "constant_store_branch"
+    ],
+    "transition": "Switch from a uniformly false store predicate to the value branch with an active bounds predicate."
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-test-store-constant-kernel-7150411f0c49-boundary-9bb9286a53",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "BLOCK_SIZE": 128,
+      "CONSTANT_FIELD": "value"
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "BLOCK_SIZE": "constexpr",
+      "CONSTANT_FIELD": "constexpr",
+      "n_elements": "i32",
+      "output_ptr": "*u8"
+    }
+  },
+  "evidence": [
+    "triton-store-constant-source",
+    "triton-store-constant-upstream-test",
+    "nvidia-sm90-memory-conflict-rules"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ONLY",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [
+      "TRITON_PREDICATE_UNRESOLVED"
+    ],
+    "status": "UNSUPPORTED"
+  },
+  "ground_truth": {
+    "class": "CORRECT",
+    "evidence_ids": [
+      "triton-store-constant-upstream-test"
+    ],
+    "method": "UPSTREAM_REGRESSION",
+    "rationale": "The official test expects every uint8 destination element to equal one; current frontend evidence is insufficient to check that valid kernel.",
+    "status": "CONFIRMED"
+  },
+  "kernel_id": "triton-test-store-constant-kernel-7150411f0c49",
+  "kind": "BOUNDARY",
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:2428;pytest-param:dtype_str=uint8,constant_field=value",
+  "parent_case_id": "triton-test-store-constant-kernel-7150411f0c49-original-229508cf1d",
+  "reason": "This branch activates the memory write and requires exact predicate and lane-region recovery; unresolved predicate evidence must fail closed rather than being reported SAFE.",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [
+    "MEM-01",
+    "MEM-02"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

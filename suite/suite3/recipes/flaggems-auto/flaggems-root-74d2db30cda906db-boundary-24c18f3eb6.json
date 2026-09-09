@@ -1,0 +1,45 @@
+{
+  "bindings": {
+    "dtype": "torch.float32",
+    "shape": [
+      8,
+      8
+    ]
+  },
+  "candidate_id": "74d2db30cda906db",
+  "compiler": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-4fa597a65f0348ef"
+      ],
+      "test_end_line": 47,
+      "test_function": "test_cholesky_inverse",
+      "test_path": "tests/test_cholesky_inverse.py",
+      "test_source_sha256": "37860ebf514dde3e5ad6e922b8fef716e19d4f6a599b9e9ebac0638c29e2c208",
+      "test_start_line": 34
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "triton",
+  "lowerable": false,
+  "origin": "upstream-test:tests/test_cholesky_inverse.py:34-47#test_cholesky_inverse",
+  "recipe_id": "flaggems-root-74d2db30cda906db-boundary-24c18f3eb6-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

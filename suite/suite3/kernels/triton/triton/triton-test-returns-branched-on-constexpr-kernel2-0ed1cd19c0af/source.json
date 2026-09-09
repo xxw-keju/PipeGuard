@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-returns-branched-on-constexpr-kernel2-0ed1cd19c0af",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "cd048d98cb1bba7ce40ddda89060b2c6eae228fcc541f87452272780482ad73e"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      213,
+      216
+    ],
+    "path": "python/test/unit/language/test_compile_errors.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_compile_errors.py#L213-L216",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "1ff6aa7a85dc2f063be00b66edb72b99c0223fc61d73e41cb0b956add8ce9952",
+    "symbol": "test_returns_branched_on_constexpr.kernel2"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

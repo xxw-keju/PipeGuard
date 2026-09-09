@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-inject-fence-proxy-does-not-inject-tma-store-sync-before-d6a5c5515808",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "c3e20d814ba4cdc6e00e0809f8975aee9bf84a5f651f036983a04b8620a212ee"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      308,
+      312
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_inject_fence_proxy.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_inject_fence_proxy.py#L308-L312",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "12069886375252309b81979fc6903546ced90bd5570a26c62a43c40ab661b368",
+    "symbol": "test_inject_fence_proxy_does_not_inject_tma_store_sync.before"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

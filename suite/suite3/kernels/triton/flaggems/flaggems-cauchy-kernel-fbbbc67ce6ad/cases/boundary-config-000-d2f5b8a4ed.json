@@ -1,0 +1,106 @@
+{
+  "arguments": {
+    "dtype": "torch.float32",
+    "median": 0.0,
+    "shape": [
+      256,
+      256
+    ],
+    "sigma": 1.0
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": [
+          256,
+          256
+        ],
+        "before": [
+          1024
+        ],
+        "path": "/bindings/shape"
+      }
+    ],
+    "dimensions": [
+      "shape"
+    ],
+    "transition": "Official test-matrix variation across: shape"
+  },
+  "build": {},
+  "case_id": "flaggems-cauchy-kernel-fbbbc67ce6ad-boundary-4102a2aa7c-config-d2f5b8a4ed",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-ce7ff60d3132578d"
+      ],
+      "test_end_line": 110,
+      "test_function": "test_cauchy_accuracy",
+      "test_path": "tests/test_cauchy.py",
+      "test_source_sha256": "6416fd9248dfcc3c0bde265f22dfced363f85cc6d28c9a21a03ad1a587c9f02b",
+      "test_start_line": 36
+    },
+    "config_index": 0,
+    "config_source": "src/flag_gems/ops/cauchy.py#autotune",
+    "constexprs": {
+      "BLOCK": 256
+    },
+    "options": {
+      "maxnreg": null,
+      "num_ctas": 1,
+      "num_stages": 2,
+      "num_warps": 8
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-ce7ff60d3132578d",
+    "flaggems-test-20fde19cbaf900ff",
+    "source-ec6c4dbc9a1c104a"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-cauchy-kernel-fbbbc67ce6ad",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_cauchy.py:36-110#test_cauchy_accuracy",
+  "parent_case_id": "flaggems-cauchy-kernel-fbbbc67ce6ad-original-b2981958d8-config-72aaad94da",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned. Autotune candidate 0 from src/flag_gems/ops/cauchy.py#autotune.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

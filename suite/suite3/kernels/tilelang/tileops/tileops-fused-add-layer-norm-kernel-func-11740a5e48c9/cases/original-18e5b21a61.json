@@ -1,0 +1,82 @@
+{
+  "arguments": {
+    "dtype": "float16",
+    "label": "llama-8b-prefill",
+    "manifest": "src/tileops/manifest/normalization.yaml",
+    "operator": "FusedAddLayerNormFwdOp",
+    "row_index": 0,
+    "x_shape": [
+      2048,
+      4096
+    ]
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "M": 2048,
+      "N": 4096,
+      "dtype": "float16",
+      "eps": 1e-05
+    }
+  },
+  "case_id": "tileops-fused-add-layer-norm-kernel-func-11740a5e48c9-original-18e5b21a61",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 250,
+      "function": "FusedAddLayerNormFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/normalization.yaml",
+      "source_sha256": "f5b4fd75dfc6d5f1fab90a9191609ff387da42ef5c8e43b269c2db9daa1accb0",
+      "start_line": 201
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-74b4e75699f40bf7",
+    "tileops-6a4085cd-spec-evidence-89bcc575f05cc07b"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-fused-add-layer-norm-kernel-func-11740a5e48c9",
+  "kind": "ORIGINAL",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/normalization.yaml:201-250#FusedAddLayerNormFwdOp",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

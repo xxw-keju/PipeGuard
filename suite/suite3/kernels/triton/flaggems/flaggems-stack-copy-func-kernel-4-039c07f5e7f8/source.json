@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-stack-copy-func-kernel-4-039c07f5e7f8",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "bc63c4f11b062d4217b3f8b99433256b090c57ad12233fd0a63a0fec45ddcd98"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      25,
+      84
+    ],
+    "path": "src/flag_gems/ops/stack.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/stack.py#L25-L84",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "42fdc04798773194044d2e85094ed9cdfc31fad3905aefeb9df4092ed9ebcc44",
+    "symbol": "stack_copy_func_kernel_4"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

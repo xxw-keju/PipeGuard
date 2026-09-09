@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-gqa-bwd-wgmma-pipelined-kernel-gqa-bwd-wgmma-pipelined-func-7affb34879d1",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "7b533a0b148fbfe6a85bacaab84a572088bed31a0859bf4b37bbb7034e72ca18"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      113,
+      219
+    ],
+    "path": "src/tileops/kernels/attention/gqa_bwd.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/attention/gqa_bwd.py#L113-L219",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "b7919769a3e8b29ba29af043ca02702a5a90b79b6ccac4e57882f786cd7f4df4",
+    "symbol": "_gqa_bwd_wgmma_pipelined_kernel._gqa_bwd_wgmma_pipelined_func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

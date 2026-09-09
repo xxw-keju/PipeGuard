@@ -1,0 +1,133 @@
+{
+  "arguments": {
+    "dtype": "torch.bfloat16",
+    "kernel_size": 2,
+    "output_size": [
+      28,
+      28
+    ],
+    "shape": [
+      1,
+      64,
+      56,
+      56
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 28,
+        "before": 16,
+        "path": "/bindings/output_size/0"
+      },
+      {
+        "after": 28,
+        "before": 16,
+        "path": "/bindings/output_size/1"
+      },
+      {
+        "after": 1,
+        "before": 4,
+        "path": "/bindings/shape/0"
+      },
+      {
+        "after": 64,
+        "before": 3,
+        "path": "/bindings/shape/1"
+      },
+      {
+        "after": 56,
+        "before": 32,
+        "path": "/bindings/shape/2"
+      },
+      {
+        "after": 56,
+        "before": 32,
+        "path": "/bindings/shape/3"
+      }
+    ],
+    "dimensions": [
+      "output_size",
+      "shape"
+    ],
+    "transition": "Official test-matrix variation across: output_size, shape"
+  },
+  "build": {},
+  "case_id": "flaggems-fractional-max-pool2d-backward-kernel-55e59efc6c32-boundary-cc54f2281d-config-bac08f4e03",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-a150985f68bdbf3e"
+      ],
+      "test_end_line": 101,
+      "test_function": "test_fractional_max_pool2d_backward",
+      "test_path": "tests/test_fractional_max_pool2d.py",
+      "test_source_sha256": "252f2d03512e5f2f6832e967f964969fca450d655705b2f2a0609a75ce82ebbc",
+      "test_start_line": 62
+    },
+    "config_index": 67,
+    "config_source": "src/flag_gems/runtime/backend/_nvidia/tune_configs.yaml#fractional_max_pool2d_backward",
+    "constexprs": {
+      "BLOCK_H": 32,
+      "BLOCK_W": 16
+    },
+    "options": {
+      "maxnreg": null,
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-a150985f68bdbf3e",
+    "flaggems-test-ea61dbcb7d0cf63a",
+    "source-3d6f39a081f9154e"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-fractional-max-pool2d-backward-kernel-55e59efc6c32",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_fractional_max_pool2d.py:62-101#test_fractional_max_pool2d_backward",
+  "parent_case_id": "flaggems-fractional-max-pool2d-backward-kernel-55e59efc6c32-original-a0820e994c-config-5bcbf25b05",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned. Autotune candidate 67 from src/flag_gems/runtime/backend/_nvidia/tune_configs.yaml#fractional_max_pool2d_backward.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

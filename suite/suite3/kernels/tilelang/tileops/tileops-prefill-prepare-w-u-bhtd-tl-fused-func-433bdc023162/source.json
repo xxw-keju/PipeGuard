@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-prefill-prepare-w-u-bhtd-tl-fused-func-433bdc023162",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "6ea90a7152dda683ecca636625a6188b54c68e0598fd6768a5041d8501ab8cac"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      257,
+      351
+    ],
+    "path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py#L257-L351",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "9f3de2a5dc60dc4e9b86d4ba5f604e7da655120ca7035ff4a7c56290d123645d",
+    "symbol": "_prefill_prepare_w_u_bhtd_tl._fused_func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

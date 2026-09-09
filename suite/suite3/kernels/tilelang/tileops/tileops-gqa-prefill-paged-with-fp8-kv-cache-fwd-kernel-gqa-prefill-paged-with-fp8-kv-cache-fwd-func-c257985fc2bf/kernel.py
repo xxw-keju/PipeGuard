@@ -1,0 +1,280 @@
+# Normalized device code for PipeGuard Suite 3.
+# Exact upstream code and provenance are stored beside this file.
+
+from typing import Callable, Optional, Tuple
+import tilelang
+import tilelang.language as T
+import tilelang.language as T
+FP8_E4M3_MAX: float = 448.0
+
+def make_online_softmax_with_mask_guard(scale, accum_dtype, block_rows, block_cols):
+    """Create an online softmax T.macro with monotonic max enforcement and NaN guard.
+
+    Use this variant instead of ``make_online_softmax`` when some attention blocks
+    may be fully masked (all scores = -infinity), e.g., causal or sliding-window
+    attention with OOB guards.  Two extra steps vs the base variant:
+
+    * **Monotonic max**: ``scores_max[i] = max(scores_max[i], scores_max_prev[i])``
+      ensures the running maximum never decreases when the current block's max
+      is smaller than the accumulated maximum.
+    * **NaN guard**: clamps ``scores_max[i]`` to at least ``-1e38`` so that
+      ``exp2(-inf - (-inf))`` never produces NaN for fully-masked blocks.
+
+    Note: These extra T.Parallel loops may conflict with WGMMA pipeline stage
+    constraints in some kernels — always verify with tests after adopting.
+
+    Args:
+        scale: Pre-computed scale factor (should include LOG2E multiplication)
+        accum_dtype: Accumulator data type (e.g., "float")
+        block_rows: Number of rows in the score matrix
+        block_cols: Number of columns in the score matrix
+
+    Returns:
+        online_softmax: A T.macro that performs the online softmax update
+    """
+
+    @T.macro
+    def online_softmax(acc_s, scores_max, scores_max_prev, scores_scale, scores_sum, logsum):
+        T.copy(scores_max, scores_max_prev)
+        T.fill(scores_max, -T.infinity(accum_dtype))
+        T.reduce_max(acc_s, scores_max, dim=1, clear=False)
+        for i in T.Parallel(block_rows):
+            scores_max[i] = T.max(scores_max[i], scores_max_prev[i])
+        for i in T.Parallel(block_rows):
+            scores_max[i] = T.max(scores_max[i], T.cast(-1e+38, accum_dtype))
+        for i in T.Parallel(block_rows):
+            scores_scale[i] = T.exp2(scores_max_prev[i] * scale - scores_max[i] * scale)
+        for i, j in T.Parallel(block_rows, block_cols):
+            acc_s[i, j] = T.exp2(acc_s[i, j] * scale - scores_max[i] * scale)
+        T.reduce_sum(acc_s, scores_sum, dim=1)
+        for i in T.Parallel(block_rows):
+            logsum[i] = logsum[i] * scores_scale[i] + scores_sum[i]
+    return online_softmax
+
+def make_rescale(block_rows, head_dim):
+    """Create a reusable rescale T.macro for the output accumulator.
+
+    Args:
+        block_rows: Number of rows in the output accumulator
+        head_dim: Dimension of each head
+
+    Returns:
+        rescale: A T.macro that rescales acc_o by scores_scale
+    """
+
+    @T.macro
+    def rescale(acc_o, scores_scale):
+        for i, j in T.Parallel(block_rows, head_dim):
+            acc_o[i, j] *= scores_scale[i]
+    return rescale
+_FAST_COMPILE_FLAGS = ['-O3', '--use_fast_math', '-Wno-deprecated-declarations', '-U__CUDA_NO_HALF_OPERATORS__', '-U__CUDA_NO_HALF_CONVERSIONS__', '-U__CUDA_NO_HALF2_OPERATORS__', '-U__CUDA_NO_BFLOAT16_CONVERSIONS__', '--expt-relaxed-constexpr', '--expt-extended-lambda', '-DENABLE_BF16']
+
+def _make_apply_softcap_no_mask_guard(score_scale, softcap, accum_dtype, block_rows, block_cols):
+
+    @T.macro
+    def apply_softcap(acc_s):
+        for i, j in T.Parallel(block_rows, block_cols):
+            acc_s[i, j] = T.cast(softcap, accum_dtype) * T.tanh(acc_s[i, j] * T.cast(score_scale / softcap, accum_dtype))
+    return apply_softcap
+
+def _resolve_kernel(**pipeguard_bindings):
+    accum_dtype = pipeguard_bindings['accum_dtype']
+    batch = pipeguard_bindings['batch']
+    cache_dtype = pipeguard_bindings['cache_dtype']
+    dim = pipeguard_bindings['dim']
+    dtype = pipeguard_bindings['dtype']
+    groups = pipeguard_bindings['groups']
+    heads = pipeguard_bindings['heads']
+    heads_kv = pipeguard_bindings['heads_kv']
+    is_causal = pipeguard_bindings['is_causal']
+    max_pages_per_req = pipeguard_bindings['max_pages_per_req']
+    page_size = pipeguard_bindings['page_size']
+    physical_tokens = pipeguard_bindings['physical_tokens']
+    scale = pipeguard_bindings['scale']
+    score_scale = pipeguard_bindings['score_scale']
+    softcap = pipeguard_bindings['softcap']
+    total_q = pipeguard_bindings['total_q']
+    use_softcap = pipeguard_bindings['use_softcap']
+
+    @tilelang.jit(out_idx=[10], pass_configs={tilelang.PassConfigKey.TL_ENABLE_FAST_MATH: True, tilelang.PassConfigKey.TL_DISABLE_TMA_LOWER: True, tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True}, compile_flags=_FAST_COMPILE_FLAGS)
+    def _gqa_prefill_paged_with_fp8_kv_cache_fwd_func(block_m: int, block_n: int, num_stages: int, threads: int) -> Callable:
+        q_shape = (total_q, heads, dim)
+        kv_new_shape = (total_q, heads_kv, dim)
+        kv_pages_shape = (physical_tokens, heads_kv, dim)
+        block_table_shape = (batch, max_pages_per_req)
+        o_shape = (total_q, heads, dim)
+        online_softmax = make_online_softmax_with_mask_guard(scale, accum_dtype, block_m, block_n)
+        apply_softcap = _make_apply_softcap_no_mask_guard(score_scale, softcap, accum_dtype, block_m, block_n) if use_softcap else None
+        rescale = make_rescale(block_m, dim)
+        page_size_log2 = page_size.bit_length() - 1
+        fp8_min = -FP8_E4M3_MAX
+        fp8_max = FP8_E4M3_MAX
+
+        @T.macro
+        def quantize_fp8(value, scale_value):
+            return T.clamp(T.Cast('float32', value) / scale_value, fp8_min, fp8_max)
+
+        @T.macro
+        def dequantize_fp8(value, scale_value):
+            return T.Cast(dtype, T.Cast('float32', value) * scale_value)
+
+        @T.prim_func
+        def _gqa_prefill_paged_with_fp8_kv_cache_fwd_main(q: T.Tensor(q_shape, dtype), k_new: T.Tensor(kv_new_shape, dtype), v_new: T.Tensor(kv_new_shape, dtype), k_pages: T.Tensor(kv_pages_shape, cache_dtype), v_pages: T.Tensor(kv_pages_shape, cache_dtype), k_scale: T.Tensor([1], T.float32), v_scale: T.Tensor([1], T.float32), cu_seqlens_q: T.Tensor([batch + 1], T.int32), cache_seqlens: T.Tensor([batch], T.int32), block_table: T.Tensor(block_table_shape, T.int32), output: T.Tensor(o_shape, dtype), max_seqlen_q: T.int32) -> None:
+            with T.Kernel(T.ceildiv(max_seqlen_q, block_m), heads, batch, threads=threads) as (bx, by, bz):
+                q_shared = T.alloc_shared([block_m, dim], dtype)
+                k_shared = T.alloc_shared([block_n, dim], dtype)
+                v_shared = T.alloc_shared([block_n, dim], dtype)
+                acc_s = T.alloc_fragment([block_m, block_n], accum_dtype)
+                acc_s_cast = T.alloc_fragment([block_m, block_n], dtype)
+                acc_o = T.alloc_fragment([block_m, dim], accum_dtype)
+                scores_max = T.alloc_fragment([block_m], accum_dtype)
+                scores_max_prev = T.alloc_fragment([block_m], accum_dtype)
+                scores_scale = T.alloc_fragment([block_m], accum_dtype)
+                scores_sum = T.alloc_fragment([block_m], accum_dtype)
+                logsum = T.alloc_fragment([block_m], accum_dtype)
+                inv_logsum = T.alloc_fragment([block_m], accum_dtype)
+                q_start = cu_seqlens_q[bz]
+                q_len = cu_seqlens_q[bz + 1] - q_start
+                old_len = cache_seqlens[bz]
+                total_len = old_len + q_len
+                cur_kv_head = by // groups
+                local_k_scale = T.alloc_var(T.float32)
+                local_v_scale = T.alloc_var(T.float32)
+                local_k_scale = k_scale[0]
+                local_v_scale = v_scale[0]
+                if bx * block_m + block_m <= q_len:
+                    T.copy(q[q_start + bx * block_m:q_start + (bx + 1) * block_m, by, :], q_shared, disable_tma=True)
+                else:
+                    for i, d in T.Parallel(block_m, dim):
+                        new_pos = bx * block_m + i
+                        if new_pos < q_len:
+                            q_shared[i, d] = q[q_start + new_pos, by, d]
+                        else:
+                            q_shared[i, d] = T.cast(0, dtype)
+                if by < heads_kv:
+                    append_start = old_len + bx * block_m
+                    append_end = append_start + block_m
+                    if bx * block_m + block_m <= q_len:
+                        if append_start >> T.int32(page_size_log2) == append_end - 1 >> T.int32(page_size_log2):
+                            page_idx = append_start >> T.int32(page_size_log2)
+                            page_offset = append_start - page_idx * page_size
+                            physical_start = block_table[bz, page_idx] * page_size + page_offset
+                            for i, d in T.Parallel(block_m, dim):
+                                k_pages[physical_start + i, by, d] = quantize_fp8(k_new[q_start + bx * block_m + i, by, d], local_k_scale)
+                                v_pages[physical_start + i, by, d] = quantize_fp8(v_new[q_start + bx * block_m + i, by, d], local_v_scale)
+                        else:
+                            for i, d in T.Parallel(block_m, dim):
+                                new_pos = bx * block_m + i
+                                logical_pos = old_len + new_pos
+                                page_idx = logical_pos >> T.int32(page_size_log2)
+                                page_offset = logical_pos - page_idx * page_size
+                                physical_pos = block_table[bz, page_idx] * page_size + page_offset
+                                k_pages[physical_pos, by, d] = quantize_fp8(k_new[q_start + new_pos, by, d], local_k_scale)
+                                v_pages[physical_pos, by, d] = quantize_fp8(v_new[q_start + new_pos, by, d], local_v_scale)
+                    else:
+                        for i, d in T.Parallel(block_m, dim):
+                            new_pos = bx * block_m + i
+                            safe_new_pos = T.if_then_else(new_pos < q_len, new_pos, 0)
+                            logical_pos = old_len + safe_new_pos
+                            page_idx = logical_pos >> T.int32(page_size_log2)
+                            page_offset = logical_pos - page_idx * page_size
+                            if new_pos < q_len:
+                                physical_pos = block_table[bz, page_idx] * page_size + page_offset
+                                k_pages[physical_pos, by, d] = quantize_fp8(k_new[q_start + new_pos, by, d], local_k_scale)
+                                v_pages[physical_pos, by, d] = quantize_fp8(v_new[q_start + new_pos, by, d], local_v_scale)
+                T.clear(acc_o)
+                T.clear(logsum)
+                T.fill(scores_max, -T.infinity(accum_dtype))
+                loop_range = T.ceildiv(old_len + (bx + 1) * block_m, block_n) if is_causal else T.ceildiv(total_len, block_n)
+                for k_idx in T.Pipelined(loop_range, num_stages=num_stages):
+                    tile_start = k_idx * block_n
+                    tile_end = tile_start + block_n
+                    if tile_end <= old_len:
+                        if page_size % block_n == 0:
+                            page_idx = tile_start >> T.int32(page_size_log2)
+                            page_offset = tile_start - page_idx * page_size
+                            physical_start = block_table[bz, page_idx] * page_size + page_offset
+                            for j, d in T.Parallel(block_n, dim):
+                                k_shared[j, d] = dequantize_fp8(k_pages[physical_start + j, cur_kv_head, d], local_k_scale)
+                                v_shared[j, d] = dequantize_fp8(v_pages[physical_start + j, cur_kv_head, d], local_v_scale)
+                        elif block_n % page_size == 0:
+                            tile_page_start = tile_start >> T.int32(page_size_log2)
+                            for p in range(block_n // page_size):
+                                segment_physical_start = block_table[bz, tile_page_start + p] * page_size
+                                for off, d in T.Parallel(page_size, dim):
+                                    shared_row = p * page_size + off
+                                    k_shared[shared_row, d] = dequantize_fp8(k_pages[segment_physical_start + off, cur_kv_head, d], local_k_scale)
+                                    v_shared[shared_row, d] = dequantize_fp8(v_pages[segment_physical_start + off, cur_kv_head, d], local_v_scale)
+                        else:
+                            for j, d in T.Parallel(block_n, dim):
+                                kv_pos = tile_start + j
+                                page_idx = kv_pos >> T.int32(page_size_log2)
+                                page_offset = kv_pos - page_idx * page_size
+                                physical_pos = block_table[bz, page_idx] * page_size + page_offset
+                                k_shared[j, d] = dequantize_fp8(k_pages[physical_pos, cur_kv_head, d], local_k_scale)
+                                v_shared[j, d] = dequantize_fp8(v_pages[physical_pos, cur_kv_head, d], local_v_scale)
+                    elif tile_start >= old_len and tile_end <= total_len:
+                        new_start = tile_start - old_len
+                        for j, d in T.Parallel(block_n, dim):
+                            k_shared[j, d] = k_new[q_start + new_start + j, cur_kv_head, d]
+                            v_shared[j, d] = v_new[q_start + new_start + j, cur_kv_head, d]
+                    else:
+                        for j, d in T.Parallel(block_n, dim):
+                            kv_pos = tile_start + j
+                            new_pos = kv_pos - old_len
+                            safe_kv_pos = T.if_then_else(kv_pos < old_len, kv_pos, 0)
+                            page_idx = safe_kv_pos >> T.int32(page_size_log2)
+                            page_offset = safe_kv_pos - page_idx * page_size
+                            physical_pos = block_table[bz, page_idx] * page_size + page_offset
+                            if kv_pos < old_len:
+                                k_shared[j, d] = dequantize_fp8(k_pages[physical_pos, cur_kv_head, d], local_k_scale)
+                                v_shared[j, d] = dequantize_fp8(v_pages[physical_pos, cur_kv_head, d], local_v_scale)
+                            elif kv_pos < total_len:
+                                k_shared[j, d] = k_new[q_start + new_pos, cur_kv_head, d]
+                                v_shared[j, d] = v_new[q_start + new_pos, cur_kv_head, d]
+                            else:
+                                k_shared[j, d] = T.cast(0, dtype)
+                                v_shared[j, d] = T.cast(0, dtype)
+                    if use_softcap:
+                        T.clear(acc_s)
+                    elif is_causal:
+                        for i, j in T.Parallel(block_m, block_n):
+                            kv_pos = k_idx * block_n + j
+                            q_abs_pos = old_len + bx * block_m + i
+                            valid = (bx * block_m + i < q_len) & (kv_pos < total_len) & (kv_pos <= q_abs_pos)
+                            acc_s[i, j] = T.if_then_else(valid, 0, -T.infinity(acc_s.dtype))
+                    else:
+                        for i, j in T.Parallel(block_m, block_n):
+                            kv_pos = k_idx * block_n + j
+                            valid = (bx * block_m + i < q_len) & (kv_pos < total_len)
+                            acc_s[i, j] = T.if_then_else(valid, 0, -T.infinity(acc_s.dtype))
+                    T.gemm(q_shared, k_shared, acc_s, transpose_B=True, policy=T.GemmWarpPolicy.FullRow)
+                    if use_softcap:
+                        apply_softcap(acc_s)
+                        if is_causal:
+                            for i, j in T.Parallel(block_m, block_n):
+                                kv_pos = k_idx * block_n + j
+                                q_abs_pos = old_len + bx * block_m + i
+                                valid = (bx * block_m + i < q_len) & (kv_pos < total_len) & (kv_pos <= q_abs_pos)
+                                acc_s[i, j] = T.if_then_else(valid, acc_s[i, j], -T.infinity(acc_s.dtype))
+                        else:
+                            for i, j in T.Parallel(block_m, block_n):
+                                kv_pos = k_idx * block_n + j
+                                valid = (bx * block_m + i < q_len) & (kv_pos < total_len)
+                                acc_s[i, j] = T.if_then_else(valid, acc_s[i, j], -T.infinity(acc_s.dtype))
+                    online_softmax(acc_s, scores_max, scores_max_prev, scores_scale, scores_sum, logsum)
+                    T.copy(acc_s, acc_s_cast)
+                    rescale(acc_o, scores_scale)
+                    T.gemm(acc_s_cast, v_shared, acc_o, policy=T.GemmWarpPolicy.FullRow)
+                for i in T.Parallel(block_m):
+                    if bx * block_m + i < q_len:
+                        inv_logsum[i] = T.cast(1, accum_dtype) / logsum[i]
+                for i, j in T.Parallel(block_m, dim):
+                    if bx * block_m + i < q_len:
+                        output[q_start + bx * block_m + i, by, j] = acc_o[i, j] * inv_logsum[i]
+        return _gqa_prefill_paged_with_fp8_kv_cache_fwd_main
+    return _gqa_prefill_paged_with_fp8_kv_cache_fwd_func
+
+def build_kernel(case):
+    """Construct the selected TileLang device entry without launching it."""
+    return _resolve_kernel(**case["build"]["factory_arguments"])(**case["build"]["kernel_arguments"])

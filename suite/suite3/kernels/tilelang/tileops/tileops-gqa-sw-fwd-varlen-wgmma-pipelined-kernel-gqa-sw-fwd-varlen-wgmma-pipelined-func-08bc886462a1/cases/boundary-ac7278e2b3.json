@@ -1,0 +1,138 @@
+{
+  "arguments": {
+    "batch": 4,
+    "dim": 128,
+    "dtype": "float16",
+    "heads": 64,
+    "heads_kv": 8,
+    "is_causal": true,
+    "label": "llama-70b-long-w1024",
+    "manifest": "src/tileops/manifest/attention.yaml",
+    "max_seqlen_q": 2048,
+    "operator": "GroupedQueryAttentionSlidingWindowVarlenFwdOp",
+    "row_index": 3,
+    "total_k": 8192,
+    "total_q": 8192,
+    "window_size_left": 1024
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 64,
+        "before": 32,
+        "path": "/bindings/heads"
+      },
+      {
+        "after": "llama-70b-long-w1024",
+        "before": "llama-8b-short-w256",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 2048,
+        "before": 512,
+        "path": "/bindings/max_seqlen_q"
+      },
+      {
+        "after": 3,
+        "before": 0,
+        "path": "/bindings/row_index"
+      },
+      {
+        "after": 8192,
+        "before": 2048,
+        "path": "/bindings/total_k"
+      },
+      {
+        "after": 8192,
+        "before": 2048,
+        "path": "/bindings/total_q"
+      },
+      {
+        "after": 1024,
+        "before": 256,
+        "path": "/bindings/window_size_left"
+      }
+    ],
+    "dimensions": [
+      "heads",
+      "max_seqlen_q",
+      "total_k",
+      "total_q",
+      "window_size_left"
+    ],
+    "transition": "Official source-matrix variation across: heads, max_seqlen_q, total_k, total_q, window_size_left"
+  },
+  "build": {
+    "factory_arguments": {
+      "accum_dtype": "float32",
+      "batch": 4,
+      "dim": 128,
+      "dtype": "float16",
+      "heads": 64,
+      "heads_kv": 8,
+      "is_causal": true,
+      "total_k": 8192,
+      "total_q": 8192,
+      "window_size_left": 1024,
+      "window_size_right": 0
+    }
+  },
+  "case_id": "tileops-gqa-sw-fwd-varlen-wgmma-pipelined-kernel-gqa-sw-fwd-varlen-wgmma-pipelined-func-08bc886462a1-boundary-ac7278e2b3",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 628,
+      "function": "GroupedQueryAttentionSlidingWindowVarlenFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/attention.yaml",
+      "source_sha256": "fb75d3c34124338e0eff39b58c975847a695ce56d24a2319684b0648d44ce420",
+      "start_line": 577
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-3f4b85135f711e64",
+    "tileops-6a4085cd-spec-evidence-51109e53b87f6733"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-gqa-sw-fwd-varlen-wgmma-pipelined-kernel-gqa-sw-fwd-varlen-wgmma-pipelined-func-08bc886462a1",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/attention.yaml:577-628#GroupedQueryAttentionSlidingWindowVarlenFwdOp",
+  "parent_case_id": "tileops-gqa-sw-fwd-varlen-wgmma-pipelined-kernel-gqa-sw-fwd-varlen-wgmma-pipelined-func-08bc886462a1-original-050a72af5f",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

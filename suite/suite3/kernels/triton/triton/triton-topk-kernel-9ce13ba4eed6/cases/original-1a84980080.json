@@ -1,0 +1,67 @@
+{
+  "arguments": {},
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-topk-kernel-9ce13ba4eed6-original-1a84980080",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "K": 1
+    },
+    "grid_ctas": 1,
+    "options": {},
+    "signature": {
+      "K": "constexpr"
+    }
+  },
+  "evidence": [
+    "source-20bc89c8423f81e4",
+    "launch-68f3439e7d0544d7"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-topk-kernel-9ce13ba4eed6",
+  "kind": "ORIGINAL",
+  "origin": "static-inference:python/test/unit/language/test_compile_only.py:42-42",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: static-inference:python/test/unit/language/test_compile_only.py:42-42",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

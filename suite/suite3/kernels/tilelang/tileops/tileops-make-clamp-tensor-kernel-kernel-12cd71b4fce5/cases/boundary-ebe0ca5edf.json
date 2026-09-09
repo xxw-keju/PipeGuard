@@ -1,0 +1,142 @@
+{
+  "arguments": {
+    "dtype": "bfloat16",
+    "input_shape": [
+      16384,
+      16384
+    ],
+    "label": "elementwise-256M-min-only",
+    "manifest": "src/tileops/manifest/elementwise_unary_activation.yaml",
+    "max_shape": {
+      "__pipeguard_missing__": true
+    },
+    "min_shape": [
+      16384,
+      16384
+    ],
+    "operator": "ClampFwdOp",
+    "row_index": 3
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": "bfloat16",
+        "before": "float16",
+        "path": "/bindings/dtype"
+      },
+      {
+        "after": 16384,
+        "before": 4096,
+        "path": "/bindings/input_shape/0"
+      },
+      {
+        "after": 16384,
+        "before": 4096,
+        "path": "/bindings/input_shape/1"
+      },
+      {
+        "after": "elementwise-256M-min-only",
+        "before": "elementwise-16M",
+        "path": "/bindings/label"
+      },
+      {
+        "after": {
+          "__pipeguard_missing__": true
+        },
+        "before": [
+          4096,
+          4096
+        ],
+        "path": "/bindings/max_shape"
+      },
+      {
+        "after": 16384,
+        "before": 4096,
+        "path": "/bindings/min_shape/0"
+      },
+      {
+        "after": 16384,
+        "before": 4096,
+        "path": "/bindings/min_shape/1"
+      },
+      {
+        "after": 3,
+        "before": 0,
+        "path": "/bindings/row_index"
+      }
+    ],
+    "dimensions": [
+      "dtype",
+      "input_shape",
+      "max_shape",
+      "min_shape"
+    ],
+    "transition": "Official source-matrix variation across: dtype, input_shape, max_shape, min_shape"
+  },
+  "build": {
+    "factory_arguments": {
+      "N": 268435456,
+      "dtype": "bfloat16",
+      "has_max": false,
+      "has_min": true
+    }
+  },
+  "case_id": "tileops-make-clamp-tensor-kernel-kernel-12cd71b4fce5-boundary-ebe0ca5edf",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 474,
+      "function": "ClampFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/elementwise_unary_activation.yaml",
+      "source_sha256": "f7e87e1d58fba2e5d2ca966558571e830a210db5233ad69ea2446045de2ceccd",
+      "start_line": 427
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-9e07f1961d7f3061",
+    "tileops-6a4085cd-spec-evidence-85e0b317bc56fb67"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-make-clamp-tensor-kernel-kernel-12cd71b4fce5",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/elementwise_unary_activation.yaml:427-474#ClampFwdOp",
+  "parent_case_id": "tileops-make-clamp-tensor-kernel-kernel-12cd71b4fce5-original-27d4f76fea",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-hoist-fence-proxy-out-of-while-loop-before-f54ac1e69297",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "d05bf8eaacfd299e82bb0414aaace21f9188938cdc20ccf92517c4840f99ca88"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      1202,
+      1232
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_inject_fence_proxy.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_inject_fence_proxy.py#L1202-L1232",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "26bad9f5b72f409e390cc18f0fb5bb0d1e413e8653ce22f6136e7591d754ae7b",
+    "symbol": "test_hoist_fence_proxy_out_of_while_loop.before"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

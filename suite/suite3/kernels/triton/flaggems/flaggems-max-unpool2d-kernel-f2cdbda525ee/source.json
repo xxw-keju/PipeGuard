@@ -1,0 +1,33 @@
+{
+  "case_count": 24,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-max-unpool2d-kernel-f2cdbda525ee",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "9e436cc4e57f0318228f9348002876c02e98141131ec0c0881f123a5877f81a7"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      28,
+      107
+    ],
+    "path": "src/flag_gems/ops/max_unpool2d.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/max_unpool2d.py#L28-L107",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "5bc6990e474c9597280871314533901ad59bb7d00f0a73bd14d20bee6d546cfa",
+    "symbol": "max_unpool2d_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

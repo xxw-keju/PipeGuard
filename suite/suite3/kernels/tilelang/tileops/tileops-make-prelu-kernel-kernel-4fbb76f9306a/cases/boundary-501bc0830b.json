@@ -1,0 +1,97 @@
+{
+  "arguments": {
+    "dtype": "bfloat16",
+    "input_shape": [
+      16,
+      256,
+      56,
+      56
+    ],
+    "label": "cnn-feat-per-channel",
+    "manifest": "src/tileops/manifest/elementwise_binary.yaml",
+    "operator": "PreluFwdOp",
+    "row_index": 0,
+    "weight_shape": [
+      256
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": "bfloat16",
+        "before": "float16",
+        "path": "/bindings/dtype"
+      }
+    ],
+    "dimensions": [
+      "dtype"
+    ],
+    "transition": "Official source-matrix variation across: dtype"
+  },
+  "build": {
+    "factory_arguments": {
+      "C": 256,
+      "N": 12845056,
+      "dtype": "bfloat16",
+      "inner_size": 3136
+    }
+  },
+  "case_id": "tileops-make-prelu-kernel-kernel-4fbb76f9306a-boundary-501bc0830b",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 48,
+      "function": "PreluFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/elementwise_binary.yaml",
+      "source_sha256": "4b5c0adc39786e9df5fd4da8d7b89f163a79710540a56142d8c53e5b3bc610ab",
+      "start_line": 8
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-e77a52a97810d31f",
+    "tileops-6a4085cd-spec-evidence-55344258c2706080"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-make-prelu-kernel-kernel-4fbb76f9306a",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/elementwise_binary.yaml:8-48#PreluFwdOp",
+  "parent_case_id": "tileops-make-prelu-kernel-kernel-4fbb76f9306a-original-b566a715d3",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

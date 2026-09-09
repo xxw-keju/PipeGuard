@@ -1,0 +1,151 @@
+{
+  "arguments": {
+    "dtype": "bfloat16",
+    "gk_shape": [
+      1,
+      32,
+      128
+    ],
+    "k_shape": [
+      1,
+      32,
+      128
+    ],
+    "label": "gla-decode-serving-b1-h32-d128",
+    "manifest": "src/tileops/manifest/linear_attention.yaml",
+    "operator": "GLADecodeFwdOp",
+    "q_shape": [
+      1,
+      32,
+      128
+    ],
+    "row_index": 2,
+    "scale": 0.08838834764831845,
+    "state_shape": [
+      1,
+      32,
+      128,
+      128
+    ],
+    "v_shape": [
+      1,
+      32,
+      128
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 32,
+        "before": 8,
+        "path": "/bindings/gk_shape/1"
+      },
+      {
+        "after": 32,
+        "before": 8,
+        "path": "/bindings/k_shape/1"
+      },
+      {
+        "after": "gla-decode-serving-b1-h32-d128",
+        "before": "gla-decode-serving-b1-h8-d128",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 32,
+        "before": 8,
+        "path": "/bindings/q_shape/1"
+      },
+      {
+        "after": 2,
+        "before": 0,
+        "path": "/bindings/row_index"
+      },
+      {
+        "after": 32,
+        "before": 8,
+        "path": "/bindings/state_shape/1"
+      },
+      {
+        "after": 32,
+        "before": 8,
+        "path": "/bindings/v_shape/1"
+      }
+    ],
+    "dimensions": [
+      "gk_shape",
+      "k_shape",
+      "q_shape",
+      "state_shape",
+      "v_shape"
+    ],
+    "transition": "Official source-matrix variation across: gk_shape, k_shape, q_shape, state_shape, v_shape"
+  },
+  "build": {
+    "factory_arguments": {
+      "batch": 1,
+      "dim_k": 128,
+      "dim_v": 128,
+      "dtype": "bfloat16",
+      "head": 32,
+      "scale": 0.08838834764831845
+    }
+  },
+  "case_id": "tileops-gla-decode-tl-decode-func-12c6743c7d7d-boundary-a54d261bac",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 269,
+      "function": "GLADecodeFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/linear_attention.yaml",
+      "source_sha256": "4dc49a829b5f1beb04dbee52a4ed843738c9c11db2d5944249213ec688e92073",
+      "start_line": 219
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-ee8e41095ebe5b40",
+    "tileops-6a4085cd-spec-evidence-64b92a3c77a9b7c7"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-gla-decode-tl-decode-func-12c6743c7d7d",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/linear_attention.yaml:219-269#GLADecodeFwdOp",
+  "parent_case_id": "tileops-gla-decode-tl-decode-func-12c6743c7d7d-original-8f0776c0c5",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

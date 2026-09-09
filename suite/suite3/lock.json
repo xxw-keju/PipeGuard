@@ -1,0 +1,188 @@
+{
+  "normative_baseline": {
+    "document_id": "nvidia-sm90-ptx93-cuda133-v1",
+    "sha256": "64763262deeeecd05eda2ffb084355bfed902da8e1e31ddc1bafef244c4cb113",
+    "source": "suite3/normative-baseline.json",
+    "version": "PTX ISA 9.3 / CUDA Toolkit 13.3 Update 1"
+  },
+  "policy": {
+    "default_checker_engine": "maximal",
+    "denominator": "ADMITTED_LOGICAL_LAUNCH_ROOTS",
+    "minimum_boundary_dimensions": 2,
+    "minimum_boundary_specs": 3,
+    "minimum_original_specs": 1
+  },
+  "repositories": [
+    {
+      "audit_documents": [
+        {
+          "kind": "LAUNCH_ROOT_AUDIT",
+          "path": "flaggems-34bd6d68/launch-root-audit.json",
+          "sha256": "f4c3f586fc1190739535f8640232d25e82edcf3dc20976fead2466d16a7a5245"
+        },
+        {
+          "kind": "SPECIFICATION_AUDIT",
+          "path": "flaggems-34bd6d68/specification-audit.json",
+          "sha256": "1a6f4a51a016c9d54d8fe079792bed4c54b3c4f9a1c56450bf65a6f71c4f2822"
+        }
+      ],
+      "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+      "dsl": "triton",
+      "license": {
+        "path": "LICENSE",
+        "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+        "spdx_id": "Apache-2.0"
+      },
+      "project": "FlagGems",
+      "repository_url": "https://github.com/flagos-ai/FlagGems",
+      "source_id": "flaggems-34bd6d68",
+      "source_index": {
+        "path": "flaggems-34bd6d68/source-index.json",
+        "sha256": "d01deaed6f772cc1c3b0ee7cd93bf4b86dd25fd29ff11b6162ede7b6bd5efb7d"
+      },
+      "source_prefixes": [
+        "src/flag_gems/ops/",
+        "src/flag_gems/fused/",
+        "src/flag_gems/experimental_ops/",
+        "src/flag_gems/runtime/backend/_nvidia/",
+        "src/flag_gems/fused_moe_mxq.py",
+        "src/flag_gems/utils/"
+      ],
+      "version": "v5.4.0-rc1.post1"
+    },
+    {
+      "audit_documents": [
+        {
+          "kind": "SPECIFICATION_AUDIT",
+          "path": "tilekernels-36d9e45d/specification-audit.json",
+          "sha256": "c0c3294a2104c7cbb3ce267fe249baa59e2539613ecf8a1b4b9f7c95263c3937"
+        }
+      ],
+      "commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+      "dsl": "tilelang",
+      "license": {
+        "path": "LICENSE",
+        "sha256": "ebb4f09972aee8608be255debaf78451a68e95c290f55c240dec2ecfa16ea6be",
+        "spdx_id": "MIT"
+      },
+      "project": "TileKernels",
+      "repository_url": "https://github.com/deepseek-ai/TileKernels",
+      "source_id": "tilekernels-36d9e45d",
+      "source_index": {
+        "path": "tilekernels-36d9e45d/source-index.json",
+        "sha256": "3f196b0d7665fc4bf1327a223de61f0bf5f096cff968b8e038488c2609b2dbeb"
+      },
+      "source_prefixes": [
+        "tile_kernels/"
+      ],
+      "version": "36d9e45d"
+    },
+    {
+      "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+      "dsl": "tilelang",
+      "license": {
+        "path": "LICENSE",
+        "sha256": "f70e5cdc24c3797af741930440086f9a0ad36930b05a3dfc25b420936dc2cfa1",
+        "spdx_id": "MIT"
+      },
+      "project": "TileLang",
+      "repository_url": "https://github.com/tile-ai/tilelang",
+      "source_id": "tilelang-2c31e071",
+      "source_index": {
+        "path": "tilelang-2c31e071/source-index.json",
+        "sha256": "aaaa5f2c13334bbf710be3ddc34839b221e8879a21e8c10691ee51c3d70879e2"
+      },
+      "source_prefixes": [
+        "examples/",
+        "testing/",
+        "benchmark/",
+        "docs/tutorials/"
+      ],
+      "version": "v0.1.14-9-g2c31e071"
+    },
+    {
+      "audit_documents": [
+        {
+          "kind": "SPECIFICATION_AUDIT",
+          "path": "tileops-6a4085cd/specification-audit.json",
+          "sha256": "d9f350e01e5247450c37fb99961811b9171a7886a6ade64ebf1c027c04682d64"
+        }
+      ],
+      "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+      "dsl": "tilelang",
+      "license": {
+        "path": "LICENSE",
+        "sha256": "bfd7d57808112905dce724b04e7b3bebb823d3e74737d5d83e9194464015017b",
+        "spdx_id": "MIT"
+      },
+      "project": "TileOPs",
+      "repository_url": "https://github.com/tile-ai/TileOPs",
+      "source_id": "tileops-6a4085cd",
+      "source_index": {
+        "path": "tileops-6a4085cd/source-index.json",
+        "sha256": "64422d753552555da7541702d30949d26ec42a5925f4219915590bb868f07224"
+      },
+      "source_prefixes": [
+        "src/tileops/kernels/"
+      ],
+      "version": "6a4085cd"
+    },
+    {
+      "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+      "dsl": "triton",
+      "license": {
+        "path": "LICENSE",
+        "sha256": "92640fb97222fd0a698ff28ce0c3782c172623f8d6c609b557636a80f28fb946",
+        "spdx_id": "MIT"
+      },
+      "project": "Triton",
+      "repository_url": "https://github.com/triton-lang/triton",
+      "source_id": "triton-61c02bcd",
+      "source_index": {
+        "path": "triton-61c02bcd/source-index.json",
+        "sha256": "12506c64b688a5241eec30747acd28be2d957d07603a0a618140337c20bb9df9"
+      },
+      "source_prefixes": [
+        "python/examples/",
+        "python/test/",
+        "python/tutorials/",
+        "python/triton_kernels/tests/"
+      ],
+      "version": "legacy-backend-6281-g61c02bcdba"
+    }
+  ],
+  "schema_version": "pipeguard-upstream-suite-lock-v1",
+  "suite_id": "pipeguard-real-upstream-kernels-sm90-v1",
+  "suite_revision": 2,
+  "target_profiles": [
+    {
+      "analysis_architecture": "sm90",
+      "backend": "cuda",
+      "cta_scope": "single_cta",
+      "profile_id": "nvidia-sm90-single-cta",
+      "warp_size": 32
+    }
+  ],
+  "toolchains": [
+    {
+      "adapter_version": "tilelang-pgir-v2",
+      "backend_commit": "907a88c8791ccf33b9874821bc875e7abf624367",
+      "compiler_target": "sm_90a",
+      "dsl": "tilelang",
+      "environment": "tl-pg",
+      "frontend_commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+      "frontend_source_id": "tilelang-2c31e071",
+      "toolchain_id": "tilelang-sm90a-2c31e071"
+    },
+    {
+      "adapter_version": "triton-pgir-v2",
+      "backend_commit": null,
+      "compiler_target": "sm90",
+      "dsl": "triton",
+      "environment": "triton-pg",
+      "frontend_commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+      "frontend_source_id": "triton-61c02bcd",
+      "toolchain_id": "triton-sm90-61c02bcd"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-conflicting-global-in-inner-function-kernel1-b938c3d615fd",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "6a2ca4a79e8ff95ead2c6d363ddc28f85db4953499ec3f39eede3b8637663d41"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      483,
+      486
+    ],
+    "path": "python/test/unit/runtime/test_cache.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/runtime/test_cache.py#L483-L486",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "a04d6c567df973e97d1779c1a88949932b9eaf7e2bd738adeaa83fafa471cbad",
+    "symbol": "test_conflicting_global_in_inner_function.kernel1"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

@@ -1,0 +1,115 @@
+{
+  "arguments": {
+    "batch": 1,
+    "chunk_size": 64,
+    "dim_k": 128,
+    "dim_v": 128,
+    "dtype": "float16",
+    "group_chunks": 64,
+    "head": 16,
+    "label": "gdn_summary-upper",
+    "manifest": "src/tileops/manifest/linear_attention.yaml",
+    "operator": "GatedDeltaNetPrefillBHTDFwdOp",
+    "seq_len": 262144
+  },
+  "boundary": {
+    "dimensions": [
+      "batch",
+      "chunk_size",
+      "dim_k",
+      "dim_v",
+      "dtype",
+      "group_chunks",
+      "head",
+      "seq_len"
+    ],
+    "position": "upper",
+    "transition": "batch=1, head=16, seq_len>=65536, chunk_size=64, dim_k=dim_v=128, dtype=float16, seq_len%4096=0"
+  },
+  "build": {
+    "factory_arguments": {
+      "BV": 64,
+      "accum_dtype": "float32",
+      "batch": 1,
+      "block_C": 64,
+      "dim_aug": 256,
+      "dim_k": 128,
+      "dim_v": 128,
+      "dtype": "float16",
+      "group_chunks": 64,
+      "head": 16,
+      "num_groups": 64,
+      "num_v_tiles": 2,
+      "seq_len": 262144
+    },
+    "kernel_arguments": {
+      "num_stages": 2,
+      "threads": 256
+    }
+  },
+  "case_id": "tileops-prefill-group-transition-summary-bthd-tl-func-d0a7732c4f99-boundary-62a049b4e0",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 112,
+      "function": "GatedDeltaNetPrefillBHTDFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/linear_attention.yaml",
+      "source_sha256": "0215399314392eca9231e1bde590488889a3c3c9ca20585394ca6cb215ab0d68",
+      "start_line": 65
+    },
+    "dispatch": {
+      "predicate": "batch=1, head=16, seq_len>=65536, chunk_size=64, dim_k=dim_v=128, dtype=float16, seq_len%4096=0",
+      "strategy": "gdn_summary"
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-67d46a1db5c1c96b",
+    "tileops-6a4085cd-spec-evidence-07aac141ec318a35"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-prefill-group-transition-summary-bthd-tl-func-d0a7732c4f99",
+  "kind": "BOUNDARY",
+  "origin": "upstream-dispatch:batch=1, head=16, seq_len>=65536, chunk_size=64, dim_k=dim_v=128, dtype=float16, seq_len%4096=0",
+  "reason": "H100 source-condition witness for gdn_summary.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [
+    "tileops-dispatch-witness"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "device": "NVIDIA H100 80GB HBM3",
+    "sm_count": 132,
+    "warp_size": 32
+  },
+  "unresolved": []
+}

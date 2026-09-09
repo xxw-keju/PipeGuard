@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-make-where-kernel-kernel-680775acfeff",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "33213aaa22db449d9d728549fb2a68478b8b979829a6b76a13074df026fa9335"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      28,
+      55
+    ],
+    "path": "src/tileops/kernels/elementwise/where.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/elementwise/where.py#L28-L55",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "fcd7ab219b0d1a6d228b601a7a4696f216791df9f24930d47741c1f5ab3acc90",
+    "symbol": "_make_where_kernel.kernel"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

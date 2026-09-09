@@ -1,0 +1,31 @@
+@triton.jit
+def fake_quantize_per_channel_affine_kernel(
+    input_ptr,
+    scale_ptr,
+    zero_point_ptr,
+    output_ptr,
+    n_elements,
+    n_channels,
+    channel_stride,
+    quant_min,
+    quant_max,
+    BLOCK_SIZE: tl.constexpr,
+):
+    pid = tl.program_id(axis=0)
+    block_start = pid * BLOCK_SIZE
+    offsets = block_start + tl.arange(0, BLOCK_SIZE)
+    mask = offsets < n_elements
+
+    x = tl.load(input_ptr + offsets, mask=mask, other=0.0)
+    channel_idx = (offsets // channel_stride) % n_channels
+    scale = tl.load(scale_ptr + channel_idx, mask=mask, other=1.0)
+    zero_point = tl.load(zero_point_ptr + channel_idx, mask=mask, other=0.0)
+
+    x_fp32 = x.to(tl.float32)
+    scale_fp32 = scale.to(tl.float32)
+    zero_point_fp32 = zero_point.to(tl.float32)
+    x_quantized = _round_half_to_even(x_fp32 / scale_fp32) + zero_point_fp32
+    x_clamped = tl.minimum(tl.maximum(x_quantized, quant_min), quant_max)
+    output = (x_clamped - zero_point_fp32) * scale_fp32
+
+    tl.store(output_ptr + offsets, output, mask=mask)

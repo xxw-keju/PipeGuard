@@ -1,0 +1,132 @@
+{
+  "arguments": {
+    "dtype": "bfloat16",
+    "k": 2048,
+    "label": "ds-v3-decode-down",
+    "m": 128,
+    "manifest": "src/tileops/manifest/gemm.yaml",
+    "n": 7168,
+    "operator": "GemmFwdOp",
+    "row_index": 2,
+    "trans_a": false,
+    "trans_b": true
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": "bfloat16",
+        "before": "float16",
+        "path": "/bindings/dtype"
+      },
+      {
+        "after": 2048,
+        "before": 1024,
+        "path": "/bindings/k"
+      },
+      {
+        "after": "ds-v3-decode-down",
+        "before": "square-1k-nn",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 128,
+        "before": 1024,
+        "path": "/bindings/m"
+      },
+      {
+        "after": 7168,
+        "before": 1024,
+        "path": "/bindings/n"
+      },
+      {
+        "after": 2,
+        "before": 0,
+        "path": "/bindings/row_index"
+      },
+      {
+        "after": true,
+        "before": false,
+        "path": "/bindings/trans_b"
+      }
+    ],
+    "dimensions": [
+      "dtype",
+      "k",
+      "m",
+      "n",
+      "trans_b"
+    ],
+    "transition": "Official source-matrix variation across: dtype, k, m, n, trans_b"
+  },
+  "build": {
+    "factory_arguments": {
+      "dtype": "bfloat16",
+      "k": 2048,
+      "m": 128,
+      "n": 7168,
+      "sm_count": 132,
+      "trans_a": false,
+      "trans_b": true
+    }
+  },
+  "case_id": "tileops-gemm-kernel-gemm-func-a5820c42bf1e-boundary-df45d67202",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 68,
+      "function": "GemmFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/gemm.yaml",
+      "source_sha256": "6b38222bae27173626d40742bf23f4908df86ca2d73cfa887944584e229763c7",
+      "start_line": 8
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-ba0f389ba6ad8683",
+    "tileops-6a4085cd-spec-evidence-d3513ef2d4fb3fed"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-gemm-kernel-gemm-func-a5820c42bf1e",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/gemm.yaml:8-68#GemmFwdOp",
+  "parent_case_id": "tileops-gemm-kernel-gemm-func-a5820c42bf1e-original-0020f35390",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "device": "NVIDIA H100 80GB HBM3",
+    "sm_count": 132,
+    "warp_size": 32
+  },
+  "unresolved": []
+}

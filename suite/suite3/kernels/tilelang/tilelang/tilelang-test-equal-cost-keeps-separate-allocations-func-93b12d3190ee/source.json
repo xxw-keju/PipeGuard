@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-equal-cost-keeps-separate-allocations-func-93b12d3190ee",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "a7c8c83e121ebf31820bc5909cdae78b97da7fa41f290c40ab1fe26641518493"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      131,
+      139
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_tmem_arena_packing.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_tmem_arena_packing.py#L131-L139",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "2ac87439c06313e27a38b663da440f1d9ab13dd254775e08897a27974144fb32",
+    "symbol": "test_equal_cost_keeps_separate_allocations.func"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

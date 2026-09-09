@@ -1,0 +1,33 @@
+{
+  "case_count": 24,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-cauchy-kernel-fbbbc67ce6ad",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "e238eb73a6dd7d5764bb1073c82df9671c022095857ff064ca3a80faa4f5543d"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      56,
+      91
+    ],
+    "path": "src/flag_gems/ops/cauchy.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/cauchy.py#L56-L91",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "9234a4a7df5ff493e87940d0bff24e3cec178fa0c557a7e9430e41c20776c1e8",
+    "symbol": "cauchy_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

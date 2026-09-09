@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-invalid-nested-parallel-index-main-76f23d841f13",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "de8cde0bf5b06f8bd3bdba1f279a2daf7285193b6424381b7d406dc1689ebec2"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      35,
+      40
+    ],
+    "path": "testing/python/analysis/test_tilelang_parallel_local_index_checker.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/analysis/test_tilelang_parallel_local_index_checker.py#L35-L40",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "3c114be82a13c9c1a325fac46ec9ef9648bd0e7078459446cad077f88a673633",
+    "symbol": "invalid_nested_parallel_index.main"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

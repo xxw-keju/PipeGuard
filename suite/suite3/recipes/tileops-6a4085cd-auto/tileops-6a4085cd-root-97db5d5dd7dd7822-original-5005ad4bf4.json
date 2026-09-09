@@ -1,0 +1,47 @@
+{
+  "bindings": {
+    "dtype": "float16",
+    "label": "attn-weights-4k",
+    "manifest": "src/tileops/manifest/reduction.yaml",
+    "operator": "LogSoftmaxFwdOp",
+    "row_index": 0,
+    "x_shape": [
+      32,
+      32,
+      4096
+    ]
+  },
+  "candidate_id": "97db5d5dd7dd7822",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 108,
+      "function": "LogSoftmaxFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/reduction.yaml",
+      "source_sha256": "85b6232a47432a58c4b2fd4b57b16dd5d0fb6741bb26f91edce76cff37b549fc",
+      "start_line": 56
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/reduction.yaml:56-108#LogSoftmaxFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-97db5d5dd7dd7822-original-5005ad4bf4-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

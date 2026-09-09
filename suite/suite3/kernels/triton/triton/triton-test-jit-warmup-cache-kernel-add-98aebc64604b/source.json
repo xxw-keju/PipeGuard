@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-jit-warmup-cache-kernel-add-98aebc64604b",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "510ff35cbd3ade427a2af532da845e6add1bff53f4c6dfc4558bf52ed6ee1927"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      638,
+      641
+    ],
+    "path": "python/test/unit/runtime/test_cache.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/runtime/test_cache.py#L638-L641",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "e03adc8d7be429166eb331db7db9c2714167ddfe08b8ee2cd6badda5cc1584af",
+    "symbol": "test_jit_warmup_cache.kernel_add"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

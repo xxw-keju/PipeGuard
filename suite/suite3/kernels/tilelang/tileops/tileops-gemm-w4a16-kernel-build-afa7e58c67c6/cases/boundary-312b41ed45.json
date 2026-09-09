@@ -1,0 +1,114 @@
+{
+  "arguments": {
+    "dtype": "float16",
+    "k": 8192,
+    "label": "decode-l2-resident-ish",
+    "m": 1,
+    "manifest": "src/tileops/manifest/gemm.yaml",
+    "n": 8192,
+    "operator": "GemmW4A16FwdOp",
+    "row_index": 2
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 8192,
+        "before": 128,
+        "path": "/bindings/k"
+      },
+      {
+        "after": "decode-l2-resident-ish",
+        "before": "compile-smoke-square-64x64x128",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 1,
+        "before": 64,
+        "path": "/bindings/m"
+      },
+      {
+        "after": 8192,
+        "before": 64,
+        "path": "/bindings/n"
+      },
+      {
+        "after": 2,
+        "before": 0,
+        "path": "/bindings/row_index"
+      }
+    ],
+    "dimensions": [
+      "k",
+      "m",
+      "n"
+    ],
+    "transition": "Official source-matrix variation across: k, m, n"
+  },
+  "build": {
+    "factory_arguments": {
+      "dtype": "float16",
+      "group_size": 128,
+      "k": 8192,
+      "m": 1,
+      "n": 8192
+    }
+  },
+  "case_id": "tileops-gemm-w4a16-kernel-build-afa7e58c67c6-boundary-312b41ed45",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 164,
+      "function": "GemmW4A16FwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/gemm.yaml",
+      "source_sha256": "781fe2ecf21fde8f9c70c47e871d10adc2f6958c7bb67dbe063f6290186a81fe",
+      "start_line": 120
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-4be1cd5414da0032",
+    "tileops-6a4085cd-spec-evidence-648c6a261657375f"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-gemm-w4a16-kernel-build-afa7e58c67c6",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/gemm.yaml:120-164#GemmW4A16FwdOp",
+  "parent_case_id": "tileops-gemm-w4a16-kernel-build-afa7e58c67c6-original-4bc08ec246",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

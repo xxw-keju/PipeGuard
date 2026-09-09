@@ -1,0 +1,189 @@
+{
+  "arguments": {
+    "C_out": 256,
+    "bias_shape": [
+      256
+    ],
+    "dilation": {
+      "__pipeguard_missing__": true
+    },
+    "dtype": "bfloat16",
+    "groups": {
+      "__pipeguard_missing__": true
+    },
+    "input_shape": [
+      2,
+      64,
+      56,
+      56
+    ],
+    "kH": 1,
+    "kW": 1,
+    "label": "resnet-1x1-bias",
+    "manifest": "src/tileops/manifest/convolution.yaml",
+    "operator": "Conv2dFwdOp",
+    "padding": [
+      0,
+      0
+    ],
+    "row_index": 22,
+    "stride": [
+      1,
+      1
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 256,
+        "before": 64,
+        "path": "/bindings/C_out"
+      },
+      {
+        "after": [
+          256
+        ],
+        "before": {
+          "__pipeguard_missing__": true
+        },
+        "path": "/bindings/bias_shape"
+      },
+      {
+        "after": "bfloat16",
+        "before": "float16",
+        "path": "/bindings/dtype"
+      },
+      {
+        "after": 1,
+        "before": 3,
+        "path": "/bindings/kH"
+      },
+      {
+        "after": 1,
+        "before": 3,
+        "path": "/bindings/kW"
+      },
+      {
+        "after": "resnet-1x1-bias",
+        "before": "resnet-3x3",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 0,
+        "before": 1,
+        "path": "/bindings/padding/0"
+      },
+      {
+        "after": 0,
+        "before": 1,
+        "path": "/bindings/padding/1"
+      },
+      {
+        "after": 22,
+        "before": 0,
+        "path": "/bindings/row_index"
+      }
+    ],
+    "dimensions": [
+      "C_out",
+      "bias_shape",
+      "dtype",
+      "kH",
+      "kW",
+      "padding"
+    ],
+    "transition": "Official source-matrix variation across: C_out, bias_shape, dtype, kH, kW, padding"
+  },
+  "build": {
+    "factory_arguments": {
+      "accum_dtype": "float32",
+      "c_in": 64,
+      "c_in_g": 64,
+      "c_out": 256,
+      "c_out_g": 256,
+      "dilation": 1,
+      "dilation_h": 1,
+      "dilation_w": 1,
+      "dtype": "bfloat16",
+      "groups": 1,
+      "h": 56,
+      "h_in": 56,
+      "has_bias": true,
+      "hw": 3136,
+      "k_total": 64,
+      "kernel_h": 1,
+      "kernel_size": 1,
+      "kernel_w": 1,
+      "n": 2,
+      "out_h": 56,
+      "out_hw": 3136,
+      "out_w": 56,
+      "pad": 0,
+      "pad_h": 0,
+      "pad_w": 0,
+      "stride": 1,
+      "stride_h": 1,
+      "stride_w": 1,
+      "w": 56,
+      "w_in": 56
+    }
+  },
+  "case_id": "tileops-conv2d-depthwise-kernel-conv2d-depthwise-func-659ac5136ba0-boundary-f2e5d3de90",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 185,
+      "function": "Conv2dFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/convolution.yaml",
+      "source_sha256": "c0a81ca773962995fdb0cb29d90e38c3ad18dab30ccf00e4f1454a5aa1438922",
+      "start_line": 79
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-5f6f39dd5a3ded08",
+    "tileops-6a4085cd-spec-evidence-382641710da7ddc3"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-conv2d-depthwise-kernel-conv2d-depthwise-func-659ac5136ba0",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/convolution.yaml:79-185#Conv2dFwdOp",
+  "parent_case_id": "tileops-conv2d-depthwise-kernel-conv2d-depthwise-func-659ac5136ba0-original-6d9298dbcf",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

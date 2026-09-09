@@ -1,0 +1,71 @@
+{
+  "bindings": {
+    "chunk_size": 64,
+    "dtype": "float16",
+    "g_shape": [
+      2,
+      2048,
+      4,
+      64
+    ],
+    "initial_state_shape": {
+      "__pipeguard_missing__": true
+    },
+    "k_shape": [
+      2,
+      2048,
+      4,
+      64
+    ],
+    "label": "gla-noinit-b2-s2k-h4-d64",
+    "manifest": "src/tileops/manifest/linear_attention.yaml",
+    "operator": "GLAFwdOp",
+    "q_shape": [
+      2,
+      2048,
+      4,
+      64
+    ],
+    "row_index": 0,
+    "scale": 0.125,
+    "v_shape": [
+      2,
+      2048,
+      4,
+      64
+    ]
+  },
+  "candidate_id": "d5b0d995b822ce34",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 574,
+      "function": "GLAFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/linear_attention.yaml",
+      "source_sha256": "3cb4d56341b78389086c6ef3f1742b4fc9cbb1434026b0930e7953a83368fea0",
+      "start_line": 538
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/linear_attention.yaml:538-574#GLAFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-d5b0d995b822ce34-original-9e6721cbeb-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

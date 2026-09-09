@@ -1,0 +1,17 @@
+    @T.prim_func(private=True)
+    def func():
+        buf_dyn_shmem = T.alloc_buffer((2048,), "uint8", scope="shared.dyn")
+        x_ub: T.handle("float32", "shared.dyn") = T.handle_add_byte_offset(buf_dyn_shmem.data, 0)
+        y_ub: T.handle("float8_e4m3fn", "shared.dyn") = T.handle_add_byte_offset(buf_dyn_shmem.data, 0)
+        x_local = T.alloc_buffer((4,), "float32", scope="local")
+        y_local = T.alloc_buffer((4,), "float8_e4m3fn", scope="local")
+        tx = T.launch_thread("threadIdx.x", 128)
+        ty = T.launch_thread("threadIdx.y", 1)
+        tz = T.launch_thread("threadIdx.z", 1)
+        x_ub_1 = T.decl_buffer((512,), "float32", data=x_ub, scope="shared.dyn")
+        y_ub_1 = T.decl_buffer((512,), "float8_e4m3fn", data=y_ub, scope="shared.dyn")
+        x_local_1 = T.decl_buffer((4,), "float32", data=x_local.data, scope="local")
+        y_local_1 = T.decl_buffer((4,), "float8_e4m3fn", data=y_local.data, scope="local")
+        x_local_1[T.Ramp(0, 1, 4)] = x_ub_1[T.Ramp(tx * 4, 1, 4)]
+        y_local_1[T.Ramp(0, 1, 4)] = T.Cast("float8_e4m3fnx4", x_local_1[T.Ramp(0, 1, 4)])
+        y_ub_1[T.Ramp(tx * 4, 1, 4)] = y_local_1[T.Ramp(0, 1, 4)]

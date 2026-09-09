@@ -1,0 +1,69 @@
+{
+  "bindings": {
+    "C_out": 256,
+    "bias_shape": {
+      "__pipeguard_missing__": true
+    },
+    "dilation": [
+      12,
+      12
+    ],
+    "dtype": "float16",
+    "groups": {
+      "__pipeguard_missing__": true
+    },
+    "input_shape": [
+      1,
+      2048,
+      32,
+      32
+    ],
+    "kH": 3,
+    "kW": 3,
+    "label": "deeplabv3-aspp-3x3-rate12",
+    "manifest": "src/tileops/manifest/convolution.yaml",
+    "operator": "Conv2dFwdOp",
+    "padding": [
+      12,
+      12
+    ],
+    "row_index": 12,
+    "stride": [
+      1,
+      1
+    ]
+  },
+  "candidate_id": "4c946242136b51b5",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 185,
+      "function": "Conv2dFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/convolution.yaml",
+      "source_sha256": "c0a81ca773962995fdb0cb29d90e38c3ad18dab30ccf00e4f1454a5aa1438922",
+      "start_line": 79
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/convolution.yaml:79-185#Conv2dFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-4c946242136b51b5-boundary-303f9110f5-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

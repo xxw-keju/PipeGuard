@@ -1,0 +1,95 @@
+{
+  "arguments": {
+    "SEM": null,
+    "triton_dtype": {
+      "__pipeguard_triton_dtype__": "int32"
+    }
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-test-atomic-cas-serialized-add-6feb9c34c0f6-original-6b5b1a4cad",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:data",
+        "1": "global:lock"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "SEM": null,
+      "triton_dtype": {
+        "__pipeguard_triton_dtype__": "int32"
+      }
+    },
+    "grid": [
+      2000,
+      1,
+      1
+    ],
+    "grid_ctas": 2000,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "Lock": "*i32",
+      "SEM": "constexpr",
+      "data": "*fp32",
+      "triton_dtype": "constexpr"
+    }
+  },
+  "evidence": [
+    "source-109ee10290fc7cb1",
+    "launch-a8eab7b12652bac9"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-test-atomic-cas-serialized-add-6feb9c34c0f6",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_core.py:2037;dtype=int32,sem=default-acq_rel,num_ctas=1",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-launch:python/test/unit/language/test_core.py:2037;dtype=int32,sem=default-acq_rel,num_ctas=1",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

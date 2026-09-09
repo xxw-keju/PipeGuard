@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-prelu-kernel-21bcfa64503a",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "25eb7dfe30b9d1e1c4fb1188b6c41a04cf78e7a1f1330138f1d292eff1f92c68"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      27,
+      53
+    ],
+    "path": "src/flag_gems/ops/prelu.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/prelu.py#L27-L53",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "10f1addd9c6a5c6e8cfe9c0786cf7489dff7b4ad3e4615bed22722199ca8498b",
+    "symbol": "prelu_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

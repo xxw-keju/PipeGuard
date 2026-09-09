@@ -1,0 +1,194 @@
+{
+  "arguments": {
+    "C_out": 128,
+    "bias_shape": [
+      128
+    ],
+    "dilation": {
+      "__pipeguard_missing__": true
+    },
+    "dtype": "float16",
+    "groups": {
+      "__pipeguard_missing__": true
+    },
+    "input_shape": [
+      1,
+      64,
+      8,
+      56,
+      56
+    ],
+    "kD": 3,
+    "kH": 3,
+    "kW": 3,
+    "label": "video-stage-downsample-k3-s2-bias",
+    "manifest": "src/tileops/manifest/convolution.yaml",
+    "operator": "Conv3dFwdOp",
+    "padding": [
+      1,
+      1,
+      1
+    ],
+    "row_index": 6,
+    "stride": [
+      2,
+      2,
+      2
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 128,
+        "before": 64,
+        "path": "/bindings/C_out"
+      },
+      {
+        "after": [
+          128
+        ],
+        "before": {
+          "__pipeguard_missing__": true
+        },
+        "path": "/bindings/bias_shape"
+      },
+      {
+        "after": 64,
+        "before": 3,
+        "path": "/bindings/input_shape/1"
+      },
+      {
+        "after": 8,
+        "before": 16,
+        "path": "/bindings/input_shape/2"
+      },
+      {
+        "after": 56,
+        "before": 112,
+        "path": "/bindings/input_shape/3"
+      },
+      {
+        "after": 56,
+        "before": 112,
+        "path": "/bindings/input_shape/4"
+      },
+      {
+        "after": "video-stage-downsample-k3-s2-bias",
+        "before": "r3d-stem-k3-s1",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 6,
+        "before": 0,
+        "path": "/bindings/row_index"
+      },
+      {
+        "after": 2,
+        "before": 1,
+        "path": "/bindings/stride/0"
+      },
+      {
+        "after": 2,
+        "before": 1,
+        "path": "/bindings/stride/1"
+      },
+      {
+        "after": 2,
+        "before": 1,
+        "path": "/bindings/stride/2"
+      }
+    ],
+    "dimensions": [
+      "C_out",
+      "bias_shape",
+      "input_shape",
+      "stride"
+    ],
+    "transition": "Official source-matrix variation across: C_out, bias_shape, input_shape, stride"
+  },
+  "build": {
+    "factory_arguments": {
+      "c_in": 64,
+      "c_in_g": 64,
+      "c_out": 128,
+      "c_out_g": 128,
+      "d_in": 8,
+      "dilation_d": 1,
+      "dilation_h": 1,
+      "dilation_w": 1,
+      "dtype": "float16",
+      "groups": 1,
+      "h_in": 56,
+      "has_bias": true,
+      "kernel_d": 3,
+      "kernel_h": 3,
+      "kernel_w": 3,
+      "n": 1,
+      "pad_d": 1,
+      "pad_h": 1,
+      "pad_w": 1,
+      "stride_d": 2,
+      "stride_h": 2,
+      "stride_w": 2,
+      "w_in": 56
+    }
+  },
+  "case_id": "tileops-conv3d-group-kernel-conv3d-group-func-997e719f28c4-boundary-cef8c222f5",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 271,
+      "function": "Conv3dFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/convolution.yaml",
+      "source_sha256": "d942836582e95fd1dd7e720c3b01801e0048ef4811704e521c59ec4d9a0669a2",
+      "start_line": 186
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-83427d1f813b65b6",
+    "tileops-6a4085cd-spec-evidence-083929c01c7c17ed"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-conv3d-group-kernel-conv3d-group-func-997e719f28c4",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/convolution.yaml:186-271#Conv3dFwdOp",
+  "parent_case_id": "tileops-conv3d-group-kernel-conv3d-group-func-997e719f28c4-original-aa3c3b0a69",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

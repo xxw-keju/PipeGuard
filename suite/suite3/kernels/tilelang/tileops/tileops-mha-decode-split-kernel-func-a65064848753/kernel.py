@@ -1,0 +1,172 @@
+# Normalized device code for PipeGuard Suite 3.
+# Exact upstream code and provenance are stored beside this file.
+
+import tilelang.language as T
+import tilelang
+LOG2E: float = 1.4426950408889634
+
+def make_log2e_scale(dim):
+    """Compute softmax scale with log2(e) factor pre-multiplied.
+
+    Returns (1/sqrt(dim)) * log2(e) for use with exp2-based softmax.
+    """
+    return (1.0 / dim) ** 0.5 * LOG2E
+
+def make_rescale(block_rows, head_dim):
+    """Create a reusable rescale T.macro for the output accumulator.
+
+    Args:
+        block_rows: Number of rows in the output accumulator
+        head_dim: Dimension of each head
+
+    Returns:
+        rescale: A T.macro that rescales acc_o by scores_scale
+    """
+
+    @T.macro
+    def rescale(acc_o, scores_scale):
+        for i, j in T.Parallel(block_rows, head_dim):
+            acc_o[i, j] *= scores_scale[i]
+    return rescale
+
+def _kernel_factory(batch, heads, seqlen_q, seqlen_kv, dim, page_size, is_causal, dtype):
+    scale = make_log2e_scale(dim)
+    accum_dtype = 'float'
+
+    @tilelang.jit(out_idx=[-1], pass_configs={tilelang.PassConfigKey.TL_ENABLE_FAST_MATH: True}, compile_flags=['-O3', '-DENABLE_BF16'])
+    def _func(block_M, block_N, num_split, num_stages, threads):
+        shape_q = [batch, seqlen_q, heads, dim]
+        shape_kv = [seqlen_kv, heads, dim]
+        part_shape = [batch, seqlen_q, heads, num_split, dim]
+        rescale = make_rescale(block_M, dim)
+
+        @T.macro
+        def MMA0(K: T.Tensor(shape_kv, dtype), Q_shared: T.SharedBuffer([block_M, dim], dtype), K_shared: T.SharedBuffer([block_N, dim], dtype), real_seqlen_kv: T.Tensor([batch], T.int32), acc_s: T.FragmentBuffer([block_M, block_N], accum_dtype), k_global: T.int32, k: T.int32, mid: T.int32, hid: T.int32, bid: T.int32, sid: T.int32):
+            seqlen_kv = real_seqlen_kv[bid]
+            T.copy(K[k * block_N:(k + 1) * block_N, hid, :], K_shared)
+            if is_causal:
+                for i, j in T.Parallel(block_M, block_N):
+                    acc_s[i, j] = T.if_then_else(mid * block_M + i >= k_global * block_N + j, 0, -T.infinity(acc_s.dtype))
+            else:
+                for i, j in T.Parallel(block_M, block_N):
+                    acc_s[i, j] = T.if_then_else(k_global * block_N + j < seqlen_kv, 0, -T.infinity(acc_s.dtype))
+            T.gemm(Q_shared, K_shared, acc_s, transpose_B=True, policy=T.GemmWarpPolicy.FullRow)
+
+        @T.macro
+        def MMA1(V: T.Tensor(shape_kv, dtype), V_shared: T.SharedBuffer([block_N, dim], dtype), real_seqlen_kv: T.int32, acc_s_cast: T.FragmentBuffer([block_M, block_N], dtype), acc_o: T.FragmentBuffer([block_M, dim], accum_dtype), k_global: T.int32, k: T.int32, hid: T.int32, bid: T.int32, sid: T.int32):
+            T.copy(V[k * block_N:(k + 1) * block_N, hid, :], V_shared)
+            T.gemm(acc_s_cast, V_shared, acc_o, policy=T.GemmWarpPolicy.FullRow)
+
+        @T.macro
+        def Softmax(acc_s: T.FragmentBuffer([block_M, block_N], accum_dtype), acc_s_cast: T.FragmentBuffer([block_M, block_N], dtype), scores_max: T.FragmentBuffer([block_M], accum_dtype), scores_max_prev: T.FragmentBuffer([block_M], accum_dtype), scores_scale: T.FragmentBuffer([block_M], accum_dtype), scores_sum: T.FragmentBuffer([block_M], accum_dtype), logsum: T.FragmentBuffer([block_M], accum_dtype)):
+            T.copy(scores_max, scores_max_prev)
+            T.fill(scores_max, -T.infinity(accum_dtype))
+            T.reduce_max(acc_s, scores_max, dim=1, clear=False)
+            for i in T.Parallel(block_M):
+                scores_scale[i] = T.if_then_else(scores_max[i] == -T.infinity(accum_dtype), 0, T.exp2(scores_max_prev[i] * scale - scores_max[i] * scale))
+            for i, j in T.Parallel(block_M, block_N):
+                acc_s[i, j] = T.exp2(acc_s[i, j] * scale - scores_max[i] * scale)
+            T.reduce_sum(acc_s, scores_sum, dim=1)
+            for i in T.Parallel(block_M):
+                logsum[i] = logsum[i] * scores_scale[i] + scores_sum[i]
+            T.copy(acc_s, acc_s_cast)
+
+        @T.macro
+        def _mha_decode_split(Q: T.Tensor(shape_q, dtype), K: T.Tensor(shape_kv, dtype), V: T.Tensor(shape_kv, dtype), real_seqlen_kv: T.Tensor([batch], T.int32), block_table: T.Tensor([batch, seqlen_kv // page_size], T.int32), glse: T.Tensor([batch, heads, num_split, seqlen_q], dtype), Output_partial: T.Tensor(part_shape, dtype), split_length: T.Tensor([batch, num_split], 'int32')):
+            with T.Kernel(T.ceildiv(seqlen_q, block_M), heads * batch, num_split, threads=128) as (bx, by, bz):
+                Q_shared = T.alloc_shared([block_M, dim], dtype)
+                K_shared = T.alloc_shared([block_N, dim], dtype)
+                V_shared = T.alloc_shared([block_N, dim], dtype)
+                O_shared = T.alloc_shared([block_M, dim], dtype)
+                acc_s = T.alloc_fragment([block_M, block_N], accum_dtype)
+                acc_s_cast = T.alloc_fragment([block_M, block_N], dtype)
+                acc_o = T.alloc_fragment([block_M, dim], accum_dtype)
+                scores_max = T.alloc_fragment([block_M], accum_dtype)
+                scores_max_prev = T.alloc_fragment([block_M], accum_dtype)
+                scores_scale = T.alloc_fragment([block_M], accum_dtype)
+                scores_sum = T.alloc_fragment([block_M], accum_dtype)
+                logsum = T.alloc_fragment([block_M], accum_dtype)
+                mid = bx
+                hid = by % heads
+                bid = by // heads
+                sid = bz
+                split_length_shared = T.alloc_shared([num_split], 'int32')
+                T.copy(split_length[bid, :], split_length_shared, disable_tma=True)
+                T.copy(Q[bid, mid * block_M:(mid + 1) * block_M, hid, :], Q_shared, disable_tma=True)
+                T.fill(acc_o, 0)
+                T.fill(logsum, 0)
+                T.fill(scores_max, -T.infinity(accum_dtype))
+                real_seqlen_kv_b = real_seqlen_kv[bid]
+                start_block_sid = T.if_then_else(sid > 0, split_length_shared[sid - 1] // block_N, 0)
+                end_block_valid = T.ceildiv(real_seqlen_kv_b, block_N)
+                blocks_valid_this_split = end_block_valid - start_block_sid
+                blocks_in_split = T.if_then_else(sid > 0, T.ceildiv(split_length_shared[sid] - split_length_shared[sid - 1], block_N), T.ceildiv(split_length_shared[0], block_N))
+                loop_range = T.if_then_else(blocks_valid_this_split <= 0, 0, T.if_then_else(blocks_valid_this_split <= blocks_in_split, blocks_valid_this_split, blocks_in_split))
+                num_blockn_in_page = page_size // block_N
+                loop_range = blocks_in_split
+                offset = 0 if sid == 0 else split_length_shared[sid - 1] // block_N
+                for k in T.Pipelined(loop_range, num_stages=2):
+                    k_global = k
+                    k_global += offset
+                    page_idx = k_global // num_blockn_in_page
+                    block_idx_in_page = k_global % num_blockn_in_page
+                    blockn_num_offset = block_table[bid, page_idx] * num_blockn_in_page + block_idx_in_page
+                    MMA0(K, Q_shared, K_shared, real_seqlen_kv, acc_s, k_global, blockn_num_offset, mid, hid, bid, sid)
+                    Softmax(acc_s, acc_s_cast, scores_max, scores_max_prev, scores_scale, scores_sum, logsum)
+                    rescale(acc_o, scores_scale)
+                    MMA1(V, V_shared, real_seqlen_kv, acc_s_cast, acc_o, k_global, blockn_num_offset, hid, bid, sid)
+                for i, j in T.Parallel(block_M, dim):
+                    acc_o[i, j] = T.if_then_else(logsum[i] == 0, 0, acc_o[i, j] / logsum[i])
+                for i in T.Parallel(block_M):
+                    logsum_safe = T.if_then_else(logsum[i] == 0, 1, logsum[i])
+                    logsum[i] = T.log2(logsum_safe) + scores_max[i] * scale
+                T.copy(logsum, glse[bid, hid, sid, mid * block_M:(mid + 1) * block_M])
+                T.copy(acc_o, O_shared)
+                T.copy(O_shared, Output_partial[bid, mid * block_M:(mid + 1) * block_M, hid, sid, :], disable_tma=True)
+
+        @T.macro
+        def combine(glse: T.Tensor([batch, heads, num_split, seqlen_q], dtype), Output_partial: T.Tensor(part_shape, dtype), Output: T.Tensor(shape_q, dtype)):
+            with T.Kernel(T.ceildiv(seqlen_q, block_M), heads, batch, threads=128) as (bx, by, bz):
+                po_local = T.alloc_fragment([block_M, dim], dtype)
+                po_shared = T.alloc_shared([block_M, dim], dtype)
+                o_accum_local = T.alloc_fragment([block_M, dim], accum_dtype)
+                o_shared = T.alloc_shared([block_M, dim], dtype)
+                lse_shared = T.alloc_shared([num_split, block_M], dtype)
+                lse_local = T.alloc_fragment([num_split, block_M], dtype)
+                lse_local_split = T.alloc_fragment([block_M], accum_dtype)
+                lse_logsum_local = T.alloc_fragment([block_M], accum_dtype)
+                lse_max_local = T.alloc_fragment([block_M], accum_dtype)
+                scale_local = T.alloc_fragment([block_M], accum_dtype)
+                T.annotate_layout({o_accum_local: T.Fragment(o_accum_local.shape, forward_thread_fn=lambda i, j: i), o_shared: tilelang.layout.make_swizzled_layout(o_shared), po_shared: tilelang.layout.make_swizzled_layout(po_shared), lse_local: T.Fragment(lse_local.shape, forward_thread_fn=lambda _k, i: i)})
+                T.clear(lse_logsum_local)
+                T.clear(o_accum_local)
+                T.copy(glse[bz, by, :, bx * block_M:(bx + 1) * block_M], lse_shared, disable_tma=True)
+                T.copy(lse_shared, lse_local)
+                T.reduce_max(lse_local, lse_max_local, dim=0, clear=False)
+                for k in T.Pipelined(num_split):
+                    T.copy(lse_shared[k, :], lse_local_split)
+                    for i in T.Parallel(block_M):
+                        lse_logsum_local[i] += T.exp2(lse_local_split[i] - lse_max_local[i])
+                for i in T.Parallel(block_M):
+                    lse_logsum_local[i] = T.log2(lse_logsum_local[i]) + lse_max_local[i]
+                for k in T.Pipelined(num_split, num_stages=2):
+                    T.copy(Output_partial[bz, bx * block_M:(bx + 1) * block_M, by, k, :], po_shared, disable_tma=True)
+                    T.copy(po_shared, po_local)
+                    T.copy(lse_shared[k, :], lse_local_split)
+                    for i in T.Parallel(block_M):
+                        scale_local[i] = T.exp2(lse_local_split[i] - lse_logsum_local[i])
+                    for i, j in T.Parallel(block_M, dim):
+                        o_accum_local[i, j] += po_local[i, j] * scale_local[i]
+                T.copy(o_accum_local, o_shared)
+                T.copy(o_shared, Output[bz, bx * block_M:(bx + 1) * block_M, by, :], disable_tma=True)
+
+        @T.prim_func
+        def mha_decode_split(Q: T.Tensor(shape_q, dtype), K: T.Tensor(shape_kv, dtype), V: T.Tensor(shape_kv, dtype), real_seqlen_kv: T.Tensor([batch], T.int32), block_table: T.Tensor([batch, seqlen_kv // page_size], T.int32), glse: T.Tensor([batch, heads, num_split, seqlen_q], dtype), Output_partial: T.Tensor(part_shape, dtype), split_length: T.Tensor([batch, num_split], 'int32'), Output: T.Tensor(shape_q, dtype)):
+            _mha_decode_split(Q, K, V, real_seqlen_kv, block_table, glse, Output_partial, split_length)
+            combine(glse, Output_partial, Output)
+        return mha_decode_split
+    return _func
+
+def build_kernel(case):
+    """Construct the TileLang device entry without launching it."""
+    return _kernel_factory(**case['build']['factory_arguments'])

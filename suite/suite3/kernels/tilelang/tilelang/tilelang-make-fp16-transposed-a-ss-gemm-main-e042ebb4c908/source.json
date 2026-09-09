@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-make-fp16-transposed-a-ss-gemm-main-e042ebb4c908",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "67babfd2d88537f1cd3114a031450db057e85dcef93c7a0a5053c9c6eabc024f"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      58,
+      73
+    ],
+    "path": "testing/python/kernel/test_tilelang_kernel_sm70_gemm_fma.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/kernel/test_tilelang_kernel_sm70_gemm_fma.py#L58-L73",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "18822641c9ca82953854220fe1ba0c92c5eae8cfd304316708efb1c5fdd98b45",
+    "symbol": "_make_fp16_transposed_a_ss_gemm.main"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

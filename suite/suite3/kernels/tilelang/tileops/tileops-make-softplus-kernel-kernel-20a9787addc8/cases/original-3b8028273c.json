@@ -1,0 +1,82 @@
+{
+  "arguments": {
+    "dtype": "float16",
+    "input_shape": [
+      2048,
+      4096
+    ],
+    "label": "mlp-hidden",
+    "manifest": "src/tileops/manifest/elementwise_unary_activation.yaml",
+    "operator": "EluFwdOp",
+    "row_index": 0
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "N": 8388608,
+      "beta": 1.0,
+      "dtype": "float16",
+      "threshold": 20.0
+    }
+  },
+  "case_id": "tileops-make-softplus-kernel-kernel-20a9787addc8-original-3b8028273c",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 347,
+      "function": "EluFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/elementwise_unary_activation.yaml",
+      "source_sha256": "a88b788b09a9b59a3f0f06817b8893ba059e89b1a581913b8f54219076897bfb",
+      "start_line": 310
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-a7c8c6fd3e083464",
+    "tileops-6a4085cd-spec-evidence-a22eef49d7ddf90e"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-make-softplus-kernel-kernel-20a9787addc8",
+  "kind": "ORIGINAL",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/elementwise_unary_activation.yaml:310-347#EluFwdOp",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

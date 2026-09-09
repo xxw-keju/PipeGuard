@@ -1,0 +1,67 @@
+{
+  "arguments": {},
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-test-disable-licm-for-no-licm-46f35e760d19-original-57ed1ed246",
+  "compile": {
+    "attrs": {
+      "n": []
+    },
+    "binding_evidence": null,
+    "constexprs": {},
+    "grid_ctas": 1,
+    "options": {},
+    "signature": {
+      "n": "i32"
+    }
+  },
+  "evidence": [
+    "source-e3e8822d365cd52e",
+    "launch-ec843466f0d3e387"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-test-disable-licm-for-no-licm-46f35e760d19",
+  "kind": "ORIGINAL",
+  "origin": "profile-sm90-launch-inference:python/test/unit/language/test_core.py:6948-6948",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: profile-sm90-launch-inference:python/test/unit/language/test_core.py:6948-6948",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

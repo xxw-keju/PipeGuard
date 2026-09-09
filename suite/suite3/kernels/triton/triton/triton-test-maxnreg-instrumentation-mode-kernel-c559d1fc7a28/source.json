@@ -1,0 +1,31 @@
+{
+  "case_count": 6,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-maxnreg-instrumentation-mode-kernel-c559d1fc7a28",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "7e69cbe1c71de99c88124e73a08d3ecd5bd6858fb792f66a9449ea9b25ed0792"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      167,
+      169
+    ],
+    "path": "python/test/unit/language/test_compile_only.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_compile_only.py#L167-L169",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "9abdc63592ee047583f56c7bfba34254d3fa37faf8b9190463f852d214b0fe3c",
+    "symbol": "test_maxnreg_instrumentation_mode.kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 6,
+  "variant": ""
+}

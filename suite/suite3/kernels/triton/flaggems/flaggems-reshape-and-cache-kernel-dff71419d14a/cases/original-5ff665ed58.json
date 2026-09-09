@@ -1,0 +1,81 @@
+{
+  "arguments": {
+    "block_size": 8,
+    "dtype": "torch.half",
+    "head_size": 64,
+    "kv_cache_dtype": "auto",
+    "num_blocks": 1024,
+    "num_heads": 8,
+    "num_tokens": 42,
+    "seed": 2025
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-reshape-and-cache-kernel-dff71419d14a-original-5ff665ed58",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-f72378cc4aeec13f"
+      ],
+      "test_end_line": 153,
+      "test_function": "test_reshape_and_cache",
+      "test_path": "tests/test_reshape_and_cache.py",
+      "test_source_sha256": "9f265f14238d84a0d4eaf0e0c87ba50cab8a4baa8cc7ad24460b46e04e46a1f1",
+      "test_start_line": 81
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-f72378cc4aeec13f",
+    "flaggems-test-9ecea061f48a8195",
+    "source-cab1f101f342f0b4"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-reshape-and-cache-kernel-dff71419d14a",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_reshape_and_cache.py:81-153#test_reshape_and_cache",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

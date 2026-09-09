@@ -1,0 +1,96 @@
+{
+  "arguments": {
+    "h": 7680,
+    "n0": 2,
+    "n1": 4096
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 7680,
+        "before": 1280,
+        "path": "/bindings/h"
+      },
+      {
+        "after": 2,
+        "before": 1,
+        "path": "/bindings/n0"
+      },
+      {
+        "after": 4096,
+        "before": 1024,
+        "path": "/bindings/n1"
+      }
+    ],
+    "dimensions": [
+      "h",
+      "n0",
+      "n1"
+    ],
+    "transition": "Official source-matrix variation across: h, n0, n1"
+  },
+  "build": {
+    "factory_arguments": {
+      "hidden": 7680,
+      "mhc_mult": 4
+    }
+  },
+  "case_id": "tilekernels-mhc-pre-apply-mix-bwd-eae52ea2eecd-boundary-506c4754d7",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 52,
+      "function": "test_pre_apply_mix_comprehensive",
+      "kind": "UPSTREAM_TEST",
+      "path": "tests/mhc/test_pre_apply_mix.py",
+      "source_sha256": "542d1eed68d0dd8b51470a96d517aa10e209d51ffb5fc52dfa52e0708745c893",
+      "start_line": 39
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-368373c91eab0921",
+    "tilekernels-36d9e45d-spec-evidence-7c68d5371536fb31"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tilekernels-mhc-pre-apply-mix-bwd-eae52ea2eecd",
+  "kind": "BOUNDARY",
+  "origin": "upstream-upstream_test:tests/mhc/test_pre_apply_mix.py:39-52#test_pre_apply_mix_comprehensive",
+  "parent_case_id": "tilekernels-mhc-pre-apply-mix-bwd-eae52ea2eecd-original-0451b2add2",
+  "reason": "Source-derived TileKernels specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

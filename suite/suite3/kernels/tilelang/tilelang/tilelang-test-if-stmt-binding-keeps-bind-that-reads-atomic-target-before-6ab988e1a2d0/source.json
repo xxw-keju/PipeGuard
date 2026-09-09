@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-if-stmt-binding-keeps-bind-that-reads-atomic-target-before-6ab988e1a2d0",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "c8cb5186e60be2738c6230cf5a8117f08a19768f4d4809ec48b6f85db98a95f7"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      196,
+      232
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_if_stmt_binding.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_if_stmt_binding.py#L196-L232",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "c839c5a11ec924ee881caae7e1bbf198777231b4bd1e56d64dbb541cd1ab08cd",
+    "symbol": "test_if_stmt_binding_keeps_bind_that_reads_atomic_target.before"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

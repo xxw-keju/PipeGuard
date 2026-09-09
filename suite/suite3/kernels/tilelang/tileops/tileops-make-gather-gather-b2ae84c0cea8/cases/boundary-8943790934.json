@@ -1,0 +1,110 @@
+{
+  "arguments": {
+    "alignment": 64,
+    "dtype": "float16",
+    "hidden_states_shape": [
+      1024,
+      512
+    ],
+    "label": "gather-upper",
+    "layout": "aligned_per_row",
+    "local_expert_ids_shape": [
+      1024,
+      4
+    ],
+    "manifest": "src/tileops/manifest/moe.yaml",
+    "num_local_experts": 16,
+    "num_tokens": 1024,
+    "operator": "MoePrePermuteFwdOp",
+    "top_k": 4
+  },
+  "boundary": {
+    "dimensions": [
+      "alignment",
+      "dtype",
+      "hidden_states_shape",
+      "layout",
+      "local_expert_ids_shape",
+      "num_local_experts",
+      "num_tokens",
+      "top_k"
+    ],
+    "position": "upper",
+    "transition": "layout == aligned_per_row; gather zero-fills aligned capacity rows"
+  },
+  "build": {
+    "factory_arguments": {
+      "dtype": "float16",
+      "hidden_size": 512,
+      "num_tokens": 1024,
+      "physical_rows": 5104,
+      "zero_fill": true
+    },
+    "kernel_arguments": {}
+  },
+  "case_id": "tileops-make-gather-gather-b2ae84c0cea8-boundary-8943790934",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 367,
+      "function": "MoePrePermuteFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/moe.yaml",
+      "source_sha256": "12e9b4c4c4927ea0ffe388c3a95517fb344d44a818bde9a8de65762b8055440e",
+      "start_line": 332
+    },
+    "dispatch": {
+      "predicate": "layout == aligned_per_row; gather zero-fills aligned capacity rows",
+      "strategy": "gather"
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-9f244fb9ee3beaaf",
+    "tileops-6a4085cd-spec-evidence-74b424a9c020974e"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-make-gather-gather-b2ae84c0cea8",
+  "kind": "BOUNDARY",
+  "origin": "upstream-dispatch:layout == aligned_per_row; gather zero-fills aligned capacity rows",
+  "reason": "H100 source-condition witness for gather.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [
+    "tileops-dispatch-witness"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "device": "NVIDIA H100 80GB HBM3",
+    "sm_count": 132,
+    "warp_size": 32
+  },
+  "unresolved": []
+}

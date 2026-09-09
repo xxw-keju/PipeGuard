@@ -1,0 +1,31 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the TileLang device factory and its PrimFunc body",
+    "removed unrelated upstream host and test context",
+    "mapped official test parameters through build_kernel(case)"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilekernels-mhc-pre-norm-fn-fwd-norm-7c9270ba6091",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "9ede1b103d1a76c80d359ec377eed0a7f7c955c985ae854ec397298250bde643"
+  },
+  "original": {
+    "commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+    "file": "original_excerpt.py",
+    "lines": [
+      126,
+      165
+    ],
+    "path": "tile_kernels/mhc/norm_fn_kernel.py",
+    "permalink": "https://github.com/deepseek-ai/TileKernels/blob/36d9e45d38e204ebb87e6f6e833821eee0482fe5/tile_kernels/mhc/norm_fn_kernel.py#L126-L165",
+    "repository": "https://github.com/deepseek-ai/TileKernels",
+    "sha256": "45b91de8053d7fe8fdd0596a57551d14d4c91108a72545f07b9931cae98e8cbf",
+    "symbol": "_mhc_pre_norm_fn_fwd_norm"
+  },
+  "project": "tilekernels",
+  "runnable_case_count": 4,
+  "variant": ""
+}

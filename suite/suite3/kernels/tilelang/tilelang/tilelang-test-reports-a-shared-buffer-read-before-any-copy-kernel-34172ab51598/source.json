@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-reports-a-shared-buffer-read-before-any-copy-kernel-34172ab51598",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "9591f4ea9ce551336be291642d9c67a4dc44c26f65a65ba1e223dfd845d16446"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      147,
+      152
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_verify_buffer_init.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_verify_buffer_init.py#L147-L152",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "1451086b6d892bd7b44e1b67582017132957f9a5348382a112da00a7b7871dd8",
+    "symbol": "test_reports_a_shared_buffer_read_before_any_copy.kernel"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

@@ -1,0 +1,33 @@
+{
+  "case_count": 24,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-unbind-copy-kernel-7471c3f4696b",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "e86804c0723e8ebae7b11295cd9f6f7dfd458423665276f0675da9133690f979"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      28,
+      72
+    ],
+    "path": "src/flag_gems/ops/unbind_copy.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/unbind_copy.py#L28-L72",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "50c42a221e909bdaa46cb27d443ae8d477ecf5e1123045d4b8a32f735eef6173",
+    "symbol": "unbind_copy_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

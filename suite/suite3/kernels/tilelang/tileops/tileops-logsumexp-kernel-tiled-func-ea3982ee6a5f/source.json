@@ -1,0 +1,32 @@
+{
+  "case_count": 3,
+  "changes": [
+    "retained the TileLang device factory and its in-file helper closure",
+    "removed unrelated upstream host definitions and decorators",
+    "inlined required TileOPs helper functions and constants",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-logsumexp-kernel-tiled-func-ea3982ee6a5f",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "f3f4c438041e5c8ab7fbd1875735b7d7e616045de3fd91a9a6d0acface93041d"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      233,
+      305
+    ],
+    "path": "src/tileops/kernels/reduction/logsumexp.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/reduction/logsumexp.py#L233-L305",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "f1dbce166caca42d1cec069b69e086f2ae381060eb475b7d663ecf980be97e0d",
+    "symbol": "_logsumexp_kernel_tiled._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 3,
+  "variant": ""
+}

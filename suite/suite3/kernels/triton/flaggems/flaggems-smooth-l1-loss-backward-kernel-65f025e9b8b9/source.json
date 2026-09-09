@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-smooth-l1-loss-backward-kernel-65f025e9b8b9",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "f889eba3f4d32e56b75f125b1a39530716fbc331aab85644d0f6cff0b1b1a05c"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      87,
+      121
+    ],
+    "path": "src/flag_gems/ops/smooth_l1_loss.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/smooth_l1_loss.py#L87-L121",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "dc2e11c7d2b013bd75954ec6c7ddb7dfd4faf243f0d6a812c2b5c1c2bab36087",
+    "symbol": "_smooth_l1_loss_backward_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

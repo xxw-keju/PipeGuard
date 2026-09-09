@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-non-explicit-unroll-allows-break-main-cd7f56fff1af",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "a067f0e6f5447ff1b13a3ac68acee747194d2f1c5e7eca21de6c694225533f07"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      93,
+      98
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_unroll_loop.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_unroll_loop.py#L93-L98",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "e80de248d05e278e8e4122f8769157e73b7b5146801b3c1a0618a87b8ea03a45",
+    "symbol": "test_non_explicit_unroll_allows_break.main"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

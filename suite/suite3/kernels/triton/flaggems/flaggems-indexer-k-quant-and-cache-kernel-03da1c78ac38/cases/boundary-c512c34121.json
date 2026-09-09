@@ -1,0 +1,102 @@
+{
+  "arguments": {
+    "block_size": 64,
+    "dtype": "torch.bfloat16",
+    "head_dim": 512,
+    "num_blocks": 4,
+    "num_tokens": 17,
+    "quant_block_size": 128,
+    "scale_fmt": "ue8m0"
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 64,
+        "before": 16,
+        "path": "/bindings/block_size"
+      },
+      {
+        "after": 512,
+        "before": 128,
+        "path": "/bindings/head_dim"
+      },
+      {
+        "after": 17,
+        "before": 19,
+        "path": "/bindings/num_tokens"
+      }
+    ],
+    "dimensions": [
+      "block_size",
+      "head_dim",
+      "num_tokens"
+    ],
+    "transition": "Official test-matrix variation across: block_size, head_dim, num_tokens"
+  },
+  "build": {},
+  "case_id": "flaggems-indexer-k-quant-and-cache-kernel-03da1c78ac38-boundary-c512c34121",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-b22b3338275285a9"
+      ],
+      "test_end_line": 239,
+      "test_function": "test_indexer_k_quant_and_cache_matches_reference",
+      "test_path": "tests/test_indexer_k_quant_and_cache.py",
+      "test_source_sha256": "90f9cd5302fd6012778a1dbf229875570e8ff7c560d6a18f29b5c6e877162769",
+      "test_start_line": 195
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-b22b3338275285a9",
+    "flaggems-test-07552102c10442d8",
+    "source-97864f7c0d5b1ddf"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-indexer-k-quant-and-cache-kernel-03da1c78ac38",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_indexer_k_quant_and_cache.py:195-239#test_indexer_k_quant_and_cache_matches_reference",
+  "parent_case_id": "flaggems-indexer-k-quant-and-cache-kernel-03da1c78ac38-original-953009e9c3",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

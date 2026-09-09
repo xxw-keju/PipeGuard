@@ -1,0 +1,100 @@
+{
+  "arguments": {
+    "dtype": "bfloat16",
+    "ffn_size": 2048,
+    "hidden_size": 7168,
+    "label": "scheduler-middle",
+    "manifest": "src/tileops/manifest/moe.yaml",
+    "num_experts": 128,
+    "num_tokens": 4096,
+    "operator": "MoeGroupedGemmFwdOp",
+    "top_k": 8
+  },
+  "boundary": {
+    "dimensions": [
+      "dtype",
+      "ffn_size",
+      "hidden_size",
+      "num_experts",
+      "num_tokens",
+      "top_k"
+    ],
+    "position": "middle",
+    "transition": "MoeGroupedGemmNopadKernel phase 1: tile scheduler"
+  },
+  "build": {
+    "factory_arguments": {
+      "block_m": 64,
+      "max_tiles": 640,
+      "num_experts": 128
+    },
+    "kernel_arguments": {
+      "threads": 256
+    }
+  },
+  "case_id": "tileops-tile-scheduler-kernel-func-977b43cd1c82-boundary-150f4ca969",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 218,
+      "function": "FusedMoEExpertsNopadPersistent3WGFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/moe.yaml",
+      "source_sha256": "ee7c14d61c6d2335feea5c471bc5aff6a54170a8459f869b6cb806f233e7d569",
+      "start_line": 147
+    },
+    "dispatch": {
+      "predicate": "MoeGroupedGemmNopadKernel phase 1: tile scheduler",
+      "strategy": "scheduler"
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-4cb495af4d986aaa",
+    "tileops-6a4085cd-spec-evidence-de1d7c838adbf929"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-tile-scheduler-kernel-func-977b43cd1c82",
+  "kind": "BOUNDARY",
+  "origin": "upstream-dispatch:MoeGroupedGemmNopadKernel phase 1: tile scheduler",
+  "reason": "H100 source-condition witness for scheduler.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [
+    "tileops-dispatch-witness"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "device": "NVIDIA H100 80GB HBM3",
+    "sm_count": 132,
+    "warp_size": 32
+  },
+  "unresolved": []
+}

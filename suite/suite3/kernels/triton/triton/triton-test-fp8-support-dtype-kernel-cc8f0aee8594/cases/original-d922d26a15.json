@@ -1,0 +1,77 @@
+{
+  "arguments": {
+    "dtype": {
+      "__pipeguard_triton_dtype__": "fp8e5"
+    }
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-test-fp8-support-dtype-kernel-cc8f0aee8594-original-d922d26a15",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "dtype": {
+        "__pipeguard_triton_dtype__": "fp8e5"
+      }
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "dtype": "constexpr"
+    }
+  },
+  "evidence": [
+    "source-589fbe6126d58d14",
+    "launch-1f1e5e0675ce6c8e"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-test-fp8-support-dtype-kernel-cc8f0aee8594",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-compile:python/test/unit/language/test_compile_errors.py:390-391;sm90-supported-dtype=fp8e5",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-compile:python/test/unit/language/test_compile_errors.py:390-391;sm90-supported-dtype=fp8e5",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

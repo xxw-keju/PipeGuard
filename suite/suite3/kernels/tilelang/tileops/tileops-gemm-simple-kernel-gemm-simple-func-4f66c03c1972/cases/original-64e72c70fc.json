@@ -1,0 +1,85 @@
+{
+  "arguments": {
+    "dtype": "float16",
+    "k": 1024,
+    "label": "square-1k-nn",
+    "m": 1024,
+    "manifest": "src/tileops/manifest/gemm.yaml",
+    "n": 1024,
+    "operator": "GemmFwdOp",
+    "row_index": 0,
+    "trans_a": false,
+    "trans_b": false
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "dtype": "float16",
+      "k": 1024,
+      "m": 1024,
+      "n": 1024,
+      "trans_a": false,
+      "trans_b": false
+    }
+  },
+  "case_id": "tileops-gemm-simple-kernel-gemm-simple-func-4f66c03c1972-original-64e72c70fc",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 68,
+      "function": "GemmFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/gemm.yaml",
+      "source_sha256": "6b38222bae27173626d40742bf23f4908df86ca2d73cfa887944584e229763c7",
+      "start_line": 8
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-8abb4aa8d0b61232",
+    "tileops-6a4085cd-spec-evidence-d3513ef2d4fb3fed"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-gemm-simple-kernel-gemm-simple-func-4f66c03c1972",
+  "kind": "ORIGINAL",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/gemm.yaml:8-68#GemmFwdOp",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

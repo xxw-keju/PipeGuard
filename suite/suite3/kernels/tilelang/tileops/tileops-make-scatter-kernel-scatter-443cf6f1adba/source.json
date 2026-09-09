@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-make-scatter-kernel-scatter-443cf6f1adba",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "afb39ad9b609bb4ef959c71d46e30a1d7a0239ede8ac074a3d85d27fef247a79"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      166,
+      188
+    ],
+    "path": "src/tileops/kernels/moe/permute_align.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/moe/permute_align.py#L166-L188",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "4ea0c4bddd957d7f25163a46a9b1fd60ba64f25b83bf321893ad85509cf5c81d",
+    "symbol": "_make_scatter_kernel._scatter"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-cross-sm-atomic-sync-kernel-6e61ce59f34c",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "b1d3da48a8736c661dd4dd4a0f1af46e548afd8358192866bc8cb00cf9728827"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      768,
+      778
+    ],
+    "path": "python/test/gsan/test_gsan.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/gsan/test_gsan.py#L768-L778",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "78e1db20f9fff5363fe071e9966148fb22330ab473893f311890e44b74e9fd3b",
+    "symbol": "_cross_sm_atomic_sync_kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

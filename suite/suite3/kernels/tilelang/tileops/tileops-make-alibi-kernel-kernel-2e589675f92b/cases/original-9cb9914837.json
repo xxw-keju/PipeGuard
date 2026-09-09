@@ -1,0 +1,79 @@
+{
+  "arguments": {
+    "dtype": "float16",
+    "label": "llama-prefill-2k",
+    "manifest": "src/tileops/manifest/elementwise_generative.yaml",
+    "num_heads": 32,
+    "operator": "AlibiFwdOp",
+    "row_index": 0,
+    "seq_len": 2048
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "dtype": "float16",
+      "num_heads": 32,
+      "seq_len": 2048
+    }
+  },
+  "case_id": "tileops-make-alibi-kernel-kernel-2e589675f92b-original-9cb9914837",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 48,
+      "function": "AlibiFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/elementwise_generative.yaml",
+      "source_sha256": "854664043001a54f40f27bf9ae2aa043023936ff851e7bf661b3895c6d4a9b74",
+      "start_line": 1
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-a521a0ff3ff0155a",
+    "tileops-6a4085cd-spec-evidence-16d5c9677974009b"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-make-alibi-kernel-kernel-2e589675f92b",
+  "kind": "ORIGINAL",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/elementwise_generative.yaml:1-48#AlibiFwdOp",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-dealloc-before-thread-return-keeps-auto-dealloc-func-75d79f26a72d",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "19ec5d8275b72c948d0465745d5341a6e78b45e72a7388057d21fe6b77d04704"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      84,
+      92
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_lower_shared_tmem.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_lower_shared_tmem.py#L84-L92",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "fd0a4d3b9550a072cef8bd6a8a867285bdc02edf4f34b061344b4104712374f6",
+    "symbol": "test_dealloc_before_thread_return_keeps_auto_dealloc.func"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

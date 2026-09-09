@@ -1,0 +1,33 @@
+{
+  "case_count": 324,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-fractional-max-pool2d-forward-kernel-d329b399cecc",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "f52437579c0beb2d1b15ee0a3ad26718086a3051d170028556066a65496a3c8e"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      14,
+      128
+    ],
+    "path": "src/flag_gems/ops/fractional_max_pool2d.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/fractional_max_pool2d.py#L14-L128",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "27ad79833fb60dd9397f1968191202da65e0e2588399f82ebfd7ab055e3f3ff6",
+    "symbol": "fractional_max_pool2d_forward_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

@@ -1,0 +1,33 @@
+{
+  "case_count": 24,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-conj-physical-kernel-5a7c560563ad",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "dae8be97c054bf00c17604f85aeb95fc8146f324b035c183168d17ba35b5ae2b"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      27,
+      43
+    ],
+    "path": "src/flag_gems/ops/conj_physical.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/conj_physical.py#L27-L43",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "511825dfce22ebeed959bf8d43dfd760a0fa4a974643097e68c0d5ae1d02db3b",
+    "symbol": "conj_physical_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

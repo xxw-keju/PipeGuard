@@ -1,0 +1,190 @@
+# Normalized device code for PipeGuard Suite 3.
+# Exact upstream code and provenance are stored beside this file.
+
+from typing import Callable, Optional, Tuple
+from tilelang import language as T
+import tilelang
+LOG2E: float = 1.4426950408889634
+
+def _kernel_factory(batch: int, seq_len: int, heads: int, dim_k: int, dim_v: int, chunk_size: int, scale: float, dtype: str, sub_chunk_size: int=16) -> Callable:
+    """Fused intra+inter backward kernel.
+
+    Phase A: Compute dq_intra, dk_intra, dv_intra using sub-chunk GEMM tiling
+             (kept in registers — no global memory write).
+    Phase B: Add inter-chunk contributions via GEMM, compute dg, write final outputs.
+
+    This avoids the global memory round-trip of the split intra/inter approach.
+    """
+    accum_dtype = 'float32'
+    num_chunks = seq_len // chunk_size
+    BT = chunk_size
+    BC = sub_chunk_size
+    NS = BT // BC
+
+    @tilelang.jit(out_idx=[-4, -3, -2, -1], pass_configs={tilelang.PassConfigKey.TL_ENABLE_FAST_MATH: True, tilelang.PassConfigKey.TL_DISABLE_TMA_LOWER: True, tilelang.PassConfigKey.TL_DISABLE_WARP_SPECIALIZED: True})
+    def _fused_func(num_stages, threads=256):
+        q_shape = [batch, seq_len, heads, dim_k]
+        k_shape = [batch, seq_len, heads, dim_k]
+        v_shape = [batch, seq_len, heads, dim_v]
+        g_cumsum_shape = [batch, seq_len, heads, dim_k]
+        do_shape = [batch, seq_len, heads, dim_v]
+        h_shape = [batch, num_chunks + 1, heads, dim_k, dim_v]
+        dh_shape = [batch, num_chunks, heads, dim_k, dim_v]
+        dq_shape = [batch, seq_len, heads, dim_k]
+        dk_shape = [batch, seq_len, heads, dim_k]
+        dv_shape = [batch, seq_len, heads, dim_v]
+        dg_shape = [batch, seq_len, heads, dim_k]
+
+        @T.prim_func
+        def _main(q: T.Tensor(q_shape, dtype), k: T.Tensor(k_shape, dtype), v: T.Tensor(v_shape, dtype), g_cumsum: T.Tensor(g_cumsum_shape, accum_dtype), do: T.Tensor(do_shape, dtype), h: T.Tensor(h_shape, accum_dtype), dh: T.Tensor(dh_shape, accum_dtype), dq_out: T.Tensor(dq_shape, accum_dtype), dk_out: T.Tensor(dk_shape, accum_dtype), dv_out: T.Tensor(dv_shape, accum_dtype), dg_out: T.Tensor(dg_shape, accum_dtype)):
+            with T.Kernel(batch * heads * num_chunks, threads=threads) as bx:
+                i_b = bx // (heads * num_chunks)
+                i_h = bx // num_chunks % heads
+                i_c = bx % num_chunks
+                chunk_start = i_c * BT
+                q_s = T.alloc_shared([BT, dim_k], dtype)
+                k_s = T.alloc_shared([BT, dim_k], dtype)
+                v_s = T.alloc_shared([BT, dim_v], dtype)
+                do_s = T.alloc_shared([BT, dim_v], dtype)
+                g_cumsum_s = T.alloc_shared([BT, dim_k], accum_dtype)
+                A_s = T.alloc_shared([BT, BT], dtype)
+                T.copy(q[i_b, chunk_start:chunk_start + BT, i_h, :], q_s, disable_tma=True)
+                T.copy(k[i_b, chunk_start:chunk_start + BT, i_h, :], k_s, disable_tma=True)
+                T.copy(v[i_b, chunk_start:chunk_start + BT, i_h, :], v_s, disable_tma=True)
+                T.copy(do[i_b, chunk_start:chunk_start + BT, i_h, :], do_s, disable_tma=True)
+                T.copy(g_cumsum[i_b, chunk_start:chunk_start + BT, i_h, :], g_cumsum_s, disable_tma=True)
+                A_frag = T.alloc_fragment([BT, BT], accum_dtype)
+                T.fill(A_frag, 0.0)
+                for i_k in T.Serial(dim_k):
+                    for i_t, i_j in T.Parallel(BT, BT):
+                        A_frag[i_t, i_j] = A_frag[i_t, i_j] + T.cast(q_s[i_t, i_k], accum_dtype) * T.cast(k_s[i_j, i_k], accum_dtype) * T.exp2((g_cumsum_s[i_t, i_k] - g_cumsum_s[i_j, i_k]) * LOG2E)
+                for i_t, i_j in T.Parallel(BT, BT):
+                    A_s[i_t, i_j] = T.cast(T.if_then_else(i_j <= i_t, A_frag[i_t, i_j] * scale, 0.0), dtype)
+                dv_frag = T.alloc_fragment([BT, dim_v], accum_dtype)
+                T.fill(dv_frag, 0.0)
+                T.gemm(A_s, do_s, dv_frag, transpose_A=True, policy=T.GemmWarpPolicy.FullRow)
+                dA_frag = T.alloc_fragment([BT, BT], accum_dtype)
+                T.fill(dA_frag, 0.0)
+                T.gemm(do_s, v_s, dA_frag, transpose_B=True, policy=T.GemmWarpPolicy.FullRow)
+                for i_t, i_j in T.Parallel(BT, BT):
+                    A_s[i_t, i_j] = T.cast(T.if_then_else(i_j <= i_t, scale * dA_frag[i_t, i_j], 0.0), dtype)
+                dq_frag = T.alloc_fragment([BT, dim_k], accum_dtype)
+                T.fill(dq_frag, 0.0)
+                dA_sub = T.alloc_shared([BC, BC], dtype)
+                k_shifted_sub = T.alloc_shared([BC, dim_k], dtype)
+                for s_i in T.Serial(NS):
+                    dq_sub = T.alloc_fragment([BC, dim_k], accum_dtype)
+                    T.fill(dq_sub, 0.0)
+                    for s_j in T.Serial(NS):
+                        if s_j < s_i:
+                            for i_t, i_j in T.Parallel(BC, BC):
+                                dA_sub[i_t, i_j] = A_s[s_i * BC + i_t, s_j * BC + i_j]
+                            for i_t, i_k in T.Parallel(BC, dim_k):
+                                k_shifted_sub[i_t, i_k] = T.cast(T.cast(k_s[s_j * BC + i_t, i_k], accum_dtype) * T.exp2((g_cumsum_s[s_i * BC, i_k] - g_cumsum_s[s_j * BC + i_t, i_k]) * LOG2E), dtype)
+                            T.gemm(dA_sub, k_shifted_sub, dq_sub, policy=T.GemmWarpPolicy.FullRow)
+                    for i_local, i_k in T.Parallel(BC, dim_k):
+                        dq_sub[i_local, i_k] = dq_sub[i_local, i_k] * T.exp2((g_cumsum_s[s_i * BC + i_local, i_k] - g_cumsum_s[s_i * BC, i_k]) * LOG2E)
+                    for j_local in T.Serial(BC):
+                        dA_col = T.alloc_fragment([BC], accum_dtype)
+                        k_row = T.alloc_fragment([dim_k], accum_dtype)
+                        g_j = T.alloc_fragment([dim_k], accum_dtype)
+                        for i_local in T.Parallel(BC):
+                            dA_col[i_local] = T.if_then_else(j_local <= i_local, T.cast(A_s[s_i * BC + i_local, s_i * BC + j_local], accum_dtype), 0.0)
+                        for i_k in T.Parallel(dim_k):
+                            k_row[i_k] = T.cast(k_s[s_i * BC + j_local, i_k], accum_dtype)
+                            g_j[i_k] = g_cumsum_s[s_i * BC + j_local, i_k]
+                        for i_local, i_k in T.Parallel(BC, dim_k):
+                            dq_sub[i_local, i_k] = dq_sub[i_local, i_k] + dA_col[i_local] * k_row[i_k] * T.exp2((g_cumsum_s[s_i * BC + i_local, i_k] - g_j[i_k]) * LOG2E)
+                    for i_local, i_k in T.Parallel(BC, dim_k):
+                        dq_frag[s_i * BC + i_local, i_k] = dq_sub[i_local, i_k]
+                dk_frag = T.alloc_fragment([BT, dim_k], accum_dtype)
+                T.fill(dk_frag, 0.0)
+                q_shifted_sub = T.alloc_shared([BC, dim_k], dtype)
+                for s_j in T.Serial(NS):
+                    dk_sub = T.alloc_fragment([BC, dim_k], accum_dtype)
+                    T.fill(dk_sub, 0.0)
+                    for s_i in T.Serial(NS):
+                        if s_i > s_j:
+                            for i_i, i_j in T.Parallel(BC, BC):
+                                dA_sub[i_i, i_j] = A_s[s_i * BC + i_i, s_j * BC + i_j]
+                            for i_t, i_k in T.Parallel(BC, dim_k):
+                                q_shifted_sub[i_t, i_k] = T.cast(T.cast(q_s[s_i * BC + i_t, i_k], accum_dtype) * T.exp2((g_cumsum_s[s_i * BC + i_t, i_k] - g_cumsum_s[(s_j + 1) * BC - 1, i_k]) * LOG2E), dtype)
+                            T.gemm(dA_sub, q_shifted_sub, dk_sub, transpose_A=True, policy=T.GemmWarpPolicy.FullRow)
+                    for j_local, i_k in T.Parallel(BC, dim_k):
+                        dk_sub[j_local, i_k] = dk_sub[j_local, i_k] * T.exp2((g_cumsum_s[(s_j + 1) * BC - 1, i_k] - g_cumsum_s[s_j * BC + j_local, i_k]) * LOG2E)
+                    for i_local in T.Serial(BC):
+                        dA_row = T.alloc_fragment([BC], accum_dtype)
+                        q_row = T.alloc_fragment([dim_k], accum_dtype)
+                        g_i = T.alloc_fragment([dim_k], accum_dtype)
+                        for j_local in T.Parallel(BC):
+                            dA_row[j_local] = T.if_then_else(j_local <= i_local, T.cast(A_s[s_j * BC + i_local, s_j * BC + j_local], accum_dtype), 0.0)
+                        for i_k in T.Parallel(dim_k):
+                            q_row[i_k] = T.cast(q_s[s_j * BC + i_local, i_k], accum_dtype)
+                            g_i[i_k] = g_cumsum_s[s_j * BC + i_local, i_k]
+                        for j_local, i_k in T.Parallel(BC, dim_k):
+                            dk_sub[j_local, i_k] = dk_sub[j_local, i_k] + dA_row[j_local] * q_row[i_k] * T.exp2((g_i[i_k] - g_cumsum_s[s_j * BC + j_local, i_k]) * LOG2E)
+                    for j_local, i_k in T.Parallel(BC, dim_k):
+                        dk_frag[s_j * BC + j_local, i_k] = dk_sub[j_local, i_k]
+                h_cast_s = T.alloc_shared([dim_k, dim_v], dtype)
+                dh_cast_s = T.alloc_shared([dim_k, dim_v], dtype)
+                for i_k, i_v in T.Parallel(dim_k, dim_v):
+                    h_cast_s[i_k, i_v] = T.cast(h[i_b, i_c, i_h, i_k, i_v], dtype)
+                for i_k, i_v in T.Parallel(dim_k, dim_v):
+                    dh_cast_s[i_k, i_v] = T.cast(dh[i_b, i_c, i_h, i_k, i_v], dtype)
+                g_last = T.alloc_fragment([dim_k], accum_dtype)
+                for i_k in T.Parallel(dim_k):
+                    g_last[i_k] = g_cumsum_s[BT - 1, i_k]
+                k_gated_s = T.alloc_shared([BT, dim_k], dtype)
+                for i_t, i_k in T.Parallel(BT, dim_k):
+                    k_gated_s[i_t, i_k] = T.cast(T.cast(k_s[i_t, i_k], accum_dtype) * T.exp2((g_last[i_k] - g_cumsum_s[i_t, i_k]) * LOG2E), dtype)
+                T.gemm(k_gated_s, dh_cast_s, dv_frag, policy=T.GemmWarpPolicy.FullRow)
+                for i_t, i_v in T.Parallel(BT, dim_v):
+                    dv_out[i_b, chunk_start + i_t, i_h, i_v] = dv_frag[i_t, i_v]
+                dq_inter_s = T.alloc_shared([BT, dim_k], accum_dtype)
+                dq_inter_frag = T.alloc_fragment([BT, dim_k], accum_dtype)
+                T.fill(dq_inter_frag, 0.0)
+                T.gemm(do_s, h_cast_s, dq_inter_frag, transpose_B=True, policy=T.GemmWarpPolicy.FullRow)
+                for i_t, i_k in T.Parallel(BT, dim_k):
+                    dq_inter_s[i_t, i_k] = dq_inter_frag[i_t, i_k]
+                for i_t, i_k in T.Parallel(BT, dim_k):
+                    dq_frag[i_t, i_k] = dq_frag[i_t, i_k] + scale * dq_inter_s[i_t, i_k] * T.exp2(g_cumsum_s[i_t, i_k] * LOG2E)
+                for i_t, i_k in T.Parallel(BT, dim_k):
+                    dq_out[i_b, chunk_start + i_t, i_h, i_k] = dq_frag[i_t, i_k]
+                dk_inter_s = T.alloc_shared([BT, dim_k], accum_dtype)
+                dk_inter_frag = T.alloc_fragment([BT, dim_k], accum_dtype)
+                T.fill(dk_inter_frag, 0.0)
+                T.gemm(v_s, dh_cast_s, dk_inter_frag, transpose_B=True, policy=T.GemmWarpPolicy.FullRow)
+                for i_t, i_k in T.Parallel(BT, dim_k):
+                    dk_inter_s[i_t, i_k] = dk_inter_frag[i_t, i_k]
+                for i_t, i_k in T.Parallel(BT, dim_k):
+                    dk_frag[i_t, i_k] = dk_frag[i_t, i_k] + dk_inter_s[i_t, i_k] * T.exp2((g_last[i_k] - g_cumsum_s[i_t, i_k]) * LOG2E)
+                for i_t, i_k in T.Parallel(BT, dim_k):
+                    dk_out[i_b, chunk_start + i_t, i_h, i_k] = dk_frag[i_t, i_k]
+                dg_inter = T.alloc_shared([dim_k], accum_dtype)
+                for i_k in T.Parallel(dim_k):
+                    dg_inter[i_k] = 0.0
+                for i_v2 in T.Serial(dim_v):
+                    for i_k in T.Parallel(dim_k):
+                        dg_inter[i_k] = dg_inter[i_k] + h[i_b, i_c, i_h, i_k, i_v2] * T.cast(dh[i_b, i_c, i_h, i_k, i_v2], accum_dtype)
+                for i_k in T.Parallel(dim_k):
+                    dg_inter[i_k] = dg_inter[i_k] * T.exp2(g_last[i_k] * LOG2E)
+                corr_s = T.alloc_shared([BT, dim_k], accum_dtype)
+                for i_t, i_k in T.Parallel(BT, dim_k):
+                    corr_s[i_t, i_k] = T.cast(k_s[i_t, i_k], accum_dtype) * dk_inter_s[i_t, i_k] * T.exp2((g_last[i_k] - g_cumsum_s[i_t, i_k]) * LOG2E)
+                for i_t in T.Serial(BT):
+                    for i_k in T.Parallel(dim_k):
+                        dg_inter[i_k] = dg_inter[i_k] + corr_s[i_t, i_k]
+                for i_t, i_k in T.Parallel(BT, dim_k):
+                    g_cumsum_s[i_t, i_k] = T.cast(q_s[i_t, i_k], accum_dtype) * dq_frag[i_t, i_k] - T.cast(k_s[i_t, i_k], accum_dtype) * dk_frag[i_t, i_k]
+                for s in T.Serial(BT - 1):
+                    i_t_rev = BT - 2 - s
+                    for i_k in T.Parallel(dim_k):
+                        g_cumsum_s[i_t_rev, i_k] = g_cumsum_s[i_t_rev, i_k] + g_cumsum_s[i_t_rev + 1, i_k]
+                for i_t, i_k in T.Parallel(BT, dim_k):
+                    dg_out[i_b, chunk_start + i_t, i_h, i_k] = g_cumsum_s[i_t, i_k] + dg_inter[i_k]
+        return _main
+    return _fused_func
+
+def build_kernel(case):
+    """Construct the TileLang device entry without launching it."""
+    return _kernel_factory(**case['build']['factory_arguments'])

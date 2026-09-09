@@ -1,0 +1,76 @@
+{
+  "arguments": {
+    "mhc": 4,
+    "n0": 1,
+    "n1": 1
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "eps": 1e-06,
+      "hidden_size": 4,
+      "repeat": 10,
+      "token_block_size": 32
+    }
+  },
+  "case_id": "tilekernels-mhc-sinkhorn-bwd-7368335f2a29-original-c66074e3d4",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 43,
+      "function": "test_sinkhorn_comprehensive",
+      "kind": "UPSTREAM_TEST",
+      "path": "tests/mhc/test_sinkhorn.py",
+      "source_sha256": "c0ff95835f5d8e2f29abbc436ece97731938c6e978b213d7b28ddeee07fdf841",
+      "start_line": 33
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-bf6115ae7df875c6",
+    "tilekernels-36d9e45d-spec-evidence-f8f52627925302c9"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tilekernels-mhc-sinkhorn-bwd-7368335f2a29",
+  "kind": "ORIGINAL",
+  "origin": "upstream-upstream_test:tests/mhc/test_sinkhorn.py:33-43#test_sinkhorn_comprehensive",
+  "reason": "Source-derived TileKernels specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

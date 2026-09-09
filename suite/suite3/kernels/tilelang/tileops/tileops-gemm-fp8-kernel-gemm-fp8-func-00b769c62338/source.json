@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-gemm-fp8-kernel-gemm-fp8-func-00b769c62338",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "a98ca6744ba643eed28ffc1f9054fe1ad628b63137122236dd13019aef76f924"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      214,
+      418
+    ],
+    "path": "src/tileops/kernels/gemm/dense.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/gemm/dense.py#L214-L418",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "58c72bf3ac31b8f2d60ff0939390b4846904ec242c0c766141594e5b7dcfce92",
+    "symbol": "_gemm_fp8_kernel._gemm_fp8_func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

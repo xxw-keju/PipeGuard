@@ -1,0 +1,53 @@
+{
+  "bindings": {
+    "C_out": 512,
+    "bias_shape": [
+      512
+    ],
+    "dtype": "bfloat16",
+    "input_shape": [
+      1,
+      1,
+      16000
+    ],
+    "kW": 10,
+    "label": "wav2vec2-layer1-bias",
+    "manifest": "src/tileops/manifest/convolution.yaml",
+    "operator": "Conv1dFwdOp",
+    "row_index": 5,
+    "stride": 5
+  },
+  "candidate_id": "60297ff42e6b3776",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 78,
+      "function": "Conv1dFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/convolution.yaml",
+      "source_sha256": "ae1edda18912f7dd5e086e94ac299b1f4e2c4315a8a073bf14ab102a75d20cda",
+      "start_line": 7
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/convolution.yaml:7-78#Conv1dFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-60297ff42e6b3776-boundary-fe3bb5ce92-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

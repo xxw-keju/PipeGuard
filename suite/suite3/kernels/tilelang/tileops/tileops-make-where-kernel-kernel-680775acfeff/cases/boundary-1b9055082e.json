@@ -1,0 +1,111 @@
+{
+  "arguments": {
+    "dtype": "bfloat16",
+    "input_shape": [
+      16384,
+      16384
+    ],
+    "label": "elementwise-256M",
+    "manifest": "src/tileops/manifest/elementwise_multi_input.yaml",
+    "operator": "WhereFwdOp",
+    "row_index": 1
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": "bfloat16",
+        "before": "float16",
+        "path": "/bindings/dtype"
+      },
+      {
+        "after": 16384,
+        "before": 4096,
+        "path": "/bindings/input_shape/0"
+      },
+      {
+        "after": 16384,
+        "before": 4096,
+        "path": "/bindings/input_shape/1"
+      },
+      {
+        "after": "elementwise-256M",
+        "before": "elementwise-16M",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 1,
+        "before": 0,
+        "path": "/bindings/row_index"
+      }
+    ],
+    "dimensions": [
+      "dtype",
+      "input_shape"
+    ],
+    "transition": "Official source-matrix variation across: dtype, input_shape"
+  },
+  "build": {
+    "factory_arguments": {
+      "N": 268435456,
+      "dtype": "bfloat16"
+    }
+  },
+  "case_id": "tileops-make-where-kernel-kernel-680775acfeff-boundary-1b9055082e",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 45,
+      "function": "WhereFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/elementwise_multi_input.yaml",
+      "source_sha256": "1b5df7ee5347fbf7ce5b5267b6b6e58883a39e914f58043f925d2f3fcee8c1db",
+      "start_line": 8
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-38f99edba284bc42",
+    "tileops-6a4085cd-spec-evidence-fc11c788492c97b3"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-make-where-kernel-kernel-680775acfeff",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/elementwise_multi_input.yaml:8-45#WhereFwdOp",
+  "parent_case_id": "tileops-make-where-kernel-kernel-680775acfeff-original-9ce62a5719",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

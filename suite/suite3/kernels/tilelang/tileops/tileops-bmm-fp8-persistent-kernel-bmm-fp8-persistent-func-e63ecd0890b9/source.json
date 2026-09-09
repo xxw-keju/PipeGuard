@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-bmm-fp8-persistent-kernel-bmm-fp8-persistent-func-e63ecd0890b9",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "b01203f287e9af19e12e8dd5b2695fd184f2ba48bd1cde591fbc7c5ab029e055"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      237,
+      312
+    ],
+    "path": "src/tileops/kernels/gemm/bmm.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/gemm/bmm.py#L237-L312",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "8671057cbb4ea82d83f97237f9942e554b8ee7926685c72f2c90323a5ad5ab8d",
+    "symbol": "_bmm_fp8_persistent_kernel._bmm_fp8_persistent_func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

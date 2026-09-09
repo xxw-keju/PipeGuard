@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-histc-kernel-simple-c5f07765ea2b",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "15812074a7f0429e3c48a5f4ef53afe8ef3feedfe566b93fd477fcc1f42c4f50"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      82,
+      122
+    ],
+    "path": "src/flag_gems/ops/histc.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/histc.py#L82-L122",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "748530ee14342cd15397d557ae2987d2671d0d56eeb65c37e3686a554d5a5fe8",
+    "symbol": "histc_kernel_simple"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

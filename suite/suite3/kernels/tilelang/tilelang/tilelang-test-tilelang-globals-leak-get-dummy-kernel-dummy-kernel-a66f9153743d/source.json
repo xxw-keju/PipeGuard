@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-tilelang-globals-leak-get-dummy-kernel-dummy-kernel-a66f9153743d",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "9ee838c04ce275dca8334979b33f121bb9ae75831fcaa4c56f9efdb838afb991"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      15,
+      26
+    ],
+    "path": "testing/python/language/test_tilelang_memory_leak.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/language/test_tilelang_memory_leak.py#L15-L26",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "eca8015ec715d7b2348a70865bc31f305a220bb729d97a72492a2ef29496eb07",
+    "symbol": "test_tilelang_globals_leak.get_dummy_kernel.dummy_kernel"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

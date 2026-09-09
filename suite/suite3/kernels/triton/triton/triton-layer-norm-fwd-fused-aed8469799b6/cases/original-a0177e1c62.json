@@ -1,0 +1,86 @@
+{
+  "arguments": {
+    "BLOCK_SIZE": 8192,
+    "M": 1151,
+    "N": 8192,
+    "eps": 1e-05,
+    "stride": 8192
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-layer-norm-fwd-fused-aed8469799b6-original-a0177e1c62",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "BLOCK_SIZE": 8192
+    },
+    "grid_ctas": 1151,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 8
+    },
+    "signature": {
+      "B": "*fp16",
+      "BLOCK_SIZE": "constexpr",
+      "Mean": "*fp32",
+      "N": "i32",
+      "Rstd": "*fp32",
+      "W": "*fp16",
+      "X": "*fp16",
+      "Y": "*fp16",
+      "eps": "fp32",
+      "stride": "i32"
+    }
+  },
+  "evidence": [
+    "source-3a2b5d012ec338da",
+    "launch-c1ac39e5ee015d77"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-layer-norm-fwd-fused-aed8469799b6",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-launch:python/tutorials/05-layer-norm.py:252;tutorial-test:M=1151,N=8192,dtype=fp16",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-launch:python/tutorials/05-layer-norm.py:252;tutorial-test:M=1151,N=8192,dtype=fp16",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

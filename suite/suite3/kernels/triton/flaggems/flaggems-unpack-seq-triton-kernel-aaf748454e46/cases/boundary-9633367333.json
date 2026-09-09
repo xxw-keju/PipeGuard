@@ -1,0 +1,139 @@
+{
+  "arguments": {
+    "D": 32,
+    "N": 16,
+    "dtype": "torch.bfloat16",
+    "lengths_list": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 32,
+        "before": 64,
+        "path": "/bindings/D"
+      },
+      {
+        "after": 16,
+        "before": 32,
+        "path": "/bindings/N"
+      },
+      {
+        "after": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "before": [
+          4,
+          7,
+          1,
+          8,
+          12
+        ],
+        "path": "/bindings/lengths_list"
+      }
+    ],
+    "dimensions": [
+      "D",
+      "N",
+      "lengths_list"
+    ],
+    "transition": "Official test-matrix variation across: D, N, lengths_list"
+  },
+  "build": {},
+  "case_id": "flaggems-unpack-seq-triton-kernel-aaf748454e46-boundary-9633367333",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-30003a2505000a2a"
+      ],
+      "test_end_line": 155,
+      "test_function": "test_pack_unpack_roundtrip_2d",
+      "test_path": "tests/test_unpack_seq.py",
+      "test_source_sha256": "75228fab027ba40234c9c028a1e2b9981ceff93d67f80596b6c7713281b171f8",
+      "test_start_line": 143
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-30003a2505000a2a",
+    "flaggems-test-d0b6520428d7d19a",
+    "source-3a54c6dc3f4a31b7"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-unpack-seq-triton-kernel-aaf748454e46",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_unpack_seq.py:143-155#test_pack_unpack_roundtrip_2d",
+  "parent_case_id": "flaggems-unpack-seq-triton-kernel-aaf748454e46-original-1322a4280f",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

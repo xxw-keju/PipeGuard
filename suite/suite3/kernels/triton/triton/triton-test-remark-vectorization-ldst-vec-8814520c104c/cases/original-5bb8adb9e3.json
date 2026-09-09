@@ -1,0 +1,78 @@
+{
+  "arguments": {
+    "XBLOCK": 1024
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-test-remark-vectorization-ldst-vec-8814520c104c-original-5bb8adb9e3",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "XBLOCK": 1024
+    },
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 1
+    },
+    "signature": {
+      "XBLOCK": "constexpr",
+      "in_ptr0": "*i64",
+      "in_ptr1": "*i64",
+      "in_ptr2": "*fp16",
+      "in_ptr3": "*fp32",
+      "out_ptr0": "*fp16"
+    }
+  },
+  "evidence": [
+    "source-4129330b4e1225bc",
+    "launch-c613fdb8e619f986"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-test-remark-vectorization-ldst-vec-8814520c104c",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-compile:python/test/unit/test_perf_warning.py:138-141;XBLOCK=1024;equivalent-diagnostics-repeat:148-151",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-compile:python/test/unit/test_perf_warning.py:138-141;XBLOCK=1024;equivalent-diagnostics-repeat:148-151",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

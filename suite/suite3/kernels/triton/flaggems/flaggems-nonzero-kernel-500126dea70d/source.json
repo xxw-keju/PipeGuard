@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-nonzero-kernel-500126dea70d",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "10fd9abcbd3aea4f02821798518a030c7db44d84912f24210ff252c1d285651f"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      29,
+      56
+    ],
+    "path": "src/flag_gems/ops/nonzero.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/nonzero.py#L29-L56",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "289b88095dc9e62461e16e2177acc1787a85c805d977688cddbd23d213e4f6bc",
+    "symbol": "nonzero_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

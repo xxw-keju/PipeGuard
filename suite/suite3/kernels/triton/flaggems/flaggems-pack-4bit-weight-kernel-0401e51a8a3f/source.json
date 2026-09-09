@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-pack-4bit-weight-kernel-0401e51a8a3f",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "c7f4886359dfd5b4b79406bcecfa1ef29fd5df9d717f231033cd2b7e5c9e08fc"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      28,
+      70
+    ],
+    "path": "src/flag_gems/ops/_dyn_quant_pack_4bit_weight.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/_dyn_quant_pack_4bit_weight.py#L28-L70",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "717302546cadf41109e3ab7c59e7612aca550484b9d7738fc2bc1c3c45b6d507",
+    "symbol": "_pack_4bit_weight_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

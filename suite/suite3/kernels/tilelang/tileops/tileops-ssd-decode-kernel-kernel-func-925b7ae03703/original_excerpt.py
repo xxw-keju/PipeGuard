@@ -1,0 +1,137 @@
+    @tilelang.jit(out_idx=[-1])
+    def kernel_func(
+        block_p: int,
+        block_n: int,
+        threads: int,
+    ):
+        # block_n must be a power of 2 for the log-depth tree reduction.
+        if not (block_n > 0 and (block_n & (block_n - 1)) == 0):
+            raise ValueError(
+                f"block_n must be a power of 2 for the log-depth tree reduction; got {block_n}"
+            )
+        _log_n = int(math.log2(block_n))
+
+        @T.prim_func
+        def main(
+            A: T.Tensor((H, P, N), accum_dtype),  # type: ignore
+            dt: T.Tensor((B, H, P), accum_dtype),  # type: ignore
+            x: T.Tensor((B, H, P), dtype),  # type: ignore
+            B_in: T.Tensor((B, G, N), dtype),  # type: ignore
+            C_in: T.Tensor((B, G, N), dtype),  # type: ignore
+            state: T.Tensor((B, H, P, N), accum_dtype),  # type: ignore  in-place
+            y_out: T.Tensor((B, H, P), accum_dtype),  # type: ignore
+        ):
+            # Grid: axis-0 fuses (batch, head); axis-1 tiles d_head.
+            # threads = block_p * block_n.
+            #
+            # Thread layout: 2D T.Parallel(block_p, block_n).
+            # Thread (pp, nn) owns p=p0+pp and n=n0+nn for each n-chunk.
+            #
+            # Coalescing: for a fixed pp row (one warp when block_n=32), all
+            # block_n threads access consecutive n-positions in A, state, B, C
+            # → stride-1 loads, perfectly coalesced within each warp.
+            #
+            # x and dt only depend on pp (not nn or n_blk) — loaded once into
+            # x_frag/dt_frag before the n_blk loop to avoid redundant HBM reads.
+            #
+            # y reduction: each thread accumulates a partial sum in a register
+            # (y_frag), then a log-depth tree reduction in shared memory
+            # collapses the block_n partial sums for each pp into y_out[p].
+            with T.Kernel(B * H, T.ceildiv(P, block_p), threads=threads) as (bh, bp):
+                b = bh // H
+                h = bh % H
+                g = h // HEADS_PER_GROUP
+                p0 = bp * block_p
+
+                # Per-thread y accumulator.  Thread (pp, nn) owns y_frag[pp, nn].
+                y_frag = T.alloc_fragment((block_p, block_n), accum_dtype)
+                T.clear(y_frag)
+
+                # Hoist x and dt loads out of the n_blk loop.
+                #   x[b,h,p] and dt[b,h,p] depend only on pp, not on n_blk,
+                #   so reading them once before the loop eliminates
+                #   ceil(N/block_n) redundant global loads per thread.
+                #   Allocated as (block_p,) — one scalar per pp — so each
+                #   thread stores exactly one value, not block_n redundant
+                #   copies.  Loaded by T.Parallel(block_p) only.
+                x_frag = T.alloc_fragment((block_p,), accum_dtype)
+                dt_frag = T.alloc_fragment((block_p,), accum_dtype)
+                for pp in T.Parallel(block_p):
+                    p_idx = p0 + pp
+                    valid_p = p_idx < P
+                    x_frag[pp] = T.if_then_else(
+                        valid_p,
+                        T.cast(x[b, h, p_idx], accum_dtype),
+                        T.float32(0.0),
+                    )
+                    dt_frag[pp] = T.if_then_else(
+                        valid_p,
+                        dt[b, h, p_idx],
+                        T.float32(0.0),
+                    )
+
+                # Main loop: 2D parallel state update.
+                #   T.Parallel(block_p, block_n) maps (pp, nn) → thread index.
+                #   Adjacent threads in the same pp-row access consecutive n
+                #   positions → coalesced loads for A, state, B_in, C_in.
+                for n_blk in T.serial(T.ceildiv(N, block_n)):
+                    n0 = n_blk * block_n
+                    for pp, nn in T.Parallel(block_p, block_n):
+                        p_idx = p0 + pp
+                        n_idx = n0 + nn
+                        valid = (p_idx < P) and (n_idx < N)
+
+                        A_val = T.if_then_else(
+                            valid,
+                            A[h, p_idx, n_idx],
+                            T.float32(0.0),
+                        )
+                        B_val = T.if_then_else(
+                            valid,
+                            T.cast(B_in[b, g, n_idx], accum_dtype),
+                            T.float32(0.0),
+                        )
+                        C_val = T.if_then_else(
+                            valid,
+                            T.cast(C_in[b, g, n_idx], accum_dtype),
+                            T.float32(0.0),
+                        )
+                        old_s = T.if_then_else(
+                            valid,
+                            state[b, h, p_idx, n_idx],
+                            T.float32(0.0),
+                        )
+
+                        dA_val = T.exp(dt_frag[pp] * A_val)
+                        new_s = dA_val * old_s + dt_frag[pp] * x_frag[pp] * B_val
+                        if valid:
+                            state[b, h, p_idx, n_idx] = new_s
+
+                        y_frag[pp, nn] = y_frag[pp, nn] + new_s * C_val
+
+                # y reduction: store fragments to shared memory, then
+                # perform a log-depth tree reduction over the nn dimension.
+                # Round r: threads with nn < block_n>>(r+1) add the value
+                # at nn + block_n>>(r+1) into their cell.  Unrolled at
+                # Python trace-time; each _stride is a compile-time int.
+                y_smem = T.alloc_shared((block_p, block_n), accum_dtype)
+                for pp, nn in T.Parallel(block_p, block_n):
+                    y_smem[pp, nn] = y_frag[pp, nn]
+
+                T.sync_threads()
+
+                for _d in range(_log_n):
+                    _stride = block_n >> (_d + 1)
+                    for pp, nn in T.Parallel(block_p, block_n):
+                        if nn < _stride:
+                            y_smem[pp, nn] = y_smem[pp, nn] + y_smem[pp, nn + _stride]
+                    T.sync_threads()
+
+                # Write y_out from the reduced y_smem[:, 0].
+                for pp, nn in T.Parallel(block_p, block_n):
+                    if nn == 0:
+                        p_idx = p0 + pp
+                        if p_idx < P:
+                            y_out[b, h, p_idx] = y_smem[pp, 0]
+
+        return main

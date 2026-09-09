@@ -1,0 +1,32 @@
+{
+  "case_count": 3,
+  "changes": [
+    "retained the TileLang device factory and its in-file helper closure",
+    "removed unrelated upstream host definitions and decorators",
+    "inlined required TileOPs helper functions and constants",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-argreduce-warp-kernel-func-9b14ac46eb92",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "acf152c59fea6d170c2870db263adfbcb454ca3cf29ea122a008fb6828aa5a64"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      239,
+      274
+    ],
+    "path": "src/tileops/kernels/reduction/argreduce.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/reduction/argreduce.py#L239-L274",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "de4bab0b6baffec022202eecb246b5378adf991521663183a7427706335e7592",
+    "symbol": "_argreduce_warp_kernel._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 3,
+  "variant": ""
+}

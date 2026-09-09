@@ -1,0 +1,32 @@
+{
+  "case_count": 3,
+  "changes": [
+    "retained the TileLang device factory and its in-file helper closure",
+    "removed unrelated upstream host definitions and decorators",
+    "inlined required TileOPs helper functions and constants",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-prod-reduce-kernel-func-fb5d26426516",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "0ff43c3297412aff02ff21218d3df35f83aec7e883d91a0de2770acbbf40a6c7"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      667,
+      731
+    ],
+    "path": "src/tileops/kernels/reduction/reduce.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/reduction/reduce.py#L667-L731",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "2085d99f465b7424152fbe75d49134b6298ede75a1a665e8c4bc2eceea6f4002",
+    "symbol": "_prod_reduce_kernel._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 3,
+  "variant": ""
+}

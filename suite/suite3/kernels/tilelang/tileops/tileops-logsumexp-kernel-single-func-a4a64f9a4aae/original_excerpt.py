@@ -1,0 +1,47 @@
+    @tilelang.jit(out_idx=[1])
+    def _func(block_m, threads):
+        @T.prim_func
+        def main(
+            x: T.Tensor[(M, N), dtype],
+            y: T.Tensor[(M,), dtype],
+        ):
+            with T.Kernel(T.ceildiv(M, block_m), threads=threads) as pid_m:
+                shared_buf = T.alloc_shared((block_m, N_padded), dtype)
+                x_local = T.alloc_fragment((block_m, N_padded), dtype)
+                x_f32 = T.alloc_fragment((block_m, N_padded), "float32")
+                row_max = T.alloc_fragment((block_m,), "float32")
+                row_sum = T.alloc_fragment((block_m,), "float32")
+
+                if _needs_pad:
+                    # Kernel-side boundary handling: element-wise load
+                    # with T.if_then_else masking for padding columns
+                    # and row-tail safety (M % block_m != 0).
+                    for i in T.serial(block_m):
+                        for j in T.Parallel(N_padded):
+                            x_f32[i, j] = T.if_then_else(
+                                T.And(pid_m * block_m + i < M, j < N),
+                                T.cast(x[pid_m * block_m + i, j], "float32"),
+                                T.cast(_neg_inf, "float32"),
+                            )
+                else:
+                    T.copy(x[pid_m * block_m, 0], shared_buf)
+                    T.copy(shared_buf, x_local)
+                    for i in T.serial(block_m):
+                        for j in T.Parallel(N_padded):
+                            x_f32[i, j] = T.cast(x_local[i, j], "float32")
+
+                T.fill(row_max, -T.infinity("float32"))
+                T.reduce_max(x_f32, row_max, dim=1, clear=False)
+
+                for i in T.serial(block_m):
+                    for j in T.Parallel(N_padded):
+                        x_f32[i, j] = T.exp(x_f32[i, j] - row_max[i])
+                T.reduce_sum(x_f32, row_sum, dim=1)
+
+                out_local = T.alloc_fragment((block_m,), dtype)
+                for i in T.Parallel(block_m):
+                    out_local[i] = row_max[i] + T.log(row_sum[i])
+
+                T.copy(out_local, y[pid_m * block_m])
+
+        return main

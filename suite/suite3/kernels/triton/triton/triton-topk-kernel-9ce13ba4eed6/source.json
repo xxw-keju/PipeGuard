@@ -1,0 +1,31 @@
+{
+  "case_count": 2,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-topk-kernel-9ce13ba4eed6",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "9608600e7a2fb9e20416da9574c7e0705f32df3ea4b24591f5b17f5c0a7e6b1f"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      13,
+      16
+    ],
+    "path": "python/test/unit/language/test_compile_only.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_compile_only.py#L13-L16",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "6e04dd3b6a177694f3ab3e25b797fcb75448975ee1e2d283de04419c5e8a3189",
+    "symbol": "topk_kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 2,
+  "variant": ""
+}

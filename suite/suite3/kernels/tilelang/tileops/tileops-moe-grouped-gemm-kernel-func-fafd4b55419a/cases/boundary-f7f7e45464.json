@@ -1,0 +1,109 @@
+{
+  "arguments": {
+    "dtype": "bfloat16",
+    "ffn_size": 2048,
+    "hidden_size": 7168,
+    "label": "moe_gemm-upper",
+    "manifest": "src/tileops/manifest/moe.yaml",
+    "num_experts": 256,
+    "num_tokens": 4096,
+    "operator": "MoeGroupedGemmFwdOp",
+    "top_k": 8
+  },
+  "boundary": {
+    "dimensions": [
+      "dtype",
+      "ffn_size",
+      "hidden_size",
+      "num_experts",
+      "num_tokens",
+      "top_k"
+    ],
+    "position": "upper",
+    "transition": "MoeGroupedGemmNopadKernel phase 2: NT grouped GEMM"
+  },
+  "build": {
+    "factory_arguments": {
+      "K": 7168,
+      "N": 4096,
+      "accum_dtype": "float",
+      "dtype": "bfloat16",
+      "max_tiles": 768,
+      "num_experts": 256,
+      "numel": 32768
+    },
+    "kernel_arguments": {
+      "block_k": 64,
+      "block_m": 64,
+      "block_n": 256,
+      "group_size_m": 1,
+      "num_stages": 3,
+      "threads": 128
+    }
+  },
+  "case_id": "tileops-moe-grouped-gemm-kernel-func-fafd4b55419a-boundary-f7f7e45464",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 218,
+      "function": "FusedMoEExpertsNopadPersistent3WGFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/moe.yaml",
+      "source_sha256": "ee7c14d61c6d2335feea5c471bc5aff6a54170a8459f869b6cb806f233e7d569",
+      "start_line": 147
+    },
+    "dispatch": {
+      "predicate": "MoeGroupedGemmNopadKernel phase 2: NT grouped GEMM",
+      "strategy": "moe_gemm"
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-c435582e9feb0ff8",
+    "tileops-6a4085cd-spec-evidence-de1d7c838adbf929"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-moe-grouped-gemm-kernel-func-fafd4b55419a",
+  "kind": "BOUNDARY",
+  "origin": "upstream-dispatch:MoeGroupedGemmNopadKernel phase 2: NT grouped GEMM",
+  "reason": "H100 source-condition witness for moe_gemm.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [
+    "tileops-dispatch-witness"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "device": "NVIDIA H100 80GB HBM3",
+    "sm_count": 132,
+    "warp_size": 32
+  },
+  "unresolved": []
+}

@@ -1,0 +1,81 @@
+{
+  "arguments": {
+    "batch_dims": [
+      8
+    ],
+    "dtype": "torch.bfloat16",
+    "in1": 16,
+    "in2": 24,
+    "out": 32,
+    "with_bias": true
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-bilinear-kernel-330c2480c720-original-c165209129",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-8ac548d4c63808c0"
+      ],
+      "test_end_line": 55,
+      "test_function": "test_bilinear",
+      "test_path": "tests/test_bilinear.py",
+      "test_source_sha256": "f99076fc031d913d646d79edf1eec980b58c362bc44b2711b5128388d730c7da",
+      "test_start_line": 33
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-8ac548d4c63808c0",
+    "flaggems-test-4bf1dd09fa6d589c",
+    "source-d4e11d33c7d58002"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-bilinear-kernel-330c2480c720",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_bilinear.py:33-55#test_bilinear",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

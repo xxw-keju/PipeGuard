@@ -1,0 +1,32 @@
+{
+  "case_count": 3,
+  "changes": [
+    "retained the TileLang device factory and its in-file helper closure",
+    "removed unrelated upstream host definitions and decorators",
+    "inlined required TileOPs helper functions and constants",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-vector-norm-kernel-func-36e6d3d94da5",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "e66c255fef228a28af072cd91c834b410c834a48bff67e8f3ecf0cde6baa52fc"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      90,
+      126
+    ],
+    "path": "src/tileops/kernels/reduction/vector_norm.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/reduction/vector_norm.py#L90-L126",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "4a2ffab04d08bab02af3bf0f4b2e472e25a15c45733aa6b3e1cd7e4d1126f3ae",
+    "symbol": "_vector_norm_kernel._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 3,
+  "variant": ""
+}

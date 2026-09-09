@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-bound-unused-result-good-power-kernel-f3a8b2a7ed77",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "1ecacaaaed0928fe4f751bee37a494009c0b7e90e997d3d910d39ad61ba2099a"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      526,
+      529
+    ],
+    "path": "python/test/unit/language/test_compile_errors.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_compile_errors.py#L526-L529",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "d3fbc91f0bccc8e95f87bb00f163dc0ad568a96d055a2c8d992e11caa4b0005a",
+    "symbol": "test_bound_unused_result.good_power_kernel"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

@@ -1,0 +1,69 @@
+    @tilelang.jit(
+        out_idx=[-2, -1],
+        pass_configs={
+            tilelang.PassConfigKey.TL_ENABLE_FAST_MATH: False,
+        },
+        compile_flags=["-O3", "-DENABLE_BF16"],
+    )
+    def _func(num_stages, threads=128):
+        @T.prim_func
+        def h_recurrence_kernel(
+            k: T.Tensor([batch, head, seq_len, dim_k], dtype),
+            w: T.Tensor([batch, head, seq_len, dim_k], dtype),
+            u: T.Tensor([batch, head, seq_len, dim_v], dtype),
+            S_0: T.Tensor([batch, head, dim_k, dim_v], dtype),
+            S: T.Tensor([batch, head, num_chunks + 1, dim_k, dim_v], accum_dtype),
+            v_new: T.Tensor([batch, head, seq_len, dim_v], dtype),
+        ):
+            with T.Kernel(num_v_tiles, batch, head, threads=threads) as (vid, bid, hid):
+                k_c = T.alloc_shared([block_C, dim_k], dtype)
+                w_c = T.alloc_shared([block_C, dim_k], dtype)
+                u_c = T.alloc_shared([block_C, BV], dtype)
+                h_c = T.alloc_shared([dim_k, BV], dtype)
+                v_new_c = T.alloc_shared([block_C, BV], dtype)
+
+                ws_frag = T.alloc_fragment([block_C, BV], accum_dtype)
+                # Precise fp32 accumulator for running state (avoids
+                # compounding quantization error over many chunks).
+                h_fp32 = T.alloc_fragment([dim_k, BV], accum_dtype)
+
+                v_offset = vid * BV
+
+                # Initialise h tile from S_0 and promote to fp32
+                T.copy(S_0[bid, hid, :, v_offset : v_offset + BV], h_c, disable_tma=True)
+                for i, j in T.Parallel(dim_k, BV):
+                    h_fp32[i, j] = T.cast(h_c[i, j], accum_dtype)
+                for i, j in T.Parallel(dim_k, BV):
+                    S[bid, hid, 0, i, v_offset + j] = h_fp32[i, j]
+
+                for t in T.Pipelined(num_chunks, num_stages=num_stages):
+                    T.copy(k[bid, hid, t * block_C : (t + 1) * block_C, :], k_c, disable_tma=True)
+                    T.copy(w[bid, hid, t * block_C : (t + 1) * block_C, :], w_c, disable_tma=True)
+                    T.copy(
+                        u[bid, hid, t * block_C : (t + 1) * block_C, v_offset : v_offset + BV],
+                        u_c,
+                        disable_tma=True,
+                    )
+
+                    # Cast precise state to dtype for gemm input
+                    T.copy(h_fp32, h_c)
+
+                    # v_new_tile = u_tile - w @ h_tile (no exp scaling)
+                    T.clear(ws_frag)
+                    T.gemm(w_c, h_c, ws_frag)
+                    for i, j in T.Parallel(block_C, BV):
+                        v_new_c[i, j] = u_c[i, j] - ws_frag[i, j]
+
+                    # Store v_new tile
+                    T.copy(
+                        v_new_c,
+                        v_new[bid, hid, t * block_C : (t + 1) * block_C, v_offset : v_offset + BV],
+                        disable_tma=True,
+                    )
+
+                    # h_tile_next = h_tile + k^T @ v_new_tile (fp32 accumulation)
+                    T.gemm(k_c, v_new_c, h_fp32, transpose_A=True)
+                    for i, j in T.Parallel(dim_k, BV):
+                        S[bid, hid, t + 1, i, v_offset + j] = h_fp32[i, j]
+
+        return h_recurrence_kernel

@@ -1,0 +1,55 @@
+{
+  "bindings": {
+    "dtype": "float16",
+    "is_causal": true,
+    "kv_shape": [
+      4,
+      512,
+      8,
+      128
+    ],
+    "label": "llama-8b-short",
+    "manifest": "src/tileops/manifest/attention.yaml",
+    "operator": "GroupedQueryAttentionBwdOp",
+    "q_shape": [
+      4,
+      512,
+      32,
+      128
+    ],
+    "row_index": 0
+  },
+  "candidate_id": "8decb85a7714a960",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 427,
+      "function": "GroupedQueryAttentionBwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/attention.yaml",
+      "source_sha256": "aa6ac23bc48239a9858b0c078402077e89628e4fa26148d2e09d5a8fd01be286",
+      "start_line": 372
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/attention.yaml:372-427#GroupedQueryAttentionBwdOp",
+  "recipe_id": "tileops-6a4085cd-root-8decb85a7714a960-original-2323311a2a-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

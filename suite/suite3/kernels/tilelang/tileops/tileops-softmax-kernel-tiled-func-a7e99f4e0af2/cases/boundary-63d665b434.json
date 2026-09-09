@@ -1,0 +1,98 @@
+{
+  "arguments": {
+    "dim": -1,
+    "dtype": "bfloat16",
+    "label": "dispatch-lower-m512-n16640",
+    "manifest": "src/tileops/manifest/reduction.yaml",
+    "operator": "LogSoftmaxFwdOp",
+    "x_shape": [
+      512,
+      16640
+    ]
+  },
+  "boundary": {
+    "dimensions": [
+      "M",
+      "N",
+      "dtype"
+    ],
+    "position": "lower",
+    "transition": "seg_n == 0 and tile_n > 0"
+  },
+  "build": {
+    "factory_arguments": {
+      "M": 512,
+      "N": 16640,
+      "dtype": "bfloat16",
+      "op_kind": "log_softmax",
+      "tile_n": 12288
+    },
+    "kernel_arguments": {
+      "block_m": 1,
+      "threads": 256
+    }
+  },
+  "case_id": "tileops-softmax-kernel-tiled-func-a7e99f4e0af2-boundary-63d665b434",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 108,
+      "function": "LogSoftmaxFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/reduction.yaml",
+      "source_sha256": "85b6232a47432a58c4b2fd4b57b16dd5d0fb6741bb26f91edce76cff37b549fc",
+      "start_line": 56
+    },
+    "dispatch": {
+      "predicate": "seg_n == 0 and tile_n > 0",
+      "strategy": "soft_tiled"
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-4d84bf1d8e6a17f5",
+    "tileops-6a4085cd-spec-evidence-eb4908558cc37683"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-softmax-kernel-tiled-func-a7e99f4e0af2",
+  "kind": "BOUNDARY",
+  "origin": "upstream-dispatch:src/tileops/kernels/reduction/softmax.py and logsumexp.py",
+  "reason": "Dispatch witness for soft_tiled: seg_n == 0 and tile_n > 0.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [
+    "tileops-dispatch-witness"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

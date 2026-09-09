@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-fused-add-layer-norm-kernel-func-11740a5e48c9",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "22ebc0f0585be34727360b8b075bbe967a53b9fb48f20e1b82a3e715954e1277"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      44,
+      129
+    ],
+    "path": "src/tileops/kernels/norm/fused_add_norm.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/norm/fused_add_norm.py#L44-L129",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "2e9e2aadc4b22d73ecba97ff020df06c5913c867768e9b9ebf3f5a43bb845ef3",
+    "symbol": "_fused_add_layer_norm_kernel._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

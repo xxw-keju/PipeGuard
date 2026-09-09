@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-memory-to-local-after-b69b1cc8ecd8",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "aadfbfe7926251625dcc5bd5351b734c6438d0158bd0f4295bc1dee68e617047"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      52,
+      63
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_decouple_type_cast.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_decouple_type_cast.py#L52-L63",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "be751e85da7dc345aa169ad4ab21d378cdb81c2172e7a08d4d7100b4c7ce6fdd",
+    "symbol": "test_memory_to_local.after"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

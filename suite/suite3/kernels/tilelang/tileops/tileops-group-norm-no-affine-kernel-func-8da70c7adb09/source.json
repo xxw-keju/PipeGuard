@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-group-norm-no-affine-kernel-func-8da70c7adb09",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "6466ffad424cdd47b7e51cce37ac89b7592ad4a5a3dfe03c11c811f5e20a9e02"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      424,
+      509
+    ],
+    "path": "src/tileops/kernels/norm/group_norm.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/norm/group_norm.py#L424-L509",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "3feba692eced63b679cfe01c80396a49d236df9ec4a94ee77fd5c3adde859a58",
+    "symbol": "_group_norm_no_affine_kernel._func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

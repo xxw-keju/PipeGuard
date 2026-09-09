@@ -1,0 +1,86 @@
+{
+  "arguments": {
+    "cache_dtype": "torch.float32",
+    "num_tokens": 32,
+    "use_fp4": false
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 32,
+        "before": 1,
+        "path": "/bindings/num_tokens"
+      }
+    ],
+    "dimensions": [
+      "num_tokens"
+    ],
+    "transition": "Official test-matrix variation across: num_tokens"
+  },
+  "build": {},
+  "case_id": "flaggems-fused-indexer-q-rope-quant-kernel-1c39f244822d-boundary-bb30ed9147",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-b9422164d561752a"
+      ],
+      "test_end_line": 161,
+      "test_function": "test_fused_indexer_q_rope_quant",
+      "test_path": "tests/test_fused_indexer_q_rope_quant.py",
+      "test_source_sha256": "6c073b2fb4f8d89a6f204208445e751174059fa6972e4c69adf8a408b1799f11",
+      "test_start_line": 111
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-b9422164d561752a",
+    "flaggems-test-b7f6d1a97b45e392",
+    "source-934365514a2c7148"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-fused-indexer-q-rope-quant-kernel-1c39f244822d",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_fused_indexer_q_rope_quant.py:111-161#test_fused_indexer_q_rope_quant",
+  "parent_case_id": "flaggems-fused-indexer-q-rope-quant-kernel-1c39f244822d-original-e385bd68f1",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

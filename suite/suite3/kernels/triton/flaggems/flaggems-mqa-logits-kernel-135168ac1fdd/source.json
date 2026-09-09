@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-mqa-logits-kernel-135168ac1fdd",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "d02e97439ed8ec816fbfb109b1a1e95909a30b46fb3c0fa8bce3934387054f85"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      34,
+      121
+    ],
+    "path": "src/flag_gems/fused/fp8_fp4_paged_mqa_logits.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/fused/fp8_fp4_paged_mqa_logits.py#L34-L121",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "cc860a339a4e507cba83a413f0b61f0612bef5b643ad7b88d1d743be47b8dc11",
+    "symbol": "_mqa_logits_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

@@ -1,0 +1,66 @@
+{
+  "bindings": {
+    "beta_shape": [
+      2,
+      4,
+      2048
+    ],
+    "chunk_size": 64,
+    "dtype": "float16",
+    "k_shape": [
+      2,
+      4,
+      2048,
+      64
+    ],
+    "label": "dn-autograd-b2-s2k-h4-d64",
+    "manifest": "src/tileops/manifest/linear_attention.yaml",
+    "operator": "DeltaNetAutogradOp",
+    "q_shape": [
+      2,
+      4,
+      2048,
+      64
+    ],
+    "row_index": 0,
+    "v_shape": [
+      2,
+      4,
+      2048,
+      64
+    ]
+  },
+  "candidate_id": "36bc35e1135427c1",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 456,
+      "function": "DeltaNetAutogradOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/linear_attention.yaml",
+      "source_sha256": "a36a9ff76af4e17dbc696c467e7e45aa4f4bb58e694c8432a7bf4107a82970c1",
+      "start_line": 424
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/linear_attention.yaml:424-456#DeltaNetAutogradOp",
+  "recipe_id": "tileops-6a4085cd-root-36bc35e1135427c1-original-794bfb6d6c-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

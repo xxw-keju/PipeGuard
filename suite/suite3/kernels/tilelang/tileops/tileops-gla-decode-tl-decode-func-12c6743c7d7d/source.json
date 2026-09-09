@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-gla-decode-tl-decode-func-12c6743c7d7d",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "097b979a87e2916baa637d15b250effcbf580c18f66a1ab1edc5452e97460817"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      52,
+      133
+    ],
+    "path": "src/tileops/kernels/linear_attention/gla_recurrence.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/linear_attention/gla_recurrence.py#L52-L133",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "0d10fa881c385b4bde1731d04340624ca94acb0a2843fe755cdc0f0cdb7e21bc",
+    "symbol": "_gla_decode_tl._decode_func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

@@ -1,0 +1,92 @@
+{
+  "arguments": {
+    "dtype": "torch.bfloat16",
+    "periodic": false,
+    "window_length": 4096
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": false,
+        "before": true,
+        "path": "/bindings/periodic"
+      },
+      {
+        "after": 4096,
+        "before": 0,
+        "path": "/bindings/window_length"
+      }
+    ],
+    "dimensions": [
+      "periodic",
+      "window_length"
+    ],
+    "transition": "Official test-matrix variation across: periodic, window_length"
+  },
+  "build": {},
+  "case_id": "flaggems-blackman-window-kernel-f3f0cafd5dc0-boundary-2f526341c8",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-91f741b692230617"
+      ],
+      "test_end_line": 67,
+      "test_function": "test_blackman_window_periodic",
+      "test_path": "tests/test_blackman_window.py",
+      "test_source_sha256": "f70db89b36a35f61cb6418cc469f8cd3823e4648b1c441db85f664272781fea7",
+      "test_start_line": 45
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-91f741b692230617",
+    "flaggems-test-fe0d0658dcdd9988",
+    "source-e36e4d823eefe121"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-blackman-window-kernel-f3f0cafd5dc0",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_blackman_window.py:45-67#test_blackman_window_periodic",
+  "parent_case_id": "flaggems-blackman-window-kernel-f3f0cafd5dc0-original-28d7298ef0",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

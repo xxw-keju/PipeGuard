@@ -1,0 +1,76 @@
+    @tilelang.jit(
+        out_idx=[-1],
+        pass_configs={
+            tilelang.PassConfigKey.TL_ENABLE_FAST_MATH: True,
+            "tl.disable_warp_specialized": True,
+        },
+        compile_flags=["-O3", "-DENABLE_BF16"],
+    )
+    def _bmm_fp8_persistent_func(
+        block_m: int = 128,
+        block_n: int = 128,
+        block_k: int = 64,
+        num_stages: int = 3,
+        threads: int = 256,
+    ) -> Callable:
+        scale_a_shape = (1,)
+        scale_b_shape = (1,)
+
+        @T.prim_func
+        def _bmm_fp8_persistent_main(
+            a: T.Tensor((batch, m, k), dtype),  # type: ignore
+            b: T.Tensor((batch, n, k), dtype),  # type: ignore  # N-major B
+            scale_a: T.Tensor(scale_a_shape, "float32"),  # type: ignore
+            scale_b: T.Tensor(scale_b_shape, "float32"),  # type: ignore
+            c: T.Tensor((batch, m, n), out_dtype),  # type: ignore
+        ) -> None:
+            with T.Kernel(sm_count, 1, 1, threads=threads) as (bx, _by, _bz):
+                a_shared = T.alloc_shared((block_m, block_k), dtype)
+                b_shared = T.alloc_shared((block_n, block_k), dtype)
+                c_shared = T.alloc_shared((block_m, block_n), out_dtype)
+                c_local = T.alloc_fragment((block_m, block_n), accum_dtype)
+
+                T.annotate_layout(
+                    {
+                        a_shared: tilelang.layout.make_swizzled_layout(a_shared),
+                        b_shared: tilelang.layout.make_swizzled_layout(b_shared),
+                        c_shared: tilelang.layout.make_swizzled_layout(c_shared),
+                    }
+                )
+
+                for tile_b, tile_m, tile_n in T.Persistent(
+                    [batch, T.ceildiv(m, block_m), T.ceildiv(n, block_n)],
+                    wave_size=sm_count,
+                    index=bx,
+                    group_size=8,
+                ):
+                    m_start = tile_m * block_m
+                    n_start = tile_n * block_n
+                    T.clear(c_local)
+
+                    for kk in T.Pipelined(T.ceildiv(k, block_k), num_stages=num_stages):
+                        k_start = kk * block_k
+                        T.copy(
+                            a[tile_b, m_start : m_start + block_m, k_start : k_start + block_k],
+                            a_shared,
+                        )
+                        T.copy(
+                            b[tile_b, n_start : n_start + block_n, k_start : k_start + block_k],
+                            b_shared,
+                        )
+                        T.gemm(
+                            a_shared,
+                            b_shared,
+                            c_local,
+                            transpose_B=True,
+                            policy=T.GemmWarpPolicy.FullRow,
+                        )
+                    for i, j in T.Parallel(block_m, block_n):
+                        c_local[i, j] = c_local[i, j] * scale_a[0] * scale_b[0]
+                    T.copy(c_local, c_shared)
+                    T.copy(
+                        c_shared,
+                        c[tile_b, m_start : m_start + block_m, n_start : n_start + block_n],
+                    )
+
+        return _bmm_fp8_persistent_main

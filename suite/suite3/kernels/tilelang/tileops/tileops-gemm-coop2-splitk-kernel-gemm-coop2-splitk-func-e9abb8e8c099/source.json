@@ -1,0 +1,32 @@
+{
+  "case_count": 3,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-gemm-coop2-splitk-kernel-gemm-coop2-splitk-func-e9abb8e8c099",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "7a6a6e4893e563f43eb574e54a8f83363a740f88b2e89fa0fd662fa491bbc5b3"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      1116,
+      1237
+    ],
+    "path": "src/tileops/kernels/gemm/dense.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/gemm/dense.py#L1116-L1237",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "e9270cf2ee7436de3c1b06c58df551fd54a7598d67c52da485d99a4e66244616",
+    "symbol": "_gemm_coop2_splitk_kernel._gemm_coop2_splitk_func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 3,
+  "variant": ""
+}

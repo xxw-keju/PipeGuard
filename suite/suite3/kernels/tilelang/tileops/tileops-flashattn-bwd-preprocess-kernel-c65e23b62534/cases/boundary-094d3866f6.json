@@ -1,0 +1,132 @@
+{
+  "arguments": {
+    "dtype": "bfloat16",
+    "is_causal": true,
+    "kv_shape": [
+      2,
+      512,
+      8,
+      128
+    ],
+    "label": "llama-70b-short",
+    "manifest": "src/tileops/manifest/attention.yaml",
+    "operator": "GroupedQueryAttentionBwdOp",
+    "q_shape": [
+      2,
+      512,
+      64,
+      128
+    ],
+    "row_index": 2
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": "bfloat16",
+        "before": "float16",
+        "path": "/bindings/dtype"
+      },
+      {
+        "after": 2,
+        "before": 4,
+        "path": "/bindings/kv_shape/0"
+      },
+      {
+        "after": "llama-70b-short",
+        "before": "llama-8b-short",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 2,
+        "before": 4,
+        "path": "/bindings/q_shape/0"
+      },
+      {
+        "after": 64,
+        "before": 32,
+        "path": "/bindings/q_shape/2"
+      },
+      {
+        "after": 2,
+        "before": 0,
+        "path": "/bindings/row_index"
+      }
+    ],
+    "dimensions": [
+      "dtype",
+      "kv_shape",
+      "q_shape"
+    ],
+    "transition": "Official source-matrix variation across: dtype, kv_shape, q_shape"
+  },
+  "build": {
+    "factory_arguments": {
+      "batch": 2,
+      "dim": 128,
+      "dtype": "bfloat16",
+      "heads": 64,
+      "seq_len": 512
+    }
+  },
+  "case_id": "tileops-flashattn-bwd-preprocess-kernel-c65e23b62534-boundary-094d3866f6",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 427,
+      "function": "GroupedQueryAttentionBwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/attention.yaml",
+      "source_sha256": "aa6ac23bc48239a9858b0c078402077e89628e4fa26148d2e09d5a8fd01be286",
+      "start_line": 372
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "upstream_wrappers": [
+      "functools.lru_cache(maxsize=32)"
+    ]
+  },
+  "evidence": [
+    "source-bc7aa0f392d72ccb",
+    "tileops-6a4085cd-spec-evidence-261f116b7fc42c8d"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-flashattn-bwd-preprocess-kernel-c65e23b62534",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/attention.yaml:372-427#GroupedQueryAttentionBwdOp",
+  "parent_case_id": "tileops-flashattn-bwd-preprocess-kernel-c65e23b62534-original-956e0b3c50",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

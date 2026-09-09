@@ -1,0 +1,97 @@
+{
+  "arguments": {
+    "A_shape": [
+      48
+    ],
+    "chunk_len": 256,
+    "dt_bias_shape": {
+      "__pipeguard_missing__": true
+    },
+    "dt_shape": [
+      1,
+      4096,
+      48
+    ],
+    "dt_softplus": true,
+    "dtype": "float16",
+    "label": "mamba2-780m-b1-s4k",
+    "manifest": "src/tileops/manifest/mamba.yaml",
+    "operator": "DaCumsumFwdOp",
+    "row_index": 0
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "factory_arguments": {
+      "batch": 1,
+      "chunk_len": 256,
+      "dt_max": Infinity,
+      "dt_min": 0.0,
+      "dt_softplus": true,
+      "dtype": "float16",
+      "has_dt_bias": false,
+      "n_heads": 48,
+      "num_chunks": 16,
+      "seq_len": 4096
+    }
+  },
+  "case_id": "tileops-da-cumsum-fwd-placed-kernel-kernel-func-0a8d13b1c3dd-original-6b668a347c",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 69,
+      "function": "DaCumsumFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/mamba.yaml",
+      "source_sha256": "6e8980f246a7dea4cbc207ac0d876df4b04acdac2b225749c8c57536022b7dea",
+      "start_line": 25
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-0ae000af32e96ae4",
+    "tileops-6a4085cd-spec-evidence-27881329b5fb2a94"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-da-cumsum-fwd-placed-kernel-kernel-func-0a8d13b1c3dd",
+  "kind": "ORIGINAL",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/mamba.yaml:25-69#DaCumsumFwdOp",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

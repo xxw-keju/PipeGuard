@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tilelang-test-unknown-extern-address-of-shared-then-wgmma-injects-fence-proxy-before-1d6657b1a960",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "84d408f4bb64b6f2e2a049791a40f7d9f228feb4fa8f6198e21f40f74fc2105a"
+  },
+  "original": {
+    "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+    "file": "original_excerpt.py",
+    "lines": [
+      246,
+      272
+    ],
+    "path": "testing/python/transform/test_tilelang_transform_inject_fence_proxy.py",
+    "permalink": "https://github.com/tile-ai/tilelang/blob/2c31e071c626c0498b48dcdc2741dc8651b70dc1/testing/python/transform/test_tilelang_transform_inject_fence_proxy.py#L246-L272",
+    "repository": "https://github.com/tile-ai/tilelang",
+    "sha256": "4feeb98a7c6ac3ccd381ae6cebf64c9a7168bfb0200595bc9813d3214975fde4",
+    "symbol": "test_unknown_extern_address_of_shared_then_wgmma_injects_fence_proxy.before"
+  },
+  "project": "tilelang",
+  "runnable_case_count": 1,
+  "variant": ""
+}

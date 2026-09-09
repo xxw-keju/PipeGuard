@@ -1,0 +1,32 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained the complete upstream TileLang factory and device body",
+    "inlined required TileOPs helpers and constants",
+    "mapped manifest workload values to factory arguments",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "tilelang",
+  "kernel_id": "tileops-gated-deltanet-decode-fp32-tl-decode-func-9ae135952b2c",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "cf759b34f307dd33b5bef4a08e3953bdd5f3950dfdbd5b64ff627f6896ff529e"
+  },
+  "original": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "file": "original_excerpt.py",
+    "lines": [
+      527,
+      594
+    ],
+    "path": "src/tileops/kernels/linear_attention/gated_deltanet_recurrence.py",
+    "permalink": "https://github.com/tile-ai/TileOPs/blob/6a4085cddb32f9a0f22bc8c99c2bbadbceff7226/src/tileops/kernels/linear_attention/gated_deltanet_recurrence.py#L527-L594",
+    "repository": "https://github.com/tile-ai/TileOPs",
+    "sha256": "5df9c853a8675b32d7ec88ad812fe1a9ac7547f9d71580cf4d5cf91b6dcdd429",
+    "symbol": "_gated_deltanet_decode_fp32_tl._decode_func"
+  },
+  "project": "tileops",
+  "runnable_case_count": 4,
+  "variant": ""
+}

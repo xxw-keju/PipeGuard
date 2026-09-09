@@ -1,0 +1,91 @@
+{
+  "arguments": {
+    "M": 1,
+    "N": 32,
+    "dtype": "torch.bfloat16",
+    "scalar": 0.001
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-addmv-kernel-b90b1cba5181-original-a45a3d4501-config-55b5f24fd2",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-6dfcfc126ff93bfe",
+        "launch-c5cabc8451c34f2e"
+      ],
+      "test_end_line": 66,
+      "test_function": "test_addmv",
+      "test_path": "tests/test_addmv.py",
+      "test_source_sha256": "29805bdcffe7962d8505105a6f15ee3c362170fdd0c2838891ea94bea35c7746",
+      "test_start_line": 35
+    },
+    "config_index": 6,
+    "config_source": "src/flag_gems/ops/addmv.py#autotune",
+    "constexprs": {
+      "BLOCK_M": 1024,
+      "BLOCK_N": 128
+    },
+    "options": {
+      "maxnreg": null,
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 8
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-6dfcfc126ff93bfe",
+    "flaggems-launch-c5cabc8451c34f2e",
+    "flaggems-test-255fee484dfb4e78",
+    "source-6c282e31ea61d7c0"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-addmv-kernel-b90b1cba5181",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_addmv.py:35-66#test_addmv",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned. Autotune candidate 6 from src/flag_gems/ops/addmv.py#autotune.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

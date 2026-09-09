@@ -1,0 +1,77 @@
+{
+  "arguments": {
+    "BLOCK_SIZE": 1024,
+    "n_elements": 98432
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-asin-kernel-fa57c8e1ea55-original-8e75964bce",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": null,
+    "constexprs": {
+      "BLOCK_SIZE": 1024
+    },
+    "grid_ctas": 97,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "BLOCK_SIZE": "constexpr",
+      "n_elements": "i32",
+      "x_ptr": "*fp32",
+      "y_ptr": "*fp32"
+    }
+  },
+  "evidence": [
+    "source-2d0d1f1b9603c5e2",
+    "launch-de325de062082b4f"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-asin-kernel-fa57c8e1ea55",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-launch:python/tutorials/07-extern-functions.py:60;default-libdevice;n=98432",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-launch:python/tutorials/07-extern-functions.py:60;default-libdevice;n=98432",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

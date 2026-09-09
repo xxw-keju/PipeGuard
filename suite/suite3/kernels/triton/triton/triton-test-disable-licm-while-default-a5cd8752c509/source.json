@@ -1,0 +1,31 @@
+{
+  "case_count": 1,
+  "changes": [
+    "retained the extracted device entry and required device helpers",
+    "removed unrelated upstream host and test context",
+    "added the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "triton-test-disable-licm-while-default-a5cd8752c509",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "e3b69cbf09c8787dd7bf01c444cffcb3625939efa77d7cb0f1c4cc30686071e2"
+  },
+  "original": {
+    "commit": "61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f",
+    "file": "original_excerpt.py",
+    "lines": [
+      6930,
+      6935
+    ],
+    "path": "python/test/unit/language/test_core.py",
+    "permalink": "https://github.com/triton-lang/triton/blob/61c02bcdba0ccc1cdfc89ba608aa1a1221a59e1f/python/test/unit/language/test_core.py#L6930-L6935",
+    "repository": "https://github.com/triton-lang/triton",
+    "sha256": "8745966f6f995b8ad3d1205614de7d72d1db69f3a9ee51418f29f9bd5cbb80de",
+    "symbol": "test_disable_licm.while_default"
+  },
+  "project": "triton",
+  "runnable_case_count": 1,
+  "variant": ""
+}

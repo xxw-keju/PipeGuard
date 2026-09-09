@@ -1,0 +1,107 @@
+{
+  "arguments": {
+    "N": 12
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {
+    "args": [],
+    "kwargs": {},
+    "mode": "direct",
+    "resolver_kwargs": {}
+  },
+  "case_id": "triton-small-tma-load-kernel-c5a4eb5e870d-original-fc509fad12",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {
+        "9": {
+          "descriptor": {
+            "allocation_id": "global:input",
+            "coordinate_order": [
+              0
+            ],
+            "element_bytes": 4,
+            "shape": [
+              12
+            ],
+            "strides": [
+              1
+            ],
+            "tile_shape": [
+              4
+            ]
+          }
+        }
+      },
+      "evidence_version": "triton-binding-evidence-v1",
+      "scalar_values": {
+        "1": 12,
+        "2": 1
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "N": 12
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "signature": {
+      "N": "constexpr",
+      "input_desc": "tensordesc<fp32[4]>",
+      "output_ptr": "*fp32"
+    }
+  },
+  "evidence": [
+    "source-cf8b1d885d4ff5d7",
+    "launch-14f921829ca34efa"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The source specialization is preserved before checker output is observed; semantic adjudication and boundary review remain pending.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "triton-small-tma-load-kernel-c5a4eb5e870d",
+  "kind": "ORIGINAL",
+  "origin": "ai-reviewed-launch:python/test/unit/language/test_pipeliner.py:338;test_tma_load_unaligned_stage_size:N=12,block=4,dtype=fp32",
+  "reason": "Source-derived concrete upstream specialization. Recipe origin: ai-reviewed-launch:python/test/unit/language/test_pipeliner.py:338;test_tma_load_unaligned_stage_size:N=12,block=4,dtype=fp32",
+  "reference": {
+    "mode": "reference_replay"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm90",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

@@ -1,0 +1,91 @@
+{
+  "arguments": {
+    "attn_heads": 2,
+    "batch_size": 1,
+    "dtype": "torch.float16",
+    "key_seq_len": 128,
+    "query_seq_len": 64,
+    "scale_factor": 0.1
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-scaled-softmax-forward-kernel-e4c98f6a8719-original-d628ad68d0-config-96125fa29b",
+  "compile": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-a5f402c8071e8487"
+      ],
+      "test_end_line": 110,
+      "test_function": "test_scaled_softmax_backward",
+      "test_path": "tests/test_scaled_softmax.py",
+      "test_source_sha256": "05387754f9845a69ffba5b2aa3e80b57407cab411505a6a7bbed60b3161ce851",
+      "test_start_line": 68
+    },
+    "config_index": 10,
+    "config_source": "src/flag_gems/ops/scaled_softmax.py#autotune",
+    "constexprs": {
+      "BLOCK_K": 64,
+      "BLOCK_Q": 8
+    },
+    "options": {
+      "maxnreg": null,
+      "num_ctas": 1,
+      "num_stages": 2,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "flaggems-launch-a5f402c8071e8487",
+    "flaggems-test-a866991cad460be9",
+    "source-4664aff015d0de09"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-scaled-softmax-forward-kernel-e4c98f6a8719",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_scaled_softmax.py:68-110#test_scaled_softmax_backward",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned. Autotune candidate 10 from src/flag_gems/ops/scaled_softmax.py#autotune.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

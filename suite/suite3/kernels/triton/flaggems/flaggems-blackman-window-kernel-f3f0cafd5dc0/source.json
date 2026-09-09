@@ -1,0 +1,33 @@
+{
+  "case_count": 4,
+  "changes": [
+    "retained only the Triton device entry and its transitive in-file helpers",
+    "removed FlagGems host wrappers, tuning classes, and project imports",
+    "inlined small device helpers required by the entry",
+    "kept upstream wrapper configuration in each case",
+    "kept the uniform build_kernel(case) entry"
+  ],
+  "dsl": "triton",
+  "kernel_id": "flaggems-blackman-window-kernel-f3f0cafd5dc0",
+  "normalized": {
+    "entry": "build_kernel",
+    "file": "kernel.py",
+    "sha256": "05289c6d99c0d0d9fb48153a3fc7bafd5d6a902f38e7b3ec83e3a06b26607f0b"
+  },
+  "original": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "file": "original_excerpt.py",
+    "lines": [
+      31,
+      68
+    ],
+    "path": "src/flag_gems/ops/blackman_window.py",
+    "permalink": "https://github.com/flagos-ai/FlagGems/blob/34bd6d68928c8b0039c42987840929da52aa6a62/src/flag_gems/ops/blackman_window.py#L31-L68",
+    "repository": "https://github.com/flagos-ai/FlagGems",
+    "sha256": "56c48e48131001d3460939ff57ed6fa1b0ca41befdb933773220ee757cb8f451",
+    "symbol": "blackman_window_kernel"
+  },
+  "project": "flaggems",
+  "runnable_case_count": 0,
+  "variant": ""
+}

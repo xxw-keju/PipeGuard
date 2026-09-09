@@ -1,0 +1,98 @@
+{
+  "arguments": {
+    "dim": -1,
+    "dtype": "float16",
+    "label": "dispatch-upper",
+    "manifest": "src/tileops/manifest/reduction.yaml",
+    "operator": "CountNonzeroFwdOp",
+    "x_shape": [
+      512,
+      65536
+    ]
+  },
+  "boundary": {
+    "dimensions": [
+      "shape",
+      "dtype"
+    ],
+    "position": "upper",
+    "transition": "logical_tiled source dispatch region"
+  },
+  "build": {
+    "factory_arguments": {
+      "M": 512,
+      "N": 65536,
+      "dtype": "float16",
+      "op_kind": "count_nonzero",
+      "partial": false,
+      "tile_n": 12288
+    },
+    "kernel_arguments": {
+      "block_m": 1,
+      "threads": 256
+    }
+  },
+  "case_id": "tileops-logical-reduce-kernel-tiled-func-6054e5c7f147-boundary-a997a3e746",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 778,
+      "function": "CountNonzeroFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/reduction.yaml",
+      "source_sha256": "86e481940cda19a6f80df7a4b966cd4a6d278bc69c5f8284cf169db385da9268",
+      "start_line": 731
+    },
+    "dispatch": {
+      "predicate": "logical_tiled source dispatch region",
+      "strategy": "logical_tiled"
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-7329bf1ce10b27b2",
+    "tileops-6a4085cd-spec-evidence-10e298ae02311d90"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-logical-reduce-kernel-tiled-func-6054e5c7f147",
+  "kind": "BOUNDARY",
+  "origin": "upstream-dispatch:src/tileops/kernels/reduction",
+  "reason": "Source-condition witness for logical_tiled (upper).",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [
+    "tileops-dispatch-witness"
+  ],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": []
+}

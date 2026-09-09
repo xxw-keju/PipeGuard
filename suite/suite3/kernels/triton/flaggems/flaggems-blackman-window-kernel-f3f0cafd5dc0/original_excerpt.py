@@ -1,0 +1,38 @@
+@libentry()
+@triton.jit
+def blackman_window_kernel(
+    out_ptr,
+    window_length,
+    scale,
+    LOW_PRECISION: tl.constexpr,
+    BLOCK_SIZE: tl.constexpr,
+):
+    pid = ext.program_id(0)
+    idx = pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)
+    mask = idx < window_length
+
+    dtype = out_ptr.dtype.element_ty
+
+    if LOW_PRECISION:
+        # Mirror torch's computation op-by-op. torch evaluates each elementary
+        # op (arange, mul, cos, ...) in the output dtype, rounding the result of
+        # every step. tl.cos requires fp32, so we compute in fp32 but round back
+        # to the output dtype after each step to reproduce torch's results
+        # bit-for-bit (observable for float16 / bfloat16).
+        n = idx.to(dtype).to(tl.float32)  # arange in output dtype
+        x = (n * scale).to(dtype).to(tl.float32)  # x = n * (pi / (N - 1))
+        c2 = tl.cos((x * 2.0).to(dtype).to(tl.float32)).to(dtype).to(tl.float32)
+        c4 = tl.cos((x * 4.0).to(dtype).to(tl.float32)).to(dtype).to(tl.float32)
+        t4 = (c4 * 0.08).to(dtype).to(tl.float32)
+        t2 = (c2 * 0.5).to(dtype).to(tl.float32)
+        term = (t4 - t2).to(dtype).to(tl.float32)
+        val = (term + 0.42).to(dtype)
+    else:
+        # fp32 / fp64: compute directly in the native dtype (tl.cos supports
+        # both), keeping full precision.
+        n = idx.to(dtype)
+        x = n * scale
+        val = 0.08 * tl.cos(x * 4.0) - 0.5 * tl.cos(x * 2.0) + 0.42
+        val = val.to(dtype)
+
+    tl.store(out_ptr + idx, val, mask=mask)

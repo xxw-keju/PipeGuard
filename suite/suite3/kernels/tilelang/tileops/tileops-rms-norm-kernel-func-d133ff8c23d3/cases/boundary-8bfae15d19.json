@@ -1,0 +1,125 @@
+{
+  "arguments": {
+    "dtype": "bfloat16",
+    "label": "llama-405b-prefill",
+    "manifest": "src/tileops/manifest/normalization.yaml",
+    "normalized_shape": [
+      16384
+    ],
+    "operator": "RMSNormFwdOp",
+    "row_index": 4,
+    "x_shape": [
+      2048,
+      16384
+    ]
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": "bfloat16",
+        "before": "float16",
+        "path": "/bindings/dtype"
+      },
+      {
+        "after": "llama-405b-prefill",
+        "before": "llama-8b-prefill",
+        "path": "/bindings/label"
+      },
+      {
+        "after": 16384,
+        "before": 4096,
+        "path": "/bindings/normalized_shape/0"
+      },
+      {
+        "after": 4,
+        "before": 0,
+        "path": "/bindings/row_index"
+      },
+      {
+        "after": 16384,
+        "before": 4096,
+        "path": "/bindings/x_shape/1"
+      }
+    ],
+    "dimensions": [
+      "dtype",
+      "normalized_shape",
+      "x_shape"
+    ],
+    "transition": "Official source-matrix variation across: dtype, normalized_shape, x_shape"
+  },
+  "build": {
+    "factory_arguments": {
+      "M": 2048,
+      "N": 16384,
+      "N_padded": 16384,
+      "_needs_pad": false,
+      "dtype": "bfloat16",
+      "eps": 1e-05,
+      "needs_pad": false,
+      "pad_count": 0,
+      "partial_min_elements": 32,
+      "sm_count": 132
+    }
+  },
+  "case_id": "tileops-rms-norm-kernel-func-d133ff8c23d3-boundary-8bfae15d19",
+  "compile": {
+    "binding_evidence": {
+      "end_line": 56,
+      "function": "RMSNormFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/normalization.yaml",
+      "source_sha256": "f8c4b975237ffa172ebc210d8ac3b8c4ced19271aa91e5e02519bb6b98ebc09f",
+      "start_line": 7
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ]
+  },
+  "evidence": [
+    "source-bd9dbf94ce190d6b",
+    "tileops-6a4085cd-spec-evidence-7e020d16b23164f5"
+  ],
+  "execution": {
+    "claim_scope": "SELECTED_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "Upstream source supplies legal workload provenance; no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "tileops-rms-norm-kernel-func-d133ff8c23d3",
+  "kind": "BOUNDARY",
+  "origin": "upstream-manifest_workload:src/tileops/manifest/normalization.yaml:7-56#RMSNormFwdOp",
+  "parent_case_id": "tileops-rms-norm-kernel-func-d133ff8c23d3-original-372a2bf39c",
+  "reason": "Source-derived TileOPs specialization; native factory materialization and checker output remain unassessed.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": true,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "device": "NVIDIA H100 80GB HBM3",
+    "sm_count": 132,
+    "warp_size": 32
+  },
+  "unresolved": []
+}
