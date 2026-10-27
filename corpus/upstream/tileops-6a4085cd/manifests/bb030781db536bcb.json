@@ -1,0 +1,71 @@
+{
+  "candidate_id": "bb030781db536bcb",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/mamba/da_cumsum.py/L81-L135__da_cumsum_fwd_placed_kernel.kernel_func.da_cumsum_fwd_placed_main__bb030781db536bcb.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "7d81ca18819bf1d3e6bea2d372b1bde6191d7d9649524d8b716783e4ad77af8b",
+    "source_map": {
+      "end_line": 135,
+      "logical_path": "src/tileops/kernels/mamba/da_cumsum.py",
+      "start_line": 81
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "B",
+    "BLOCK_H",
+    "C",
+    "H",
+    "Q",
+    "ROWS_PER_CTA",
+    "S",
+    "T",
+    "accum_dtype",
+    "dt_max",
+    "dt_min",
+    "dt_softplus",
+    "dtype",
+    "has_dt_bias",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_da_cumsum_fwd_placed_kernel",
+    "kernel_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/bb030781db536bcb/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "B",
+    "BLOCK_H",
+    "C",
+    "H",
+    "Q",
+    "ROWS_PER_CTA",
+    "S",
+    "accum_dtype",
+    "dt_max",
+    "dt_min",
+    "dt_softplus",
+    "dtype",
+    "has_dt_bias",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 135,
+    "git_blob": "e0a880f7f10510eb0caa29dcc0dabe330a91f097",
+    "qualname": "_da_cumsum_fwd_placed_kernel.kernel_func.da_cumsum_fwd_placed_main",
+    "relative_path": "src/tileops/kernels/mamba/da_cumsum.py",
+    "selected_source_sha256": "3594f6c6105ce08e7486b8d019cb05d5c9e88996e5100e73747e05376463cb9c",
+    "source_sha256": "51f3613e360d07068ce824edc8888d33c5f1ebbfe5f404dbd825a471d6545065",
+    "start_line": 81
+  }
+}

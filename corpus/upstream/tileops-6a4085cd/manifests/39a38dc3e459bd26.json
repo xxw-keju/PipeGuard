@@ -1,0 +1,86 @@
+{
+  "candidate_id": "39a38dc3e459bd26",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_dense.py/L767-L855__gqa_sw_fwd_wgmma_pipelined_kernel._gqa_sw_fwd_wgmma_pipelined_func._gqa__b890fe3__39a38dc3e459bd26.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "9a348af4cee9c489e0e4951beffc15ad33b7eb97a12d5623b571099538f1306a",
+    "source_map": {
+      "end_line": 855,
+      "logical_path": "src/tileops/kernels/attention/gqa_dense.py",
+      "start_line": 767
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "apply_softcap",
+    "batch",
+    "block_m",
+    "block_n",
+    "dim",
+    "dtype",
+    "has_window",
+    "heads",
+    "is_causal",
+    "kv_shape",
+    "mma0",
+    "mma1",
+    "num_stages",
+    "q_shape",
+    "scale",
+    "seq_len",
+    "threads",
+    "tilelang",
+    "use_softcap",
+    "window_size_left",
+    "window_size_right"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gqa_sw_fwd_wgmma_pipelined_kernel",
+    "_gqa_sw_fwd_wgmma_pipelined_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/39a38dc3e459bd26/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "apply_softcap",
+    "batch",
+    "block_m",
+    "block_n",
+    "dim",
+    "dtype",
+    "has_window",
+    "heads",
+    "is_causal",
+    "kv_shape",
+    "mma0",
+    "mma1",
+    "num_stages",
+    "q_shape",
+    "scale",
+    "seq_len",
+    "threads",
+    "use_softcap",
+    "window_size_left",
+    "window_size_right"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 855,
+    "git_blob": "18d371cf6eed3b31b775897e390e13ee4c81035c",
+    "qualname": "_gqa_sw_fwd_wgmma_pipelined_kernel._gqa_sw_fwd_wgmma_pipelined_func._gqa_sw_fwd_wgmma_pipelined_main",
+    "relative_path": "src/tileops/kernels/attention/gqa_dense.py",
+    "selected_source_sha256": "f88adc6deb7bee875b9ec35fa51518ab76670bea67ab7c6cc1552a708c99694f",
+    "source_sha256": "d8de663ae697439fb195b587bd93175217635380ccf624ca7dfafa1e95c2844f",
+    "start_line": 767
+  }
+}

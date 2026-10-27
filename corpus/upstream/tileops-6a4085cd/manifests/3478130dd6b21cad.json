@@ -1,0 +1,67 @@
+{
+  "candidate_id": "3478130dd6b21cad",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/mamba/ssd_decode.py/L101-L222__ssd_decode_kernel.kernel_func.main__3478130dd6b21cad.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f42364f5e12e6680f8418783d21f07316309a6a7fc4eeb66e791d9e8bbfad96b",
+    "source_map": {
+      "end_line": 222,
+      "logical_path": "src/tileops/kernels/mamba/ssd_decode.py",
+      "start_line": 101
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "B",
+    "G",
+    "H",
+    "HEADS_PER_GROUP",
+    "N",
+    "P",
+    "T",
+    "_log_n",
+    "accum_dtype",
+    "block_n",
+    "block_p",
+    "dtype",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_ssd_decode_kernel",
+    "kernel_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/3478130dd6b21cad/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "B",
+    "G",
+    "H",
+    "HEADS_PER_GROUP",
+    "N",
+    "P",
+    "_log_n",
+    "accum_dtype",
+    "block_n",
+    "block_p",
+    "dtype",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 222,
+    "git_blob": "aebe7b1a70161a58fcf4d6ca4c7f5e42e9033bc2",
+    "qualname": "_ssd_decode_kernel.kernel_func.main",
+    "relative_path": "src/tileops/kernels/mamba/ssd_decode.py",
+    "selected_source_sha256": "40e31a13c8e768514124c28365b1d12cc510bab3d753dcf1885c04250bf532f2",
+    "source_sha256": "9319aa25b82fa7df589cb140ecd0722145e58b78cf229c9818c443966129132f",
+    "start_line": 101
+  }
+}

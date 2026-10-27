@@ -1,0 +1,45 @@
+{
+  "candidate_id": "3ecac0d9baaff9ff",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/chalf.py/L36-L54__chalf_real_kernel__3ecac0d9baaff9ff.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e803b28e20cf355dc80a7734633afe7d796ade30b4a4b084d6df396aa8fa0601",
+    "source_map": {
+      "end_line": 54,
+      "logical_path": "src/flag_gems/ops/chalf.py",
+      "start_line": 36
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "flag_gems.utils.libtuner",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "CHALF_CONFIGS",
+    "libentry",
+    "libtuner",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/3ecac0d9baaff9ff/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 54,
+    "git_blob": "29f0a4c58af38d085408f16eb043ff7694ce8164",
+    "qualname": "chalf_real_kernel",
+    "relative_path": "src/flag_gems/ops/chalf.py",
+    "selected_source_sha256": "f4b33b5ad53732b07caf4b8d9e96fd4e52c862debfab9e3b388570a34a85c870",
+    "source_sha256": "fdff01ab449756f1a235dbe2108c90ac3e1c9cf422df32eb8b9b4e29e2fa16c9",
+    "start_line": 36
+  }
+}

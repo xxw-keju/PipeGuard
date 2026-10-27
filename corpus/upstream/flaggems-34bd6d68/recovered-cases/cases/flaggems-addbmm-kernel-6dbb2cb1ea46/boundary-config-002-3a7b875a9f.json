@@ -1,0 +1,159 @@
+{
+  "arguments": {
+    "K": 128,
+    "M": 1024,
+    "N": 1024,
+    "dtype": "torch.bfloat16",
+    "scalar": -111.999
+  },
+  "boundary": {
+    "delta": [
+      {
+        "after": 128,
+        "before": 32,
+        "path": "/bindings/K"
+      },
+      {
+        "after": 1024,
+        "before": 1,
+        "path": "/bindings/M"
+      },
+      {
+        "after": 1024,
+        "before": 1,
+        "path": "/bindings/N"
+      },
+      {
+        "after": -111.999,
+        "before": 0.001,
+        "path": "/bindings/scalar"
+      }
+    ],
+    "dimensions": [
+      "K",
+      "M",
+      "N",
+      "scalar"
+    ],
+    "transition": "Official test-matrix variation across: K, M, N, scalar"
+  },
+  "build": {},
+  "case_id": "flaggems-addbmm-kernel-6dbb2cb1ea46-boundary-5c6756d587-config-3a7b875a9f",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:bias_ptr",
+        "1": "global:batch1_ptr",
+        "2": "global:batch2_ptr",
+        "3": "global:out_ptr",
+        "6": "global:K"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "B": 16,
+      "BLOCK_SIZE_K": 32,
+      "BLOCK_SIZE_M": 128,
+      "BLOCK_SIZE_N": 128,
+      "IS_FP64": false,
+      "M": 1024,
+      "N": 1024,
+      "stride_b1_b": 1,
+      "stride_b1_k": 1,
+      "stride_b1_m": 1,
+      "stride_b2_b": 1,
+      "stride_b2_k": 1,
+      "stride_b2_n": 1,
+      "stride_bias_m": 1,
+      "stride_bias_n": 1,
+      "stride_out_m": 1,
+      "stride_out_n": 1
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "maxnreg": null,
+      "num_ctas": 1,
+      "num_stages": 4,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "K": "*bf16",
+      "alpha": "fp32",
+      "batch1_ptr": "*bf16",
+      "batch2_ptr": "*bf16",
+      "beta": "fp32",
+      "bias_ptr": "*bf16",
+      "out_ptr": "*bf16"
+    }
+  },
+  "evidence": [
+    "flaggems-launch-34f7a33c874dbe1c",
+    "flaggems-launch-eb13687058fb4c51",
+    "flaggems-test-ada8917fab1d44c2",
+    "source-68aceb9b90e6d994"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-addbmm-kernel-6dbb2cb1ea46",
+  "kind": "BOUNDARY",
+  "origin": "upstream-test:tests/test_addbmm.py:30-57#test_accuracy_addbmm",
+  "parent_case_id": "flaggems-addbmm-kernel-6dbb2cb1ea46-original-1565e53b15-config-becf3bbcd3",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned. Autotune candidate 2 from src/flag_gems/runtime/backend/_nvidia/tune_configs.yaml#addmm.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ],
+  "workload_recovery": {
+    "method": "static-source-and-case-heuristic-v1",
+    "notes": [
+      "All scalar parameters are compile-time specialized.",
+      "Pointer types derive from source use, parameter names, and the case dtype.",
+      "The recovered workload checks CTA (0,0,0) with a one-CTA launch and is not evidence for the original full launch grid."
+    ],
+    "original_case_path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/corpus/upstream/suite3/kernels/triton/flaggems/flaggems-addbmm-kernel-6dbb2cb1ea46/cases/boundary-config-002-3a7b875a9f.json",
+    "status": "HEURISTIC"
+  }
+}

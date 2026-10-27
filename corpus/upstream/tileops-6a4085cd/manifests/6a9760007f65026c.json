@@ -1,0 +1,65 @@
+{
+  "candidate_id": "6a9760007f65026c",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/topk_selector.py/L43-L241__topk_selector_kernel.topk_selector_fwd_func._topk_selector_kernel_main__6a9760007f65026c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "8de76be8c46e470d55880db536eca0598637dbd361517c4a54546abe9c28842b",
+    "source_map": {
+      "end_line": 241,
+      "logical_path": "src/tileops/kernels/topk_selector.py",
+      "start_line": 43
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "BLOCK_SIZE",
+    "RADIX",
+    "SMEM_INPUT_SIZE",
+    "T",
+    "batch",
+    "convert_to_uint16",
+    "convert_to_uint32",
+    "in_dtype",
+    "kv_group",
+    "out_dtype",
+    "seq_len",
+    "seq_len_kv",
+    "topk"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_topk_selector_kernel",
+    "topk_selector_fwd_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/6a9760007f65026c/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "BLOCK_SIZE",
+    "RADIX",
+    "SMEM_INPUT_SIZE",
+    "batch",
+    "in_dtype",
+    "kv_group",
+    "out_dtype",
+    "seq_len",
+    "seq_len_kv",
+    "topk"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 241,
+    "git_blob": "8380f1b86301ed15ed34a819585c87ea73e7dd40",
+    "qualname": "_topk_selector_kernel.topk_selector_fwd_func._topk_selector_kernel_main",
+    "relative_path": "src/tileops/kernels/topk_selector.py",
+    "selected_source_sha256": "04a24d9a1c76838a14bcc2814b265370a58064f651e09a7c0644fe9fc48e32ac",
+    "source_sha256": "ff6aee71cde6201979dc83ac118263b300f6b0a482ffe097f534a12e495a9f04",
+    "start_line": 43
+  }
+}

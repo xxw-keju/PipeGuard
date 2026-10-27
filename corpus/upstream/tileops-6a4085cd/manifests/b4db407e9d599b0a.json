@@ -1,0 +1,74 @@
+{
+  "candidate_id": "b4db407e9d599b0a",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_fwd.py/L1481-L1584__gqa_prefill_paged_with_kv_cache_rope_append_kernel._gqa_prefill_paged_w__1adaf85__b4db407e9d599b0a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "222aa8af3a08271a0caf6538cd8078b122d688a598beb02ba79c908c39856796",
+    "source_map": {
+      "end_line": 1584,
+      "logical_path": "src/tileops/kernels/attention/gqa_fwd.py",
+      "start_line": 1481
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "Callable",
+    "T",
+    "batch",
+    "dim",
+    "dtype",
+    "half",
+    "heads_kv",
+    "max_pages_per_req",
+    "max_position",
+    "page_size",
+    "page_size_log2",
+    "physical_tokens",
+    "rotary_dim",
+    "tilelang",
+    "total_q"
+  ],
+  "kernel_dependencies": [
+    "54032381756bdbb7"
+  ],
+  "lexical_parents": [
+    "_gqa_prefill_paged_with_kv_cache_rope_append_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/b4db407e9d599b0a/unresolved.json",
+    "tileops-6a4085cd/recipes/b4db407e9d599b0a/tileops-6a4085cd-root-b4db407e9d599b0a-boundary-8862b737cb-recipe.json",
+    "tileops-6a4085cd/recipes/b4db407e9d599b0a/tileops-6a4085cd-root-b4db407e9d599b0a-boundary-bfabca5b45-recipe.json",
+    "tileops-6a4085cd/recipes/b4db407e9d599b0a/tileops-6a4085cd-root-b4db407e9d599b0a-boundary-d1e92c35c4-recipe.json",
+    "tileops-6a4085cd/recipes/b4db407e9d599b0a/tileops-6a4085cd-root-b4db407e9d599b0a-original-c01f028dcd-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "batch",
+    "dim",
+    "dtype",
+    "half",
+    "heads_kv",
+    "max_pages_per_req",
+    "max_position",
+    "page_size",
+    "page_size_log2",
+    "physical_tokens",
+    "rotary_dim",
+    "total_q"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 1584,
+    "git_blob": "82b87c8358e7c9dfad4f19de7cd36f268a8caefd",
+    "qualname": "_gqa_prefill_paged_with_kv_cache_rope_append_kernel._gqa_prefill_paged_with_kv_cache_rope_append_func",
+    "relative_path": "src/tileops/kernels/attention/gqa_fwd.py",
+    "selected_source_sha256": "99698e33be598b11dc43c0dd1237f3d4a8192f7cd5a6482636b63466588afd6c",
+    "source_sha256": "ff7499fdf6df69bd0028461b99ced1f4cd3fb85abca5c8c790038ef07373bafa",
+    "start_line": 1481
+  }
+}

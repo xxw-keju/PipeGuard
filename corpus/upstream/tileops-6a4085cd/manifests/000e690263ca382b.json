@@ -1,0 +1,66 @@
+{
+  "candidate_id": "000e690263ca382b",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/mamba/ssd_decode.py/L88-L224__ssd_decode_kernel.kernel_func__000e690263ca382b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "2225ca3e0178b15dd1256cabf874590372fd344599fad11feba7c0512fefb521",
+    "source_map": {
+      "end_line": 224,
+      "logical_path": "src/tileops/kernels/mamba/ssd_decode.py",
+      "start_line": 88
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "B",
+    "G",
+    "H",
+    "HEADS_PER_GROUP",
+    "N",
+    "P",
+    "T",
+    "accum_dtype",
+    "dtype",
+    "math",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "3478130dd6b21cad"
+  ],
+  "lexical_parents": [
+    "_ssd_decode_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/000e690263ca382b/unresolved.json",
+    "tileops-6a4085cd/recipes/000e690263ca382b/tileops-6a4085cd-root-000e690263ca382b-boundary-0ae279906f-recipe.json",
+    "tileops-6a4085cd/recipes/000e690263ca382b/tileops-6a4085cd-root-000e690263ca382b-boundary-5a295afb0b-recipe.json",
+    "tileops-6a4085cd/recipes/000e690263ca382b/tileops-6a4085cd-root-000e690263ca382b-boundary-d33f246145-recipe.json",
+    "tileops-6a4085cd/recipes/000e690263ca382b/tileops-6a4085cd-root-000e690263ca382b-original-71022afe71-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "B",
+    "G",
+    "H",
+    "HEADS_PER_GROUP",
+    "N",
+    "P",
+    "accum_dtype",
+    "dtype"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 224,
+    "git_blob": "aebe7b1a70161a58fcf4d6ca4c7f5e42e9033bc2",
+    "qualname": "_ssd_decode_kernel.kernel_func",
+    "relative_path": "src/tileops/kernels/mamba/ssd_decode.py",
+    "selected_source_sha256": "492e3e129e5447e021ea96046b1e7fdc5dfc82dff08b064e808be7165f30035a",
+    "source_sha256": "9319aa25b82fa7df589cb140ecd0722145e58b78cf229c9818c443966129132f",
+    "start_line": 88
+  }
+}

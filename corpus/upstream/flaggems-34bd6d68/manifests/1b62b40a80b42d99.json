@@ -1,0 +1,47 @@
+{
+  "candidate_id": "1b62b40a80b42d99",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/amax.py/L63-L96__amax_kernel__1b62b40a80b42d99.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "8b11e5d2a045308f7d924d93b9e444afaf28553bd5f062bd46b6dbc76926f086",
+    "source_map": {
+      "end_line": 96,
+      "logical_path": "src/flag_gems/ops/amax.py",
+      "start_line": 63
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "flag_gems.utils.libtuner",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "get_dtype_min",
+    "libentry",
+    "libtuner",
+    "runtime",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/1b62b40a80b42d99/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 96,
+    "git_blob": "54aaf705065d0e581ed20123da5584b6870ad7dd",
+    "qualname": "amax_kernel",
+    "relative_path": "src/flag_gems/ops/amax.py",
+    "selected_source_sha256": "13068950a6a99f92e5a97d78811b0196dbed82546bcd9e137d84ddecf83c54ce",
+    "source_sha256": "a47cc2248956e0b9640574e01b12556f92f1e5632023ff84bc2186b81675d1a0",
+    "start_line": 63
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "candidate_id": "fe02a0bc03d6b978",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/grouped_gemm/grouped_gemm_persistent_3wg.py/L1013-L1051__persistent_grouped_gemm_v2_kernel._func__fe02a0bc03d6b978.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "979be8ae5105d7df4c2020ee6e06d0f240836d2990ffa7bea1002930ceab2a87",
+    "source_map": {
+      "end_line": 1051,
+      "logical_path": "src/tileops/kernels/grouped_gemm/grouped_gemm_persistent_3wg.py",
+      "start_line": 1013
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "K",
+    "N",
+    "_make_cooperative_kernel",
+    "_make_pingpong_kernel",
+    "dtype",
+    "num_experts",
+    "numel",
+    "sm_count",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_persistent_grouped_gemm_v2_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/fe02a0bc03d6b978/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "N",
+    "dtype",
+    "num_experts",
+    "numel",
+    "sm_count"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 1051,
+    "git_blob": "dfd88925526e28bf9f6c2dcd8e8cf3e956d654c8",
+    "qualname": "_persistent_grouped_gemm_v2_kernel._func",
+    "relative_path": "src/tileops/kernels/grouped_gemm/grouped_gemm_persistent_3wg.py",
+    "selected_source_sha256": "c7e09183c93897b941049643efec52e9b2ed7434d1f24ae724f5cf8ebe999532",
+    "source_sha256": "ba4be99316283a16bfcc741fa6f1d2a86824b036ef07c0360b6eed66d61a92a7",
+    "start_line": 1013
+  }
+}

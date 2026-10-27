@@ -1,0 +1,43 @@
+{
+  "candidate_id": "180251533b9b4dfe",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/flash_kernel.py/L32-L58__philox__180251533b9b4dfe.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c6631bfed0613ada14acefa99709ce670c0ae76f108f58c7a442c91a1d1645f1",
+    "source_map": {
+      "end_line": 58,
+      "logical_path": "src/flag_gems/ops/flash_kernel.py",
+      "start_line": 32
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton",
+    "u64_to_lohi"
+  ],
+  "kernel_dependencies": [
+    "2ffad56ace1877ce"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/180251533b9b4dfe/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 58,
+    "git_blob": "134075b148126a010734e49effedc554da801b68",
+    "qualname": "philox_",
+    "relative_path": "src/flag_gems/ops/flash_kernel.py",
+    "selected_source_sha256": "c9d797e17c7907eac763cf1df65f673bdd3491fd345144b8589edd67c2cc8c6c",
+    "source_sha256": "eef0202e6c0ed08bef8098adede1a603c63354c54b54a19414e210b675157265",
+    "start_line": 32
+  }
+}

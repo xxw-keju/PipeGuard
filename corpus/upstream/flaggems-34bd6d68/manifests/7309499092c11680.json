@@ -1,0 +1,48 @@
+{
+  "candidate_id": "7309499092c11680",
+  "candidate_kind": "HEURISTICS_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/softmax.py/L104-L176__softmax_kernel_inner__7309499092c11680.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6b93fbf70aa5283a8255b698f1e40894d9ac104e223d9e2de6655c7898e50669",
+    "source_map": {
+      "end_line": 176,
+      "logical_path": "src/flag_gems/ops/softmax.py",
+      "start_line": 104
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.heuristics",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "libentry",
+    "prev_multiple_of",
+    "runtime",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "73452c6da648fb56"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/7309499092c11680/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 176,
+    "git_blob": "629267eba6108e99d3e9fb96569bb33065355ac2",
+    "qualname": "softmax_kernel_inner",
+    "relative_path": "src/flag_gems/ops/softmax.py",
+    "selected_source_sha256": "65ed1fc59fc1bd91b3a56327df8d8814c3384e0fbcb5215c47c6759feaa29728",
+    "source_sha256": "d7c6eef628fba956403c1f43f4a2c94dea1142ec8fa532359de5016e3bf9488d",
+    "start_line": 104
+  }
+}

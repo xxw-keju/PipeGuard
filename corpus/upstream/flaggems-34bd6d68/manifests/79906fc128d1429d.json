@@ -1,0 +1,42 @@
+{
+  "candidate_id": "79906fc128d1429d",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/vdot.py/L167-L182__reduce_kernel__79906fc128d1429d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "aed617247efe0a173a333e776335fc2a9a36ce7c246facb36091b94d411eeee5",
+    "source_map": {
+      "end_line": 182,
+      "logical_path": "src/flag_gems/ops/vdot.py",
+      "start_line": 167
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/79906fc128d1429d/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 182,
+    "git_blob": "edc6cbf81068a5513d8019cd1815429a289531e6",
+    "qualname": "reduce_kernel",
+    "relative_path": "src/flag_gems/ops/vdot.py",
+    "selected_source_sha256": "31b1035848bce2303c29c4a2c766a6a732d5ef96910a552d8b665a55c15210d6",
+    "source_sha256": "99b9af5e21c4d04b6269fcf3e928800f655af9f303b18b19fc2fe56289b42656",
+    "start_line": 167
+  }
+}

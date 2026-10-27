@@ -1,0 +1,40 @@
+{
+  "candidate_id": "e528aebcda63de88",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/experimental_ops/_log_softmax_backward_data.py/L22-L56__log_softmax_bwd_kernel__e528aebcda63de88.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "3f9f8df4240b5619f8cf9f3b37da748fa4fc4b10c69cbfe082faf4eabbabc2e6",
+    "source_map": {
+      "end_line": 56,
+      "logical_path": "src/flag_gems/experimental_ops/_log_softmax_backward_data.py",
+      "start_line": 22
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/e528aebcda63de88/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 56,
+    "git_blob": "1afec8fb7e017277641097af5ccb5f948aeeebeb",
+    "qualname": "_log_softmax_bwd_kernel",
+    "relative_path": "src/flag_gems/experimental_ops/_log_softmax_backward_data.py",
+    "selected_source_sha256": "bc630130a2a2f6c8a4d65b1b8916bb0923ed98512ad9cd391c424099246f421f",
+    "source_sha256": "ae30d52b6ab2bf83397457a0e1722b916f334fb8fc2b0a1c756f2ab8788a3c3b",
+    "start_line": 22
+  }
+}

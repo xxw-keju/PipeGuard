@@ -1,0 +1,81 @@
+{
+  "candidate_id": "65ca9a0772d09c44",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/grouped_gemm/grouped_gemm_persistent_3wg.py/L726-L992__make_cooperative_kernel._gemm_main_v2_coop__65ca9a0772d09c44.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "8b8f31eaf450af133507f5db8e2d4a6beefc0db0ca3b1a24c9a3e469bac0d4f8",
+    "source_map": {
+      "end_line": 992,
+      "logical_path": "src/tileops/kernels/grouped_gemm/grouped_gemm_persistent_3wg.py",
+      "start_line": 726
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "K",
+    "N",
+    "T",
+    "_k_iters",
+    "_max_waves",
+    "_num_pid_n",
+    "_swizzle_decode",
+    "_tiling",
+    "accum_dtype",
+    "block_k",
+    "block_m",
+    "block_n",
+    "dtype",
+    "half_m",
+    "num_experts",
+    "num_stages",
+    "numel",
+    "sm_count",
+    "threads",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_cooperative_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/65ca9a0772d09c44/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "K",
+    "N",
+    "_k_iters",
+    "_max_waves",
+    "_num_pid_n",
+    "_swizzle_decode",
+    "_tiling",
+    "accum_dtype",
+    "block_k",
+    "block_m",
+    "block_n",
+    "dtype",
+    "half_m",
+    "num_experts",
+    "num_stages",
+    "numel",
+    "sm_count",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 992,
+    "git_blob": "dfd88925526e28bf9f6c2dcd8e8cf3e956d654c8",
+    "qualname": "_make_cooperative_kernel._gemm_main_v2_coop",
+    "relative_path": "src/tileops/kernels/grouped_gemm/grouped_gemm_persistent_3wg.py",
+    "selected_source_sha256": "d63f8042ef2811a28551a212813210478a1c0bfd5c13d233528ec533e93af5b2",
+    "source_sha256": "ba4be99316283a16bfcc741fa6f1d2a86824b036ef07c0360b6eed66d61a92a7",
+    "start_line": 726
+  }
+}

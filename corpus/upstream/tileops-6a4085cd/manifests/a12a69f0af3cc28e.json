@@ -1,0 +1,67 @@
+{
+  "candidate_id": "a12a69f0af3cc28e",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_decode_paged.py/L360-L375__gqa_decode_split_paged_kernel._func.gqa_decode_split__a12a69f0af3cc28e.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "53ea2bc4360eb8843e3d01393dc446564bcb94af795c2ef32b0f5ce1ebd2b8da",
+    "source_map": {
+      "end_line": 375,
+      "logical_path": "src/tileops/kernels/attention/gqa_decode_paged.py",
+      "start_line": 360
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_gqa_decode_split",
+    "batch",
+    "combine",
+    "dtype",
+    "heads",
+    "num_split",
+    "page_size",
+    "part_shape",
+    "seqlen_kv",
+    "shape_kv",
+    "shape_o",
+    "shape_q"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gqa_decode_split_paged_kernel",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/a12a69f0af3cc28e/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_gqa_decode_split",
+    "batch",
+    "combine",
+    "dtype",
+    "heads",
+    "num_split",
+    "page_size",
+    "part_shape",
+    "seqlen_kv",
+    "shape_kv",
+    "shape_o",
+    "shape_q"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 375,
+    "git_blob": "359fcee543ae2725f2c8296eb0075e46daaf1988",
+    "qualname": "_gqa_decode_split_paged_kernel._func.gqa_decode_split",
+    "relative_path": "src/tileops/kernels/attention/gqa_decode_paged.py",
+    "selected_source_sha256": "1f932a3cbd8251b274a0fc9e755487830fb0d3b311269d92fbaa437b89c8cbd9",
+    "source_sha256": "9c954ffbdec40afa33c326744ea7dc652baf96f70aacd21399676fe2ed1f0290",
+    "start_line": 360
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "candidate_id": "889be0171351976d",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/cumsum.py/L408-L474__block_cumsum_kernel__889be0171351976d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "3f97d5a714b609bf5463e3e5563ed96a92eb282e36e85382aea4d13618c695cc",
+    "source_map": {
+      "end_line": 474,
+      "logical_path": "src/flag_gems/ops/cumsum.py",
+      "start_line": 408
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/889be0171351976d/unresolved.json",
+    "flaggems-34bd6d68/recipes/889be0171351976d/flaggems-root-889be0171351976d-boundary-6b447a5c54-recipe.json",
+    "flaggems-34bd6d68/recipes/889be0171351976d/flaggems-root-889be0171351976d-boundary-776838aa8a-recipe.json",
+    "flaggems-34bd6d68/recipes/889be0171351976d/flaggems-root-889be0171351976d-boundary-8ba2d6dc86-recipe.json",
+    "flaggems-34bd6d68/recipes/889be0171351976d/flaggems-root-889be0171351976d-original-a7da561a1f-recipe.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 474,
+    "git_blob": "08fd0fd2a1d1b1339376c7a358d3e8dafc2d2122",
+    "qualname": "block_cumsum_kernel",
+    "relative_path": "src/flag_gems/ops/cumsum.py",
+    "selected_source_sha256": "d29d7357e3513d3d927a4486ce9abc7b0223b469389e8b59e4aad9dc865d21e1",
+    "source_sha256": "ef7f010fdc53b3eacef469326bffd030c961887e5fa0ec1c71f861a62793a502",
+    "start_line": 408
+  }
+}

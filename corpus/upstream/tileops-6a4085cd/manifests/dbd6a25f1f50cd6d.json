@@ -1,0 +1,77 @@
+{
+  "candidate_id": "dbd6a25f1f50cd6d",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/grouped_gemm/grouped_gemm_persistent_3wg.py/L351-L634__make_pingpong_kernel._gemm_main_v2__dbd6a25f1f50cd6d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "30c57f9ef8777edadc8f3d163d197c6922002231caf3124a08b7c1ba6b02c1a8",
+    "source_map": {
+      "end_line": 634,
+      "logical_path": "src/tileops/kernels/grouped_gemm/grouped_gemm_persistent_3wg.py",
+      "start_line": 351
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A_shape",
+    "K",
+    "N",
+    "T",
+    "_k_iters",
+    "_max_waves",
+    "_num_pid_n",
+    "_tiling",
+    "accum_dtype",
+    "block_k",
+    "block_m",
+    "block_n",
+    "dtype",
+    "num_experts",
+    "num_stages",
+    "numel",
+    "sm_count",
+    "threads",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_pingpong_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/dbd6a25f1f50cd6d/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A_shape",
+    "K",
+    "N",
+    "_k_iters",
+    "_max_waves",
+    "_num_pid_n",
+    "_tiling",
+    "accum_dtype",
+    "block_k",
+    "block_m",
+    "block_n",
+    "dtype",
+    "num_experts",
+    "num_stages",
+    "numel",
+    "sm_count",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 634,
+    "git_blob": "dfd88925526e28bf9f6c2dcd8e8cf3e956d654c8",
+    "qualname": "_make_pingpong_kernel._gemm_main_v2",
+    "relative_path": "src/tileops/kernels/grouped_gemm/grouped_gemm_persistent_3wg.py",
+    "selected_source_sha256": "ede0ab11c198b341d9543c830941fd9dbe9ab47d3c58356eb84fbeefc855f8f1",
+    "source_sha256": "ba4be99316283a16bfcc741fa6f1d2a86824b036ef07c0360b6eed66d61a92a7",
+    "start_line": 351
+  }
+}

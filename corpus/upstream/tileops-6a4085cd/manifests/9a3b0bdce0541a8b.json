@@ -1,0 +1,75 @@
+{
+  "candidate_id": "9a3b0bdce0541a8b",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gla/gla_bwd.py/L200-L521__gla_bwd_fused_kernel._fused_func__9a3b0bdce0541a8b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "98cedda050c4de7731b6f7c123a32e42d971961f47d2721f6d8b6bcd92615082",
+    "source_map": {
+      "end_line": 521,
+      "logical_path": "src/tileops/kernels/linear_attention/gla/gla_bwd.py",
+      "start_line": 200
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "BC",
+    "BT",
+    "LOG2E",
+    "NS",
+    "T",
+    "accum_dtype",
+    "batch",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "heads",
+    "num_chunks",
+    "scale",
+    "seq_len",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "a52776c48a578dec",
+    "c31f0bd81da02516"
+  ],
+  "lexical_parents": [
+    "_gla_bwd_fused_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/9a3b0bdce0541a8b/unresolved.json",
+    "tileops-6a4085cd/recipes/9a3b0bdce0541a8b/tileops-6a4085cd-root-9a3b0bdce0541a8b-boundary-49a15ffa03-recipe.json",
+    "tileops-6a4085cd/recipes/9a3b0bdce0541a8b/tileops-6a4085cd-root-9a3b0bdce0541a8b-boundary-d767e9589e-recipe.json",
+    "tileops-6a4085cd/recipes/9a3b0bdce0541a8b/tileops-6a4085cd-root-9a3b0bdce0541a8b-boundary-d99e084c6e-recipe.json",
+    "tileops-6a4085cd/recipes/9a3b0bdce0541a8b/tileops-6a4085cd-root-9a3b0bdce0541a8b-original-57c3e9b446-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "BC",
+    "BT",
+    "NS",
+    "accum_dtype",
+    "batch",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "heads",
+    "num_chunks",
+    "scale",
+    "seq_len"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 521,
+    "git_blob": "695a2114b83f55f3f3a67d0f2b614a09dce8d5d1",
+    "qualname": "_gla_bwd_fused_kernel._fused_func",
+    "relative_path": "src/tileops/kernels/linear_attention/gla/gla_bwd.py",
+    "selected_source_sha256": "3e78c51e672fcd89e410c7aba1e72efcd0f8c845b099cf79bfa6ab6418a2b34b",
+    "source_sha256": "246a362fd38a9fd56a564131053018d43544a7bb8aa2172cf23fcf06ff81996e",
+    "start_line": 200
+  }
+}

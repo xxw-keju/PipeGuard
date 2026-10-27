@@ -1,0 +1,123 @@
+{
+  "arguments": {
+    "block_size": 8,
+    "dtype": "torch.half",
+    "head_size": 64,
+    "kv_cache_dtype": "auto",
+    "num_blocks": 1024,
+    "num_heads": 8,
+    "num_tokens": 42,
+    "seed": 2025
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-reshape-and-cache-kernel-dff71419d14a-original-5ff665ed58",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:key",
+        "1": "global:value",
+        "2": "global:key_cache",
+        "3": "global:value_cache",
+        "4": "global:slot_mapping",
+        "5": "global:x"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "block_size": 8,
+      "head_size": 64,
+      "k_scale": 1,
+      "key_stride": 1,
+      "n": 1,
+      "num_heads": 8,
+      "v_scale": 1,
+      "value_stride": 1
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "key": "*fp16",
+      "key_cache": "*fp16",
+      "slot_mapping": "*i64",
+      "value": "*fp16",
+      "value_cache": "*fp16",
+      "x": "*fp16"
+    }
+  },
+  "evidence": [
+    "flaggems-launch-f72378cc4aeec13f",
+    "flaggems-test-9ecea061f48a8195",
+    "source-cab1f101f342f0b4"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-reshape-and-cache-kernel-dff71419d14a",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_reshape_and_cache.py:81-153#test_reshape_and_cache",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ],
+  "workload_recovery": {
+    "method": "static-source-and-case-heuristic-v1",
+    "notes": [
+      "All scalar parameters are compile-time specialized.",
+      "Pointer types derive from source use, parameter names, and the case dtype.",
+      "The recovered workload checks CTA (0,0,0) with a one-CTA launch and is not evidence for the original full launch grid."
+    ],
+    "original_case_path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/corpus/upstream/suite3/kernels/triton/flaggems/flaggems-reshape-and-cache-kernel-dff71419d14a/cases/original-5ff665ed58.json",
+    "status": "HEURISTIC"
+  }
+}

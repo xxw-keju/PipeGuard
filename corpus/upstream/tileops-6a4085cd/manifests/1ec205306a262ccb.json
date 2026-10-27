@@ -1,0 +1,63 @@
+{
+  "candidate_id": "1ec205306a262ccb",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/argreduce.py/L318-L362__argreduce_output_kernel._func.main__1ec205306a262ccb.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "0cf68172f1367ad26002c4262de5adc92a6cb0aebf8951613501c368da2aae7d",
+    "source_map": {
+      "end_line": 362,
+      "logical_path": "src/tileops/kernels/reduction/argreduce.py",
+      "start_line": 318
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "T",
+    "dtype",
+    "inner_stride",
+    "key_of",
+    "ops",
+    "per_thread",
+    "span",
+    "stage",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_argreduce_output_kernel",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/1ec205306a262ccb/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "dtype",
+    "inner_stride",
+    "key_of",
+    "ops",
+    "per_thread",
+    "span",
+    "stage",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 362,
+    "git_blob": "0ab600ca4858368a54c58cb048927b48221d1ad1",
+    "qualname": "_argreduce_output_kernel._func.main",
+    "relative_path": "src/tileops/kernels/reduction/argreduce.py",
+    "selected_source_sha256": "8213ab6709ce1b99f4d80fbdea7ce433a559469e736ca0ca74076baf914f4b58",
+    "source_sha256": "9ee78705cb497eab60aa6b70a0cf7a1f01e9d369ae346b45820dc02b20da8d98",
+    "start_line": 318
+  }
+}

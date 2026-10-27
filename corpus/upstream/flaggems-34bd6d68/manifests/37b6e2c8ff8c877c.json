@@ -1,0 +1,40 @@
+{
+  "candidate_id": "37b6e2c8ff8c877c",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/experimental_ops/im2col.py/L20-L99__im2col_kernel__37b6e2c8ff8c877c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c50c1a682f7a0b726e1dba1a1679c5a8bde4ca5207c77c09a5ebcad4ba41bc81",
+    "source_map": {
+      "end_line": 99,
+      "logical_path": "src/flag_gems/experimental_ops/im2col.py",
+      "start_line": 20
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/37b6e2c8ff8c877c/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 99,
+    "git_blob": "f8013c1e69f3e5b93349864a9bddf3fa98ac7c45",
+    "qualname": "im2col_kernel",
+    "relative_path": "src/flag_gems/experimental_ops/im2col.py",
+    "selected_source_sha256": "ad8386e48492cd077dda0dd372f2b92b7e040407acc5d673ffd30e4e8c293c56",
+    "source_sha256": "72245d0b10fde58d51070a2321ace1d794f75780b67ba23af9b306c9ed112506",
+    "start_line": 20
+  }
+}

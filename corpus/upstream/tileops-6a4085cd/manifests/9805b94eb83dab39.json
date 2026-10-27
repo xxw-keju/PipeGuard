@@ -1,0 +1,60 @@
+{
+  "candidate_id": "9805b94eb83dab39",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/gemm/dense.py/L804-L827__splitk_reduce_kernel._splitk_reduce_func__9805b94eb83dab39.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1db7a50afc5e5dfdb2aab887cbd1ab690bdf96635ede92f346bc5cb7ae38e6ec",
+    "source_map": {
+      "end_line": 827,
+      "logical_path": "src/tileops/kernels/gemm/dense.py",
+      "start_line": 804
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "Callable",
+    "T",
+    "accum_dtype",
+    "dtype",
+    "m",
+    "n",
+    "split_k",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "de897da3f83674a5"
+  ],
+  "lexical_parents": [
+    "_splitk_reduce_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/9805b94eb83dab39/unresolved.json",
+    "tileops-6a4085cd/recipes/9805b94eb83dab39/tileops-6a4085cd-root-9805b94eb83dab39-boundary-0ec9e62d82-recipe.json",
+    "tileops-6a4085cd/recipes/9805b94eb83dab39/tileops-6a4085cd-root-9805b94eb83dab39-boundary-98d2c4a7ca-recipe.json",
+    "tileops-6a4085cd/recipes/9805b94eb83dab39/tileops-6a4085cd-root-9805b94eb83dab39-boundary-fc896830c9-recipe.json",
+    "tileops-6a4085cd/recipes/9805b94eb83dab39/tileops-6a4085cd-root-9805b94eb83dab39-original-cc4ee0f218-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "dtype",
+    "m",
+    "n",
+    "split_k"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 827,
+    "git_blob": "eddbf8bcc75a35fe8b2902263f459502259880a0",
+    "qualname": "_splitk_reduce_kernel._splitk_reduce_func",
+    "relative_path": "src/tileops/kernels/gemm/dense.py",
+    "selected_source_sha256": "67f5abb033b5a7ec8706f6738c0fcda286d3efd6961ef26677655840dccc0648",
+    "source_sha256": "5c382dd03a6ec1f75bdcc0e937f6e31308068cbfdd3293a54ca639642501f1bf",
+    "start_line": 804
+  }
+}

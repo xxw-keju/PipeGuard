@@ -1,0 +1,65 @@
+{
+  "candidate_id": "dd20650255efc348",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/rope.py/L306-L345__make_rope_non_neox_2d.kernel.main__dd20650255efc348.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "67820755f6b70a9180c2d7a263056792760077ff15b4983a30d65b32c844f5df",
+    "source_map": {
+      "end_line": 345,
+      "logical_path": "src/tileops/kernels/rope.py",
+      "start_line": 306
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "block_size",
+    "dtype",
+    "half",
+    "head_dim",
+    "n_pairs",
+    "n_total",
+    "npt_arg",
+    "num_heads",
+    "seq_len",
+    "staged",
+    "threads_arg"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_rope_non_neox_2d",
+    "kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/dd20650255efc348/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "block_size",
+    "dtype",
+    "half",
+    "head_dim",
+    "n_pairs",
+    "n_total",
+    "npt_arg",
+    "num_heads",
+    "seq_len",
+    "staged",
+    "threads_arg"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 345,
+    "git_blob": "f8ff3534ba5816b672ab89d86d90197e3dce3985",
+    "qualname": "_make_rope_non_neox_2d.kernel.main",
+    "relative_path": "src/tileops/kernels/rope.py",
+    "selected_source_sha256": "7376d343edf2a7a172fab2fdc6c562e9d3bf9c50e25e5c6c231186d33a0eb1b6",
+    "source_sha256": "a9d1e667f9c89cd7138b24c9e0582ef5ef600515d93f939a53b79f30fa756143",
+    "start_line": 306
+  }
+}

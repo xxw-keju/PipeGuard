@@ -1,0 +1,45 @@
+{
+  "bindings": {
+    "dtype": "torch.bool",
+    "shape": [
+      2637
+    ]
+  },
+  "candidate_id": "2cf7a9a9633b4500",
+  "compiler": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-14d2a365e3b7820f"
+      ],
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "test_end_line": 55,
+      "test_function": "test_nonzero",
+      "test_path": "tests/test_nonzero.py",
+      "test_source_sha256": "2a716f8617e64111b71ea38a9090e52783c1e2004d951ce4bf52990c76da7d71",
+      "test_start_line": 36,
+      "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": false,
+  "origin": "upstream-test:tests/test_nonzero.py:36-55#test_nonzero",
+  "recipe_id": "flaggems-root-2cf7a9a9633b4500-boundary-737b3e1a7b-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

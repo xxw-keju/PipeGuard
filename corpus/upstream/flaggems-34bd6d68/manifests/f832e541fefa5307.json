@@ -1,0 +1,45 @@
+{
+  "candidate_id": "f832e541fefa5307",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/DSA/sparse_mla.py/L175-L303__triton_sparse_mla_fwd_tle__f832e541fefa5307.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "2a8c8e28fae9ed82d6f24541e8d2411af224efd961802848f573095bd9d2a419",
+    "source_map": {
+      "end_line": 303,
+      "logical_path": "src/flag_gems/fused/DSA/sparse_mla.py",
+      "start_line": 175
+    }
+  },
+  "decorators": [
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "spar_mla_fwd_configs",
+    "tl",
+    "tle",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/f832e541fefa5307/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "tle"
+  ],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 303,
+    "git_blob": "94a6cac94354eef00a6ccce4c278b2ebc95858db",
+    "qualname": "triton_sparse_mla_fwd_tle",
+    "relative_path": "src/flag_gems/fused/DSA/sparse_mla.py",
+    "selected_source_sha256": "331c6ead6b6c0d02d85da1688fab1980b1d0904dd367a5add568e26272789c37",
+    "source_sha256": "32789bb6ac679726cc83b19a0f75d3dcb4df091ce3d026bf25dfa7a36255e909",
+    "start_line": 175
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "candidate_id": "5b8b36dff9273dc1",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_dense.py/L699-L857__gqa_sw_fwd_wgmma_pipelined_kernel._gqa_sw_fwd_wgmma_pipelined_func__5b8b36dff9273dc1.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "44011dd04e6f4d826ac6f517fb5780da7eb2add4867af54b0694bc210b3207b3",
+    "source_map": {
+      "end_line": 857,
+      "logical_path": "src/tileops/kernels/attention/gqa_dense.py",
+      "start_line": 699
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "groups",
+    "has_window",
+    "heads",
+    "heads_kv",
+    "is_causal",
+    "make_apply_softcap",
+    "scale",
+    "score_scale",
+    "seq_len",
+    "softcap",
+    "tilelang",
+    "use_softcap",
+    "window_size_left",
+    "window_size_right"
+  ],
+  "kernel_dependencies": [
+    "39a38dc3e459bd26"
+  ],
+  "lexical_parents": [
+    "_gqa_sw_fwd_wgmma_pipelined_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/5b8b36dff9273dc1/unresolved.json",
+    "tileops-6a4085cd/recipes/5b8b36dff9273dc1/tileops-6a4085cd-root-5b8b36dff9273dc1-boundary-142dcdfd16-recipe.json",
+    "tileops-6a4085cd/recipes/5b8b36dff9273dc1/tileops-6a4085cd-root-5b8b36dff9273dc1-boundary-24a34f6df7-recipe.json",
+    "tileops-6a4085cd/recipes/5b8b36dff9273dc1/tileops-6a4085cd-root-5b8b36dff9273dc1-boundary-c8677e188b-recipe.json",
+    "tileops-6a4085cd/recipes/5b8b36dff9273dc1/tileops-6a4085cd-root-5b8b36dff9273dc1-original-0e8474f8fc-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "groups",
+    "has_window",
+    "heads",
+    "heads_kv",
+    "is_causal",
+    "scale",
+    "score_scale",
+    "seq_len",
+    "softcap",
+    "use_softcap",
+    "window_size_left",
+    "window_size_right"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 857,
+    "git_blob": "18d371cf6eed3b31b775897e390e13ee4c81035c",
+    "qualname": "_gqa_sw_fwd_wgmma_pipelined_kernel._gqa_sw_fwd_wgmma_pipelined_func",
+    "relative_path": "src/tileops/kernels/attention/gqa_dense.py",
+    "selected_source_sha256": "a3119ddb49843c344d60520df72a9916fd2161f3229a1c2bc86347ae906d7f23",
+    "source_sha256": "d8de663ae697439fb195b587bd93175217635380ccf624ca7dfafa1e95c2844f",
+    "start_line": 699
+  }
+}

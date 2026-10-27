@@ -1,0 +1,40 @@
+{
+  "candidate_id": "c97d861c1ac2b10f",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/var_mean.py/L29-L37__welford_func__c97d861c1ac2b10f.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1adbd9c8a4447601055c9e43dd1e70553a02a318392c72067e2b0880eb579bdc",
+    "source_map": {
+      "end_line": 37,
+      "logical_path": "src/flag_gems/ops/var_mean.py",
+      "start_line": 29
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/c97d861c1ac2b10f/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 37,
+    "git_blob": "93f7ab480a6c77570559216efe7b016ebde008be",
+    "qualname": "welford_func",
+    "relative_path": "src/flag_gems/ops/var_mean.py",
+    "selected_source_sha256": "bbba332d2ef34eecf8f7725b04de51c446739bb83105f195c747a58598cbd02a",
+    "source_sha256": "ed06d8e21f070d99c899c52a109e74fc8c2a54cfd3db7cfe6774133961f1e724",
+    "start_line": 29
+  }
+}

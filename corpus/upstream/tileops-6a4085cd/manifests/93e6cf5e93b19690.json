@@ -1,0 +1,77 @@
+{
+  "candidate_id": "93e6cf5e93b19690",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/fp8_lightning_indexer.py/L50-L154__fp8_lightning_indexer_kernel._fp8_lightning_indexer_func._fp8_lightning__cfd8865__93e6cf5e93b19690.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "401ca3acd24b3863326a0f5249048341d2b71a42eb2e53293e6445bbe9f1cd68",
+    "source_map": {
+      "end_line": 154,
+      "logical_path": "src/tileops/kernels/fp8_lightning_indexer.py",
+      "start_line": 50
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_N",
+    "block_Q",
+    "dtype",
+    "heads",
+    "index_dim",
+    "index_dtype",
+    "index_k_scale_shape",
+    "index_k_shape",
+    "index_q_shape",
+    "kv_group",
+    "logits_shape",
+    "num_stages",
+    "seq_len",
+    "seq_len_kv",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_fp8_lightning_indexer_kernel",
+    "_fp8_lightning_indexer_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/93e6cf5e93b19690/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_N",
+    "block_Q",
+    "dtype",
+    "heads",
+    "index_dim",
+    "index_dtype",
+    "index_k_scale_shape",
+    "index_k_shape",
+    "index_q_shape",
+    "kv_group",
+    "logits_shape",
+    "num_stages",
+    "seq_len",
+    "seq_len_kv",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 154,
+    "git_blob": "ab2ba8c6af88a1c698c573d5196b30674bc28fc2",
+    "qualname": "_fp8_lightning_indexer_kernel._fp8_lightning_indexer_func._fp8_lightning_indexer_main",
+    "relative_path": "src/tileops/kernels/fp8_lightning_indexer.py",
+    "selected_source_sha256": "cb5835aad235569ea346cbb1f60752d0146458070203d42cd710b8256b81eebc",
+    "source_sha256": "2bdde2ae0ebfebac8047180387dc83dc52465f1fc0b25b70b1f52b0d46194cd5",
+    "start_line": 50
+  }
+}

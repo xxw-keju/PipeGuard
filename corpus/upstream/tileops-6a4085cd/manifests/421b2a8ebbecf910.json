@@ -1,0 +1,68 @@
+{
+  "candidate_id": "421b2a8ebbecf910",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py/L1219-L1275__prefill_output_o_bthd_tl._func__421b2a8ebbecf910.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "47d372b6f594bd619b3f4b0bf9e0c209c8dc10ddaf3db8f776ae7f928e06200d",
+    "source_map": {
+      "end_line": 1275,
+      "logical_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+      "start_line": 1219
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "LOG2E",
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_chunks",
+    "seq_len",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "fbb53946afb40e78"
+  ],
+  "lexical_parents": [
+    "_prefill_output_o_bthd_tl"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/421b2a8ebbecf910/unresolved.json",
+    "tileops-6a4085cd/recipes/421b2a8ebbecf910/tileops-6a4085cd-root-421b2a8ebbecf910-boundary-784470494a-recipe.json",
+    "tileops-6a4085cd/recipes/421b2a8ebbecf910/tileops-6a4085cd-root-421b2a8ebbecf910-boundary-972c184d72-recipe.json",
+    "tileops-6a4085cd/recipes/421b2a8ebbecf910/tileops-6a4085cd-root-421b2a8ebbecf910-boundary-bd520a7c36-recipe.json",
+    "tileops-6a4085cd/recipes/421b2a8ebbecf910/tileops-6a4085cd-root-421b2a8ebbecf910-original-9bf9b84578-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_chunks",
+    "seq_len"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 1275,
+    "git_blob": "f17f222201df2565859754ee60b1ae9c1589ab6f",
+    "qualname": "_prefill_output_o_bthd_tl._func",
+    "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+    "selected_source_sha256": "9a6857fc2186c360720478a45117cad0413bdae70bfccf3440ba5cb2a290684a",
+    "source_sha256": "df6831a09ec97ec92771e1e4aac4f69560b8990dce47f811f0ea25a32cf9d2f1",
+    "start_line": 1219
+  }
+}

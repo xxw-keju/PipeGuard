@@ -1,0 +1,104 @@
+{
+  "bindings": {
+    "Au_shape": [
+      2,
+      4,
+      8192,
+      64
+    ],
+    "Aw_shape": [
+      2,
+      4,
+      8192,
+      64
+    ],
+    "S_shape": [
+      2,
+      4,
+      129,
+      64,
+      64
+    ],
+    "beta_shape": [
+      2,
+      4,
+      8192
+    ],
+    "chunk_size": 64,
+    "do_shape": [
+      2,
+      4,
+      8192,
+      64
+    ],
+    "dtype": "bfloat16",
+    "k_shape": [
+      2,
+      4,
+      8192,
+      64
+    ],
+    "label": "dn-bwd-b2-s8k-h4-d64",
+    "manifest": "src/tileops/manifest/linear_attention.yaml",
+    "operator": "DeltaNetBwdOp",
+    "q_shape": [
+      2,
+      4,
+      8192,
+      64
+    ],
+    "row_index": 2,
+    "u_shape": [
+      2,
+      4,
+      8192,
+      64
+    ],
+    "v_shape": [
+      2,
+      4,
+      8192,
+      64
+    ],
+    "w_shape": [
+      2,
+      4,
+      8192,
+      64
+    ]
+  },
+  "candidate_id": "84aa0ca603959d67",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 537,
+      "function": "DeltaNetBwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/linear_attention.yaml",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source_sha256": "fd6c9d87448bf4ecb532de15498b365384536c4df0b0253c6b353bc25ae67a31",
+      "start_line": 496,
+      "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226"
+    }
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/linear_attention.yaml:496-537#DeltaNetBwdOp",
+  "recipe_id": "tileops-6a4085cd-root-84aa0ca603959d67-boundary-dc728c7b38-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

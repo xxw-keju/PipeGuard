@@ -1,0 +1,42 @@
+{
+  "candidate_id": "2141085c6f60e18e",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/softplus.py/L25-L32__softplus_forward__2141085c6f60e18e.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "56098a70b7de4716efdd41dc40102c08d9b8003b9d633952a2a7704fbe1af65e",
+    "source_map": {
+      "end_line": 32,
+      "logical_path": "src/flag_gems/ops/softplus.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/2141085c6f60e18e/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 32,
+    "git_blob": "7620a4a36287ec13858c529fb2ab8085db846d1b",
+    "qualname": "softplus_forward",
+    "relative_path": "src/flag_gems/ops/softplus.py",
+    "selected_source_sha256": "fdb071a508fbd60fc4fef853dfcd57527426cdc5876c11d6eb32ab912939bf02",
+    "source_sha256": "c6afa48e5cacc0a432e90025e9b1b315ec33a2d69c57232ef29e1f8c60502a6b",
+    "start_line": 25
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "candidate_id": "c3810d3e1b0a5509",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/moe/moe_grouped_gemm_persistent_3wg_fused_act.py/L906-L945__fused_act_kernel._func__c3810d3e1b0a5509.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "a2a783c67b9af5fadf325441f11b8b2369427b074ecd3af25d08bdb00ee4d521",
+    "source_map": {
+      "end_line": 945,
+      "logical_path": "src/tileops/kernels/moe/moe_grouped_gemm_persistent_3wg_fused_act.py",
+      "start_line": 906
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "K",
+    "_make_cooperative_fused_act_kernel",
+    "_make_pingpong_fused_act_kernel",
+    "activation",
+    "dtype",
+    "ffn",
+    "num_experts",
+    "numel",
+    "sm_count",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_fused_act_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/c3810d3e1b0a5509/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "activation",
+    "dtype",
+    "ffn",
+    "num_experts",
+    "numel",
+    "sm_count"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 945,
+    "git_blob": "45a001a359bc443d9da3e7d6a3a1162d063831ce",
+    "qualname": "_fused_act_kernel._func",
+    "relative_path": "src/tileops/kernels/moe/moe_grouped_gemm_persistent_3wg_fused_act.py",
+    "selected_source_sha256": "685badb1bfdde622912e4bf1d2e7a6eda3a3d48a29658474ceec88f343b1f727",
+    "source_sha256": "eb88838584f35659f1f0442c0dc92e3edab8a2ac01a9e8a306e7974d53e90ce3",
+    "start_line": 906
+  }
+}

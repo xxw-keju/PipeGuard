@@ -1,0 +1,48 @@
+{
+  "candidate_id": "d8b434a3f7fd3fd2",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/exponential_.py/L102-L159__fused_exponential_kernel_f32_unroll8__d8b434a3f7fd3fd2.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1f05de8e5c26d5ea7177f9adb8f3ae03fdee5f1c5e90db0ab7bde467c16370e4",
+    "source_map": {
+      "end_line": 159,
+      "logical_path": "src/flag_gems/ops/exponential_.py",
+      "start_line": 102
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "flag_gems.utils.libtuner",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "libtuner",
+    "tl",
+    "transform_exponential_f32",
+    "triton",
+    "uint_to_uniform_float"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/d8b434a3f7fd3fd2/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "transform_exponential_f32"
+  ],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 159,
+    "git_blob": "c8d9bac0d2f54396e041360d44453f00a76c26d4",
+    "qualname": "fused_exponential_kernel_f32_unroll8",
+    "relative_path": "src/flag_gems/ops/exponential_.py",
+    "selected_source_sha256": "15ffd8766feb4d6859fe4a1ca17899c7662f160f3e5384aebd1a1c69e04dabc7",
+    "source_sha256": "0847c0d647c93b5f5af790862d9235090760d349b64bf51a059bbbdc8faaac53",
+    "start_line": 102
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "candidate_id": "eba4f25ee8366540",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/clamp.py/L31-L34__clamp_func_min_tensor__eba4f25ee8366540.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "eb8af8c2953a7c765f8151d3c7dcb14dd19be1097a566c7b8ebed5be90ca31e7",
+    "source_map": {
+      "end_line": 34,
+      "logical_path": "src/flag_gems/ops/clamp.py",
+      "start_line": 31
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/eba4f25ee8366540/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 34,
+    "git_blob": "01c3d865dc2bdd037537b8b90934e615cb2ee3ac",
+    "qualname": "clamp_func_min_tensor",
+    "relative_path": "src/flag_gems/ops/clamp.py",
+    "selected_source_sha256": "11d6e200d5b8bd7b946709c421faea4d88d315278bf0af42c730889c921e8bd8",
+    "source_sha256": "116bc60b7b58b527c128687cf968df886e00a75adb15fd213439930b07e5680f",
+    "start_line": 31
+  }
+}

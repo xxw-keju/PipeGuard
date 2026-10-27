@@ -1,0 +1,64 @@
+{
+  "candidate_id": "13e77b712f288fb4",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/elementwise/_builders.py/L522-L538__make_binary_explicit.kernel__13e77b712f288fb4.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "16741785bebefcb6c92a42a65553f08b960a25b772d8a61c7ccdb831fd6a5e3e",
+    "source_map": {
+      "end_line": 538,
+      "logical_path": "src/tileops/kernels/elementwise/_builders.py",
+      "start_line": 522
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "N_total",
+    "T",
+    "dtype",
+    "op_func_for",
+    "op_name",
+    "out_dtype",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "072f65b5df501439",
+    "12ae4d8adaf9b8b9",
+    "17c0839d00afa4c8",
+    "368f31403200ca7e",
+    "81a0ca7aa1a72803",
+    "94730882349270f6",
+    "a5e6e1eed7ed4bbb",
+    "b61e08c453a8f76b",
+    "bd70b29f6654ffe6",
+    "d484c4335d892df0",
+    "d7bd0e7cf10af5d1"
+  ],
+  "lexical_parents": [
+    "_make_binary_explicit"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/13e77b712f288fb4/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "N_total",
+    "dtype",
+    "op_name",
+    "out_dtype"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 538,
+    "git_blob": "0c45343c49b95aa2efab1af3f2e989f386f4bad6",
+    "qualname": "_make_binary_explicit.kernel",
+    "relative_path": "src/tileops/kernels/elementwise/_builders.py",
+    "selected_source_sha256": "016246fb1a3c9809c46f43c3329983a7310dca38d8954d39de52f37186d38537",
+    "source_sha256": "a851eb7a9d7fdad7d1d283b1f9cde3066ab9d2890635d43edfd89e4546450e33",
+    "start_line": 522
+  }
+}

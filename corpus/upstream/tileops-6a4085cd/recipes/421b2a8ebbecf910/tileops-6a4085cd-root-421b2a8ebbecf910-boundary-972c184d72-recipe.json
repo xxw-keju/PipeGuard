@@ -1,0 +1,72 @@
+{
+  "bindings": {
+    "beta_shape": [
+      1,
+      64,
+      131072
+    ],
+    "chunk_size": 64,
+    "dtype": "float16",
+    "g_shape": [
+      1,
+      64,
+      131072
+    ],
+    "k_shape": [
+      1,
+      64,
+      131072,
+      128
+    ],
+    "label": "bhtd-qwen35-gdn-prefill-b1-s128k-h64-d128",
+    "manifest": "src/tileops/manifest/linear_attention.yaml",
+    "operator": "GatedDeltaNetPrefillBHTDFwdOp",
+    "q_shape": [
+      1,
+      64,
+      131072,
+      128
+    ],
+    "row_index": 1,
+    "v_shape": [
+      1,
+      64,
+      131072,
+      128
+    ]
+  },
+  "candidate_id": "421b2a8ebbecf910",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 112,
+      "function": "GatedDeltaNetPrefillBHTDFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/linear_attention.yaml",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source_sha256": "0215399314392eca9231e1bde590488889a3c3c9ca20585394ca6cb215ab0d68",
+      "start_line": 65,
+      "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226"
+    }
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/linear_attention.yaml:65-112#GatedDeltaNetPrefillBHTDFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-421b2a8ebbecf910-boundary-972c184d72-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

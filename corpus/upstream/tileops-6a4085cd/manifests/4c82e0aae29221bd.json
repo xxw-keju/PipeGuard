@@ -1,0 +1,61 @@
+{
+  "candidate_id": "4c82e0aae29221bd",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/norm/rms_norm.py/L49-L109__rms_norm_kernel._func.main__4c82e0aae29221bd.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "a2e837642bf7ad1317f761a30a4e96b9f5137006516647d64b3de45124ad1b2f",
+    "source_map": {
+      "end_line": 109,
+      "logical_path": "src/tileops/kernels/norm/rms_norm.py",
+      "start_line": 49
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "N_padded",
+    "T",
+    "block_m",
+    "dtype",
+    "eps",
+    "per_thread_partial",
+    "row_guard",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_rms_norm_kernel",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/4c82e0aae29221bd/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "N_padded",
+    "block_m",
+    "dtype",
+    "eps",
+    "per_thread_partial",
+    "row_guard",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 109,
+    "git_blob": "71d20ce4221189eb67ff1a30f8ee0948d5450436",
+    "qualname": "_rms_norm_kernel._func.main",
+    "relative_path": "src/tileops/kernels/norm/rms_norm.py",
+    "selected_source_sha256": "10de846254e40e59840e479da250b85c18246a50f7e1d7a5fc215e6022ca61f8",
+    "source_sha256": "705620ffa1d41a0dc542e0f2965bcbec28da0c94ce1783222e947a12551cea75",
+    "start_line": 49
+  }
+}

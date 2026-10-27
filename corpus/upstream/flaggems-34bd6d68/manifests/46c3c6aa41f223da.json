@@ -1,0 +1,40 @@
+{
+  "candidate_id": "46c3c6aa41f223da",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/experimental_ops/trunc.py/L20-L55__trunc_kernel__46c3c6aa41f223da.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "560dabe0ab90a44a1bd0d52331663d48e3e32ba5f38357f730b586f8639bd714",
+    "source_map": {
+      "end_line": 55,
+      "logical_path": "src/flag_gems/experimental_ops/trunc.py",
+      "start_line": 20
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/46c3c6aa41f223da/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 55,
+    "git_blob": "0cc86ace098beeaa08102093facf99cd951fd75e",
+    "qualname": "trunc_kernel",
+    "relative_path": "src/flag_gems/experimental_ops/trunc.py",
+    "selected_source_sha256": "cc675c77e2ccb4ee704cca762f14bed6b6b9c3551096028cff5f4bee33f0bdb2",
+    "source_sha256": "8806bbc9fbb9669be607fe610654bd42b4bba1a553f867e57af45d7afee032f8",
+    "start_line": 20
+  }
+}

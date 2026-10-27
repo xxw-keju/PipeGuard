@@ -1,0 +1,55 @@
+{
+  "candidate_id": "e731d031346eb5a7",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/elementwise/clamp.py/L107-L127__make_clamp_tensor_kernel.kernel.main__e731d031346eb5a7.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "470c1bfceb3fea96d46d73d4c96802e5bb555777077a856a3bc1e9c763f27af9",
+    "source_map": {
+      "end_line": 127,
+      "logical_path": "src/tileops/kernels/elementwise/clamp.py",
+      "start_line": 107
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "N",
+    "T",
+    "block_size",
+    "dtype",
+    "npt_arg",
+    "take_max",
+    "threads_arg"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_clamp_tensor_kernel",
+    "kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/e731d031346eb5a7/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "N",
+    "block_size",
+    "dtype",
+    "npt_arg",
+    "take_max",
+    "threads_arg"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 127,
+    "git_blob": "05a6c657dde6517e1bdb683b9941f55ec0226d21",
+    "qualname": "_make_clamp_tensor_kernel.kernel.main",
+    "relative_path": "src/tileops/kernels/elementwise/clamp.py",
+    "selected_source_sha256": "397393af664a323a7caec2f53b10a3bf91f26e8ef3205e5d8480523a8a462235",
+    "source_sha256": "719cf5e1dc6ac0d290f2b7153de82dbe97283a4127ef1416e93ec58958b0b94b",
+    "start_line": 107
+  }
+}

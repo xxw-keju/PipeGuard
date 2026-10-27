@@ -1,0 +1,59 @@
+{
+  "candidate_id": "e380a79c0142ea98",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/convolution/conv1d.py/L133-L139__conv1d_kernel._conv1d_func._conv1d_main__e380a79c0142ea98.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "12aabfdf13f2384edc127880f6edaecbe4967f063916d5f3171d5d0dff0e8e8b",
+    "source_map": {
+      "end_line": 139,
+      "logical_path": "src/tileops/kernels/convolution/conv1d.py",
+      "start_line": 133
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_conv1d_body",
+    "c_in",
+    "c_out",
+    "dtype",
+    "k_total",
+    "l_in",
+    "n",
+    "out_l"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_conv1d_kernel",
+    "_conv1d_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/e380a79c0142ea98/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_conv1d_body",
+    "c_in",
+    "c_out",
+    "dtype",
+    "k_total",
+    "l_in",
+    "n",
+    "out_l"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 139,
+    "git_blob": "faa8921e1918515a10238e90fae6018572d49b04",
+    "qualname": "_conv1d_kernel._conv1d_func._conv1d_main",
+    "relative_path": "src/tileops/kernels/convolution/conv1d.py",
+    "selected_source_sha256": "cc69dc5aa8f13c21e4c17650c2b2a6fca1cda3fccba6ee26bb80e623d45b592b",
+    "source_sha256": "1a91ad0a4c7281d04e3b5ee70064507b85fc54e27b4512254991f5e5be71fdef",
+    "start_line": 133
+  }
+}

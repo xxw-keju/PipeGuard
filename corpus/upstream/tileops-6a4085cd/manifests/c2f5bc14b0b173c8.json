@@ -1,0 +1,56 @@
+{
+  "candidate_id": "c2f5bc14b0b173c8",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/fp8_quant.py/L17-L62__fp8_quant_kernel._fp8_quant_fwd_func__c2f5bc14b0b173c8.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "30ebf708d92cf4b66859f41a462724a462311e102e8cbbdfa10fabba66abe87b",
+    "source_map": {
+      "end_line": 62,
+      "logical_path": "src/tileops/kernels/fp8_quant.py",
+      "start_line": 17
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "FP8_E4M3_MAX",
+    "T",
+    "batch",
+    "in_dtype",
+    "index_dim",
+    "kv_group",
+    "seq_len_kv",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "05dd75990aa50f53"
+  ],
+  "lexical_parents": [
+    "_fp8_quant_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/c2f5bc14b0b173c8/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "batch",
+    "in_dtype",
+    "index_dim",
+    "kv_group",
+    "seq_len_kv"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 62,
+    "git_blob": "67e4476262faf9db3e2b3c55cf011e2e75b054e9",
+    "qualname": "_fp8_quant_kernel._fp8_quant_fwd_func",
+    "relative_path": "src/tileops/kernels/fp8_quant.py",
+    "selected_source_sha256": "d16b939ea0ea733a6b207ea6b14f21cf133adad907055bb09413ee47af9402e7",
+    "source_sha256": "3c8558a51a1d315d44d0d49436d5548555a972e461cee6c3dbe5fe86e8f48fef",
+    "start_line": 17
+  }
+}

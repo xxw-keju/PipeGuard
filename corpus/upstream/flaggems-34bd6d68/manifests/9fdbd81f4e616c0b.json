@@ -1,0 +1,40 @@
+{
+  "candidate_id": "9fdbd81f4e616c0b",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/topk_softmax.py/L24-L81__topk_gating_softmax_kernel__9fdbd81f4e616c0b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "862d620f0b396e3e6125524b8450c2a74b4f97a60a85a1d06780bea922569f06",
+    "source_map": {
+      "end_line": 81,
+      "logical_path": "src/flag_gems/fused/topk_softmax.py",
+      "start_line": 24
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/9fdbd81f4e616c0b/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 81,
+    "git_blob": "a976117f22085a393506245be3c41fd9362da11b",
+    "qualname": "topk_gating_softmax_kernel",
+    "relative_path": "src/flag_gems/fused/topk_softmax.py",
+    "selected_source_sha256": "1c638cdf748a074c5c79b5a5e3b5cd2a09a1f5f11346ce057d87e22846d7412a",
+    "source_sha256": "9ed276d5164fec29e8bb825cad2acc795a66f8326f4a94f8d2087e0cdb69d63b",
+    "start_line": 24
+  }
+}

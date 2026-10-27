@@ -1,0 +1,71 @@
+{
+  "candidate_id": "b9ef8935f2db530e",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/convolution/conv3d.py/L140-L147__conv3d_kernel._conv3d_func._conv3d_bias_main__b9ef8935f2db530e.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "4292ae941299977d92ec00d1a6bb1231a0038f90b7c889ccca2aa55e03c49c79",
+    "source_map": {
+      "end_line": 147,
+      "logical_path": "src/tileops/kernels/convolution/conv3d.py",
+      "start_line": 140
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_conv3d_body",
+    "c_in",
+    "c_out",
+    "d_in",
+    "dtype",
+    "h_in",
+    "kernel_d",
+    "kernel_h",
+    "kernel_w",
+    "n",
+    "out_d",
+    "out_h",
+    "out_w",
+    "w_in"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_conv3d_kernel",
+    "_conv3d_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/b9ef8935f2db530e/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_conv3d_body",
+    "c_in",
+    "c_out",
+    "d_in",
+    "dtype",
+    "h_in",
+    "kernel_d",
+    "kernel_h",
+    "kernel_w",
+    "n",
+    "out_d",
+    "out_h",
+    "out_w",
+    "w_in"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 147,
+    "git_blob": "2e1903494e62fec9f10f5542b1d2d9bee82fc949",
+    "qualname": "_conv3d_kernel._conv3d_func._conv3d_bias_main",
+    "relative_path": "src/tileops/kernels/convolution/conv3d.py",
+    "selected_source_sha256": "86b58cf375283c8f834da02b78fa8214e19b16adb21039c85ab06fec87c5fe9b",
+    "source_sha256": "b8c2eeb0f485fbe3574550bfe5ab8b54b0a7d2a07912fe99f85644abb4b4ace2",
+    "start_line": 140
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "candidate_id": "e266b8c54afea920",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/multinomial.py/L28-L65__multinomial_with_replacement__e266b8c54afea920.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "9963a1ff173b5d67bc577ba25d3a20a6f8d435761fc7f1b4453830a9f7bfd38b",
+    "source_map": {
+      "end_line": 65,
+      "logical_path": "src/flag_gems/ops/multinomial.py",
+      "start_line": 28
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "triton",
+    "uniform"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/e266b8c54afea920/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 65,
+    "git_blob": "2e02b5f7789f4f908c3167aeae51e6df57151678",
+    "qualname": "multinomial_with_replacement",
+    "relative_path": "src/flag_gems/ops/multinomial.py",
+    "selected_source_sha256": "8d668a99bef749380f6aea9a3a4a41f6876d601e8afdf70702591a78d1172a31",
+    "source_sha256": "6b3a3f45fc61df94fb6001a81479470f89d2b625e35ee7dac0748526c5be617e",
+    "start_line": 28
+  }
+}

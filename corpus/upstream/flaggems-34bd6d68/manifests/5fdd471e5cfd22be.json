@@ -1,0 +1,45 @@
+{
+  "candidate_id": "5fdd471e5cfd22be",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/reglu.py/L28-L81__dreglu_kernel__5fdd471e5cfd22be.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "4245c1ae467f94703279ecc6375624dc881ee559581d8b020a50dbb0e4338cc4",
+    "source_map": {
+      "end_line": 81,
+      "logical_path": "src/flag_gems/fused/reglu.py",
+      "start_line": 28
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "flag_gems.utils.libtuner",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "libtuner",
+    "runtime",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/5fdd471e5cfd22be/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 81,
+    "git_blob": "ae86beb6048231f331ae9dbe9fc945d11e2c5735",
+    "qualname": "dreglu_kernel",
+    "relative_path": "src/flag_gems/fused/reglu.py",
+    "selected_source_sha256": "9fc38b98ac3e38de25b05c471e3db98840c453ddaed9cc1ca69770ae63202515",
+    "source_sha256": "0ea903ba30369ef34dd4454c95f4d6d75e346f9c2883523c1d8fee76e085087d",
+    "start_line": 28
+  }
+}

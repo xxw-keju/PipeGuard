@@ -1,0 +1,40 @@
+{
+  "candidate_id": "37601895f8c4c00a",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/fused_marlin_moe.py/L639-L691__dequant_fp4_bf16_fold__37601895f8c4c00a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "39ffa2feddba84c19e8bbbdfccfa1dc0b907adcd51920cd365bb1577aa71ef34",
+    "source_map": {
+      "end_line": 691,
+      "logical_path": "src/flag_gems/fused/fused_marlin_moe.py",
+      "start_line": 639
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/37601895f8c4c00a/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 691,
+    "git_blob": "204ceb75dc7508650d86c9bfbe863994f39c2b51",
+    "qualname": "_dequant_fp4_bf16_fold",
+    "relative_path": "src/flag_gems/fused/fused_marlin_moe.py",
+    "selected_source_sha256": "372474cb12843318be256374d0028d90af7378e8fa7567166ee0d6bb5edc50e7",
+    "source_sha256": "c4820bc58152e40555885e63a47399f72987d88fb07a8628eb43f0916dbbbf28",
+    "start_line": 639
+  }
+}

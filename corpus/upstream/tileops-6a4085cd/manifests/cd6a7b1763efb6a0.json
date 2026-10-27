@@ -1,0 +1,61 @@
+{
+  "candidate_id": "cd6a7b1763efb6a0",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/logsumexp.py/L235-L303__logsumexp_kernel_tiled._func.main__cd6a7b1763efb6a0.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "3fff20c8d9e451c58e56d956deddb8a15e7df0c9263ff9bfbb66adba3c27bf5c",
+    "source_map": {
+      "end_line": 303,
+      "logical_path": "src/tileops/kernels/reduction/logsumexp.py",
+      "start_line": 235
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "T",
+    "_needs_mask",
+    "_neg_inf",
+    "block_m",
+    "dtype",
+    "num_tiles",
+    "threads",
+    "tile_n"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_logsumexp_kernel_tiled",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/cd6a7b1763efb6a0/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "_needs_mask",
+    "_neg_inf",
+    "block_m",
+    "dtype",
+    "num_tiles",
+    "threads",
+    "tile_n"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 303,
+    "git_blob": "c058d9fc3f595d7e541677ecfaeb273794604fe5",
+    "qualname": "_logsumexp_kernel_tiled._func.main",
+    "relative_path": "src/tileops/kernels/reduction/logsumexp.py",
+    "selected_source_sha256": "c0733b85d3fa3b5608869ea362e3e56a8abc12f3a2d953e3fbeac56f90cf0b1d",
+    "source_sha256": "e4657d98707c16b2e25e9eb1bde9797b626d5388a4e975d5d48c436344d33a57",
+    "start_line": 235
+  }
+}

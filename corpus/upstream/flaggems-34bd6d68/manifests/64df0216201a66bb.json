@@ -1,0 +1,43 @@
+{
+  "candidate_id": "64df0216201a66bb",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/cholesky_solve.py/L772-L982__cholesky_solve_complex_single_rhs_gather_kernel__64df0216201a66bb.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "105dfb56d95be7a40903b19e7fb6f3d93d43c7b0587254473ca3ed6e049a3e35",
+    "source_map": {
+      "end_line": 982,
+      "logical_path": "src/flag_gems/ops/cholesky_solve.py",
+      "start_line": 772
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "program_id",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/64df0216201a66bb/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 982,
+    "git_blob": "1bc0d27260e5bfa153e8219ed9852eff63d36346",
+    "qualname": "cholesky_solve_complex_single_rhs_gather_kernel",
+    "relative_path": "src/flag_gems/ops/cholesky_solve.py",
+    "selected_source_sha256": "05dc88c2a25106e5a3be05a0056158789f748e551c145531fc7174b1444aca2e",
+    "source_sha256": "a3b219e34d401221512089269100b9de897b2bb958b51ef6f2da686c0d1056fe",
+    "start_line": 772
+  }
+}

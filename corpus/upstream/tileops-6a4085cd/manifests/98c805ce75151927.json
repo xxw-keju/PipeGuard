@@ -1,0 +1,89 @@
+{
+  "candidate_id": "98c805ce75151927",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_fwd.py/L649-L855__gqa_prefill_paged_with_kv_cache_fwd_kernel._gqa_prefill_paged_with_kv_c__0265376__98c805ce75151927.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c5c98632eedc26fb3dff25d25d23099c5cb4bec60403730d89f0e81938b2be8b",
+    "source_map": {
+      "end_line": 855,
+      "logical_path": "src/tileops/kernels/attention/gqa_fwd.py",
+      "start_line": 649
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "apply_softcap",
+    "batch",
+    "block_m",
+    "block_n",
+    "block_table_shape",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "heads_kv",
+    "is_causal",
+    "kv_new_shape",
+    "kv_pages_shape",
+    "num_stages",
+    "o_shape",
+    "online_softmax",
+    "page_size",
+    "page_size_log2",
+    "q_shape",
+    "rescale",
+    "threads",
+    "use_softcap"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gqa_prefill_paged_with_kv_cache_fwd_kernel",
+    "_gqa_prefill_paged_with_kv_cache_fwd_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/98c805ce75151927/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "apply_softcap",
+    "batch",
+    "block_m",
+    "block_n",
+    "block_table_shape",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "heads_kv",
+    "is_causal",
+    "kv_new_shape",
+    "kv_pages_shape",
+    "num_stages",
+    "o_shape",
+    "online_softmax",
+    "page_size",
+    "page_size_log2",
+    "q_shape",
+    "rescale",
+    "threads",
+    "use_softcap"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 855,
+    "git_blob": "82b87c8358e7c9dfad4f19de7cd36f268a8caefd",
+    "qualname": "_gqa_prefill_paged_with_kv_cache_fwd_kernel._gqa_prefill_paged_with_kv_cache_fwd_func._gqa_prefill_paged_with_kv_cache_fwd_main",
+    "relative_path": "src/tileops/kernels/attention/gqa_fwd.py",
+    "selected_source_sha256": "7eff8a2cbf67a9e529dd1a40cad9ce731ee38feec971be82e9b45a6a5d5000d0",
+    "source_sha256": "ff7499fdf6df69bd0028461b99ced1f4cd3fb85abca5c8c790038ef07373bafa",
+    "start_line": 649
+  }
+}

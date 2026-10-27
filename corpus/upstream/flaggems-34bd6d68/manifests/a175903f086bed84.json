@@ -1,0 +1,45 @@
+{
+  "candidate_id": "a175903f086bed84",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/aminmax.py/L31-L56__aminmax_kernel_1__a175903f086bed84.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c2479c8371d24e88b0e7ddec8687cb8c5cddd52717258964143d8418b9266b6c",
+    "source_map": {
+      "end_line": 56,
+      "logical_path": "src/flag_gems/ops/aminmax.py",
+      "start_line": 31
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "get_dtype_max",
+    "get_dtype_min",
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/a175903f086bed84/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 56,
+    "git_blob": "c60637ada0649ea44c62d1159bd96413f0c8757d",
+    "qualname": "aminmax_kernel_1",
+    "relative_path": "src/flag_gems/ops/aminmax.py",
+    "selected_source_sha256": "98f1c324595efb59b9fdc376cc38e0a4ddea9cc52249cd26aa9e8dcdab9ea7d3",
+    "source_sha256": "0c364d9fb10275797323665f50921269c046a22c78d9f6dfa548e41e676af1f2",
+    "start_line": 31
+  }
+}

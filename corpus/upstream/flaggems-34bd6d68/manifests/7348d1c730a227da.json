@@ -1,0 +1,42 @@
+{
+  "candidate_id": "7348d1c730a227da",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/_scaled_dot_product_attention_math.py/L29-L178__sdpa_math_kernel__7348d1c730a227da.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e0e5f7472d3ea495fd24bb12f5d99b2a7ba6eb7c373ac897a0d0946453247966",
+    "source_map": {
+      "end_line": 178,
+      "logical_path": "src/flag_gems/ops/_scaled_dot_product_attention_math.py",
+      "start_line": 29
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/7348d1c730a227da/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 178,
+    "git_blob": "51c22fda6c2af237c2bafb2532968bf740f77c17",
+    "qualname": "_sdpa_math_kernel",
+    "relative_path": "src/flag_gems/ops/_scaled_dot_product_attention_math.py",
+    "selected_source_sha256": "13640935a03873cdb2b2b10759c9fdfc215176482239b8fc29aa47ed64e33c45",
+    "source_sha256": "306b8d3fd4112bf7d318f0b34ae83eceee8f4d2efbfd70222d0bac4bcf0ae476",
+    "start_line": 29
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "candidate_id": "21e60ca1abb97537",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/atanh.py/L26-L38__atanh_func__21e60ca1abb97537.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e45224f1e76e1c7a8a9b64f4bdf302b7bec305f06dc5255ec31fc4ef62d400f5",
+    "source_map": {
+      "end_line": 38,
+      "logical_path": "src/flag_gems/ops/atanh.py",
+      "start_line": 26
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/21e60ca1abb97537/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 38,
+    "git_blob": "3b2fd3b33237d91c4a32a8e7a3ac9a97b6613d13",
+    "qualname": "atanh_func",
+    "relative_path": "src/flag_gems/ops/atanh.py",
+    "selected_source_sha256": "7399f4d62b49b61d518026d309233e477aaae56ca4d6c6df2d9990128784d015",
+    "source_sha256": "6c5e38e82b3a8130f04e6602e9378a97dc033677287bf4312ceac1384bae7548",
+    "start_line": 26
+  }
+}

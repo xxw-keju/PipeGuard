@@ -1,0 +1,59 @@
+{
+  "bindings": {
+    "dA_chunk_cumsum_shape": [
+      1,
+      64,
+      16
+    ],
+    "dtype": "bfloat16",
+    "initial_states_shape": [
+      1,
+      64,
+      128
+    ],
+    "label": "mamba2-1p3b-b1-s4k-dstate-init-states",
+    "manifest": "src/tileops/manifest/mamba.yaml",
+    "operator": "SSDStatePassingFwdOp",
+    "row_index": 2,
+    "states_shape": [
+      1,
+      16,
+      64,
+      128
+    ]
+  },
+  "candidate_id": "2135bd40bb72dd0a",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 190,
+      "function": "SSDStatePassingFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/mamba.yaml",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source_sha256": "301eb768f68c89c9f0c0b0190d02e0c9132f67f75f665ec2afb269c82b8d6348",
+      "start_line": 152,
+      "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226"
+    }
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/mamba.yaml:152-190#SSDStatePassingFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-2135bd40bb72dd0a-boundary-2eac2b6b82-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

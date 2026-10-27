@@ -1,0 +1,72 @@
+{
+  "candidate_id": "4b65c412a8d8bf68",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/logical_reduce.py/L155-L201__logical_reduce_edge_fused._func__4b65c412a8d8bf68.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c62f35774749530f2bf6516da64b6e29c38b9a0635e39cbda8f9f1e61b9730e2",
+    "source_map": {
+      "end_line": 201,
+      "logical_path": "src/tileops/kernels/reduction/logical_reduce.py",
+      "start_line": 155
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "dtype",
+    "init_val",
+    "kept",
+    "lead",
+    "needs_pad",
+    "op_kind",
+    "out_dtype",
+    "pad_val",
+    "tilelang",
+    "trail",
+    "trail_padded"
+  ],
+  "kernel_dependencies": [
+    "0253ce7873ffa569",
+    "66464020f7ba8e43",
+    "6be28329d60b2a3a",
+    "b4e6db775ff73e29"
+  ],
+  "lexical_parents": [
+    "_logical_reduce_edge_fused"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/4b65c412a8d8bf68/unresolved.json",
+    "tileops-6a4085cd/recipes/4b65c412a8d8bf68/tileops-6a4085cd-root-4b65c412a8d8bf68-boundary-123cb4f6d7-recipe.json",
+    "tileops-6a4085cd/recipes/4b65c412a8d8bf68/tileops-6a4085cd-root-4b65c412a8d8bf68-boundary-27ddebae2d-recipe.json",
+    "tileops-6a4085cd/recipes/4b65c412a8d8bf68/tileops-6a4085cd-root-4b65c412a8d8bf68-boundary-7167cab9dd-recipe.json",
+    "tileops-6a4085cd/recipes/4b65c412a8d8bf68/tileops-6a4085cd-root-4b65c412a8d8bf68-original-3adb0216c7-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "dtype",
+    "init_val",
+    "kept",
+    "lead",
+    "needs_pad",
+    "op_kind",
+    "out_dtype",
+    "pad_val",
+    "trail",
+    "trail_padded"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 201,
+    "git_blob": "3c1be4810f285d2805a4a4748a171d971d06b0d0",
+    "qualname": "_logical_reduce_edge_fused._func",
+    "relative_path": "src/tileops/kernels/reduction/logical_reduce.py",
+    "selected_source_sha256": "8ecd60c5dda798c5b034233362f9b54b92d50ba31cbc725b66e9e7a21a80015f",
+    "source_sha256": "9525d80d367f2e3c599e4c5024a84e839f66ccd4a65493137c111bfa426f2195",
+    "start_line": 155
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "candidate_id": "5570aa0c5d507979",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_dense.py/L71-L119__gqa_dense_rope_qk_kernel.main__5570aa0c5d507979.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c6a118749cd2edef664fd3fdce7e4fa1bf43e193fc79a1bbaaca09630f7e3894",
+    "source_map": {
+      "end_line": 119,
+      "logical_path": "src/tileops/kernels/attention/gqa_dense.py",
+      "start_line": 71
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "D",
+    "H",
+    "Hkv",
+    "Skv",
+    "Sq",
+    "T",
+    "block_size",
+    "co",
+    "dtype",
+    "half",
+    "k_pairs",
+    "k_rows",
+    "k_tail",
+    "max_position",
+    "num_per_thread",
+    "q_pairs",
+    "q_rows",
+    "q_tail",
+    "rope_layout",
+    "rotary_dim",
+    "tail",
+    "threads",
+    "walked"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gqa_dense_rope_qk_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/5570aa0c5d507979/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "D",
+    "H",
+    "Hkv",
+    "Skv",
+    "Sq",
+    "block_size",
+    "co",
+    "dtype",
+    "half",
+    "k_pairs",
+    "k_rows",
+    "k_tail",
+    "max_position",
+    "num_per_thread",
+    "q_pairs",
+    "q_rows",
+    "q_tail",
+    "rope_layout",
+    "rotary_dim",
+    "tail",
+    "threads",
+    "walked"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 119,
+    "git_blob": "18d371cf6eed3b31b775897e390e13ee4c81035c",
+    "qualname": "_gqa_dense_rope_qk_kernel.main",
+    "relative_path": "src/tileops/kernels/attention/gqa_dense.py",
+    "selected_source_sha256": "e7890c4bd7e8a04912c4f59398c9fd99ec931db15dee105c1b65d5c7c25485c4",
+    "source_sha256": "d8de663ae697439fb195b587bd93175217635380ccf624ca7dfafa1e95c2844f",
+    "start_line": 71
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "candidate_id": "9f8b005270a51869",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gla_recurrence.py/L60-L131__gla_decode_tl._decode_func.gla_decode__9f8b005270a51869.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "3502844b9c897a6aeb6942623eac1ad61614269facaa1b55a0b18c285562dca4",
+    "source_map": {
+      "end_line": 131,
+      "logical_path": "src/tileops/kernels/linear_attention/gla_recurrence.py",
+      "start_line": 60
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "LOG2E",
+    "T",
+    "accum_dtype",
+    "batch",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "k_tile",
+    "num_stages",
+    "scale",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gla_decode_tl",
+    "_decode_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/9f8b005270a51869/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "k_tile",
+    "num_stages",
+    "scale",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 131,
+    "git_blob": "b122783db8d6f3a82f5d07f51793c88767a957e2",
+    "qualname": "_gla_decode_tl._decode_func.gla_decode",
+    "relative_path": "src/tileops/kernels/linear_attention/gla_recurrence.py",
+    "selected_source_sha256": "6c2271064ff9be76e84c555445b82c8756bfd06e36a0ddcb35586a641a6422dd",
+    "source_sha256": "cb06ede43ed933c03f93cb65d757415c9e22d619b47af652e1a7d90491ab6042",
+    "start_line": 60
+  }
+}

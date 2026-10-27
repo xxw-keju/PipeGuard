@@ -1,0 +1,42 @@
+{
+  "candidate_id": "2738178bf7dc564d",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/clip.py/L33-L36__clip_func_min__2738178bf7dc564d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "dde174b998bf6c5777afe61d2957fa8b354d076b09e8a8f23959a338b02f62ba",
+    "source_map": {
+      "end_line": 36,
+      "logical_path": "src/flag_gems/ops/clip.py",
+      "start_line": 33
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/2738178bf7dc564d/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 36,
+    "git_blob": "1015d085780ac1bb1497c54ac9d00e25c1c3f6f2",
+    "qualname": "clip_func_min",
+    "relative_path": "src/flag_gems/ops/clip.py",
+    "selected_source_sha256": "f41ee1c2fd331292636ac31df36e78b42775a5286760b7cb3f6b2cd39387c8d9",
+    "source_sha256": "27664f7580afed2eaf86f98f21ce4e19c78bd5db0a54d4b71b99251f0447cf27",
+    "start_line": 33
+  }
+}

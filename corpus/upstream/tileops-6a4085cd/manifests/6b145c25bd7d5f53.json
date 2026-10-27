@@ -1,0 +1,61 @@
+{
+  "candidate_id": "6b145c25bd7d5f53",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/moe/unpermute.py/L61-L95__make_unpermute_kernel._unpermute__6b145c25bd7d5f53.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f253083297fefaf83c977e0ce22ee9909819ce85d466d9e602cc214077d8e771",
+    "source_map": {
+      "end_line": 95,
+      "logical_path": "src/tileops/kernels/moe/unpermute.py",
+      "start_line": 61
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "dtype",
+    "hidden_size",
+    "materialized_rows",
+    "num_tokens",
+    "numel",
+    "scaling",
+    "threads",
+    "tilelang",
+    "top_k"
+  ],
+  "kernel_dependencies": [
+    "f8280aecebd4bfa5"
+  ],
+  "lexical_parents": [
+    "_make_unpermute_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/6b145c25bd7d5f53/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "dtype",
+    "hidden_size",
+    "materialized_rows",
+    "num_tokens",
+    "numel",
+    "scaling",
+    "threads",
+    "top_k"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 95,
+    "git_blob": "5a8a6a80d53669e50b9dfba7c8e484b1c9ff2a87",
+    "qualname": "_make_unpermute_kernel._unpermute",
+    "relative_path": "src/tileops/kernels/moe/unpermute.py",
+    "selected_source_sha256": "58f548788ff85982a8411cce53a32dcf304b1f71b933320a46794aeaeacbfd21",
+    "source_sha256": "0536233fbe3ab470bbdcb54a923cee2947c5ca69030a5e09e082351d077c09d1",
+    "start_line": 61
+  }
+}

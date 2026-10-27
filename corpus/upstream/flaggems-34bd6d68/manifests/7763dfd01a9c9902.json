@@ -1,0 +1,44 @@
+{
+  "candidate_id": "7763dfd01a9c9902",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/runtime/backend/_nvidia/hopper/ops/mm.py/L1916-L2171__warp_specialized_mm_compute_split_partition__7763dfd01a9c9902.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d1172e177b13115a6073c54f504513e5c0891f50bb1292e8ee29493f304cfb90",
+    "source_map": {
+      "end_line": 2171,
+      "logical_path": "src/flag_gems/runtime/backend/_nvidia/hopper/ops/mm.py",
+      "start_line": 1916
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_warp_specialized_smem_subslice",
+    "tl",
+    "tle_exp",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/7763dfd01a9c9902/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_warp_specialized_smem_subslice"
+  ],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 2171,
+    "git_blob": "8ac7d457cde92ef28b1b71411a6de495aed87e1f",
+    "qualname": "_warp_specialized_mm_compute_split_partition",
+    "relative_path": "src/flag_gems/runtime/backend/_nvidia/hopper/ops/mm.py",
+    "selected_source_sha256": "7cd0265bae219e42cb8d76084efce29e8cbb6a56140af1e51b8b45b2f23da21e",
+    "source_sha256": "678585d9c3dd520d8be9106a51235631cbe9e4e4f339a25bc47c864bfbf43ff7",
+    "start_line": 1916
+  }
+}

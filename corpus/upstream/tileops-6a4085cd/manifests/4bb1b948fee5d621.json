@@ -1,0 +1,71 @@
+{
+  "candidate_id": "4bb1b948fee5d621",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/cumulative.py/L151-L206__row_scan_kernel._func__4bb1b948fee5d621.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "06ca24d8a36c76b9659613d2f5c8d65c59c355f45e2fcdb0944d36960137294f",
+    "source_map": {
+      "end_line": 206,
+      "logical_path": "src/tileops/kernels/reduction/cumulative.py",
+      "start_line": 151
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "T",
+    "WARP_LANES",
+    "chunk_len",
+    "combine",
+    "dtype",
+    "identity",
+    "n_steps",
+    "n_warps",
+    "pad",
+    "threads",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "23ca7d40ca183b03",
+    "62a5b38b3906c67c",
+    "8e0a4c4ee05de323",
+    "a56e4ed9848c0f86",
+    "ccf812d3b67dc421",
+    "d325320cc9b84bcc"
+  ],
+  "lexical_parents": [
+    "_row_scan_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/4bb1b948fee5d621/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "chunk_len",
+    "combine",
+    "dtype",
+    "identity",
+    "n_steps",
+    "n_warps",
+    "pad",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 206,
+    "git_blob": "b8f740281ccc2c3fc39994648b6e4d486b91d36c",
+    "qualname": "_row_scan_kernel._func",
+    "relative_path": "src/tileops/kernels/reduction/cumulative.py",
+    "selected_source_sha256": "4766a1971b079e8fde7c5ac9c42efedb51b3ca6a05066670228910e95e217c30",
+    "source_sha256": "efa3017b88943c3b8caa23082f9879c4ce9ac62736a84faf06af68a0c7093d71",
+    "start_line": 151
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "candidate_id": "0e4661e04495713f",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/flash_mla_with_kvcache_model1.py/L763-L886__model1_consumer1__0e4661e04495713f.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "19f2ff97d3351b7dcfc1bf539ee1d67a1725e6f918e2d9dc8724951d7de1f809",
+    "source_map": {
+      "end_line": 886,
+      "logical_path": "src/flag_gems/fused/flash_mla_with_kvcache_model1.py",
+      "start_line": 763
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "BLOCK_HEADS",
+    "BLOCK_TOKENS",
+    "FULL_HEAD_DIM",
+    "HALF_HEAD_DIM",
+    "_seg_valid_blocks",
+    "_walk_init",
+    "tl",
+    "tle",
+    "tle_subslice",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "366c1d5f42103062",
+    "95986c16943cdbe7"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/0e4661e04495713f/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 886,
+    "git_blob": "552aece10566d0cad70167d207261018502402be",
+    "qualname": "_model1_consumer1",
+    "relative_path": "src/flag_gems/fused/flash_mla_with_kvcache_model1.py",
+    "selected_source_sha256": "caaa86614f97624a04a418dd70d7064c7e9bed16d40f5fea3a6ada46e6f81e87",
+    "source_sha256": "deb75a2e20ee70e98e724a59889f8afeea09a077e27156d2299942b58aaefaaf",
+    "start_line": 763
+  }
+}

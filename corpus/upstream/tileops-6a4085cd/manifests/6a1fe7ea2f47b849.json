@@ -1,0 +1,60 @@
+{
+  "candidate_id": "6a1fe7ea2f47b849",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/norm/fused_add_norm.py/L419-L451__fused_add_rms_norm_split_kernel._apply__6a1fe7ea2f47b849.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "5d2b5ac529b8e67277d5f021fd61351e45a1844609cb575781f3cb536f5bb51b",
+    "source_map": {
+      "end_line": 451,
+      "logical_path": "src/tileops/kernels/norm/fused_add_norm.py",
+      "start_line": 419
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "N",
+    "T",
+    "accum",
+    "dtype",
+    "eps",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "0626df4dd23a449d",
+    "390f6e69a00e9d9a",
+    "4ee28c401729656f",
+    "a70a4a5f002c6e09"
+  ],
+  "lexical_parents": [
+    "_fused_add_rms_norm_split_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/6a1fe7ea2f47b849/unresolved.json",
+    "tileops-6a4085cd/recipes/6a1fe7ea2f47b849/tileops-6a4085cd-root-6a1fe7ea2f47b849-boundary-0a499cde6f-recipe.json",
+    "tileops-6a4085cd/recipes/6a1fe7ea2f47b849/tileops-6a4085cd-root-6a1fe7ea2f47b849-boundary-3ac51cc51d-recipe.json",
+    "tileops-6a4085cd/recipes/6a1fe7ea2f47b849/tileops-6a4085cd-root-6a1fe7ea2f47b849-boundary-5b5932f711-recipe.json",
+    "tileops-6a4085cd/recipes/6a1fe7ea2f47b849/tileops-6a4085cd-root-6a1fe7ea2f47b849-original-09d4ad23ea-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "N",
+    "accum",
+    "dtype",
+    "eps"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 451,
+    "git_blob": "f80ccd65569274bc60da21946f038651a3e340e3",
+    "qualname": "_fused_add_rms_norm_split_kernel._apply",
+    "relative_path": "src/tileops/kernels/norm/fused_add_norm.py",
+    "selected_source_sha256": "c07b69378fabef76358325a541182904312418b0394322a40ba70230e5f71a4c",
+    "source_sha256": "0e7e16774d06bdbd7fafdf2534c06f327b638574f3657d94578d9ecb447f4b6f",
+    "start_line": 419
+  }
+}

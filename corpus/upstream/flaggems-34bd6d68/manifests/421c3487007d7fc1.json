@@ -1,0 +1,43 @@
+{
+  "candidate_id": "421c3487007d7fc1",
+  "candidate_kind": "HEURISTICS_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/bernoulli_.py/L32-L71__bernoulli_kernel__421c3487007d7fc1.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e04ad1a160d88fff3cc5c7efee582f7c7a753945cefb47bec63e8b40c2d35cd6",
+    "source_map": {
+      "end_line": 71,
+      "logical_path": "src/flag_gems/ops/bernoulli_.py",
+      "start_line": 32
+    }
+  },
+  "decorators": [
+    "triton.heuristics",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "runtime",
+    "tl",
+    "triton",
+    "uint_to_uniform_float"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/421c3487007d7fc1/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 71,
+    "git_blob": "f0b7b6826fe568e8a6779fd7130215cfe16b47e5",
+    "qualname": "bernoulli_kernel",
+    "relative_path": "src/flag_gems/ops/bernoulli_.py",
+    "selected_source_sha256": "29f32b533971747207f99b581036c9fb6fdd540fd7acb0a56fa6e1291d183940",
+    "source_sha256": "f2cc091012e3c6006e2c72e75adc48b56cfa2bf72fce3f28c8f0f040dd239cc8",
+    "start_line": 32
+  }
+}

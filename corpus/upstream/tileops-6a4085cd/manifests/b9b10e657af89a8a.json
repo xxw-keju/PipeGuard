@@ -1,0 +1,70 @@
+{
+  "candidate_id": "b9b10e657af89a8a",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/deepseek_mla_decode.py/L24-L623__mla_decode_ws_kernel._mla_decode_ws_func__b9b10e657af89a8a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "60aa1c0b73ae9906992a26b6fed600a74882195fe95df927e0a6978e918ab9dc",
+    "source_map": {
+      "end_line": 623,
+      "logical_path": "src/tileops/kernels/attention/deepseek_mla_decode.py",
+      "start_line": 24
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "heads",
+    "kv_group_num",
+    "kv_head_num",
+    "pe_dim",
+    "seqlen_kv",
+    "sm_scale",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "8f95b8b0fb337441",
+    "fea33852d5bb8c28"
+  ],
+  "lexical_parents": [
+    "_mla_decode_ws_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/b9b10e657af89a8a/unresolved.json",
+    "tileops-6a4085cd/recipes/b9b10e657af89a8a/tileops-6a4085cd-root-b9b10e657af89a8a-boundary-591ce63bb4-recipe.json",
+    "tileops-6a4085cd/recipes/b9b10e657af89a8a/tileops-6a4085cd-root-b9b10e657af89a8a-boundary-87e684f351-recipe.json",
+    "tileops-6a4085cd/recipes/b9b10e657af89a8a/tileops-6a4085cd-root-b9b10e657af89a8a-boundary-ea984e2576-recipe.json",
+    "tileops-6a4085cd/recipes/b9b10e657af89a8a/tileops-6a4085cd-root-b9b10e657af89a8a-original-d1ee625388-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "heads",
+    "kv_group_num",
+    "kv_head_num",
+    "pe_dim",
+    "seqlen_kv",
+    "sm_scale"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 623,
+    "git_blob": "c45b72cc263555d4ffdef2e2edf333be468466ce",
+    "qualname": "_mla_decode_ws_kernel._mla_decode_ws_func",
+    "relative_path": "src/tileops/kernels/attention/deepseek_mla_decode.py",
+    "selected_source_sha256": "c67a4e594d2319f4f3356df269db2e0c92642e8f65d196eea553a1455029c6bd",
+    "source_sha256": "f9c181e90b37b0063040bc45148efe57d78f95586b4a83e9df734dc6988bad8f",
+    "start_line": 24
+  }
+}

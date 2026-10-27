@@ -1,0 +1,40 @@
+{
+  "candidate_id": "4a55dfa83211e0fb",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/kron.py/L198-L224__calculate_batch_indices_kernel__4a55dfa83211e0fb.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1b92cf79966268043bc8bf152fd5fccb26159b1d3329a245e26b188eeae218a7",
+    "source_map": {
+      "end_line": 224,
+      "logical_path": "src/flag_gems/ops/kron.py",
+      "start_line": 198
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/4a55dfa83211e0fb/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 224,
+    "git_blob": "fa2904b1ff1260ea96c1ba6646a7e1bd43e823a7",
+    "qualname": "calculate_batch_indices_kernel",
+    "relative_path": "src/flag_gems/ops/kron.py",
+    "selected_source_sha256": "59b1312ced7e6dd3a9fb05821d78d92adbe604f86d61b5c7f732f01883d38c64",
+    "source_sha256": "ca02822baf57f8b1323b16052a16bd9eff18d87fa4a96057e5ba3f7da708762b",
+    "start_line": 198
+  }
+}

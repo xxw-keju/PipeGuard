@@ -1,0 +1,42 @@
+{
+  "candidate_id": "31424835d1671601",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/threshold.py/L25-L28__threshold_kernel__31424835d1671601.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ed6ce73c4946f9609973eef092ffa280e54d8a829867e2d75a82061c82506d47",
+    "source_map": {
+      "end_line": 28,
+      "logical_path": "src/flag_gems/ops/threshold.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/31424835d1671601/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 28,
+    "git_blob": "301842654965be094285d635a1f88e2254139415",
+    "qualname": "threshold_kernel",
+    "relative_path": "src/flag_gems/ops/threshold.py",
+    "selected_source_sha256": "cd9b57418b441f6d3b7778ea9b43e9b40eb82f013d3a412c5d4ec06f88cb4530",
+    "source_sha256": "ee87f6fbdc122426a129bd1b4b614107aba121c835efeb6f6135bd71e2d87b31",
+    "start_line": 25
+  }
+}

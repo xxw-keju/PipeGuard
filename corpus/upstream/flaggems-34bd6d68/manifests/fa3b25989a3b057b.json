@@ -1,0 +1,40 @@
+{
+  "candidate_id": "fa3b25989a3b057b",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/tensor_split.py/L26-L67__split_copy_kernel__fa3b25989a3b057b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "041e31a264387c38d40ef3ec0e7000b8b036d612bd54c0d1273af9ff6e591c37",
+    "source_map": {
+      "end_line": 67,
+      "logical_path": "src/flag_gems/ops/tensor_split.py",
+      "start_line": 26
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/fa3b25989a3b057b/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 67,
+    "git_blob": "a3e3fe303da8fd439cf59b4f51f12df0572ff9e6",
+    "qualname": "split_copy_kernel",
+    "relative_path": "src/flag_gems/ops/tensor_split.py",
+    "selected_source_sha256": "c8ab730b74a7689e47755a313a773dafe391ccb8ed6dd4aa1e1e3e93d1930744",
+    "source_sha256": "9db8906e57aa9ac0e7b1451834e37564cf36fb19a9e938d3ce3f84a7f834af71",
+    "start_line": 26
+  }
+}

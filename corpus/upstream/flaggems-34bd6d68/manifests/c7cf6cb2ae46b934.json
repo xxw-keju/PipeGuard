@@ -1,0 +1,44 @@
+{
+  "candidate_id": "c7cf6cb2ae46b934",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/runtime/backend/_nvidia/ops/add.py/L20-L46__add_kernel__c7cf6cb2ae46b934.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "30c8da26793ff41b862cba9421e15faed8ab8a66498f9cdcea1d7e5dcbb81ea2",
+    "source_map": {
+      "end_line": 46,
+      "logical_path": "src/flag_gems/runtime/backend/_nvidia/ops/add.py",
+      "start_line": 20
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/c7cf6cb2ae46b934/unresolved.json",
+    "flaggems-34bd6d68/recipes/c7cf6cb2ae46b934/flaggems-root-c7cf6cb2ae46b934-boundary-7965c9e198-recipe.json",
+    "flaggems-34bd6d68/recipes/c7cf6cb2ae46b934/flaggems-root-c7cf6cb2ae46b934-boundary-965bc17d8c-recipe.json",
+    "flaggems-34bd6d68/recipes/c7cf6cb2ae46b934/flaggems-root-c7cf6cb2ae46b934-boundary-a50494e48f-recipe.json",
+    "flaggems-34bd6d68/recipes/c7cf6cb2ae46b934/flaggems-root-c7cf6cb2ae46b934-original-08a32d77e2-recipe.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 46,
+    "git_blob": "952360ff06a0625f325cab12eda44abd82429f27",
+    "qualname": "add_kernel",
+    "relative_path": "src/flag_gems/runtime/backend/_nvidia/ops/add.py",
+    "selected_source_sha256": "635a4af95c071c08b723270c8f84c2647b0ab800f730c2b65325657291288c31",
+    "source_sha256": "4ecf03df7c6e3151fa9f729706d60314f0e7a3a0f15a9b26e8938628e54dcf17",
+    "start_line": 20
+  }
+}

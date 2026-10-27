@@ -1,0 +1,78 @@
+{
+  "candidate_id": "79314d8d18715ba9",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/gemm/dense.py/L691-L781__gemm_splitk_kernel._gemm_splitk_func._gemm_splitk_main__79314d8d18715ba9.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "0710550229c59155f1f8a80506737cb7b8b8ab49aaa607c1af99ae6663ca4ec3",
+    "source_map": {
+      "end_line": 781,
+      "logical_path": "src/tileops/kernels/gemm/dense.py",
+      "start_line": 691
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "a_tile",
+    "accum_dtype",
+    "b_tile",
+    "block_k",
+    "block_m",
+    "block_n",
+    "dtype",
+    "k",
+    "k_slice",
+    "m",
+    "n",
+    "num_stages",
+    "panel_size",
+    "split_k",
+    "threads",
+    "tilelang",
+    "trans_a",
+    "trans_b"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gemm_splitk_kernel",
+    "_gemm_splitk_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/79314d8d18715ba9/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "a_tile",
+    "accum_dtype",
+    "b_tile",
+    "block_k",
+    "block_m",
+    "block_n",
+    "dtype",
+    "k",
+    "k_slice",
+    "m",
+    "n",
+    "num_stages",
+    "panel_size",
+    "split_k",
+    "threads",
+    "trans_a",
+    "trans_b"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 781,
+    "git_blob": "eddbf8bcc75a35fe8b2902263f459502259880a0",
+    "qualname": "_gemm_splitk_kernel._gemm_splitk_func._gemm_splitk_main",
+    "relative_path": "src/tileops/kernels/gemm/dense.py",
+    "selected_source_sha256": "ac6d69d3e251d247f0cb099f2a0e106f9ca5b1bf908896dc63d83b3593489f08",
+    "source_sha256": "5c382dd03a6ec1f75bdcc0e937f6e31308068cbfdd3293a54ca639642501f1bf",
+    "start_line": 691
+  }
+}

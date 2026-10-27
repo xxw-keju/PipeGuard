@@ -1,0 +1,55 @@
+{
+  "candidate_id": "f8b198d0293a0894",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/deltanet_recurrence.py/L219-L229__deltanet_decode_tl._decode_func.deltanet_decode__f8b198d0293a0894.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "b33f0275c65212f4c4947b2cce09f6b7a6326607dc198e904f9836e8e71a5a87",
+    "source_map": {
+      "end_line": 229,
+      "logical_path": "src/tileops/kernels/linear_attention/deltanet_recurrence.py",
+      "start_line": 219
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_decode_body",
+    "batch",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_deltanet_decode_tl",
+    "_decode_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/f8b198d0293a0894/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_decode_body",
+    "batch",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 229,
+    "git_blob": "1a7dda06c6120880e9fac24cdb8418e794149a70",
+    "qualname": "_deltanet_decode_tl._decode_func.deltanet_decode",
+    "relative_path": "src/tileops/kernels/linear_attention/deltanet_recurrence.py",
+    "selected_source_sha256": "4a0fb2d06f4c7a218d9009f56977d327ba4054d41288e9f736e803e43a869a20",
+    "source_sha256": "9c632c992645bc3d279b1124e84c2c56fc955c0ea6b30167aa350bcdc3411648",
+    "start_line": 219
+  }
+}

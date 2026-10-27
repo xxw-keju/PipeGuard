@@ -1,0 +1,42 @@
+{
+  "candidate_id": "2f2edf55495a0fd9",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/maximum.py/L27-L34__maximum_kernel__2f2edf55495a0fd9.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "097cd643338604b2700aa4a61a6c04cbb711555218feba8fcb3af967e2c44b02",
+    "source_map": {
+      "end_line": 34,
+      "logical_path": "src/flag_gems/ops/maximum.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/2f2edf55495a0fd9/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 34,
+    "git_blob": "66266fda97124399fe67f8256964fe04a0c0fc3c",
+    "qualname": "maximum_kernel",
+    "relative_path": "src/flag_gems/ops/maximum.py",
+    "selected_source_sha256": "6c60f4277fcf02340afba52ff823ecb209db19f2a8a28dbac2509312137a707c",
+    "source_sha256": "4b87257b394d76484b6d82b3e494cdec5f67a1b934f9912ee5e84fb5d7502841",
+    "start_line": 27
+  }
+}

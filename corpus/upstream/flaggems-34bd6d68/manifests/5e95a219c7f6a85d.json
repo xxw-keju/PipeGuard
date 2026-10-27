@@ -1,0 +1,47 @@
+{
+  "candidate_id": "5e95a219c7f6a85d",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/matmuladd.py/L31-L105__matmuladd_kernel__5e95a219c7f6a85d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "fa5f2a2e2a8882ad3354d1656e248b570cf54c954e9ba91d1dade17f03a440b8",
+    "source_map": {
+      "end_line": 105,
+      "logical_path": "src/flag_gems/fused/matmuladd.py",
+      "start_line": 31
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "flag_gems.utils.libtuner",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "libtuner",
+    "os",
+    "runtime",
+    "tl",
+    "tle",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/5e95a219c7f6a85d/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 105,
+    "git_blob": "3efa50ba8b8c17c353519fbd75ede3b578b2e7a7",
+    "qualname": "matmuladd_kernel",
+    "relative_path": "src/flag_gems/fused/matmuladd.py",
+    "selected_source_sha256": "a1e9604e717814124046188f7aaeba7196fccaba98c5ef2da0f923766f554f12",
+    "source_sha256": "8bc8aec08b83b523de77ab47e1a9cb4ca25d287d38ad18ad61116798fd3baac1",
+    "start_line": 31
+  }
+}

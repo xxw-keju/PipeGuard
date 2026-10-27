@@ -1,0 +1,43 @@
+{
+  "candidate_id": "35a88d8eb00f0085",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/affine_grid_generator.py/L28-L128__affine_grid_generator_kernel__35a88d8eb00f0085.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c6710e3cbd401689a8e5540b973f33c70f72b60bf087e433ec7bf6234d3a19e7",
+    "source_map": {
+      "end_line": 128,
+      "logical_path": "src/flag_gems/ops/affine_grid_generator.py",
+      "start_line": 28
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "tle",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/35a88d8eb00f0085/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 128,
+    "git_blob": "93cbe69a6495de33ee792bd01978c9a808d16e81",
+    "qualname": "affine_grid_generator_kernel",
+    "relative_path": "src/flag_gems/ops/affine_grid_generator.py",
+    "selected_source_sha256": "d51576817b9a2e93b0b8118e89764b284d2f6c0d4c97866e7862e8f5e3783ce5",
+    "source_sha256": "cbfbe811f0ef152e0ef437549387199d75c4a98b7d7eeec98c9ed1e8ef75523b",
+    "start_line": 28
+  }
+}

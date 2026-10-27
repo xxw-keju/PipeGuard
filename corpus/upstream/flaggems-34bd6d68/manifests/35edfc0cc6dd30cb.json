@@ -1,0 +1,47 @@
+{
+  "candidate_id": "35edfc0cc6dd30cb",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/polygamma.py/L209-L212__trigamma_func__35edfc0cc6dd30cb.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "8b66906fc58073d1a4f3e0aad0ca1bb86f935f5ee1be625871ff3de8f456f651",
+    "source_map": {
+      "end_line": 212,
+      "logical_path": "src/flag_gems/ops/polygamma.py",
+      "start_line": 209
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_trigamma_body",
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "ee89249158e73d53"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/35edfc0cc6dd30cb/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_fast_dividef"
+  ],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 212,
+    "git_blob": "eb5426739d390a9519fbfc2978fce7fbb1ffcff5",
+    "qualname": "trigamma_func",
+    "relative_path": "src/flag_gems/ops/polygamma.py",
+    "selected_source_sha256": "01c690ee3af64876af4be6d86507c76f95793038c39c82f29506fa264369564a",
+    "source_sha256": "5f5b9648834d34feb55da292c701ea6c5f5663d877c6dab834157eb31c8c1a5d",
+    "start_line": 209
+  }
+}

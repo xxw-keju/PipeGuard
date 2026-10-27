@@ -1,0 +1,78 @@
+{
+  "bindings": {
+    "batch": 4,
+    "cache_dtype": {
+      "__pipeguard_missing__": true
+    },
+    "cache_lens": [
+      4096,
+      4096,
+      4096,
+      4096
+    ],
+    "dim": 64,
+    "dtype": "float16",
+    "fuse_rope": {
+      "__pipeguard_missing__": true
+    },
+    "heads": 8,
+    "heads_kv": 2,
+    "is_causal": true,
+    "label": "gqa-prefill-paged-softcap50-b4-prefix4k-chunk512-p64",
+    "manifest": "src/tileops/manifest/attention.yaml",
+    "max_pages_per_req": 72,
+    "max_position": {
+      "__pipeguard_missing__": true
+    },
+    "max_seqlen_q": 512,
+    "operator": "GroupedQueryAttentionPrefillPagedWithKVCacheFwdOp",
+    "page_size": 64,
+    "physical_tokens": 18432,
+    "q_lens": [
+      512,
+      512,
+      512,
+      512
+    ],
+    "rotary_dim": {
+      "__pipeguard_missing__": true
+    },
+    "row_index": 3,
+    "softcap": 50.0,
+    "total_q": 2048
+  },
+  "candidate_id": "6d486ddf9b1ffdc8",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 371,
+      "function": "GroupedQueryAttentionPrefillPagedWithKVCacheFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/attention.yaml",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source_sha256": "3d8867ed58f1b99418e7bf753f3ebe99036c8bb1776d81c5cbf5d85a2594b5b2",
+      "start_line": 289,
+      "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226"
+    }
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/attention.yaml:289-371#GroupedQueryAttentionPrefillPagedWithKVCacheFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-6d486ddf9b1ffdc8-boundary-8862b737cb-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

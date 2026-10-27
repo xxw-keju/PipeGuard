@@ -1,0 +1,40 @@
+{
+  "candidate_id": "9a509bea15a4fc71",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/poisson.py/L43-L64__high_precision_fast_sin_cos__9a509bea15a4fc71.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "95b691cca74e9d70812dbedf8bce44cc6123e0f91d63f26584f8a8d3a81759b1",
+    "source_map": {
+      "end_line": 64,
+      "logical_path": "src/flag_gems/ops/poisson.py",
+      "start_line": 43
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/9a509bea15a4fc71/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 64,
+    "git_blob": "a9b0b22074fef0a89035727644e99f9bf4c3c3c1",
+    "qualname": "high_precision_fast_sin_cos",
+    "relative_path": "src/flag_gems/ops/poisson.py",
+    "selected_source_sha256": "d7a7ac2e29666a0c5618bacacda7ff3773a705caeef8c4fdf2897e1c2e595130",
+    "source_sha256": "e89726e00b91e2e3cd951fd14038ae765d7f3eeffc0f44e085b14a11b37e4e49",
+    "start_line": 43
+  }
+}

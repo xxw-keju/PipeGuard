@@ -1,0 +1,42 @@
+{
+  "candidate_id": "27b5c056e2d158bd",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/lerp.py/L25-L32__lerp_tensor_kernel__27b5c056e2d158bd.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "21da249a307664a7fa70be44981bb150f57f00953ccd7eb1838d9c503aab059c",
+    "source_map": {
+      "end_line": 32,
+      "logical_path": "src/flag_gems/ops/lerp.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/27b5c056e2d158bd/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 32,
+    "git_blob": "f483d8c756e6bdc7d75254d20f6e3048a05b0ba9",
+    "qualname": "lerp_tensor_kernel",
+    "relative_path": "src/flag_gems/ops/lerp.py",
+    "selected_source_sha256": "bc3114b32ef9ab6ca83d647fae06fe6c5391644d57d604d46778510c08089d3b",
+    "source_sha256": "649081331cec76d7f9e41e90faf859760f5340dbf243e8358537ab33585e6deb",
+    "start_line": 25
+  }
+}

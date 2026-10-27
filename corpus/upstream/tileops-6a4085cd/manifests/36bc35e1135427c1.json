@@ -1,0 +1,71 @@
+{
+  "candidate_id": "36bc35e1135427c1",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/deltanet/deltanet_fwd.py/L64-L132__h_recurrence_tl._func__36bc35e1135427c1.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "b3a921389f70c92517947012b487629d92b6b680b89bef400ec2a2e7c908998e",
+    "source_map": {
+      "end_line": 132,
+      "logical_path": "src/tileops/kernels/linear_attention/deltanet/deltanet_fwd.py",
+      "start_line": 64
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "BV",
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_chunks",
+    "num_v_tiles",
+    "seq_len",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "9f1f229c6f4de7ca"
+  ],
+  "lexical_parents": [
+    "_h_recurrence_tl"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/36bc35e1135427c1/unresolved.json",
+    "tileops-6a4085cd/recipes/36bc35e1135427c1/tileops-6a4085cd-root-36bc35e1135427c1-boundary-851e32e4f3-recipe.json",
+    "tileops-6a4085cd/recipes/36bc35e1135427c1/tileops-6a4085cd-root-36bc35e1135427c1-boundary-bff1cd0e00-recipe.json",
+    "tileops-6a4085cd/recipes/36bc35e1135427c1/tileops-6a4085cd-root-36bc35e1135427c1-boundary-d006b0cc54-recipe.json",
+    "tileops-6a4085cd/recipes/36bc35e1135427c1/tileops-6a4085cd-root-36bc35e1135427c1-original-794bfb6d6c-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "BV",
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_chunks",
+    "num_v_tiles",
+    "seq_len"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 132,
+    "git_blob": "ddea4fef7bb0839c935abce081448c367a4cfc84",
+    "qualname": "_h_recurrence_tl._func",
+    "relative_path": "src/tileops/kernels/linear_attention/deltanet/deltanet_fwd.py",
+    "selected_source_sha256": "36a028095f363bc7ec18e6f7a9b6ee7c2ebc759bfcad5a9e861b3d4b65d8b6a8",
+    "source_sha256": "452edf786f2b1d70173fe28d1729aa5203120c1df601c4d0899179743d46b2e0",
+    "start_line": 64
+  }
+}

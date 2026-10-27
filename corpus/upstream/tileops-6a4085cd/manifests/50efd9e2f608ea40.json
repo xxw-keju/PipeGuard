@@ -1,0 +1,103 @@
+{
+  "candidate_id": "50efd9e2f608ea40",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/convolution/conv3d.py/L392-L611__conv3d_ndhwc_kernel._conv3d_ndhwc_func__50efd9e2f608ea40.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e76807314691838b1ce4571ccdaf017cac5354a74a1901c160d2711fcf1ebcf3",
+    "source_map": {
+      "end_line": 611,
+      "logical_path": "src/tileops/kernels/convolution/conv3d.py",
+      "start_line": 392
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "CONV_SWIZZLE_PANEL",
+    "T",
+    "accum_dtype",
+    "c_in",
+    "c_out",
+    "d",
+    "dilation_d",
+    "dilation_h",
+    "dilation_w",
+    "dtype",
+    "h",
+    "has_bias",
+    "k_total",
+    "kernel_d",
+    "kernel_h",
+    "kernel_w",
+    "n",
+    "out_d",
+    "out_dhw",
+    "out_h",
+    "out_w",
+    "pad_d",
+    "pad_h",
+    "pad_w",
+    "stride_d",
+    "stride_h",
+    "stride_w",
+    "tilelang",
+    "w"
+  ],
+  "kernel_dependencies": [
+    "7d7761aa6f62a515",
+    "ee100b44b004a8f3"
+  ],
+  "lexical_parents": [
+    "_conv3d_ndhwc_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/50efd9e2f608ea40/unresolved.json",
+    "tileops-6a4085cd/recipes/50efd9e2f608ea40/tileops-6a4085cd-root-50efd9e2f608ea40-boundary-0cff1a3b73-recipe.json",
+    "tileops-6a4085cd/recipes/50efd9e2f608ea40/tileops-6a4085cd-root-50efd9e2f608ea40-boundary-8bb39afc35-recipe.json",
+    "tileops-6a4085cd/recipes/50efd9e2f608ea40/tileops-6a4085cd-root-50efd9e2f608ea40-boundary-c4e4984f08-recipe.json",
+    "tileops-6a4085cd/recipes/50efd9e2f608ea40/tileops-6a4085cd-root-50efd9e2f608ea40-original-c995541791-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "c_in",
+    "c_out",
+    "d",
+    "dilation_d",
+    "dilation_h",
+    "dilation_w",
+    "dtype",
+    "h",
+    "has_bias",
+    "k_total",
+    "kernel_d",
+    "kernel_h",
+    "kernel_w",
+    "n",
+    "out_d",
+    "out_dhw",
+    "out_h",
+    "out_w",
+    "pad_d",
+    "pad_h",
+    "pad_w",
+    "stride_d",
+    "stride_h",
+    "stride_w",
+    "w"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 611,
+    "git_blob": "2e1903494e62fec9f10f5542b1d2d9bee82fc949",
+    "qualname": "_conv3d_ndhwc_kernel._conv3d_ndhwc_func",
+    "relative_path": "src/tileops/kernels/convolution/conv3d.py",
+    "selected_source_sha256": "e9ffa43e65ea7201c5714c78909b19bcca9c3fdfd05fd4743e20904235d902c3",
+    "source_sha256": "b8c2eeb0f485fbe3574550bfe5ab8b54b0a7d2a07912fe99f85644abb4b4ace2",
+    "start_line": 392
+  }
+}

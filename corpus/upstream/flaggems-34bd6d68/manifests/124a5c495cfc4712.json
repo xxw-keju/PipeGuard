@@ -1,0 +1,42 @@
+{
+  "candidate_id": "124a5c495cfc4712",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/signbit.py/L25-L41__signbit_func__124a5c495cfc4712.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "0726d86346c366c05fed3a61053441de9919b5b7f063fbe8e2bc1b435d719150",
+    "source_map": {
+      "end_line": 41,
+      "logical_path": "src/flag_gems/ops/signbit.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/124a5c495cfc4712/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 41,
+    "git_blob": "be14ac187333834814629aab759f5a114f2147f0",
+    "qualname": "signbit_func",
+    "relative_path": "src/flag_gems/ops/signbit.py",
+    "selected_source_sha256": "e9a9e031f7f60901408aaf5ac380df713285e5c941f30ff11884804dedc87113",
+    "source_sha256": "9739512383b410787ba56d0b13c0fc2c1ad9b141cffee1274fdf0e3bfc509ef9",
+    "start_line": 25
+  }
+}

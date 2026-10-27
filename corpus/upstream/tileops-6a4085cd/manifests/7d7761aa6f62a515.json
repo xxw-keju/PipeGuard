@@ -1,0 +1,71 @@
+{
+  "candidate_id": "7d7761aa6f62a515",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/convolution/conv3d.py/L600-L609__conv3d_ndhwc_kernel._conv3d_ndhwc_func._conv3d_ndhwc_main__7d7761aa6f62a515.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "bdc29effb492641d11130802d2abc9f583c8c9f0d46c39dd856d77475a1ebd39",
+    "source_map": {
+      "end_line": 609,
+      "logical_path": "src/tileops/kernels/convolution/conv3d.py",
+      "start_line": 600
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_conv3d_ndhwc_body",
+    "c_in",
+    "c_out",
+    "d",
+    "dtype",
+    "h",
+    "kernel_d",
+    "kernel_h",
+    "kernel_w",
+    "n",
+    "out_d",
+    "out_h",
+    "out_w",
+    "w"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_conv3d_ndhwc_kernel",
+    "_conv3d_ndhwc_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/7d7761aa6f62a515/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_conv3d_ndhwc_body",
+    "c_in",
+    "c_out",
+    "d",
+    "dtype",
+    "h",
+    "kernel_d",
+    "kernel_h",
+    "kernel_w",
+    "n",
+    "out_d",
+    "out_h",
+    "out_w",
+    "w"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 609,
+    "git_blob": "2e1903494e62fec9f10f5542b1d2d9bee82fc949",
+    "qualname": "_conv3d_ndhwc_kernel._conv3d_ndhwc_func._conv3d_ndhwc_main",
+    "relative_path": "src/tileops/kernels/convolution/conv3d.py",
+    "selected_source_sha256": "13a4f55e44b7748ba82878b8c133671bbc3afe698a40f5f243b0de8694053363",
+    "source_sha256": "b8c2eeb0f485fbe3574550bfe5ab8b54b0a7d2a07912fe99f85644abb4b4ace2",
+    "start_line": 600
+  }
+}

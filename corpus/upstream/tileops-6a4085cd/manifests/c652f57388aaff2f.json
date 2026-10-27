@@ -1,0 +1,59 @@
+{
+  "candidate_id": "c652f57388aaff2f",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/elementwise/_builders.py/L503-L516__make_binary_explicit.kernel__c652f57388aaff2f.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "216d54b477e1a4d25ca57903ee60f7fd5fdc67e4863c7db2c7c345fcf6652725",
+    "source_map": {
+      "end_line": 516,
+      "logical_path": "src/tileops/kernels/elementwise/_builders.py",
+      "start_line": 503
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "N_total",
+    "_row_broadcast_prim",
+    "a_numel",
+    "b_numel",
+    "dtype",
+    "op_name",
+    "out_dtype",
+    "plan_name",
+    "stage",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_binary_explicit"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/c652f57388aaff2f/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "N_total",
+    "a_numel",
+    "b_numel",
+    "dtype",
+    "op_name",
+    "out_dtype",
+    "plan_name",
+    "stage"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 516,
+    "git_blob": "0c45343c49b95aa2efab1af3f2e989f386f4bad6",
+    "qualname": "_make_binary_explicit.kernel",
+    "relative_path": "src/tileops/kernels/elementwise/_builders.py",
+    "selected_source_sha256": "362d931b8381cf75e54f142d2290dd007be7fa91ccca9dff757a7bc4c32c86c3",
+    "source_sha256": "a851eb7a9d7fdad7d1d283b1f9cde3066ab9d2890635d43edfd89e4546450e33",
+    "start_line": 503
+  }
+}

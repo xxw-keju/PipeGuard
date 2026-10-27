@@ -1,0 +1,63 @@
+{
+  "candidate_id": "bd9dbf94ce190d6b",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/norm/rms_norm.py/L35-L111__rms_norm_kernel._func__bd9dbf94ce190d6b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f07239c9333cebb5c397cbb9e5e09721034ac8dcdf2238aded8c5a38d81020df",
+    "source_map": {
+      "end_line": 111,
+      "logical_path": "src/tileops/kernels/norm/rms_norm.py",
+      "start_line": 35
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "N_padded",
+    "T",
+    "dtype",
+    "eps",
+    "partial_min_elements",
+    "sm_count",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "4c82e0aae29221bd"
+  ],
+  "lexical_parents": [
+    "_rms_norm_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/bd9dbf94ce190d6b/unresolved.json",
+    "tileops-6a4085cd/recipes/bd9dbf94ce190d6b/tileops-6a4085cd-root-bd9dbf94ce190d6b-boundary-5d689b139d-recipe.json",
+    "tileops-6a4085cd/recipes/bd9dbf94ce190d6b/tileops-6a4085cd-root-bd9dbf94ce190d6b-boundary-7007629de4-recipe.json",
+    "tileops-6a4085cd/recipes/bd9dbf94ce190d6b/tileops-6a4085cd-root-bd9dbf94ce190d6b-boundary-ad3e94c970-recipe.json",
+    "tileops-6a4085cd/recipes/bd9dbf94ce190d6b/tileops-6a4085cd-root-bd9dbf94ce190d6b-original-92267879d5-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "N_padded",
+    "dtype",
+    "eps",
+    "partial_min_elements",
+    "sm_count"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 111,
+    "git_blob": "71d20ce4221189eb67ff1a30f8ee0948d5450436",
+    "qualname": "_rms_norm_kernel._func",
+    "relative_path": "src/tileops/kernels/norm/rms_norm.py",
+    "selected_source_sha256": "430b2879faa6ac7d989c4dfde40367f0a145a3adf8275b7be6033db3f7ac3e1c",
+    "source_sha256": "705620ffa1d41a0dc542e0f2965bcbec28da0c94ce1783222e947a12551cea75",
+    "start_line": 35
+  }
+}

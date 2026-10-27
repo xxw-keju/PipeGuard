@@ -1,0 +1,75 @@
+{
+  "candidate_id": "90cf3d0be3ba256a",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/mamba/ssd_chunk_state.py/L105-L252__ssd_chunk_state_fwd_kernel.kernel_func__90cf3d0be3ba256a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "14a2de5b31fa3e6f5019c557956b34ba4e2e707e7e9567c6145514025473095e",
+    "source_map": {
+      "end_line": 252,
+      "logical_path": "src/tileops/kernels/mamba/ssd_chunk_state.py",
+      "start_line": 105
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "B",
+    "C",
+    "G",
+    "H",
+    "HEADS_PER_GROUP",
+    "N",
+    "P",
+    "Q",
+    "S",
+    "T",
+    "accum_dtype",
+    "dt_dtype",
+    "dtype",
+    "has_seq_idx",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "382fd0dedce4da51"
+  ],
+  "lexical_parents": [
+    "_ssd_chunk_state_fwd_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/90cf3d0be3ba256a/unresolved.json",
+    "tileops-6a4085cd/recipes/90cf3d0be3ba256a/tileops-6a4085cd-root-90cf3d0be3ba256a-boundary-145b63065f-recipe.json",
+    "tileops-6a4085cd/recipes/90cf3d0be3ba256a/tileops-6a4085cd-root-90cf3d0be3ba256a-boundary-68d06ff85a-recipe.json",
+    "tileops-6a4085cd/recipes/90cf3d0be3ba256a/tileops-6a4085cd-root-90cf3d0be3ba256a-boundary-954246b232-recipe.json",
+    "tileops-6a4085cd/recipes/90cf3d0be3ba256a/tileops-6a4085cd-root-90cf3d0be3ba256a-original-4ddcd3c2b8-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "B",
+    "C",
+    "G",
+    "H",
+    "HEADS_PER_GROUP",
+    "N",
+    "P",
+    "Q",
+    "S",
+    "accum_dtype",
+    "dt_dtype",
+    "dtype",
+    "has_seq_idx"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 252,
+    "git_blob": "f5a4a387e4667349325e8c1ed35f26047f0990a0",
+    "qualname": "_ssd_chunk_state_fwd_kernel.kernel_func",
+    "relative_path": "src/tileops/kernels/mamba/ssd_chunk_state.py",
+    "selected_source_sha256": "474bc1f02b0199ec8f7fefad12c1b4875823328531592077f56a3d0d965f22aa",
+    "source_sha256": "c0e57ac759d2dfd742e1b4e950518d70fd086aff4a8fed1a58fadfd4a717ecfc",
+    "start_line": 105
+  }
+}

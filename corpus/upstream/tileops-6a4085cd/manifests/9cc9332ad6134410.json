@@ -1,0 +1,52 @@
+{
+  "candidate_id": "9cc9332ad6134410",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/logsumexp.py/L124-L138__logsumexp_split_fold_kernel._func.main__9cc9332ad6134410.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "af65bad8c2fe3a6dfdcbbe599965900f7f7572557f9236bf535fb47f6fa7e998",
+    "source_map": {
+      "end_line": 138,
+      "logical_path": "src/tileops/kernels/reduction/logsumexp.py",
+      "start_line": 124
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "T",
+    "WARP_LANES",
+    "dtype",
+    "fold",
+    "num_segs"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_logsumexp_split_fold_kernel",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/9cc9332ad6134410/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "dtype",
+    "fold",
+    "num_segs"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 138,
+    "git_blob": "c058d9fc3f595d7e541677ecfaeb273794604fe5",
+    "qualname": "_logsumexp_split_fold_kernel._func.main",
+    "relative_path": "src/tileops/kernels/reduction/logsumexp.py",
+    "selected_source_sha256": "72fcac95a2192e92fcd0c442d0f72354a9a8ea049657a0d5346114221687d6e1",
+    "source_sha256": "e4657d98707c16b2e25e9eb1bde9797b626d5388a4e975d5d48c436344d33a57",
+    "start_line": 124
+  }
+}

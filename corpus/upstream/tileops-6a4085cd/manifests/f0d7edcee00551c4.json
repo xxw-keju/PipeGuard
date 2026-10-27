@@ -1,0 +1,63 @@
+{
+  "candidate_id": "f0d7edcee00551c4",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/fft.py/L563-L620__fft_c2c_kernel._fft_lut_func._fft_lut_main__f0d7edcee00551c4.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "8e1fca00f9cb4f60285e7768c7a52ae6f767a22c4396879c5e600c06e085ed0e",
+    "source_map": {
+      "end_line": 620,
+      "logical_path": "src/tileops/kernels/fft.py",
+      "start_line": 563
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "B",
+    "T",
+    "fused_bitrev_smem_stages",
+    "lut_butterfly_radix4",
+    "lut_butterfly_radix8",
+    "lut_butterfly_stage",
+    "lut_size",
+    "lut_stage_count",
+    "lut_stage_start",
+    "n",
+    "real_dtype"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_fft_c2c_kernel",
+    "_fft_lut_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/f0d7edcee00551c4/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "B",
+    "fused_bitrev_smem_stages",
+    "lut_butterfly_radix4",
+    "lut_butterfly_radix8",
+    "lut_butterfly_stage",
+    "lut_size",
+    "lut_stage_count",
+    "lut_stage_start",
+    "n",
+    "real_dtype"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 620,
+    "git_blob": "2fda92499e3533ef19c98612d9f9efae69eb3167",
+    "qualname": "_fft_c2c_kernel._fft_lut_func._fft_lut_main",
+    "relative_path": "src/tileops/kernels/fft.py",
+    "selected_source_sha256": "ae1adec100dfdeca916d1fc08deb66a2e6c5f5ada5c01e036158b261a01d054c",
+    "source_sha256": "cf04b0c949c5006065b0327031ef5ed0219a5fcf142b09ff276d34d77a73dd6d",
+    "start_line": 563
+  }
+}

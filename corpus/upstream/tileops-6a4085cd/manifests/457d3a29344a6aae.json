@@ -1,0 +1,47 @@
+{
+  "candidate_id": "457d3a29344a6aae",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_dense.py/L43-L121__gqa_dense_rope_qk_kernel__457d3a29344a6aae.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "574dbd7f8d300cb0332435c80c431a68f534848177a17f5503364c0f5899776a",
+    "source_map": {
+      "end_line": 121,
+      "logical_path": "src/tileops/kernels/attention/gqa_dense.py",
+      "start_line": 43
+    }
+  },
+  "decorators": [
+    "functools.lru_cache",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_COMPILE_FLAGS",
+    "_PASS_CONFIGS",
+    "functools",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "5570aa0c5d507979",
+    "db796e81f7045fd0"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/457d3a29344a6aae/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 121,
+    "git_blob": "18d371cf6eed3b31b775897e390e13ee4c81035c",
+    "qualname": "_gqa_dense_rope_qk_kernel",
+    "relative_path": "src/tileops/kernels/attention/gqa_dense.py",
+    "selected_source_sha256": "2d3cd4c95d4a957d03fbcea69e624f59378339ac8f20e4f468a16880bfe14b2f",
+    "source_sha256": "d8de663ae697439fb195b587bd93175217635380ccf624ca7dfafa1e95c2844f",
+    "start_line": 43
+  }
+}

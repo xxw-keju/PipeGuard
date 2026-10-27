@@ -1,0 +1,44 @@
+{
+  "candidate_id": "3c989406e3817156",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/xlogy.py/L43-L46__xlogy_func_tensor_scalar__3c989406e3817156.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "24f2f8e448da54b17051fb705b67fcf96d85a45370cd76b2030431c4d69af0fe",
+    "source_map": {
+      "end_line": 46,
+      "logical_path": "src/flag_gems/ops/xlogy.py",
+      "start_line": 43
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_xlogy_compute",
+    "pointwise_dynamic",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "2046684122d9ed0c"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/3c989406e3817156/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 46,
+    "git_blob": "4806bcf8ce297c8fe1f2c3b877a72457d5468210",
+    "qualname": "xlogy_func_tensor_scalar",
+    "relative_path": "src/flag_gems/ops/xlogy.py",
+    "selected_source_sha256": "b2574668f52d8a5e974ee35b905614799a5d1d60317e6144e446655a1261e55f",
+    "source_sha256": "e28f19aa2d1e1db9531cf61eec6dddecda16547f00aacd52d09d85fa424325ef",
+    "start_line": 43
+  }
+}

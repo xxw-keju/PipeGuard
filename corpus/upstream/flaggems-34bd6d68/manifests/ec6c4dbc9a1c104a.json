@@ -1,0 +1,50 @@
+{
+  "candidate_id": "ec6c4dbc9a1c104a",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/cauchy.py/L56-L91__cauchy_kernel__ec6c4dbc9a1c104a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e1cec34b3893391d75b53ba4f8a21cbf6bd491f3399aee62cd4929ddf132b6ad",
+    "source_map": {
+      "end_line": 91,
+      "logical_path": "src/flag_gems/ops/cauchy.py",
+      "start_line": 56
+    }
+  },
+  "decorators": [
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "configs",
+    "tl",
+    "triton",
+    "uint_to_uniform_float",
+    "uniform_to_cauchy"
+  ],
+  "kernel_dependencies": [
+    "f8897143bf017683"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/ec6c4dbc9a1c104a/unresolved.json",
+    "flaggems-34bd6d68/recipes/ec6c4dbc9a1c104a/flaggems-root-ec6c4dbc9a1c104a-boundary-a11ce7653e-recipe.json",
+    "flaggems-34bd6d68/recipes/ec6c4dbc9a1c104a/flaggems-root-ec6c4dbc9a1c104a-boundary-b8556d8efa-recipe.json",
+    "flaggems-34bd6d68/recipes/ec6c4dbc9a1c104a/flaggems-root-ec6c4dbc9a1c104a-boundary-c99179dd10-recipe.json",
+    "flaggems-34bd6d68/recipes/ec6c4dbc9a1c104a/flaggems-root-ec6c4dbc9a1c104a-original-079b7f36e0-recipe.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 91,
+    "git_blob": "d21d3b997a9a0e7a1e5a7a37919ac3c9abf40902",
+    "qualname": "cauchy_kernel",
+    "relative_path": "src/flag_gems/ops/cauchy.py",
+    "selected_source_sha256": "9234a4a7df5ff493e87940d0bff24e3cec178fa0c557a7e9430e41c20776c1e8",
+    "source_sha256": "d0c441f362ef0cf6d457e1dfddad6aa0e778349f44c15e14f4478335613dadf2",
+    "start_line": 56
+  }
+}

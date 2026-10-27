@@ -1,0 +1,42 @@
+{
+  "candidate_id": "0ea1fece3fff72ff",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/cos.py/L25-L28__cos_func__0ea1fece3fff72ff.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d82a43567c99f0f9a95e8f55469ecd0eec64a09fc98580a482bd3abaed03e877",
+    "source_map": {
+      "end_line": 28,
+      "logical_path": "src/flag_gems/ops/cos.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/0ea1fece3fff72ff/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 28,
+    "git_blob": "7f882ca6a9488b7d18d81628545177c6553020f8",
+    "qualname": "cos_func",
+    "relative_path": "src/flag_gems/ops/cos.py",
+    "selected_source_sha256": "a3a8724a433a65033b38a13b44347612be129c1fcd580a8036f5c882d3ad695f",
+    "source_sha256": "2e9f10204c179e7e1fcae8b7a5d7e17a48d920240875bbc5ab59c5591408cded",
+    "start_line": 25
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "candidate_id": "4d84bf1d8e6a17f5",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/softmax.py/L320-L431__softmax_kernel_tiled._func__4d84bf1d8e6a17f5.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c7dfc90cd31248b1c1fa01295854c137a10f97e8adb7fc9e494993cddc912f67",
+    "source_map": {
+      "end_line": 431,
+      "logical_path": "src/tileops/kernels/reduction/softmax.py",
+      "start_line": 320
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "T",
+    "_needs_mask",
+    "_neg_inf",
+    "dtype",
+    "num_tiles",
+    "tile_n",
+    "tilelang",
+    "total_cols"
+  ],
+  "kernel_dependencies": [
+    "20e6dff1c04d686b",
+    "40a55c25cda83455",
+    "a36c96dfeffb3fa0",
+    "ab16c33824989769",
+    "d32569285da421fb"
+  ],
+  "lexical_parents": [
+    "_softmax_kernel_tiled"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/4d84bf1d8e6a17f5/unresolved.json",
+    "tileops-6a4085cd/recipes/4d84bf1d8e6a17f5/tileops-6a4085cd-root-4d84bf1d8e6a17f5-boundary-2a41339ca8-recipe.json",
+    "tileops-6a4085cd/recipes/4d84bf1d8e6a17f5/tileops-6a4085cd-root-4d84bf1d8e6a17f5-boundary-35156aa5fd-recipe.json",
+    "tileops-6a4085cd/recipes/4d84bf1d8e6a17f5/tileops-6a4085cd-root-4d84bf1d8e6a17f5-boundary-4678725aaa-recipe.json",
+    "tileops-6a4085cd/recipes/4d84bf1d8e6a17f5/tileops-6a4085cd-root-4d84bf1d8e6a17f5-original-5005ad4bf4-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "_needs_mask",
+    "_neg_inf",
+    "dtype",
+    "num_tiles",
+    "tile_n",
+    "total_cols"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 431,
+    "git_blob": "58e5ec5ca4f79da63bd0b58fd55e305eb38577f0",
+    "qualname": "_softmax_kernel_tiled._func",
+    "relative_path": "src/tileops/kernels/reduction/softmax.py",
+    "selected_source_sha256": "7d9565682e3264cab199d7db28327cbaa582c9510ba80862ec0f8e4224c9767b",
+    "source_sha256": "6dd6b21c5aabf92075899f8541c12d972b9a6c57ac94598c52e677603f8779e8",
+    "start_line": 320
+  }
+}

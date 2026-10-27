@@ -1,0 +1,51 @@
+{
+  "candidate_id": "8721f2f9be28a436",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/vector_norm.py/L208-L227__inf_merge_kernel._func.main__8721f2f9be28a436.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6d77b6b318c8af9252f7a5dbe31227400ef2e8872be01941e725cdc61b9a3974",
+    "source_map": {
+      "end_line": 227,
+      "logical_path": "src/tileops/kernels/reduction/vector_norm.py",
+      "start_line": 208
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "A",
+    "B",
+    "T",
+    "out_dtype",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_inf_merge_kernel",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/8721f2f9be28a436/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "A",
+    "B",
+    "out_dtype",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 227,
+    "git_blob": "0837020e4cf7a769a8e943939e05bc75a926f233",
+    "qualname": "_inf_merge_kernel._func.main",
+    "relative_path": "src/tileops/kernels/reduction/vector_norm.py",
+    "selected_source_sha256": "a687f1e0dd579db4e71097fcc989af7dea9fce89cc54a51a204cba69fe4bfb12",
+    "source_sha256": "d557e14b22108aa1ac146a0387b0d316134c51296a367e67102cfbc4b2fc5342",
+    "start_line": 208
+  }
+}

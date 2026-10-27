@@ -1,0 +1,103 @@
+{
+  "candidate_id": "0a6e683b7456db52",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gated_deltanet/prefill/prepare_h.py/L67-L403__build_prepare_h_kernel.prepare_h_kernel__0a6e683b7456db52.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6c54adb934cce5620da3e82308f8190f4033444d8fdf10f67d4a22b2a2aec924",
+    "source_map": {
+      "end_line": 403,
+      "logical_path": "src/tileops/kernels/linear_attention/gated_deltanet/prefill/prepare_h.py",
+      "start_line": 67
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "DK",
+    "DV",
+    "H",
+    "Hg",
+    "LOG2E",
+    "T",
+    "a_shape",
+    "accum_dtype",
+    "b_dtype",
+    "b_shape",
+    "batch_size",
+    "block_S",
+    "g_dtype",
+    "g_shape",
+    "h0_dtype",
+    "h0_shape",
+    "h_dtype",
+    "h_shape",
+    "ht_dtype",
+    "ht_shape",
+    "is_cp",
+    "is_varlen",
+    "k_shape",
+    "m_shape",
+    "num_stages",
+    "num_tokens",
+    "qkva_dtype",
+    "seqlen_dtype",
+    "store_final_state",
+    "store_h",
+    "use_initial_state",
+    "v_shape"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_build_prepare_h_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/0a6e683b7456db52/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "DK",
+    "DV",
+    "H",
+    "Hg",
+    "a_shape",
+    "accum_dtype",
+    "b_dtype",
+    "b_shape",
+    "batch_size",
+    "block_S",
+    "g_dtype",
+    "g_shape",
+    "h0_dtype",
+    "h0_shape",
+    "h_dtype",
+    "h_shape",
+    "ht_dtype",
+    "ht_shape",
+    "is_cp",
+    "is_varlen",
+    "k_shape",
+    "m_shape",
+    "num_stages",
+    "num_tokens",
+    "qkva_dtype",
+    "seqlen_dtype",
+    "store_final_state",
+    "store_h",
+    "use_initial_state",
+    "v_shape"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 403,
+    "git_blob": "77f061704ffbabf6fe3a959dada998439bba7022",
+    "qualname": "_build_prepare_h_kernel.prepare_h_kernel",
+    "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/prefill/prepare_h.py",
+    "selected_source_sha256": "f9037c46bf86a6454be1f8b6e75620860cd329b56294611e517f29a96a1e8682",
+    "source_sha256": "0090f2338588f7bac6924c1d67404f8b7dd63bb1d5a996da9002b785137ca5b4",
+    "start_line": 67
+  }
+}

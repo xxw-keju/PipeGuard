@@ -1,0 +1,71 @@
+{
+  "candidate_id": "3409744dde6ed74c",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gated_deltanet/fused_prepare_compute_w_u.py/L47-L178__fused_prepare_compute_w_u_tl._fused_func__3409744dde6ed74c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "da640de9f0c26b1f6bbf402496626fdb941ea083949cec4cac59dbe21d3732f3",
+    "source_map": {
+      "end_line": 178,
+      "logical_path": "src/tileops/kernels/linear_attention/gated_deltanet/fused_prepare_compute_w_u.py",
+      "start_line": 47
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "LOG2E",
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "chunk_size",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "fast_math",
+    "head",
+    "num_rounds",
+    "seq_len",
+    "tilelang",
+    "write_duplicate_A"
+  ],
+  "kernel_dependencies": [
+    "2daf4ddf10e7bb7e",
+    "b68ebb718ef6fb94"
+  ],
+  "lexical_parents": [
+    "fused_prepare_compute_w_u_tl"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/3409744dde6ed74c/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "chunk_size",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "fast_math",
+    "head",
+    "num_rounds",
+    "seq_len",
+    "write_duplicate_A"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 178,
+    "git_blob": "cc6eec63be5fd1fd8227ac44ce4139e2f9257ace",
+    "qualname": "fused_prepare_compute_w_u_tl._fused_func",
+    "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/fused_prepare_compute_w_u.py",
+    "selected_source_sha256": "5eb6a04358ca1a5d9ee8daa4fa30ad3b7074e9811035e98f3bea7f0f33375496",
+    "source_sha256": "6ee89042d31e3b5ec9e895100908f222cf36930bd36342195b9c5e7473d97e55",
+    "start_line": 47
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "candidate_id": "86b03d4268d95ab1",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_fwd.py/L1693-L1931__gqa_prefill_paged_with_kv_cache_rope_fwd_kernel._gqa_prefill_paged_with__0e95d29__86b03d4268d95ab1.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "45b9355330188a4fc067ebaa177b0b1c39f8a2e5c05eb87828832bbd12d84ad5",
+    "source_map": {
+      "end_line": 1931,
+      "logical_path": "src/tileops/kernels/attention/gqa_fwd.py",
+      "start_line": 1693
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "Callable",
+    "T",
+    "_FAST_COMPILE_FLAGS",
+    "_make_apply_softcap_no_mask_guard",
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "groups",
+    "half",
+    "heads",
+    "heads_kv",
+    "is_causal",
+    "make_online_softmax_with_mask_guard",
+    "make_rescale",
+    "max_pages_per_req",
+    "max_position",
+    "page_size",
+    "physical_tokens",
+    "rotary_dim",
+    "scale",
+    "score_scale",
+    "softcap",
+    "tilelang",
+    "total_q",
+    "use_softcap"
+  ],
+  "kernel_dependencies": [
+    "4fdf7c384814773d"
+  ],
+  "lexical_parents": [
+    "_gqa_prefill_paged_with_kv_cache_rope_fwd_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/86b03d4268d95ab1/unresolved.json",
+    "tileops-6a4085cd/recipes/86b03d4268d95ab1/tileops-6a4085cd-root-86b03d4268d95ab1-boundary-8862b737cb-recipe.json",
+    "tileops-6a4085cd/recipes/86b03d4268d95ab1/tileops-6a4085cd-root-86b03d4268d95ab1-boundary-bfabca5b45-recipe.json",
+    "tileops-6a4085cd/recipes/86b03d4268d95ab1/tileops-6a4085cd-root-86b03d4268d95ab1-boundary-d1e92c35c4-recipe.json",
+    "tileops-6a4085cd/recipes/86b03d4268d95ab1/tileops-6a4085cd-root-86b03d4268d95ab1-original-c01f028dcd-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "groups",
+    "half",
+    "heads",
+    "heads_kv",
+    "is_causal",
+    "max_pages_per_req",
+    "max_position",
+    "page_size",
+    "physical_tokens",
+    "rotary_dim",
+    "scale",
+    "score_scale",
+    "softcap",
+    "total_q",
+    "use_softcap"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 1931,
+    "git_blob": "82b87c8358e7c9dfad4f19de7cd36f268a8caefd",
+    "qualname": "_gqa_prefill_paged_with_kv_cache_rope_fwd_kernel._gqa_prefill_paged_with_kv_cache_rope_fwd_func",
+    "relative_path": "src/tileops/kernels/attention/gqa_fwd.py",
+    "selected_source_sha256": "b0a8b94c1220743d8f57ced55ac9a783148d72f94a95a904e46454e0352945ce",
+    "source_sha256": "ff7499fdf6df69bd0028461b99ced1f4cd3fb85abca5c8c790038ef07373bafa",
+    "start_line": 1693
+  }
+}

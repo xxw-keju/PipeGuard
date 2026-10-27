@@ -1,0 +1,68 @@
+{
+  "candidate_id": "ab0a2b0f136ba6b7",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_decode.py/L231-L402__gqa_decode_split_kernel._func__ab0a2b0f136ba6b7.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "82ca614926fd80b9faca36f0adb242abe0b6880cd5c971ba6cc4b99337073993",
+    "source_map": {
+      "end_line": 402,
+      "logical_path": "src/tileops/kernels/attention/gqa_decode.py",
+      "start_line": 231
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "make_apply_softcap",
+    "make_online_softmax",
+    "make_rescale",
+    "scale",
+    "score_scale",
+    "softcap",
+    "tilelang",
+    "use_softcap"
+  ],
+  "kernel_dependencies": [
+    "5314244e514b6441"
+  ],
+  "lexical_parents": [
+    "_gqa_decode_split_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/ab0a2b0f136ba6b7/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "scale",
+    "score_scale",
+    "softcap",
+    "use_softcap"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 402,
+    "git_blob": "034d50cec9d83e7bb7443535ff357d9a9f2cca8c",
+    "qualname": "_gqa_decode_split_kernel._func",
+    "relative_path": "src/tileops/kernels/attention/gqa_decode.py",
+    "selected_source_sha256": "4afde436b793e62a8a7affd5d1fd76566cb369868d999b80f16c7baa57de0afb",
+    "source_sha256": "3b47429a161c358dcd72d5b5055674c5bcd2307e3db8f1ebc1ce3f09b2447177",
+    "start_line": 231
+  }
+}

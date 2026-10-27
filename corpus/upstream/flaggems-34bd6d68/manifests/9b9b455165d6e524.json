@@ -1,0 +1,42 @@
+{
+  "candidate_id": "9b9b455165d6e524",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/linalg_matrix_rank.py/L2343-L2370__matrix_rank_bidiag_rmat_kernel__9b9b455165d6e524.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6f746fdf29af4f14952f206f46d68c65c73624f18c8a69059034f3440c7601a5",
+    "source_map": {
+      "end_line": 2370,
+      "logical_path": "src/flag_gems/ops/linalg_matrix_rank.py",
+      "start_line": 2343
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/9b9b455165d6e524/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 2370,
+    "git_blob": "306e58e320358346c849f8693c7bdfd6b53acc2a",
+    "qualname": "_matrix_rank_bidiag_rmat_kernel",
+    "relative_path": "src/flag_gems/ops/linalg_matrix_rank.py",
+    "selected_source_sha256": "21b66f2ea91f3055b0daba18b5abc3a3ae7c6239b611e5dcaeebcb1cd5b73181",
+    "source_sha256": "3b842d33abf90e7146e4bbf64e450c522bb983349ac0f4f428818935d102ee01",
+    "start_line": 2343
+  }
+}

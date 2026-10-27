@@ -1,0 +1,67 @@
+{
+  "candidate_id": "4d5f097c31440cdd",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/moe/permute_contiguous.py/L276-L315__make_fused_tight._fused__4d5f097c31440cdd.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e6eba2eb13c8cc06e4713ca03d3b860580b5bfa5011e1a3390a786c288a1c8d7",
+    "source_map": {
+      "end_line": 315,
+      "logical_path": "src/tileops/kernels/moe/permute_contiguous.py",
+      "start_line": 276
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "dtype",
+    "grid",
+    "hidden_size",
+    "num_experts",
+    "num_tokens",
+    "numel",
+    "rows_per_block",
+    "scan",
+    "threads",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "a05273af97ee8fb9"
+  ],
+  "lexical_parents": [
+    "_make_fused_tight"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/4d5f097c31440cdd/unresolved.json",
+    "tileops-6a4085cd/recipes/4d5f097c31440cdd/tileops-6a4085cd-root-4d5f097c31440cdd-boundary-069201aa37-recipe.json",
+    "tileops-6a4085cd/recipes/4d5f097c31440cdd/tileops-6a4085cd-root-4d5f097c31440cdd-boundary-127751e0e1-recipe.json",
+    "tileops-6a4085cd/recipes/4d5f097c31440cdd/tileops-6a4085cd-root-4d5f097c31440cdd-boundary-865293fde7-recipe.json",
+    "tileops-6a4085cd/recipes/4d5f097c31440cdd/tileops-6a4085cd-root-4d5f097c31440cdd-original-c655c1f152-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "dtype",
+    "grid",
+    "hidden_size",
+    "num_experts",
+    "num_tokens",
+    "numel",
+    "rows_per_block",
+    "scan",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 315,
+    "git_blob": "3ba5e1956b96d13a90b38cb5e26ffbc2a73ef658",
+    "qualname": "_make_fused_tight._fused",
+    "relative_path": "src/tileops/kernels/moe/permute_contiguous.py",
+    "selected_source_sha256": "c6a7725f11785901ce15c73ee078e0efbcb515870cf0844c06201c3a1090c72e",
+    "source_sha256": "a719141e5612e443cf81785851a84ac3c584e6cc79e77f5cdaa2a37aa6bf7af4",
+    "start_line": 276
+  }
+}

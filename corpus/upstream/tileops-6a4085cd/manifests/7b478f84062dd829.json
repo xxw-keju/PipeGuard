@@ -1,0 +1,59 @@
+{
+  "candidate_id": "7b478f84062dd829",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/moe/permute_contiguous.py/L122-L196__make_aligned_per_row_scan._scan._scan_main__7b478f84062dd829.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "342b3f28a5b5737b1fce8c26ca7d4c647991d17150784b5ef9df3753bf72608a",
+    "source_map": {
+      "end_line": 196,
+      "logical_path": "src/tileops/kernels/moe/permute_contiguous.py",
+      "start_line": 122
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "alignment",
+    "capacity",
+    "num_experts",
+    "num_tokens",
+    "numel",
+    "owner_search_steps",
+    "threads",
+    "top_k"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_aligned_per_row_scan",
+    "_scan"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/7b478f84062dd829/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "alignment",
+    "capacity",
+    "num_experts",
+    "num_tokens",
+    "numel",
+    "owner_search_steps",
+    "threads",
+    "top_k"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 196,
+    "git_blob": "3ba5e1956b96d13a90b38cb5e26ffbc2a73ef658",
+    "qualname": "_make_aligned_per_row_scan._scan._scan_main",
+    "relative_path": "src/tileops/kernels/moe/permute_contiguous.py",
+    "selected_source_sha256": "b446664377a9b1432e30d0939beb06a4ed4b834379312f78034876c24c50269d",
+    "source_sha256": "a719141e5612e443cf81785851a84ac3c584e6cc79e77f5cdaa2a37aa6bf7af4",
+    "start_line": 122
+  }
+}

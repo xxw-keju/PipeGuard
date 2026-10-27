@@ -1,0 +1,69 @@
+{
+  "candidate_id": "d7e19ded69837252",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/reduce.py/L372-L399__stream_kernel._func__d7e19ded69837252.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f469149330f2667de57f4375d84e891785054fedc4be69cd217efb8689b28a47",
+    "source_map": {
+      "end_line": 399,
+      "logical_path": "src/tileops/kernels/reduction/reduce.py",
+      "start_line": 372
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "dtype",
+    "m",
+    "n",
+    "op_kind",
+    "out_dtype",
+    "tilelang",
+    "vec"
+  ],
+  "kernel_dependencies": [
+    "059f4a89eb793573",
+    "105d42d27665c23e",
+    "14da36bb5bdc07a5",
+    "3221ce797f9bf06d",
+    "343cf3d68282f5df",
+    "6294d5e3ae415be4",
+    "663552c929a55147",
+    "7d4a7d84d4a7e543",
+    "c0b9bd01c352c3d9"
+  ],
+  "lexical_parents": [
+    "_stream_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/d7e19ded69837252/unresolved.json",
+    "tileops-6a4085cd/recipes/d7e19ded69837252/tileops-6a4085cd-root-d7e19ded69837252-boundary-43f51e0fe3-recipe.json",
+    "tileops-6a4085cd/recipes/d7e19ded69837252/tileops-6a4085cd-root-d7e19ded69837252-boundary-7133368784-recipe.json",
+    "tileops-6a4085cd/recipes/d7e19ded69837252/tileops-6a4085cd-root-d7e19ded69837252-boundary-ffe280aea5-recipe.json",
+    "tileops-6a4085cd/recipes/d7e19ded69837252/tileops-6a4085cd-root-d7e19ded69837252-original-fa73986de6-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "dtype",
+    "m",
+    "n",
+    "op_kind",
+    "out_dtype",
+    "vec"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 399,
+    "git_blob": "320ca23e14bc2eb1b15b79ff51413e629add6232",
+    "qualname": "_stream_kernel._func",
+    "relative_path": "src/tileops/kernels/reduction/reduce.py",
+    "selected_source_sha256": "7da6dd8ef5e5b7e2c4bf8a81c01ee88b93010734b68bf6ba0a4788efbd046de1",
+    "source_sha256": "26ed7c5be84ffc4bd2b89c3d7d03f9104d534accb25b8e8642894d51b27afd6f",
+    "start_line": 372
+  }
+}

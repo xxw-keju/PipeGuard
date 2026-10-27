@@ -1,0 +1,63 @@
+{
+  "candidate_id": "c6d6539500af5669",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/deltanet/deltanet_fwd.py/L167-L208__output_o_tl._func.output_o_kernel__c6d6539500af5669.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "eea81527f9b407ff5964af9b7241b1f864088173d2bdbdccfc7981a2d04d16d5",
+    "source_map": {
+      "end_line": 208,
+      "logical_path": "src/tileops/kernels/linear_attention/deltanet/deltanet_fwd.py",
+      "start_line": 167
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_chunks",
+    "seq_len",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_output_o_tl",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/c6d6539500af5669/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_chunks",
+    "seq_len",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 208,
+    "git_blob": "ddea4fef7bb0839c935abce081448c367a4cfc84",
+    "qualname": "_output_o_tl._func.output_o_kernel",
+    "relative_path": "src/tileops/kernels/linear_attention/deltanet/deltanet_fwd.py",
+    "selected_source_sha256": "b085ca22dec44e0b608a6bffc6683628fe397ce8aa8976daedd4df8dbbfef3b7",
+    "source_sha256": "452edf786f2b1d70173fe28d1729aa5203120c1df601c4d0899179743d46b2e0",
+    "start_line": 167
+  }
+}

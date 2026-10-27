@@ -1,0 +1,53 @@
+{
+  "candidate_id": "03a1e32dd73154e5",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/elementwise/where.py/L32-L53__make_where_kernel.kernel.main__03a1e32dd73154e5.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "100f77f6cbcebeceb668d117c236ddebe6e1b54317daea3c1de4339a25e51fcd",
+    "source_map": {
+      "end_line": 53,
+      "logical_path": "src/tileops/kernels/elementwise/where.py",
+      "start_line": 32
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "N",
+    "T",
+    "block_size",
+    "dtype",
+    "npt_arg",
+    "threads_arg"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_where_kernel",
+    "kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/03a1e32dd73154e5/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "N",
+    "block_size",
+    "dtype",
+    "npt_arg",
+    "threads_arg"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 53,
+    "git_blob": "42de6b654357f7614e020cf009c9236499880fe8",
+    "qualname": "_make_where_kernel.kernel.main",
+    "relative_path": "src/tileops/kernels/elementwise/where.py",
+    "selected_source_sha256": "1745e2db90a934e1ad8f07962ecb6c6aaa5f1f4dc9ef41e91515cb569da37484",
+    "source_sha256": "6b0941c6ef86f5647dacbd6de15018bf533d4f914ef18ddcd9c7e445455c684c",
+    "start_line": 32
+  }
+}

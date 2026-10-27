@@ -1,0 +1,74 @@
+{
+  "candidate_id": "51a5120bd50725ee",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py/L1477-L1550__prefill_grouped_replay_bthd_tl._func.h_grouped_replay_bthd__51a5120bd50725ee.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "4f666ab0b4f3dd1204002e3a8e1421b0599936d651f31d5fe308b7e90fcfa584",
+    "source_map": {
+      "end_line": 1550,
+      "logical_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+      "start_line": 1477
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "BV",
+    "LOG2E",
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "group_chunks",
+    "head",
+    "num_chunks",
+    "num_groups",
+    "num_stages",
+    "num_v_tiles",
+    "seq_len",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_prefill_grouped_replay_bthd_tl",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/51a5120bd50725ee/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "BV",
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "group_chunks",
+    "head",
+    "num_chunks",
+    "num_groups",
+    "num_stages",
+    "num_v_tiles",
+    "seq_len",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 1550,
+    "git_blob": "f17f222201df2565859754ee60b1ae9c1589ab6f",
+    "qualname": "_prefill_grouped_replay_bthd_tl._func.h_grouped_replay_bthd",
+    "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+    "selected_source_sha256": "135d35f86ace16e5a98116f7c5d5d27431fa6386cd54fe87bd5ad6e41675eedd",
+    "source_sha256": "df6831a09ec97ec92771e1e4aac4f69560b8990dce47f811f0ea25a32cf9d2f1",
+    "start_line": 1477
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "candidate_id": "971939b4659a4419",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/gemm/bmm.py/L129-L220__bmm_fp8_kernel._bmm_fp8_func__971939b4659a4419.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "9e17d7350f3df379407df272ba2e4c19391cd1685ef35babb2132cb1b150e682",
+    "source_map": {
+      "end_line": 220,
+      "logical_path": "src/tileops/kernels/gemm/bmm.py",
+      "start_line": 129
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "Callable",
+    "T",
+    "accum_dtype",
+    "batch",
+    "dtype",
+    "k",
+    "m",
+    "n",
+    "out_dtype",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "112812a12af761f2"
+  ],
+  "lexical_parents": [
+    "_bmm_fp8_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/971939b4659a4419/unresolved.json",
+    "tileops-6a4085cd/recipes/971939b4659a4419/tileops-6a4085cd-root-971939b4659a4419-boundary-4d186b2ddb-recipe.json",
+    "tileops-6a4085cd/recipes/971939b4659a4419/tileops-6a4085cd-root-971939b4659a4419-boundary-76c667303f-recipe.json",
+    "tileops-6a4085cd/recipes/971939b4659a4419/tileops-6a4085cd-root-971939b4659a4419-boundary-f01480de17-recipe.json",
+    "tileops-6a4085cd/recipes/971939b4659a4419/tileops-6a4085cd-root-971939b4659a4419-original-b14bf2d0a1-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "dtype",
+    "k",
+    "m",
+    "n",
+    "out_dtype"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 220,
+    "git_blob": "8390bc82e3bebddcfddb77368d4e6c412a1a9a7d",
+    "qualname": "_bmm_fp8_kernel._bmm_fp8_func",
+    "relative_path": "src/tileops/kernels/gemm/bmm.py",
+    "selected_source_sha256": "2dc7d03b92b254ce8cfa96a009f838c1690fd4ebdaf5100068d4f6818c977529",
+    "source_sha256": "e4d71d7ba1d0c0f20af3d43e5c3ac65746417645cc6ed658de3fc424e1671dcc",
+    "start_line": 129
+  }
+}

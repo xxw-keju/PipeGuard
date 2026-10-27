@@ -1,0 +1,29 @@
+{
+  "bindings": {},
+  "candidate_id": "a12a69f0af3cc28e",
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "a12a69f0af3cc28e-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "_gqa_decode_split",
+    "batch",
+    "combine",
+    "concrete_specialization",
+    "dtype",
+    "heads",
+    "num_split",
+    "page_size",
+    "part_shape",
+    "seqlen_kv",
+    "shape_kv",
+    "shape_o",
+    "shape_q"
+  ]
+}

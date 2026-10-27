@@ -1,0 +1,42 @@
+{
+  "candidate_id": "025b0037693881d6",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/not_equal.py/L44-L47__not_equal_func_scalar__025b0037693881d6.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "0d69344c549b091a02657f22a850fb7467e6daec6686c02ec1e811338702f56e",
+    "source_map": {
+      "end_line": 47,
+      "logical_path": "src/flag_gems/ops/not_equal.py",
+      "start_line": 44
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/025b0037693881d6/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 47,
+    "git_blob": "3838dee39ddf443d14d7874a367a4a7a041746d9",
+    "qualname": "not_equal_func_scalar",
+    "relative_path": "src/flag_gems/ops/not_equal.py",
+    "selected_source_sha256": "2573d0cd2913b206e50735bb66e1e9b24f2ffde0eff7987ae330145c4506f5bd",
+    "source_sha256": "16656adb29f50a3c269545cee32d8df4c2e7d952ae292a4da0fa5e5067972820",
+    "start_line": 44
+  }
+}

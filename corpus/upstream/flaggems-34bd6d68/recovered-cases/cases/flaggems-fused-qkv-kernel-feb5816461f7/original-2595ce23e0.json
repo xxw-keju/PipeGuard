@@ -1,0 +1,122 @@
+{
+  "arguments": {
+    "block_size": 16,
+    "n_heads": 8,
+    "num_tokens": 1
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-fused-qkv-kernel-feb5816461f7-original-2595ce23e0",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:q_ptr",
+        "1": "global:kv_ptr",
+        "2": "global:k_cache_ptr",
+        "3": "global:slot_mapping_ptr",
+        "4": "global:position_ids_ptr",
+        "5": "global:cos_sin_cache_ptr",
+        "6": "global:num_q_items"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "CACHE_BLOCK_SIZE": 1,
+      "NUM_HEADS": 16,
+      "eps": 1.0,
+      "stride_cache_block": 16,
+      "stride_cache_token": 1,
+      "stride_cos_sin_pos": 1,
+      "stride_kv_tok": 1,
+      "stride_q_head": 1,
+      "stride_q_tok": 1,
+      "total_items": 1
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "cos_sin_cache_ptr": "*fp32",
+      "k_cache_ptr": "*fp32",
+      "kv_ptr": "*fp32",
+      "num_q_items": "*fp32",
+      "position_ids_ptr": "*i64",
+      "q_ptr": "*fp32",
+      "slot_mapping_ptr": "*i64"
+    }
+  },
+  "evidence": [
+    "flaggems-launch-e0828569dbbbc1d4",
+    "flaggems-test-69c488c99d271b9e",
+    "source-274e00da976946bc"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-fused-qkv-kernel-feb5816461f7",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_fused_deepseek_v4_qnorm_rope_kv_rope_insert.py:188-227#test_combined",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ],
+  "workload_recovery": {
+    "method": "static-source-and-case-heuristic-v1",
+    "notes": [
+      "All scalar parameters are compile-time specialized.",
+      "Pointer types derive from source use, parameter names, and the case dtype.",
+      "The recovered workload checks CTA (0,0,0) with a one-CTA launch and is not evidence for the original full launch grid."
+    ],
+    "original_case_path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/corpus/upstream/suite3/kernels/triton/flaggems/flaggems-fused-qkv-kernel-feb5816461f7/cases/original-2595ce23e0.json",
+    "status": "HEURISTIC"
+  }
+}

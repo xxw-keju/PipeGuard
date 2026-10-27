@@ -1,0 +1,58 @@
+{
+  "candidate_id": "baa0ac54ae47eeeb",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/argreduce.py/L539-L566__argreduce_multicta_final_kernel._func.main__baa0ac54ae47eeeb.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ae8e1063250e344cea2055e0e947cf75afd50b74d6937cc46efdbc9cff726930",
+    "source_map": {
+      "end_line": 566,
+      "logical_path": "src/tileops/kernels/reduction/argreduce.py",
+      "start_line": 539
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "T",
+    "WARP_LANES",
+    "ctas_per_row",
+    "num_partials",
+    "ops",
+    "partials_per_lane",
+    "rows_per_block",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_argreduce_multicta_final_kernel",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/baa0ac54ae47eeeb/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "ctas_per_row",
+    "num_partials",
+    "ops",
+    "partials_per_lane",
+    "rows_per_block",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 566,
+    "git_blob": "0ab600ca4858368a54c58cb048927b48221d1ad1",
+    "qualname": "_argreduce_multicta_final_kernel._func.main",
+    "relative_path": "src/tileops/kernels/reduction/argreduce.py",
+    "selected_source_sha256": "a45901f02b6c3125b38dac06b3718c12a33f8fd1a4bb99ecf718df463398774b",
+    "source_sha256": "9ee78705cb497eab60aa6b70a0cf7a1f01e9d369ae346b45820dc02b20da8d98",
+    "start_line": 539
+  }
+}

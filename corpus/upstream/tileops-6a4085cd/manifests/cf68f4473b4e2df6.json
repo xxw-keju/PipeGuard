@@ -1,0 +1,71 @@
+{
+  "candidate_id": "cf68f4473b4e2df6",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py/L422-L798__prefill_blocksolve_A_bthd_tl._func.prefill_blocksolve_A_bthd_tl__cf68f4473b4e2df6.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "73908a8cf1a10fa00cfa5d264e8a2a052c6539bfff5796f1af3f5cb03e4c1d5d",
+    "source_map": {
+      "end_line": 798,
+      "logical_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+      "start_line": 422
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "LOG2E",
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_c",
+    "block_k",
+    "block_t",
+    "chunk_size",
+    "dim_k",
+    "dtype",
+    "head",
+    "seq_len",
+    "solve_dtype",
+    "threads",
+    "tilelang",
+    "use_gate"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_prefill_blocksolve_A_bthd_tl",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/cf68f4473b4e2df6/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_c",
+    "block_k",
+    "block_t",
+    "chunk_size",
+    "dim_k",
+    "dtype",
+    "head",
+    "seq_len",
+    "solve_dtype",
+    "threads",
+    "use_gate"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 798,
+    "git_blob": "f17f222201df2565859754ee60b1ae9c1589ab6f",
+    "qualname": "_prefill_blocksolve_A_bthd_tl._func.prefill_blocksolve_A_bthd_tl",
+    "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+    "selected_source_sha256": "07a171621bf20a51de39ae7763dea42bc8fc6aeb0eab7eb1baf68251c3c527e1",
+    "source_sha256": "df6831a09ec97ec92771e1e4aac4f69560b8990dce47f811f0ea25a32cf9d2f1",
+    "start_line": 422
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "candidate_id": "c4335917839c86d7",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py/L382-L483__dh_recurrence_bwd_tl._func.dh_recurrence_bwd_kernel__c4335917839c86d7.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "254bc9ee318b8dc5cd590942e75917b4d028836171a72d28c2369634a56f07a2",
+    "source_map": {
+      "end_line": 483,
+      "logical_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+      "start_line": 382
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "BV",
+    "LOG2E",
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "correction_from_carry",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_chunks",
+    "num_stages",
+    "num_v_tiles",
+    "seq_len",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_dh_recurrence_bwd_tl",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/c4335917839c86d7/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "BV",
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "correction_from_carry",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_chunks",
+    "num_stages",
+    "num_v_tiles",
+    "seq_len",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 483,
+    "git_blob": "8e5c33a97fe8c7c54307fd1577c5ceef698647f9",
+    "qualname": "_dh_recurrence_bwd_tl._func.dh_recurrence_bwd_kernel",
+    "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+    "selected_source_sha256": "324c230f247a15a9ca01b2aa69a731877ee247a4cb5a9565951b6130bf04b22b",
+    "source_sha256": "a679b2910c2571827fb5c58d51facfff1dad0a4ef3e01d9870ab43ad6d71ff1a",
+    "start_line": 382
+  }
+}

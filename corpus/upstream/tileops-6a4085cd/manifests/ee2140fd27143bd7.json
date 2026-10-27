@@ -1,0 +1,73 @@
+{
+  "candidate_id": "ee2140fd27143bd7",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/mamba/ssd_state_passing.py/L97-L224__ssd_state_passing_fwd_kernel.kernel_func.main__ee2140fd27143bd7.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d85d439b596697746f0457026fcee0265707435bb3037ce1a9bde65fd5e9e6b8",
+    "source_map": {
+      "end_line": 224,
+      "logical_path": "src/tileops/kernels/mamba/ssd_state_passing.py",
+      "start_line": 97
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "B",
+    "C",
+    "D",
+    "H",
+    "T",
+    "accum_dtype",
+    "block_d",
+    "dA_shape",
+    "dtype",
+    "final_shape",
+    "has_initial_states",
+    "init_shape",
+    "out_shape",
+    "states_shape",
+    "threads",
+    "vectorize"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_ssd_state_passing_fwd_kernel",
+    "kernel_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/ee2140fd27143bd7/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "B",
+    "C",
+    "D",
+    "H",
+    "accum_dtype",
+    "block_d",
+    "dA_shape",
+    "dtype",
+    "final_shape",
+    "has_initial_states",
+    "init_shape",
+    "out_shape",
+    "states_shape",
+    "threads",
+    "vectorize"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 224,
+    "git_blob": "f2c2101fc1380aadeb52d6c21c6d3cde8cdf9005",
+    "qualname": "_ssd_state_passing_fwd_kernel.kernel_func.main",
+    "relative_path": "src/tileops/kernels/mamba/ssd_state_passing.py",
+    "selected_source_sha256": "d14a0435933d700bbffdc5833b969f7b44b7b69b8f6091026fc508864917693c",
+    "source_sha256": "1121592e5feb9bb3d443048d2fa5f242281d973c8ec8c0644d06626a78f666f8",
+    "start_line": 97
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "candidate_id": "403ccb9e676d84f2",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/cummin.py/L356-L433__scan_part_min_abc_loop_kernel__403ccb9e676d84f2.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "bc8bfb371f7c861887bec25b09450903e29df15de95004bb957b7244dfb37da3",
+    "source_map": {
+      "end_line": 433,
+      "logical_path": "src/flag_gems/ops/cummin.py",
+      "start_line": 356
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "get_dtype_max",
+    "libentry",
+    "tl",
+    "tl_cummin",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "c727ddc730d4bdf4"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/403ccb9e676d84f2/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 433,
+    "git_blob": "0c40dfb8f97eb65bef8242b9968f534ae2e86113",
+    "qualname": "scan_part_min_abc_loop_kernel",
+    "relative_path": "src/flag_gems/ops/cummin.py",
+    "selected_source_sha256": "26e804fd50d48c05a2ec0534feae0b9b9a7309ae2042054d6b67ec31ced0d246",
+    "source_sha256": "0310b56daf8e340b6e7dbae30e88ed9e6ee99ee8e334dd652a63d9f5d266d74b",
+    "start_line": 356
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "candidate_id": "2f8d717a3e029e54",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/topk_selector.py/L33-L243__topk_selector_kernel.topk_selector_fwd_func__2f8d717a3e029e54.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "403cd338acb9fbbc93d5223fe8d926f7e28d0335e7bdea55d4e6cfe467d110f7",
+    "source_map": {
+      "end_line": 243,
+      "logical_path": "src/tileops/kernels/topk_selector.py",
+      "start_line": 33
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "convert_to_uint16",
+    "convert_to_uint32",
+    "in_dtype",
+    "kv_group",
+    "out_dtype",
+    "seq_len",
+    "tilelang",
+    "topk"
+  ],
+  "kernel_dependencies": [
+    "6a9760007f65026c"
+  ],
+  "lexical_parents": [
+    "_topk_selector_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/2f8d717a3e029e54/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "in_dtype",
+    "kv_group",
+    "out_dtype",
+    "seq_len",
+    "topk"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 243,
+    "git_blob": "8380f1b86301ed15ed34a819585c87ea73e7dd40",
+    "qualname": "_topk_selector_kernel.topk_selector_fwd_func",
+    "relative_path": "src/tileops/kernels/topk_selector.py",
+    "selected_source_sha256": "d002ddae3a2fe976873a5310d6e1bef2de36f0b8da1c9128f16ebad5c582575e",
+    "source_sha256": "ff6aee71cde6201979dc83ac118263b300f6b0a482ffe097f534a12e495a9f04",
+    "start_line": 33
+  }
+}

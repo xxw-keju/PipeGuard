@@ -1,0 +1,42 @@
+{
+  "candidate_id": "2265ef46e9002427",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/chunk_gated_delta_rule.py/L27-L52__l2_normalize_last_dim_kernel__2265ef46e9002427.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "76369cb0f9565f40258ccaa4414ac31bbb5c050ef3b3bfb3aff02bb1d87bd291",
+    "source_map": {
+      "end_line": 52,
+      "logical_path": "src/flag_gems/fused/chunk_gated_delta_rule.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/2265ef46e9002427/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 52,
+    "git_blob": "f83077f2f57fd59895a75edd590685beeb909574",
+    "qualname": "_l2_normalize_last_dim_kernel",
+    "relative_path": "src/flag_gems/fused/chunk_gated_delta_rule.py",
+    "selected_source_sha256": "ecf87d1946389a6b43d0e24eb57e0a80eb703d7a28b615354ab572fc96b31b67",
+    "source_sha256": "a424df896889034a496fcb4e1fc14dc585a06b8ba7d19254502b247e496e5108",
+    "start_line": 27
+  }
+}

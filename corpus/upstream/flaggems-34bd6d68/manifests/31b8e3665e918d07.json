@@ -1,0 +1,42 @@
+{
+  "candidate_id": "31b8e3665e918d07",
+  "candidate_kind": "HEURISTICS_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/FLA/fused_recurrent.py/L179-L333__fused_recurrent_gated_delta_rule_fwd_kernel__31b8e3665e918d07.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "22d6c294c7d36a8718611cb02838f19490eef59a491552632dfcc1ca16143653",
+    "source_map": {
+      "end_line": 333,
+      "logical_path": "src/flag_gems/fused/FLA/fused_recurrent.py",
+      "start_line": 179
+    }
+  },
+  "decorators": [
+    "triton.heuristics",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "exp",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/31b8e3665e918d07/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 333,
+    "git_blob": "9d2688d3a056c1e6f8ac920644c35b9446ceabaf",
+    "qualname": "fused_recurrent_gated_delta_rule_fwd_kernel",
+    "relative_path": "src/flag_gems/fused/FLA/fused_recurrent.py",
+    "selected_source_sha256": "72ebd216f19263c75b3c779b86389076303075ef346bce0097633ac70b52feb7",
+    "source_sha256": "c756b775eadb90866a9857a22be9e8d4dd0f6c7fb13d84ec108ee7ac7c2a6735",
+    "start_line": 179
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "candidate_id": "4f0b1aaa6536f2f8",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gla/gla_fwd.py/L46-L70__gla_precompute_g_kernel._fn._main__4f0b1aaa6536f2f8.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "eae88496f78d38bb3558e7e27de2152813510fee52be275caa67a14d8cfb2c15",
+    "source_map": {
+      "end_line": 70,
+      "logical_path": "src/tileops/kernels/linear_attention/gla/gla_fwd.py",
+      "start_line": 46
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "chunk_size",
+    "dim_k",
+    "dtype",
+    "g_cumsum_shape",
+    "g_shape",
+    "heads",
+    "num_chunks",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gla_precompute_g_kernel",
+    "_fn"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/4f0b1aaa6536f2f8/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "chunk_size",
+    "dim_k",
+    "dtype",
+    "g_cumsum_shape",
+    "g_shape",
+    "heads",
+    "num_chunks",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 70,
+    "git_blob": "ac69443c53fa2949cab0e9995a30c3b4e3e0d198",
+    "qualname": "_gla_precompute_g_kernel._fn._main",
+    "relative_path": "src/tileops/kernels/linear_attention/gla/gla_fwd.py",
+    "selected_source_sha256": "4858472dbd263931dce939e5f8cc347c38701b3915c55d4c1956aa20e0e070f4",
+    "source_sha256": "2d705431f6eaee6b6ef0244a342dbdbf47baf39a2a2548ece26a006b7893eb8c",
+    "start_line": 46
+  }
+}

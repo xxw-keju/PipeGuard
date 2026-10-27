@@ -1,0 +1,63 @@
+{
+  "candidate_id": "eed455e6111837e1",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/norm/batch_norm.py/L260-L345__batch_norm_fwd_train_kernel._bn_fwd_train_func._bn_fwd_train__eed455e6111837e1.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "b1e37c7fefed0968257e5df769e0a7f1eb2732d611c3b4da08779da58c6ed0fe",
+    "source_map": {
+      "end_line": 345,
+      "logical_path": "src/tileops/kernels/norm/batch_norm.py",
+      "start_line": 260
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "C",
+    "L",
+    "S",
+    "T",
+    "accum_dtype",
+    "block_l",
+    "dtype",
+    "eps",
+    "momentum",
+    "plane",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_batch_norm_fwd_train_kernel",
+    "_bn_fwd_train_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/eed455e6111837e1/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "C",
+    "L",
+    "S",
+    "accum_dtype",
+    "block_l",
+    "dtype",
+    "eps",
+    "momentum",
+    "plane",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 345,
+    "git_blob": "0ccb20ea41803be6d41bff30d9c76977b9657c6f",
+    "qualname": "_batch_norm_fwd_train_kernel._bn_fwd_train_func._bn_fwd_train",
+    "relative_path": "src/tileops/kernels/norm/batch_norm.py",
+    "selected_source_sha256": "bec721627664bd87c9094987fbbfccb4af292517a5ed67f4537904647941b521",
+    "source_sha256": "afbc631ec701d9859bc479c2ae128946f2db10c28ec4cab748f50a47d7a00d19",
+    "start_line": 260
+  }
+}

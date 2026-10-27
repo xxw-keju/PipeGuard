@@ -1,0 +1,68 @@
+{
+  "candidate_id": "5e90c0bee1df850e",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/argreduce.py/L467-L512__argreduce_multicta_partial_kernel._func.main__5e90c0bee1df850e.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "a9120cbe7cc4cf54e05e7808d9e2306bebd5ea110827b75431e5110aae0995c4",
+    "source_map": {
+      "end_line": 512,
+      "logical_path": "src/tileops/kernels/reduction/argreduce.py",
+      "start_line": 467
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "T",
+    "_NUM_ACCUMULATORS",
+    "block_reduce",
+    "chunk_size",
+    "ctas_per_row",
+    "dtype",
+    "iterations",
+    "key_of",
+    "num_partials",
+    "num_warps",
+    "ops",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_argreduce_multicta_partial_kernel",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/5e90c0bee1df850e/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "block_reduce",
+    "chunk_size",
+    "ctas_per_row",
+    "dtype",
+    "iterations",
+    "key_of",
+    "num_partials",
+    "num_warps",
+    "ops",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 512,
+    "git_blob": "0ab600ca4858368a54c58cb048927b48221d1ad1",
+    "qualname": "_argreduce_multicta_partial_kernel._func.main",
+    "relative_path": "src/tileops/kernels/reduction/argreduce.py",
+    "selected_source_sha256": "150ce630ec6ad3ad020103e41a60196446a3be266fe6da385821809355670ab9",
+    "source_sha256": "9ee78705cb497eab60aa6b70a0cf7a1f01e9d369ae346b45820dc02b20da8d98",
+    "start_line": 467
+  }
+}

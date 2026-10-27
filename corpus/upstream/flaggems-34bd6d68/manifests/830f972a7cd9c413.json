@@ -1,0 +1,41 @@
+{
+  "candidate_id": "830f972a7cd9c413",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/__ilshift__.py/L25-L28__ilshift_kernel__830f972a7cd9c413.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "7643ea14eabdd7316b84c320a3136e503a37378e68675111deb72c06fd3d156d",
+    "source_map": {
+      "end_line": 28,
+      "logical_path": "src/flag_gems/ops/__ilshift__.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/830f972a7cd9c413/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 28,
+    "git_blob": "50e4f642ffbabb555db32dbfd4a19183182f8735",
+    "qualname": "ilshift_kernel",
+    "relative_path": "src/flag_gems/ops/__ilshift__.py",
+    "selected_source_sha256": "e888ef0f3466e6830ce260251c6b92558069c119103702f413d57d183164b526",
+    "source_sha256": "062e63a51b4a35c05461a05acb46baba96c418573921e6e88f55ef22946ff739",
+    "start_line": 25
+  }
+}

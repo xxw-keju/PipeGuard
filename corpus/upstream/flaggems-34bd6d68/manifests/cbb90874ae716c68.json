@@ -1,0 +1,40 @@
+{
+  "candidate_id": "cbb90874ae716c68",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/rrelu_with_noise_backward.py/L27-L61__rrelu_with_noise_backward_kernel__cbb90874ae716c68.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6c3d78321c1a2202674999c84a7c126193714e78e7ab00298f457713bc366065",
+    "source_map": {
+      "end_line": 61,
+      "logical_path": "src/flag_gems/ops/rrelu_with_noise_backward.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/cbb90874ae716c68/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 61,
+    "git_blob": "07d09d1844e0f3f106807667d8718d1546afd81a",
+    "qualname": "rrelu_with_noise_backward_kernel",
+    "relative_path": "src/flag_gems/ops/rrelu_with_noise_backward.py",
+    "selected_source_sha256": "72103e448ba9cacc865a8917ec7362453c1d0996b21a74918e670b2604ff98b1",
+    "source_sha256": "5d5253bf4e36de1350cd0f5ea773d15fb10dd941e61eb9012b5309d0e5edbc24",
+    "start_line": 27
+  }
+}

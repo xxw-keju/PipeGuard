@@ -1,0 +1,75 @@
+{
+  "bindings": {
+    "chunk_size": 64,
+    "dtype": "float16",
+    "g_shape": [
+      2,
+      4096,
+      4,
+      64
+    ],
+    "initial_state_shape": [
+      2,
+      4,
+      64,
+      64
+    ],
+    "k_shape": [
+      2,
+      4096,
+      4,
+      64
+    ],
+    "label": "gla-init-b2-s4k-h4-d64",
+    "manifest": "src/tileops/manifest/linear_attention.yaml",
+    "operator": "GLAFwdOp",
+    "q_shape": [
+      2,
+      4096,
+      4,
+      64
+    ],
+    "row_index": 1,
+    "scale": 0.125,
+    "v_shape": [
+      2,
+      4096,
+      4,
+      64
+    ]
+  },
+  "candidate_id": "1b32c8eb4b2b3138",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 574,
+      "function": "GLAFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/linear_attention.yaml",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source_sha256": "3cb4d56341b78389086c6ef3f1742b4fc9cbb1434026b0930e7953a83368fea0",
+      "start_line": 538,
+      "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226"
+    }
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/linear_attention.yaml:538-574#GLAFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-1b32c8eb4b2b3138-boundary-d947d737a8-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

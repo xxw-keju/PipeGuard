@@ -1,0 +1,63 @@
+{
+  "candidate_id": "a2a0a25b86c1d1a3",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/deltanet_recurrence.py/L72-L128__deltanet_decode_raw_cuda_flastyle_tl._decode_func.deltanet_decode_raw_c__b380441__a2a0a25b86c1d1a3.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "de4cf840522f6ce4bfa7ee1e076d46b783d0ec1af4093493b5c6f6fec71f9e23",
+    "source_map": {
+      "end_line": 128,
+      "logical_path": "src/tileops/kernels/linear_attention/deltanet_recurrence.py",
+      "start_line": 72
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "batch",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "k_chunk",
+    "raw_group_size",
+    "threads",
+    "total_blocks",
+    "v_tile"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_deltanet_decode_raw_cuda_flastyle_tl",
+    "_decode_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/a2a0a25b86c1d1a3/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "batch",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "k_chunk",
+    "raw_group_size",
+    "threads",
+    "total_blocks",
+    "v_tile"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 128,
+    "git_blob": "1a7dda06c6120880e9fac24cdb8418e794149a70",
+    "qualname": "_deltanet_decode_raw_cuda_flastyle_tl._decode_func.deltanet_decode_raw_cuda_flastyle",
+    "relative_path": "src/tileops/kernels/linear_attention/deltanet_recurrence.py",
+    "selected_source_sha256": "a445742e6269fde0db50e2f254a6104037c43e760f0278193f8c65be37686dbd",
+    "source_sha256": "9c632c992645bc3d279b1124e84c2c56fc955c0ea6b30167aa350bcdc3411648",
+    "start_line": 72
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "candidate_id": "a82c22fd0bd9a3d0",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilekernels-36d9e45d/capsules/tile_kernels/moe/topk_gate_kernel.py/L10-L55__get_topk_gate_kernel__a82c22fd0bd9a3d0.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "8f97ba7ab24ce7e2d1269619797e6db10033b3df1c7f7b51a6fac12718746d60",
+    "source_map": {
+      "end_line": 55,
+      "logical_path": "tile_kernels/moe/topk_gate_kernel.py",
+      "start_line": 10
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "align",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "e7c50687dde874a3"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilekernels-36d9e45d/recipes/a82c22fd0bd9a3d0/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+    "end_line": 55,
+    "git_blob": "1b2ce99cd353ffb7194bf877ff42b1a409eba58c",
+    "qualname": "get_topk_gate_kernel",
+    "relative_path": "tile_kernels/moe/topk_gate_kernel.py",
+    "selected_source_sha256": "9bb8e17ee3dcce5650ee975d8908d834bc086fdd59784aa856437dfbee9c7197",
+    "source_sha256": "83f1a98980a5f6da6b0e4c455f760a9ea7885c475b62141cd6678457f9134192",
+    "start_line": 10
+  }
+}

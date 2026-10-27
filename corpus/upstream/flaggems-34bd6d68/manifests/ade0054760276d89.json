@@ -1,0 +1,40 @@
+{
+  "candidate_id": "ade0054760276d89",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/hardtanh_backward.py/L25-L49__hardtanh_backward_kernel__ade0054760276d89.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d123bc44b0896374b15c164f613d655a5ac91bc205096f03d0bd0605dfdeec68",
+    "source_map": {
+      "end_line": 49,
+      "logical_path": "src/flag_gems/ops/hardtanh_backward.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/ade0054760276d89/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 49,
+    "git_blob": "ff7da9e9923195a09a932f9ada906d61828dd565",
+    "qualname": "hardtanh_backward_kernel",
+    "relative_path": "src/flag_gems/ops/hardtanh_backward.py",
+    "selected_source_sha256": "a45be77611ae16221fe201767f1c0dcece7744aa34259e2f98b3ad3721c267f5",
+    "source_sha256": "815b5b0dd51a709dee438b7c84a32ab72932281d33ca4bcbbff27329c0688e8f",
+    "start_line": 25
+  }
+}

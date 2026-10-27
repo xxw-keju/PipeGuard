@@ -1,0 +1,45 @@
+{
+  "candidate_id": "4acb1ece8a1d8969",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/cross_entropy_loss.py/L302-L384__celoss_probability_bwd__4acb1ece8a1d8969.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "9ef1bf87fd753563b22458effb88a8c291eff325f81c46a458a8726cd6d8ecdf",
+    "source_map": {
+      "end_line": 384,
+      "logical_path": "src/flag_gems/fused/cross_entropy_loss.py",
+      "start_line": 302
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "libentry",
+    "runtime",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/4acb1ece8a1d8969/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 384,
+    "git_blob": "70129025b26dd518f6c36e1fbc9533e510a49e25",
+    "qualname": "celoss_probability_bwd",
+    "relative_path": "src/flag_gems/fused/cross_entropy_loss.py",
+    "selected_source_sha256": "a326c0872a80d8ec5a8e70bdeb9bf8be27d14ed4a9158263524ce7b303fb7b15",
+    "source_sha256": "31f62737ad03e7bf0f34a748fc7555a0a5f049d3d45528791380ff790c5beafc",
+    "start_line": 302
+  }
+}

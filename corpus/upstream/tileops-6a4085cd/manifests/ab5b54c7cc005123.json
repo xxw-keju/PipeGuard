@@ -1,0 +1,68 @@
+{
+  "candidate_id": "ab5b54c7cc005123",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/logical_reduce.py/L231-L291__logical_reduce_kernel._func__ab5b54c7cc005123.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ab40d89aeb2a1826cdee07df94fd55da02d5f0b22aab997829ad3442755d35db",
+    "source_map": {
+      "end_line": 291,
+      "logical_path": "src/tileops/kernels/reduction/logical_reduce.py",
+      "start_line": 231
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "N_padded",
+    "T",
+    "_needs_pad",
+    "_pad_val",
+    "dtype",
+    "op_kind",
+    "out_dtype",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "0253ce7873ffa569",
+    "66464020f7ba8e43",
+    "6be28329d60b2a3a",
+    "b4e6db775ff73e29"
+  ],
+  "lexical_parents": [
+    "_logical_reduce_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/ab5b54c7cc005123/unresolved.json",
+    "tileops-6a4085cd/recipes/ab5b54c7cc005123/tileops-6a4085cd-root-ab5b54c7cc005123-boundary-123cb4f6d7-recipe.json",
+    "tileops-6a4085cd/recipes/ab5b54c7cc005123/tileops-6a4085cd-root-ab5b54c7cc005123-boundary-27ddebae2d-recipe.json",
+    "tileops-6a4085cd/recipes/ab5b54c7cc005123/tileops-6a4085cd-root-ab5b54c7cc005123-boundary-7167cab9dd-recipe.json",
+    "tileops-6a4085cd/recipes/ab5b54c7cc005123/tileops-6a4085cd-root-ab5b54c7cc005123-original-3adb0216c7-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "N_padded",
+    "_needs_pad",
+    "_pad_val",
+    "dtype",
+    "op_kind",
+    "out_dtype"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 291,
+    "git_blob": "3c1be4810f285d2805a4a4748a171d971d06b0d0",
+    "qualname": "_logical_reduce_kernel._func",
+    "relative_path": "src/tileops/kernels/reduction/logical_reduce.py",
+    "selected_source_sha256": "8e66fa0630fd8c5a61cb3edb56e8a7dc51ff6aa56715e728a2107ee249b78702",
+    "source_sha256": "9525d80d367f2e3c599e4c5024a84e839f66ccd4a65493137c111bfa426f2195",
+    "start_line": 231
+  }
+}

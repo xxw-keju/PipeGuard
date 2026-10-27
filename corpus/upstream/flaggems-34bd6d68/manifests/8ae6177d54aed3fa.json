@@ -1,0 +1,44 @@
+{
+  "candidate_id": "8ae6177d54aed3fa",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/poisson.py/L86-L96__poisson_corrected_normal__8ae6177d54aed3fa.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "43ef08ec4177191a20d609c4ae1102f68ad2cadc676d15b82759b20888359211",
+    "source_map": {
+      "end_line": 96,
+      "logical_path": "src/flag_gems/ops/poisson.py",
+      "start_line": 86
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "high_precision_fast_sin_cos",
+    "tl",
+    "triton",
+    "uint_to_uniform_float"
+  ],
+  "kernel_dependencies": [
+    "9a509bea15a4fc71"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/8ae6177d54aed3fa/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 96,
+    "git_blob": "a9b0b22074fef0a89035727644e99f9bf4c3c3c1",
+    "qualname": "poisson_corrected_normal",
+    "relative_path": "src/flag_gems/ops/poisson.py",
+    "selected_source_sha256": "024771b3a80605da532e021c9f334e7abf4db73d206181a59396a1007b1084a2",
+    "source_sha256": "e89726e00b91e2e3cd951fd14038ae765d7f3eeffc0f44e085b14a11b37e4e49",
+    "start_line": 86
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "candidate_id": "01fe54d46cc49f5a",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/runtime/backend/_nvidia/hopper/grouped_topk.py/L84-L258__group_idx_and_topk_triton__01fe54d46cc49f5a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "2bc8b031b4faa759fb3edcb19a61d9ad2c789259a973acf11b616caf2ecfbfc8",
+    "source_map": {
+      "end_line": 258,
+      "logical_path": "src/flag_gems/runtime/backend/_nvidia/hopper/grouped_topk.py",
+      "start_line": 84
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libdevice",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/01fe54d46cc49f5a/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 258,
+    "git_blob": "d499225e099472c90efb0c87a0ffd73b811a6b85",
+    "qualname": "group_idx_and_topk_triton",
+    "relative_path": "src/flag_gems/runtime/backend/_nvidia/hopper/grouped_topk.py",
+    "selected_source_sha256": "d91ddae46fb8c892b05c8c2e6dae0d752bd38667b5b931d1bada00a1566e520c",
+    "source_sha256": "260e03543724d34f2f7715d7a933de42f93f27baaf5da56aed5183c8aace1936",
+    "start_line": 84
+  }
+}

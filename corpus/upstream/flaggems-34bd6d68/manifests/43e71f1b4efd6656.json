@@ -1,0 +1,46 @@
+{
+  "candidate_id": "43e71f1b4efd6656",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/deepseek_v4_attention_compute_global_topk_indices_and_lens.py/L49-L121__compute_global_topk_indices_and_lens_kernel__43e71f1b4efd6656.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "898206778e0ec322df9d13bad9da39f7966711b3cfb8d8b0c5388d008bb6a217",
+    "source_map": {
+      "end_line": 121,
+      "logical_path": "src/flag_gems/fused/deepseek_v4_attention_compute_global_topk_indices_and_lens.py",
+      "start_line": 49
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "flag_gems.utils.libtuner",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_prune_configs",
+    "libentry",
+    "libtuner",
+    "runtime",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/43e71f1b4efd6656/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 121,
+    "git_blob": "7717573475c3c388dd1fd18864c1aabad5c52c86",
+    "qualname": "_compute_global_topk_indices_and_lens_kernel",
+    "relative_path": "src/flag_gems/fused/deepseek_v4_attention_compute_global_topk_indices_and_lens.py",
+    "selected_source_sha256": "1165f1fd7d1feaa55246e2a923dc91b6cf0e11ae57b3a4e159f1c935f0680592",
+    "source_sha256": "d2b59fbb08ef414dc5f8f6fb69a3a928a6232d2ac5a6e72b9c48848364771093",
+    "start_line": 49
+  }
+}

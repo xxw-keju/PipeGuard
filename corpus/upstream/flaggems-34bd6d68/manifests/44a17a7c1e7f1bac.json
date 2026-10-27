@@ -1,0 +1,45 @@
+{
+  "candidate_id": "44a17a7c1e7f1bac",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/runtime/backend/_nvidia/hopper/ops/sqrt.py/L27-L50__sqrt_kernel__44a17a7c1e7f1bac.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ffacf8e25da97037f0efbe7e9bbca976886f7d1ee4610261a83a2897d8f00363",
+    "source_map": {
+      "end_line": 50,
+      "logical_path": "src/flag_gems/runtime/backend/_nvidia/hopper/ops/sqrt.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "flag_gems.utils.libtuner",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "libtuner",
+    "runtime",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/44a17a7c1e7f1bac/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 50,
+    "git_blob": "006c782967e703a4dcc4963756e1d3598d6a8461",
+    "qualname": "sqrt_kernel",
+    "relative_path": "src/flag_gems/runtime/backend/_nvidia/hopper/ops/sqrt.py",
+    "selected_source_sha256": "87a7ec532c5ab4043d66ca9eaf555b480ab529353094120eb658f7619683abf2",
+    "source_sha256": "d4b8410983c85ddd4f3e429818da9bce5cd941a0ac4cf535efd7582a9b523b74",
+    "start_line": 27
+  }
+}

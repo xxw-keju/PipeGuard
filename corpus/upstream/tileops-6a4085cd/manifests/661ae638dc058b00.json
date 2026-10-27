@@ -1,0 +1,56 @@
+{
+  "candidate_id": "661ae638dc058b00",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/fp8_lightning_indexer.py/L174-L194__clean_logits_.clean_logits_kernel__661ae638dc058b00.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "004dd6ec2b3c8b246a79c8198f60cf7e5ed43545983e341a7c751dd234c1fe71",
+    "source_map": {
+      "end_line": 194,
+      "logical_path": "src/tileops/kernels/fp8_lightning_indexer.py",
+      "start_line": 174
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "batch",
+    "dtype",
+    "indices_dtype",
+    "kv_group",
+    "seq_len",
+    "seq_len_kv",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "clean_logits_"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/661ae638dc058b00/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "batch",
+    "dtype",
+    "indices_dtype",
+    "kv_group",
+    "seq_len",
+    "seq_len_kv",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 194,
+    "git_blob": "ab2ba8c6af88a1c698c573d5196b30674bc28fc2",
+    "qualname": "clean_logits_.clean_logits_kernel",
+    "relative_path": "src/tileops/kernels/fp8_lightning_indexer.py",
+    "selected_source_sha256": "ba7e366d60a7947f29c78c740c4b437d0069ef131fe7d599fea5f77408eba9c3",
+    "source_sha256": "2bdde2ae0ebfebac8047180387dc83dc52465f1fc0b25b70b1f52b0d46194cd5",
+    "start_line": 174
+  }
+}

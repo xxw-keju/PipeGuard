@@ -1,0 +1,90 @@
+{
+  "candidate_id": "c31f0bd81da02516",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gla/gla_bwd.py/L221-L519__gla_bwd_fused_kernel._fused_func._main__c31f0bd81da02516.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "50d0b1df2052aba83e68253c28b99b0b2273064abc670d1541b5663e700eca29",
+    "source_map": {
+      "end_line": 519,
+      "logical_path": "src/tileops/kernels/linear_attention/gla/gla_bwd.py",
+      "start_line": 221
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "BC",
+    "BT",
+    "LOG2E",
+    "NS",
+    "T",
+    "accum_dtype",
+    "batch",
+    "dg_shape",
+    "dh_shape",
+    "dim_k",
+    "dim_v",
+    "dk_shape",
+    "do_shape",
+    "dq_shape",
+    "dtype",
+    "dv_shape",
+    "g_cumsum_shape",
+    "h_shape",
+    "heads",
+    "k_shape",
+    "num_chunks",
+    "q_shape",
+    "scale",
+    "threads",
+    "v_shape"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gla_bwd_fused_kernel",
+    "_fused_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/c31f0bd81da02516/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "BC",
+    "BT",
+    "NS",
+    "accum_dtype",
+    "batch",
+    "dg_shape",
+    "dh_shape",
+    "dim_k",
+    "dim_v",
+    "dk_shape",
+    "do_shape",
+    "dq_shape",
+    "dtype",
+    "dv_shape",
+    "g_cumsum_shape",
+    "h_shape",
+    "heads",
+    "k_shape",
+    "num_chunks",
+    "q_shape",
+    "scale",
+    "threads",
+    "v_shape"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 519,
+    "git_blob": "695a2114b83f55f3f3a67d0f2b614a09dce8d5d1",
+    "qualname": "_gla_bwd_fused_kernel._fused_func._main",
+    "relative_path": "src/tileops/kernels/linear_attention/gla/gla_bwd.py",
+    "selected_source_sha256": "510dd509460e959646c0e6b0a4dd2c31674ea1860f140c40d1570092ba44e182",
+    "source_sha256": "246a362fd38a9fd56a564131053018d43544a7bb8aa2172cf23fcf06ff81996e",
+    "start_line": 221
+  }
+}

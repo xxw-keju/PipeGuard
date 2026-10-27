@@ -1,0 +1,43 @@
+{
+  "candidate_id": "996ef177fc090a17",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/randn.py/L62-L68__pair_uniform_to_normal_fast__996ef177fc090a17.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "10632cac5d48e4bde44ffdb8d851121069e30378f8111116786ba079b93da512",
+    "source_map": {
+      "end_line": 68,
+      "logical_path": "src/flag_gems/ops/randn.py",
+      "start_line": 62
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "high_precision_fast_sin_cos",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "556a9df26af1efe1"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/996ef177fc090a17/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 68,
+    "git_blob": "2ea708276354c244ed57649245b2dd3a729362f6",
+    "qualname": "pair_uniform_to_normal_fast",
+    "relative_path": "src/flag_gems/ops/randn.py",
+    "selected_source_sha256": "dc56ef07488287d8f063ddad3f486356a90c6d9440deb74b18700829df44b4f4",
+    "source_sha256": "f0c89b53d3a8445146580575b96f294a73edda18a98e622c9ed3543e74eff7d8",
+    "start_line": 62
+  }
+}

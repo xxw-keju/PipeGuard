@@ -1,0 +1,87 @@
+{
+  "candidate_id": "54c89ef9f6a9552d",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_fwd_ws.py/L573-L1026__gqa_fwd_ws_persistent_causal_kernel.func.main__54c89ef9f6a9552d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "57789ceeb4236ea6b7a82e985c3ba61f46fdeec4fd08e70f284e525e8209a8a5",
+    "source_map": {
+      "end_line": 1026,
+      "logical_path": "src/tileops/kernels/attention/gqa_fwd_ws.py",
+      "start_line": 573
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "NUM_SMS",
+    "T",
+    "accum_dtype",
+    "apply_softcap_1",
+    "apply_softcap_2",
+    "apply_softcap_causal_mask",
+    "batch",
+    "block_m",
+    "block_n",
+    "dim",
+    "dtype",
+    "groups",
+    "half_m",
+    "half_m_blocks",
+    "hkv_sections",
+    "kv_shape",
+    "m_blocks",
+    "q_shape",
+    "rescale_1",
+    "rescale_2",
+    "softmax_1",
+    "softmax_2",
+    "tilelang",
+    "use_softcap"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gqa_fwd_ws_persistent_causal_kernel",
+    "func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/54c89ef9f6a9552d/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "apply_softcap_1",
+    "apply_softcap_2",
+    "apply_softcap_causal_mask",
+    "batch",
+    "block_m",
+    "block_n",
+    "dim",
+    "dtype",
+    "groups",
+    "half_m",
+    "half_m_blocks",
+    "hkv_sections",
+    "kv_shape",
+    "m_blocks",
+    "q_shape",
+    "rescale_1",
+    "rescale_2",
+    "softmax_1",
+    "softmax_2",
+    "use_softcap"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 1026,
+    "git_blob": "ba81d2efba6d0eb883cf43ce2224bd210290b27b",
+    "qualname": "_gqa_fwd_ws_persistent_causal_kernel.func.main",
+    "relative_path": "src/tileops/kernels/attention/gqa_fwd_ws.py",
+    "selected_source_sha256": "de78db5aa91975d56fb2e3fe53c80befb328e2fec5661ba4984ea8ec9f4aa368",
+    "source_sha256": "a2c40f86ab99071cd82578e5e2eb8a5a49d63855bb0158263632257a1ebbdd19",
+    "start_line": 573
+  }
+}

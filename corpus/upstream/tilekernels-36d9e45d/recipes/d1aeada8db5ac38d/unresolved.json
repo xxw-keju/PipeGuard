@@ -1,0 +1,40 @@
+{
+  "bindings": {},
+  "candidate_id": "d1aeada8db5ac38d",
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "d1aeada8db5ac38d-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "block_k",
+    "block_m",
+    "concrete_specialization",
+    "hidden",
+    "in_config",
+    "in_sf_shape",
+    "in_sf_stride",
+    "load_sf",
+    "num_in_sf_per_block_k",
+    "num_in_sf_per_block_m",
+    "num_in_sf_per_out_sf",
+    "num_in_sf_per_out_sf_k",
+    "num_in_sf_per_out_sf_m",
+    "num_out_sf_per_block_k",
+    "num_out_sf_per_block_m",
+    "num_threads",
+    "num_tokens",
+    "out_config",
+    "out_sf_shape",
+    "out_sf_stride",
+    "store_sf",
+    "token_stride",
+    "transform_sf_to_fp32",
+    "transform_sf_to_uint32"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "candidate_id": "0bc9673cafdd72a6",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/flipud.py/L47-L73__flipud_strided_kernel__0bc9673cafdd72a6.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "3dbdaa37f5f2f1febf8d983f224cd11c9ac3769cb72802e96e9e80650f95ee7e",
+    "source_map": {
+      "end_line": 73,
+      "logical_path": "src/flag_gems/ops/flipud.py",
+      "start_line": 47
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/0bc9673cafdd72a6/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 73,
+    "git_blob": "f85ca110937f07278134f21db0f48d240555dacb",
+    "qualname": "flipud_strided_kernel",
+    "relative_path": "src/flag_gems/ops/flipud.py",
+    "selected_source_sha256": "fe096c5b81d7a9792b702d5608cc961d4078068a2362cf81a8180ca7ac84c294",
+    "source_sha256": "3c94c0c43618064bd190f646b8258710a77d98a3885d6087dbd4c1152629e1d1",
+    "start_line": 47
+  }
+}

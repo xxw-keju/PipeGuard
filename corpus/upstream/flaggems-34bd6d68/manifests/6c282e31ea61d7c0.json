@@ -1,0 +1,48 @@
+{
+  "candidate_id": "6c282e31ea61d7c0",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/addmv.py/L28-L82__addmv_kernel__6c282e31ea61d7c0.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "20578f358976fe0bcc99485f064d7c98f0ebcb0f9f4ef973b95c1cb6b8f62550",
+    "source_map": {
+      "end_line": 82,
+      "logical_path": "src/flag_gems/ops/addmv.py",
+      "start_line": 28
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/6c282e31ea61d7c0/unresolved.json",
+    "flaggems-34bd6d68/recipes/6c282e31ea61d7c0/flaggems-root-6c282e31ea61d7c0-boundary-0d30e5b7ed-recipe.json",
+    "flaggems-34bd6d68/recipes/6c282e31ea61d7c0/flaggems-root-6c282e31ea61d7c0-boundary-34de56496b-recipe.json",
+    "flaggems-34bd6d68/recipes/6c282e31ea61d7c0/flaggems-root-6c282e31ea61d7c0-boundary-6506dc48ae-recipe.json",
+    "flaggems-34bd6d68/recipes/6c282e31ea61d7c0/flaggems-root-6c282e31ea61d7c0-original-ca953156d6-recipe.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 82,
+    "git_blob": "7c8b15451218f638933b418c34b3b0aeecd673a0",
+    "qualname": "addmv_kernel",
+    "relative_path": "src/flag_gems/ops/addmv.py",
+    "selected_source_sha256": "cf62ef71b0fc0b2650eaf70da81540bcceb0d7028b33b72549c781318afd2f2c",
+    "source_sha256": "28bd59c17e1780bc7ab6658a424f5b611406f15276b53542531f114bfd37fdff",
+    "start_line": 28
+  }
+}

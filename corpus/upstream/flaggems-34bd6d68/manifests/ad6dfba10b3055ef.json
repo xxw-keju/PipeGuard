@@ -1,0 +1,44 @@
+{
+  "candidate_id": "ad6dfba10b3055ef",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/runtime/backend/_nvidia/turing/ops/_safe_softmax.py/L26-L63__safe_softmax_kernel__ad6dfba10b3055ef.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "851f9bbe002d6d89b558385d912a23ab8129a99fd0e7c1d97bd2db7cede3b7ed",
+    "source_map": {
+      "end_line": 63,
+      "logical_path": "src/flag_gems/runtime/backend/_nvidia/turing/ops/_safe_softmax.py",
+      "start_line": 26
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/ad6dfba10b3055ef/unresolved.json",
+    "flaggems-34bd6d68/recipes/ad6dfba10b3055ef/flaggems-root-ad6dfba10b3055ef-boundary-389bbbe13c-recipe.json",
+    "flaggems-34bd6d68/recipes/ad6dfba10b3055ef/flaggems-root-ad6dfba10b3055ef-boundary-73433636f6-recipe.json",
+    "flaggems-34bd6d68/recipes/ad6dfba10b3055ef/flaggems-root-ad6dfba10b3055ef-boundary-b870bb590b-recipe.json",
+    "flaggems-34bd6d68/recipes/ad6dfba10b3055ef/flaggems-root-ad6dfba10b3055ef-original-d705baad21-recipe.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 63,
+    "git_blob": "7aba7816fa5fc8133b042fcfa25be18466094c10",
+    "qualname": "_safe_softmax_kernel",
+    "relative_path": "src/flag_gems/runtime/backend/_nvidia/turing/ops/_safe_softmax.py",
+    "selected_source_sha256": "bfde092d3c38c421c17bec96cd6e1ce5eec4a1f5f9d1b95259837915b4a50315",
+    "source_sha256": "07c6b75583583580621a35e07d1b93b7e5a659f84434408b2c8e6dc6b76ad5cc",
+    "start_line": 26
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "candidate_id": "74b4ae91dca68e3c",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/moe/permute_contiguous.py/L77-L104__make_tight_scan._scan__74b4ae91dca68e3c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "075230afd606d5dc92a925250f24226cef60614e8a4268fc063a14db33d6dc54",
+    "source_map": {
+      "end_line": 104,
+      "logical_path": "src/tileops/kernels/moe/permute_contiguous.py",
+      "start_line": 77
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_make_tight_scan_body",
+    "num_experts",
+    "numel",
+    "tilelang",
+    "top_k"
+  ],
+  "kernel_dependencies": [
+    "7b478f84062dd829",
+    "b3dc18f7f0c7b3b4"
+  ],
+  "lexical_parents": [
+    "_make_tight_scan"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/74b4ae91dca68e3c/unresolved.json",
+    "tileops-6a4085cd/recipes/74b4ae91dca68e3c/tileops-6a4085cd-root-74b4ae91dca68e3c-boundary-069201aa37-recipe.json",
+    "tileops-6a4085cd/recipes/74b4ae91dca68e3c/tileops-6a4085cd-root-74b4ae91dca68e3c-boundary-127751e0e1-recipe.json",
+    "tileops-6a4085cd/recipes/74b4ae91dca68e3c/tileops-6a4085cd-root-74b4ae91dca68e3c-boundary-865293fde7-recipe.json",
+    "tileops-6a4085cd/recipes/74b4ae91dca68e3c/tileops-6a4085cd-root-74b4ae91dca68e3c-original-c655c1f152-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "num_experts",
+    "numel",
+    "top_k"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 104,
+    "git_blob": "3ba5e1956b96d13a90b38cb5e26ffbc2a73ef658",
+    "qualname": "_make_tight_scan._scan",
+    "relative_path": "src/tileops/kernels/moe/permute_contiguous.py",
+    "selected_source_sha256": "c0d241ed828b4f1c079e93043ff1e499ac5d047091abad242e19616357c5b78a",
+    "source_sha256": "a719141e5612e443cf81785851a84ac3c584e6cc79e77f5cdaa2a37aa6bf7af4",
+    "start_line": 77
+  }
+}

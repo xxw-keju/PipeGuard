@@ -1,0 +1,40 @@
+{
+  "candidate_id": "dec0124cd717bc9d",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/experimental_ops/xlogy.py/L20-L36__xlogy_kernel__dec0124cd717bc9d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "04d8ad315db346c9a2a1d73680554aabf1692b3865831975fee602d5856bd443",
+    "source_map": {
+      "end_line": 36,
+      "logical_path": "src/flag_gems/experimental_ops/xlogy.py",
+      "start_line": 20
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/dec0124cd717bc9d/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 36,
+    "git_blob": "c16cb3a434cf565d76542d18f885ed12c603b4d0",
+    "qualname": "xlogy_kernel",
+    "relative_path": "src/flag_gems/experimental_ops/xlogy.py",
+    "selected_source_sha256": "b6d8aa875b51b7292f6848fb56b2bfcc1cead3d10eb0cd0756a14ecdba778da3",
+    "source_sha256": "4cde776fc65d8e8b9702d91767357fc1e985739e4fbd93b4f40e82c50823d8e5",
+    "start_line": 20
+  }
+}

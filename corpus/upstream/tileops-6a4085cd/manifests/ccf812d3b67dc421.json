@@ -1,0 +1,64 @@
+{
+  "candidate_id": "ccf812d3b67dc421",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/cumulative.py/L247-L311__cumulative_kernel._func.main__ccf812d3b67dc421.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "0a35dd46fc48410d22925b2b433b95f0490f1bd6899f7ffe1f12b71eabe8a86e",
+    "source_map": {
+      "end_line": 311,
+      "logical_path": "src/tileops/kernels/reduction/cumulative.py",
+      "start_line": 247
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "N_padded",
+    "T",
+    "_SCAN_POLICY",
+    "_identity",
+    "_needs_mask",
+    "block_m",
+    "block_n",
+    "dtype",
+    "n_tiles",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_cumulative_kernel",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/ccf812d3b67dc421/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "N_padded",
+    "_identity",
+    "_needs_mask",
+    "block_m",
+    "block_n",
+    "dtype",
+    "n_tiles",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 311,
+    "git_blob": "b8f740281ccc2c3fc39994648b6e4d486b91d36c",
+    "qualname": "_cumulative_kernel._func.main",
+    "relative_path": "src/tileops/kernels/reduction/cumulative.py",
+    "selected_source_sha256": "d232fdb16b1e21df6aa89183d86fdbb9f4272a22dc7edb9631f92e48f7162959",
+    "source_sha256": "efa3017b88943c3b8caa23082f9879c4ce9ac62736a84faf06af68a0c7093d71",
+    "start_line": 247
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "candidate_id": "1956c7bf7db2e671",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/experimental_ops/logaddexp2.py/L20-L41__logaddexp2_kernel__1956c7bf7db2e671.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "7d4fa77d2c981b00499c6c70f3b85def416f05b6effc0f1cba3bc5273bc7aab7",
+    "source_map": {
+      "end_line": 41,
+      "logical_path": "src/flag_gems/experimental_ops/logaddexp2.py",
+      "start_line": 20
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/1956c7bf7db2e671/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 41,
+    "git_blob": "fc3f312a62e144fb48555c3e682fc9e3d5523c0b",
+    "qualname": "logaddexp2_kernel",
+    "relative_path": "src/flag_gems/experimental_ops/logaddexp2.py",
+    "selected_source_sha256": "438b6a55afb4537dd0c06bc588e4119982b2ba1effdfb7a002c5dc0809c2e0ad",
+    "source_sha256": "caed484509548ca5a5db0a221c24ad5385cc51e2c48d9bdf69359b05eb28f75e",
+    "start_line": 20
+  }
+}

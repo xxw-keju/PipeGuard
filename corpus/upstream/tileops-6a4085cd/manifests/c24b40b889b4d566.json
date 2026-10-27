@@ -1,0 +1,62 @@
+{
+  "candidate_id": "c24b40b889b4d566",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/gemm/bmm.py/L48-L113__bmm_kernel._bmm_func__c24b40b889b4d566.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "7e6d128711b39aa811a3444f9ce04a7abe6b7080b9515090fd8db91a70dc46e8",
+    "source_map": {
+      "end_line": 113,
+      "logical_path": "src/tileops/kernels/gemm/bmm.py",
+      "start_line": 48
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "Callable",
+    "T",
+    "accum_dtype",
+    "batch",
+    "dtype",
+    "k",
+    "m",
+    "n",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "dd6ffa6b8c0914db"
+  ],
+  "lexical_parents": [
+    "_bmm_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/c24b40b889b4d566/unresolved.json",
+    "tileops-6a4085cd/recipes/c24b40b889b4d566/tileops-6a4085cd-root-c24b40b889b4d566-boundary-b27dbeda09-recipe.json",
+    "tileops-6a4085cd/recipes/c24b40b889b4d566/tileops-6a4085cd-root-c24b40b889b4d566-boundary-cb4786e93f-recipe.json",
+    "tileops-6a4085cd/recipes/c24b40b889b4d566/tileops-6a4085cd-root-c24b40b889b4d566-boundary-e2e3f386ee-recipe.json",
+    "tileops-6a4085cd/recipes/c24b40b889b4d566/tileops-6a4085cd-root-c24b40b889b4d566-original-31023616ca-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "dtype",
+    "k",
+    "m",
+    "n"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 113,
+    "git_blob": "8390bc82e3bebddcfddb77368d4e6c412a1a9a7d",
+    "qualname": "_bmm_kernel._bmm_func",
+    "relative_path": "src/tileops/kernels/gemm/bmm.py",
+    "selected_source_sha256": "68db92dc9299ebf0963fae4a613f2824b86d129768b6ec1115abf826ecec496e",
+    "source_sha256": "e4d71d7ba1d0c0f20af3d43e5c3ac65746417645cc6ed658de3fc424e1671dcc",
+    "start_line": 48
+  }
+}

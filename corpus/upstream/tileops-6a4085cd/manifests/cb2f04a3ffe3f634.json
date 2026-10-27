@@ -1,0 +1,75 @@
+{
+  "candidate_id": "cb2f04a3ffe3f634",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/pool/avg_pool2d.py/L113-L145__avg_pool2d_spatial_kernel._avg_pool2d_spatial_func__cb2f04a3ffe3f634.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "389bcb61b78d98405e028ba9042089a261fdb66673644bf5837a9fabdbebcd4f",
+    "source_map": {
+      "end_line": 145,
+      "logical_path": "src/tileops/kernels/pool/avg_pool2d.py",
+      "start_line": 113
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "c_in",
+    "dtype",
+    "h_in",
+    "kernel_h",
+    "kernel_w",
+    "n",
+    "out_h",
+    "out_w",
+    "pad_h",
+    "pad_w",
+    "stride_h",
+    "stride_w",
+    "tilelang",
+    "total_output",
+    "w_in"
+  ],
+  "kernel_dependencies": [
+    "d133ff0b4b100406"
+  ],
+  "lexical_parents": [
+    "_avg_pool2d_spatial_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/cb2f04a3ffe3f634/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "c_in",
+    "dtype",
+    "h_in",
+    "kernel_h",
+    "kernel_w",
+    "n",
+    "out_h",
+    "out_w",
+    "pad_h",
+    "pad_w",
+    "stride_h",
+    "stride_w",
+    "total_output",
+    "w_in"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 145,
+    "git_blob": "72969d5ad36748abf89caea8cd9a483eaa01f14b",
+    "qualname": "_avg_pool2d_spatial_kernel._avg_pool2d_spatial_func",
+    "relative_path": "src/tileops/kernels/pool/avg_pool2d.py",
+    "selected_source_sha256": "f6b4ec920ecb22f3dc62f38c04063da02f02ff849b33efd1d98f7a86326a6ec3",
+    "source_sha256": "02bc7b3907e18fe0b1ef9a6c6338e3a3da1f2a59fa206c4a5744047062010762",
+    "start_line": 113
+  }
+}

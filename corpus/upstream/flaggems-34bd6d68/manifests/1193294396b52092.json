@@ -1,0 +1,40 @@
+{
+  "candidate_id": "1193294396b52092",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/experimental_ops/silu.py/L20-L40__silu_kernel__1193294396b52092.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "8b589e457740e08f014e4a843d2022cacb775545b5c71eaaa46af110653df66a",
+    "source_map": {
+      "end_line": 40,
+      "logical_path": "src/flag_gems/experimental_ops/silu.py",
+      "start_line": 20
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/1193294396b52092/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 40,
+    "git_blob": "d09e9ce5bd86fe5438536a1441c33db4a76e9a28",
+    "qualname": "silu_kernel",
+    "relative_path": "src/flag_gems/experimental_ops/silu.py",
+    "selected_source_sha256": "c2eb86bf5c8d2d8d5dbadcfb47732672a12f89f18df3afad5540d8a86530625f",
+    "source_sha256": "eea3aa2922024f2683a42d9ae77a8043e936148c2f76b885bad8d60a41c00bdf",
+    "start_line": 20
+  }
+}

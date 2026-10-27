@@ -1,0 +1,77 @@
+{
+  "candidate_id": "b4973a33de87bda8",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gla/gla_bwd.py/L63-L166__gla_bwd_dh_kernel._dh_func__b4973a33de87bda8.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "5b3895ff7c6f94543f28169bb75dcd2cbb020b1f6ed377d9e518add17169aa3e",
+    "source_map": {
+      "end_line": 166,
+      "logical_path": "src/tileops/kernels/linear_attention/gla/gla_bwd.py",
+      "start_line": 63
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "LOG2E",
+    "T",
+    "accum_dtype",
+    "batch",
+    "chunk_size",
+    "dim_k",
+    "dim_v",
+    "dim_v_part",
+    "dtype",
+    "has_initial_state",
+    "heads",
+    "num_chunks",
+    "num_v_partitions",
+    "scale",
+    "seq_len",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "a52776c48a578dec",
+    "c31f0bd81da02516"
+  ],
+  "lexical_parents": [
+    "_gla_bwd_dh_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/b4973a33de87bda8/unresolved.json",
+    "tileops-6a4085cd/recipes/b4973a33de87bda8/tileops-6a4085cd-root-b4973a33de87bda8-boundary-49a15ffa03-recipe.json",
+    "tileops-6a4085cd/recipes/b4973a33de87bda8/tileops-6a4085cd-root-b4973a33de87bda8-boundary-d767e9589e-recipe.json",
+    "tileops-6a4085cd/recipes/b4973a33de87bda8/tileops-6a4085cd-root-b4973a33de87bda8-boundary-d99e084c6e-recipe.json",
+    "tileops-6a4085cd/recipes/b4973a33de87bda8/tileops-6a4085cd-root-b4973a33de87bda8-original-57c3e9b446-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "chunk_size",
+    "dim_k",
+    "dim_v",
+    "dim_v_part",
+    "dtype",
+    "has_initial_state",
+    "heads",
+    "num_chunks",
+    "num_v_partitions",
+    "scale",
+    "seq_len"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 166,
+    "git_blob": "695a2114b83f55f3f3a67d0f2b614a09dce8d5d1",
+    "qualname": "_gla_bwd_dh_kernel._dh_func",
+    "relative_path": "src/tileops/kernels/linear_attention/gla/gla_bwd.py",
+    "selected_source_sha256": "b4b39087e5dd4613d9196de932c2450cfb43fe166deb835295773ea8f72d47c5",
+    "source_sha256": "246a362fd38a9fd56a564131053018d43544a7bb8aa2172cf23fcf06ff81996e",
+    "start_line": 63
+  }
+}

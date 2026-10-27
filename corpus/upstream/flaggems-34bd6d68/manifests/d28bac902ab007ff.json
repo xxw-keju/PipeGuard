@@ -1,0 +1,43 @@
+{
+  "candidate_id": "d28bac902ab007ff",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/linalg_slogdet.py/L29-L128__slogdet_kernel__d28bac902ab007ff.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "69959f5d794dce7cd0c7cea05cef36ae84321a068e8b6aee3c4619b9a370eee2",
+    "source_map": {
+      "end_line": 128,
+      "logical_path": "src/flag_gems/ops/linalg_slogdet.py",
+      "start_line": 29
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "tle",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/d28bac902ab007ff/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 128,
+    "git_blob": "bcd1b78e794e5e3db4d7fc67fd4c00579a687090",
+    "qualname": "slogdet_kernel",
+    "relative_path": "src/flag_gems/ops/linalg_slogdet.py",
+    "selected_source_sha256": "938e194da6041e721b8ac12e0b9a059a0f509e633aa12066a0a4b32f9a701831",
+    "source_sha256": "257a7d5a69c1fe6064009c22bda780e8fa1a3e9d5628c6392979c11abd258782",
+    "start_line": 29
+  }
+}

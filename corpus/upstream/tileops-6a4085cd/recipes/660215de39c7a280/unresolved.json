@@ -1,0 +1,36 @@
+{
+  "bindings": {},
+  "candidate_id": "660215de39c7a280",
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "660215de39c7a280-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "A_shape",
+    "A_shared_shape",
+    "B_shape",
+    "B_shared_shape",
+    "C_shape",
+    "K",
+    "N",
+    "_num_pid_m",
+    "_num_pid_n",
+    "_tiling",
+    "accum_dtype",
+    "batch_count",
+    "block_k",
+    "block_m",
+    "block_n",
+    "concrete_specialization",
+    "dtype",
+    "num_stages",
+    "threads",
+    "transpose_b"
+  ]
+}

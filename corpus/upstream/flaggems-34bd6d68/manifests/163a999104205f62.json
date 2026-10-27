@@ -1,0 +1,40 @@
+{
+  "candidate_id": "163a999104205f62",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/cutlass_scaled_mm.py/L67-L81__grouped_launch__163a999104205f62.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d486a5fc8da4fa20993e6476a4503f9a320d51359499a62461fed79b0c5319da",
+    "source_map": {
+      "end_line": 81,
+      "logical_path": "src/flag_gems/fused/cutlass_scaled_mm.py",
+      "start_line": 67
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/163a999104205f62/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 81,
+    "git_blob": "cddfdbe6cb932b1add479bf684def80cbf6fb895",
+    "qualname": "grouped_launch",
+    "relative_path": "src/flag_gems/fused/cutlass_scaled_mm.py",
+    "selected_source_sha256": "dec8918c47d9dd448f5aa1b4817b0546c4899c5215284d5baa40cd2aa3f4b2cd",
+    "source_sha256": "181e53f08087a4a35e995181fd9f2194c7f364b539fd94ad0304988b28a90494",
+    "start_line": 67
+  }
+}

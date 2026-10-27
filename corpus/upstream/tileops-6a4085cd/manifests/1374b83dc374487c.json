@@ -1,0 +1,70 @@
+{
+  "candidate_id": "1374b83dc374487c",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gated_deltanet_recurrence.py/L70-L135__gated_deltanet_decode_raw_cuda_flastyle_tl._decode_func__1374b83dc374487c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "9f2daa689b6478b22ad5ff88aa8a08c292652bd94b36fd84b1337a71111759b4",
+    "source_map": {
+      "end_line": 135,
+      "logical_path": "src/tileops/kernels/linear_attention/gated_deltanet_recurrence.py",
+      "start_line": 70
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "LOG2E",
+    "T",
+    "batch",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "k_chunk",
+    "raw_compile_flags",
+    "raw_group_size",
+    "tilelang",
+    "total_blocks",
+    "v_tile"
+  ],
+  "kernel_dependencies": [
+    "91e83126c6a016f1"
+  ],
+  "lexical_parents": [
+    "_gated_deltanet_decode_raw_cuda_flastyle_tl"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/1374b83dc374487c/unresolved.json",
+    "tileops-6a4085cd/recipes/1374b83dc374487c/tileops-6a4085cd-root-1374b83dc374487c-boundary-0c4e77bc5e-recipe.json",
+    "tileops-6a4085cd/recipes/1374b83dc374487c/tileops-6a4085cd-root-1374b83dc374487c-boundary-31371cbc60-recipe.json",
+    "tileops-6a4085cd/recipes/1374b83dc374487c/tileops-6a4085cd-root-1374b83dc374487c-boundary-331a8198ac-recipe.json",
+    "tileops-6a4085cd/recipes/1374b83dc374487c/tileops-6a4085cd-root-1374b83dc374487c-original-d55d1eaea1-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "batch",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "k_chunk",
+    "raw_compile_flags",
+    "raw_group_size",
+    "total_blocks",
+    "v_tile"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 135,
+    "git_blob": "39c3aec89d6c423200b27c6a3b263c0bc7f78e7a",
+    "qualname": "_gated_deltanet_decode_raw_cuda_flastyle_tl._decode_func",
+    "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet_recurrence.py",
+    "selected_source_sha256": "0f84a9a52d315a846fe5fc2550043a1b27ea0939d8091c9f53dd2b0c6eec3f20",
+    "source_sha256": "15c6c43151de7a54a6c2ad30a56f0d967105431497a85a540c9157837d694fca",
+    "start_line": 70
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "candidate_id": "10e550a612cdad60",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/roll.py/L453-L503__roll_multi_dim_kernel__10e550a612cdad60.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f85eef0bc5c9cd566da998479e9d902739fccb3537991a20480fc6fcaa4a0087",
+    "source_map": {
+      "end_line": 503,
+      "logical_path": "src/flag_gems/ops/roll.py",
+      "start_line": 453
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/10e550a612cdad60/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 503,
+    "git_blob": "b3eb0032395938931b5a6c33d5bc32e9fcec0baa",
+    "qualname": "_roll_multi_dim_kernel",
+    "relative_path": "src/flag_gems/ops/roll.py",
+    "selected_source_sha256": "58c02eb13cf786a0ba4f68fc2d739781cf78d3855274e98d150295dc832fd83a",
+    "source_sha256": "6209240f0e3c4f419fb718c037781b4fd4c275a7952ffe8cffc8da9b3f636a3a",
+    "start_line": 453
+  }
+}

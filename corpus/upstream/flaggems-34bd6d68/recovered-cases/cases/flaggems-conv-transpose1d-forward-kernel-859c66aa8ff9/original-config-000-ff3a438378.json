@@ -1,0 +1,139 @@
+{
+  "arguments": {
+    "dtype": "torch.float32",
+    "kernel": [
+      4,
+      8,
+      3
+    ],
+    "padding": 0,
+    "shape": [
+      2,
+      4,
+      8
+    ],
+    "stride": 1
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-conv-transpose1d-forward-kernel-859c66aa8ff9-original-2236a78593-config-ff3a438378",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:input_pointer",
+        "1": "global:weight_pointer",
+        "2": "global:output_pointer",
+        "3": "global:bias_pointer"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "BLOCK_IC": 32,
+      "BLOCK_N_OW": 32,
+      "BLOCK_OC": 32,
+      "batch_size": 1,
+      "dilation_width": 1,
+      "groups": 1,
+      "in_channels": 1,
+      "input_c_stride": 1,
+      "input_n_stride": 1,
+      "input_w_stride": 1,
+      "input_width": 1,
+      "kernel_width": 1,
+      "out_channels": 1,
+      "out_width": 1,
+      "output_c_stride": 1,
+      "output_n_stride": 1,
+      "output_w_stride": 1,
+      "padding_width": 0,
+      "stride_width": 1,
+      "weight_ic_stride": 1,
+      "weight_oc_stride": 1,
+      "weight_w_stride": 1
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "maxnreg": null,
+      "num_ctas": 1,
+      "num_stages": 2,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "bias_pointer": "*fp32",
+      "input_pointer": "*fp32",
+      "output_pointer": "*fp32",
+      "weight_pointer": "*fp32"
+    }
+  },
+  "evidence": [
+    "flaggems-launch-c46296dd3524c648",
+    "flaggems-test-0d5edb1b6a962e8a",
+    "source-b95657ee90a75ca9"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-conv-transpose1d-forward-kernel-859c66aa8ff9",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_conv_transpose1d.py:44-69#test_conv_transpose1d",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned. Autotune candidate 0 from src/flag_gems/runtime/backend/_nvidia/tune_configs.yaml#conv_transpose1d.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ],
+  "workload_recovery": {
+    "method": "static-source-and-case-heuristic-v1",
+    "notes": [
+      "All scalar parameters are compile-time specialized.",
+      "Pointer types derive from source use, parameter names, and the case dtype.",
+      "The recovered workload checks CTA (0,0,0) with a one-CTA launch and is not evidence for the original full launch grid."
+    ],
+    "original_case_path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/corpus/upstream/suite3/kernels/triton/flaggems/flaggems-conv-transpose1d-forward-kernel-859c66aa8ff9/cases/original-config-000-ff3a438378.json",
+    "status": "HEURISTIC"
+  }
+}

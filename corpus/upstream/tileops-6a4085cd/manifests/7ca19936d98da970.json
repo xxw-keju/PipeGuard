@@ -1,0 +1,52 @@
+{
+  "candidate_id": "7ca19936d98da970",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/moe/shared_expert_mlp.py/L35-L67__silu_mul_fused_kernel._func__7ca19936d98da970.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6c1c66163d93c2fa1dd076b81525f322d31f21c24ea6573856eaa3e6b6f9429e",
+    "source_map": {
+      "end_line": 67,
+      "logical_path": "src/tileops/kernels/moe/shared_expert_mlp.py",
+      "start_line": 35
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "T",
+    "dtype",
+    "math",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "4537a02752d58dd1"
+  ],
+  "lexical_parents": [
+    "_silu_mul_fused_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/7ca19936d98da970/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "dtype"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 67,
+    "git_blob": "640e812a502250bce138125d0a448333c184b587",
+    "qualname": "_silu_mul_fused_kernel._func",
+    "relative_path": "src/tileops/kernels/moe/shared_expert_mlp.py",
+    "selected_source_sha256": "6d847f8f0836dd80e418d211175e9b81c5805d7581fabc96419e2f1d12e9d2d1",
+    "source_sha256": "593535e393ccd458b79fa293565d742271d35c7bbfb58a4796094ff6361b7842",
+    "start_line": 35
+  }
+}

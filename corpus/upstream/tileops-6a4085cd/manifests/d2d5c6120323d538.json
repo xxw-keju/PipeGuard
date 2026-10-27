@@ -1,0 +1,76 @@
+{
+  "candidate_id": "d2d5c6120323d538",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_decode_paged.py/L53-L160__gqa_decode_no_split_paged_kernel._func__d2d5c6120323d538.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ef13dd2d1cf99fbd9517d86e65ad21ad684a368ade7dfa69dc2b40a20221d4ae",
+    "source_map": {
+      "end_line": 160,
+      "logical_path": "src/tileops/kernels/attention/gqa_decode_paged.py",
+      "start_line": 53
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "make_apply_softcap",
+    "make_online_softmax",
+    "make_rescale",
+    "page_size",
+    "scale",
+    "score_scale",
+    "seqlen_kv",
+    "softcap",
+    "tilelang",
+    "use_softcap"
+  ],
+  "kernel_dependencies": [
+    "70feefa8fec854e9"
+  ],
+  "lexical_parents": [
+    "_gqa_decode_no_split_paged_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/d2d5c6120323d538/unresolved.json",
+    "tileops-6a4085cd/recipes/d2d5c6120323d538/tileops-6a4085cd-root-d2d5c6120323d538-boundary-8ac8090672-recipe.json",
+    "tileops-6a4085cd/recipes/d2d5c6120323d538/tileops-6a4085cd-root-d2d5c6120323d538-boundary-c37c1d5d22-recipe.json",
+    "tileops-6a4085cd/recipes/d2d5c6120323d538/tileops-6a4085cd-root-d2d5c6120323d538-boundary-c9eb1dd0a9-recipe.json",
+    "tileops-6a4085cd/recipes/d2d5c6120323d538/tileops-6a4085cd-root-d2d5c6120323d538-original-90afc28f28-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "page_size",
+    "scale",
+    "score_scale",
+    "seqlen_kv",
+    "softcap",
+    "use_softcap"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 160,
+    "git_blob": "359fcee543ae2725f2c8296eb0075e46daaf1988",
+    "qualname": "_gqa_decode_no_split_paged_kernel._func",
+    "relative_path": "src/tileops/kernels/attention/gqa_decode_paged.py",
+    "selected_source_sha256": "602dc7a2b1e4f68eca3d52d733edeae9d965dfe6b3e2a19527c05bb044b24592",
+    "source_sha256": "9c954ffbdec40afa33c326744ea7dc652baf96f70aacd21399676fe2ed1f0290",
+    "start_line": 53
+  }
+}

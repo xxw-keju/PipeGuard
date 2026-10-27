@@ -1,0 +1,40 @@
+{
+  "candidate_id": "1dbd8ea3d0e202c4",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/soft_margin_loss.py/L27-L45__soft_margin_loss_elementwise_kernel__1dbd8ea3d0e202c4.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "86b6c1de365a0188aa4ee86d241e53dccd74317c2ae506691f7fb577ff77e538",
+    "source_map": {
+      "end_line": 45,
+      "logical_path": "src/flag_gems/ops/soft_margin_loss.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/1dbd8ea3d0e202c4/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 45,
+    "git_blob": "485a686a0aa90c6abf06f05f73823d9493ed2501",
+    "qualname": "_soft_margin_loss_elementwise_kernel",
+    "relative_path": "src/flag_gems/ops/soft_margin_loss.py",
+    "selected_source_sha256": "86cca16e56e492f565121f5e3b54bada0bed05f0f6014d31df778bbe2888d5be",
+    "source_sha256": "57c6941e5a613ebf75cdc438f36228b4e3ebd9d0813a55845ce701d36ae111cc",
+    "start_line": 27
+  }
+}

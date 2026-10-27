@@ -1,0 +1,43 @@
+{
+  "candidate_id": "c9a52ba0447e065b",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/special_shifted_chebyshev_polynomial_u.py/L76-L105__shifted_chebyshev_polynomial_u_kernel_scalar_n__c9a52ba0447e065b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "b820b8ba7f08346ade1d489a81c2993c3d0649934532bf05e6f6984197625e41",
+    "source_map": {
+      "end_line": 105,
+      "logical_path": "src/flag_gems/ops/special_shifted_chebyshev_polynomial_u.py",
+      "start_line": 76
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "tl_extra_shim",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/c9a52ba0447e065b/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 105,
+    "git_blob": "524df7ef6349da84118e28360bb5b6f28f5d16ed",
+    "qualname": "shifted_chebyshev_polynomial_u_kernel_scalar_n",
+    "relative_path": "src/flag_gems/ops/special_shifted_chebyshev_polynomial_u.py",
+    "selected_source_sha256": "3ee1af5ea16eb8ecee77cc7d7b526ffc46087844c10ef74a7ccf822e766de8e3",
+    "source_sha256": "706e35759f44e2f9d76e5d40f410eb486d5fe3f5c760704bce92b6f68196cf1e",
+    "start_line": 76
+  }
+}

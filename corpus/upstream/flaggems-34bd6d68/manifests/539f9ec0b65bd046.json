@@ -1,0 +1,43 @@
+{
+  "candidate_id": "539f9ec0b65bd046",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/special_erfc.py/L12-L16__erfc_kernel__539f9ec0b65bd046.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "7ef1b5f5a778184660472bc87b78334a16045619e0a6e44bfe83c5f5d523de7a",
+    "source_map": {
+      "end_line": 16,
+      "logical_path": "src/flag_gems/ops/special_erfc.py",
+      "start_line": 12
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "tl_extra_shim",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/539f9ec0b65bd046/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 16,
+    "git_blob": "74cf625d9805eba445ffa8d736625d304d90e7e6",
+    "qualname": "_erfc_kernel",
+    "relative_path": "src/flag_gems/ops/special_erfc.py",
+    "selected_source_sha256": "7df00c9ce190f8f2649cfe0699754bc7957d62de1eb1af809976bbda8ac766be",
+    "source_sha256": "4a119b39997ae3f2f8bb85ef89c3c04e04db2232115c6ce1e61981e168b28eba",
+    "start_line": 12
+  }
+}

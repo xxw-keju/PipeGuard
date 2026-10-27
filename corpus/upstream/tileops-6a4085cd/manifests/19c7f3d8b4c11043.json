@@ -1,0 +1,73 @@
+{
+  "candidate_id": "19c7f3d8b4c11043",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py/L898-L1002__prefill_recompute_w_u_from_A_bthd_tl._func__19c7f3d8b4c11043.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "de7dc2400ae6def8633364915ba94c98cc920c03cb01022bcf236b391b2e9b3c",
+    "source_map": {
+      "end_line": 1002,
+      "logical_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+      "start_line": 898
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_c",
+    "block_d",
+    "chunk_size",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_k_tiles",
+    "num_v_tiles",
+    "seq_len",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "e5bc15d84d4d22af"
+  ],
+  "lexical_parents": [
+    "_prefill_recompute_w_u_from_A_bthd_tl"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/19c7f3d8b4c11043/unresolved.json",
+    "tileops-6a4085cd/recipes/19c7f3d8b4c11043/tileops-6a4085cd-root-19c7f3d8b4c11043-boundary-784470494a-recipe.json",
+    "tileops-6a4085cd/recipes/19c7f3d8b4c11043/tileops-6a4085cd-root-19c7f3d8b4c11043-boundary-972c184d72-recipe.json",
+    "tileops-6a4085cd/recipes/19c7f3d8b4c11043/tileops-6a4085cd-root-19c7f3d8b4c11043-boundary-bd520a7c36-recipe.json",
+    "tileops-6a4085cd/recipes/19c7f3d8b4c11043/tileops-6a4085cd-root-19c7f3d8b4c11043-original-9bf9b84578-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_c",
+    "block_d",
+    "chunk_size",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_k_tiles",
+    "num_v_tiles",
+    "seq_len"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 1002,
+    "git_blob": "f17f222201df2565859754ee60b1ae9c1589ab6f",
+    "qualname": "_prefill_recompute_w_u_from_A_bthd_tl._func",
+    "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+    "selected_source_sha256": "7f23e36ff89760966dbbc96e8d05493e060e86b75b872742a1a858ad9c40a327",
+    "source_sha256": "df6831a09ec97ec92771e1e4aac4f69560b8990dce47f811f0ea25a32cf9d2f1",
+    "start_line": 898
+  }
+}

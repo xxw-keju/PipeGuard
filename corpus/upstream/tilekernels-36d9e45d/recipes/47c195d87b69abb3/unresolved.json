@@ -1,0 +1,41 @@
+{
+  "bindings": {},
+  "candidate_id": "47c195d87b69abb3",
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "47c195d87b69abb3-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "concrete_specialization",
+    "fix_routing_mask_exists",
+    "large_prime_number",
+    "mask_exists",
+    "num_duplicate_experts",
+    "num_groups",
+    "num_logical_experts",
+    "num_physical_topk",
+    "num_routed_experts",
+    "num_routed_experts_per_group",
+    "num_routed_experts_per_thread",
+    "num_threads",
+    "num_tokens",
+    "num_tokens_per_block",
+    "num_topk",
+    "num_topk_groups",
+    "num_topk_sum",
+    "num_vectorize",
+    "num_vectorize_for_grouped_expert",
+    "scoring_type",
+    "skip_group_sort",
+    "to_physical_map_exists",
+    "unmapped_topk_idx_exists",
+    "unmapped_topk_idx_stride",
+    "warp_size"
+  ]
+}

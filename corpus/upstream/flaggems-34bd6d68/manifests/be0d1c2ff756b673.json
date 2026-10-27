@@ -1,0 +1,42 @@
+{
+  "candidate_id": "be0d1c2ff756b673",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/pairwise_distance.py/L204-L213__pairwise_distance_p1_kernel_2__be0d1c2ff756b673.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e29090d4a942a1a753f6fcfe375f4131730d4c8e97f3a8b683fd48e3ec8fba91",
+    "source_map": {
+      "end_line": 213,
+      "logical_path": "src/flag_gems/ops/pairwise_distance.py",
+      "start_line": 204
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/be0d1c2ff756b673/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 213,
+    "git_blob": "39ccd535c39a3fa2db82978be2fa298777e314f4",
+    "qualname": "pairwise_distance_p1_kernel_2",
+    "relative_path": "src/flag_gems/ops/pairwise_distance.py",
+    "selected_source_sha256": "19bd068340ff35f8cd84e4bea699b33046173a295b6f047e1017cf68d087d487",
+    "source_sha256": "4d0dcdc097513b6bdd0c8d8efa227d74632a737e1c0d8574d450d8c8497b7d1a",
+    "start_line": 204
+  }
+}

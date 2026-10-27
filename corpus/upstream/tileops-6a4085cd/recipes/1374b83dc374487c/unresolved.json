@@ -1,0 +1,27 @@
+{
+  "bindings": {},
+  "candidate_id": "1374b83dc374487c",
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "1374b83dc374487c-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "batch",
+    "concrete_specialization",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "k_chunk",
+    "raw_compile_flags",
+    "raw_group_size",
+    "total_blocks",
+    "v_tile"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "candidate_id": "4cc8f4d71ecd1389",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/remainder.py/L41-L44__rem_ts__4cc8f4d71ecd1389.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "90fc08067f425f55346eae13123d833b7b136b482813739976b23199d0f0b0f9",
+    "source_map": {
+      "end_line": 44,
+      "logical_path": "src/flag_gems/ops/remainder.py",
+      "start_line": 41
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_remainder",
+    "pointwise_dynamic",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "f7b8010f45bb83a8"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/4cc8f4d71ecd1389/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 44,
+    "git_blob": "52f9e8329a41618e4213246d1882b0958797f94e",
+    "qualname": "rem_ts",
+    "relative_path": "src/flag_gems/ops/remainder.py",
+    "selected_source_sha256": "863b7d00461687deb9d73404690d6a9efdb21ca763b5cdab89bcec6eb1f2733c",
+    "source_sha256": "d629f7c1c7880966c3c0ce2be43dd92779826e59a1fffac1ec92d8fccc13968d",
+    "start_line": 41
+  }
+}

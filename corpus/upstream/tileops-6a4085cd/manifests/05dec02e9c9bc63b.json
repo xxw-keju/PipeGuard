@@ -1,0 +1,59 @@
+{
+  "candidate_id": "05dec02e9c9bc63b",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/moe/permute_contiguous.py/L222-L249__make_gather._gather._gather_main__05dec02e9c9bc63b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "01c4a9ab9ae38117fd359ec123ef953f1fe04bc187ebeb0ec6f8ea382e540462",
+    "source_map": {
+      "end_line": 249,
+      "logical_path": "src/tileops/kernels/moe/permute_contiguous.py",
+      "start_line": 222
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "dtype",
+    "grid",
+    "hidden_size",
+    "num_tokens",
+    "physical_rows",
+    "rows_per_block",
+    "threads",
+    "zero_fill"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_gather",
+    "_gather"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/05dec02e9c9bc63b/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "dtype",
+    "grid",
+    "hidden_size",
+    "num_tokens",
+    "physical_rows",
+    "rows_per_block",
+    "threads",
+    "zero_fill"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 249,
+    "git_blob": "3ba5e1956b96d13a90b38cb5e26ffbc2a73ef658",
+    "qualname": "_make_gather._gather._gather_main",
+    "relative_path": "src/tileops/kernels/moe/permute_contiguous.py",
+    "selected_source_sha256": "b50321a9e12076f81ad0451f3115f0bfb9dd3260534fc0969d3ab893b06157ae",
+    "source_sha256": "a719141e5612e443cf81785851a84ac3c584e6cc79e77f5cdaa2a37aa6bf7af4",
+    "start_line": 222
+  }
+}

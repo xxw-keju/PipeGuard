@@ -1,0 +1,45 @@
+{
+  "candidate_id": "b579d1b26093d075",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/special_hermite_polynomial_h.py/L66-L71__hermite_polynomial_h_func__b579d1b26093d075.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "2ecabe91d49ce4b0348a73ffaa0cd7b60e9e52df88279a6124beea41852f31c9",
+    "source_map": {
+      "end_line": 71,
+      "logical_path": "src/flag_gems/ops/special_hermite_polynomial_h.py",
+      "start_line": 66
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_hermite_Hn",
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "8e89b9abbb76d866"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/b579d1b26093d075/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 71,
+    "git_blob": "b1f67187985cbf0e57013781b6cc7a6987e7c7b0",
+    "qualname": "hermite_polynomial_h_func",
+    "relative_path": "src/flag_gems/ops/special_hermite_polynomial_h.py",
+    "selected_source_sha256": "4df50de6c5ec4904fd9010634034def15e9c91c7b641cb1cb4b5d86b5f545baa",
+    "source_sha256": "3ac26fb3a77537f55fec58593fb0cccad796a6a5ea5004d674107182f13dc45d",
+    "start_line": 66
+  }
+}

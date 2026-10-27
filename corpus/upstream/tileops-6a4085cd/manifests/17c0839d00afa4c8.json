@@ -1,0 +1,79 @@
+{
+  "candidate_id": "17c0839d00afa4c8",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/elementwise/_builders.py/L345-L366__row_broadcast_prim.main__17c0839d00afa4c8.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "74c6267d3cc67b3d4d241566b0b89c44b74e13a4137bb67b8b5c19a0ac220ef4",
+    "source_map": {
+      "end_line": 366,
+      "logical_path": "src/tileops/kernels/elementwise/_builders.py",
+      "start_line": 345
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "N_total",
+    "T",
+    "_compute_broadcast_offsets",
+    "a_numel",
+    "a_strides",
+    "b_numel",
+    "b_strides",
+    "block_cols",
+    "divisors",
+    "dtype",
+    "exact",
+    "full_blocks",
+    "inner",
+    "ndim",
+    "num_per_thread",
+    "out_dtype",
+    "rows",
+    "threads",
+    "write_col",
+    "write_full_block"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_row_broadcast_prim"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/17c0839d00afa4c8/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "N_total",
+    "a_numel",
+    "a_strides",
+    "b_numel",
+    "b_strides",
+    "block_cols",
+    "divisors",
+    "dtype",
+    "exact",
+    "full_blocks",
+    "inner",
+    "ndim",
+    "num_per_thread",
+    "out_dtype",
+    "rows",
+    "threads",
+    "write_col",
+    "write_full_block"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 366,
+    "git_blob": "0c45343c49b95aa2efab1af3f2e989f386f4bad6",
+    "qualname": "_row_broadcast_prim.main",
+    "relative_path": "src/tileops/kernels/elementwise/_builders.py",
+    "selected_source_sha256": "a7e8dd245a08e665d88fee624c0e83880a6d05c7f00e1a2c045e61a5f8b63028",
+    "source_sha256": "a851eb7a9d7fdad7d1d283b1f9cde3066ab9d2890635d43edfd89e4546450e33",
+    "start_line": 345
+  }
+}

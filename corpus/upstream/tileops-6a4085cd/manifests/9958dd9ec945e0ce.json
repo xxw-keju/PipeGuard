@@ -1,0 +1,61 @@
+{
+  "candidate_id": "9958dd9ec945e0ce",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/gemm/dense.py/L2004-L2053__gemm_small_batch_kernel._gemm_small_batch_func__9958dd9ec945e0ce.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "062bb54bccc72ec32c0b7602fa6254b08a7a9f11e0bc06244bcf4c7657c7f109",
+    "source_map": {
+      "end_line": 2053,
+      "logical_path": "src/tileops/kernels/gemm/dense.py",
+      "start_line": 2004
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "Callable",
+    "T",
+    "accum_dtype",
+    "dtype",
+    "k",
+    "m",
+    "n",
+    "str2dtype",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "67eb12ab4bc40703"
+  ],
+  "lexical_parents": [
+    "_gemm_small_batch_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/9958dd9ec945e0ce/unresolved.json",
+    "tileops-6a4085cd/recipes/9958dd9ec945e0ce/tileops-6a4085cd-root-9958dd9ec945e0ce-boundary-0ec9e62d82-recipe.json",
+    "tileops-6a4085cd/recipes/9958dd9ec945e0ce/tileops-6a4085cd-root-9958dd9ec945e0ce-boundary-98d2c4a7ca-recipe.json",
+    "tileops-6a4085cd/recipes/9958dd9ec945e0ce/tileops-6a4085cd-root-9958dd9ec945e0ce-boundary-fc896830c9-recipe.json",
+    "tileops-6a4085cd/recipes/9958dd9ec945e0ce/tileops-6a4085cd-root-9958dd9ec945e0ce-original-cc4ee0f218-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "dtype",
+    "k",
+    "m",
+    "n"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 2053,
+    "git_blob": "eddbf8bcc75a35fe8b2902263f459502259880a0",
+    "qualname": "_gemm_small_batch_kernel._gemm_small_batch_func",
+    "relative_path": "src/tileops/kernels/gemm/dense.py",
+    "selected_source_sha256": "05a01b2a7e17aa3b66b03ed50ee13e81fbd1d311ad3eb0c81352d176e89be935",
+    "source_sha256": "5c382dd03a6ec1f75bdcc0e937f6e31308068cbfdd3293a54ca639642501f1bf",
+    "start_line": 2004
+  }
+}

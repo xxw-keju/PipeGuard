@@ -1,0 +1,47 @@
+{
+  "candidate_id": "138c9fbb3d63d46f",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/cholesky_solve.py/L92-L166__cholesky_solve_kernel__138c9fbb3d63d46f.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "71ed2394564243ded4cbc254770076b46c72e6e8c521700899995bae25f3fda9",
+    "source_map": {
+      "end_line": 166,
+      "logical_path": "src/flag_gems/ops/cholesky_solve.py",
+      "start_line": 92
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "CHOLESKY_SOLVE_AUTOTUNE_CONFIGS",
+    "libentry",
+    "program_id",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/138c9fbb3d63d46f/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "block_rhs"
+  ],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 166,
+    "git_blob": "1bc0d27260e5bfa153e8219ed9852eff63d36346",
+    "qualname": "cholesky_solve_kernel",
+    "relative_path": "src/flag_gems/ops/cholesky_solve.py",
+    "selected_source_sha256": "6947c86d9b9f1d727771d47ffb8eb86c14c10e4fbef36e37c3f9a595398dd20e",
+    "source_sha256": "a3b219e34d401221512089269100b9de897b2bb958b51ef6f2da686c0d1056fe",
+    "start_line": 92
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "candidate_id": "4b52c5922aeb2cd7",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/unique_consecutive.py/L258-L317__global_cumsum_consecutive_kernel__4b52c5922aeb2cd7.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1f8810a32d7db9bf1d374dde29c27a6c9d7e19e3c687e3fa50908946d65a4da8",
+    "source_map": {
+      "end_line": 317,
+      "logical_path": "src/flag_gems/ops/unique_consecutive.py",
+      "start_line": 258
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "global_cumsum_consecutive_impl",
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "46328523110768a2"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/4b52c5922aeb2cd7/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 317,
+    "git_blob": "b5590365bbe8c93a84444356bcf65124e724a623",
+    "qualname": "global_cumsum_consecutive_kernel",
+    "relative_path": "src/flag_gems/ops/unique_consecutive.py",
+    "selected_source_sha256": "06ee52b06384fac2881679627eea40097c818431d65063a8810f18b82a51c83c",
+    "source_sha256": "86d964a258f6d04e8e54c8bf9365b79b4bce79e499a4dd0dac99c6f3dfa55b15",
+    "start_line": 258
+  }
+}

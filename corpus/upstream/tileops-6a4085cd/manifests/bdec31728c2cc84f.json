@@ -1,0 +1,90 @@
+{
+  "candidate_id": "bdec31728c2cc84f",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/mamba/ssd_chunk_scan.py/L109-L465__ssd_chunk_scan_fwd_kernel.kernel_func.main__bdec31728c2cc84f.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "39130e2ceaa5d546dbfbb8c04adb83bc9c379342ab2235bcf84a5d2d292a028a",
+    "source_map": {
+      "end_line": 465,
+      "logical_path": "src/tileops/kernels/mamba/ssd_chunk_scan.py",
+      "start_line": 109
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "B",
+    "C",
+    "H",
+    "HEADS_PER_GROUP",
+    "N",
+    "P",
+    "Q",
+    "T",
+    "accum_dtype",
+    "block_l",
+    "block_n",
+    "block_p",
+    "block_s",
+    "c_shape",
+    "cb_shape",
+    "dA_shape",
+    "diagonal_microtile_size",
+    "dt_shape",
+    "dtype",
+    "num_stages",
+    "out_shape",
+    "states_shape",
+    "threads",
+    "tilelang",
+    "x_shape"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_ssd_chunk_scan_fwd_kernel",
+    "kernel_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/bdec31728c2cc84f/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "B",
+    "C",
+    "H",
+    "HEADS_PER_GROUP",
+    "N",
+    "P",
+    "Q",
+    "accum_dtype",
+    "block_l",
+    "block_n",
+    "block_p",
+    "block_s",
+    "c_shape",
+    "cb_shape",
+    "dA_shape",
+    "diagonal_microtile_size",
+    "dt_shape",
+    "dtype",
+    "num_stages",
+    "out_shape",
+    "states_shape",
+    "threads",
+    "x_shape"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 465,
+    "git_blob": "790c5d1dd70d2d51c7c0832c33bd4b51f7c4a9c1",
+    "qualname": "_ssd_chunk_scan_fwd_kernel.kernel_func.main",
+    "relative_path": "src/tileops/kernels/mamba/ssd_chunk_scan.py",
+    "selected_source_sha256": "22afdc94a2dc3853b75d68cd1dca344a49f1d3facb81d2afc2ba71454571e36f",
+    "source_sha256": "13772a8374d17c4e68d223e213a6032e392f1960a570002512d17e947611f316",
+    "start_line": 109
+  }
+}

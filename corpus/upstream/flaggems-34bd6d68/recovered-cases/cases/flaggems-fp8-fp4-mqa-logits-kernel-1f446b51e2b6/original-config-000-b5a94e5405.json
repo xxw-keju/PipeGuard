@@ -1,0 +1,125 @@
+{
+  "arguments": {
+    "M": 1,
+    "N": 1024,
+    "clean_logits": true
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-fp8-fp4-mqa-logits-kernel-1f446b51e2b6-original-df040872db-config-b5a94e5405",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:Q_ptr",
+        "1": "global:K_ptr",
+        "2": "global:K_scale_ptr",
+        "3": "global:W_ptr",
+        "4": "global:O_ptr"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "BLOCK_M": 1,
+      "BLOCK_N": 64,
+      "D": 16,
+      "H": 16,
+      "HEAD_BLOCK": 16,
+      "M": 1,
+      "N": 1024,
+      "stride_kd": 1,
+      "stride_kn": 1,
+      "stride_om": 1,
+      "stride_on": 1,
+      "stride_qd": 1,
+      "stride_qh": 1,
+      "stride_qm": 1,
+      "stride_wh": 1,
+      "stride_wm": 1
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "maxnreg": null,
+      "num_ctas": 1,
+      "num_stages": 1,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "K_ptr": "*fp32",
+      "K_scale_ptr": "*fp32",
+      "O_ptr": "*fp32",
+      "Q_ptr": "*fp32",
+      "W_ptr": "*fp32"
+    }
+  },
+  "evidence": [
+    "flaggems-launch-59fa2e05483f750a",
+    "flaggems-test-de9e019e1654b441",
+    "source-fea22172b94daba2"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-fp8-fp4-mqa-logits-kernel-1f446b51e2b6",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_fp8_fp4_mqa_logits.py:68-108#test_fp8_fp4_mqa_logits",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned. Autotune candidate 0 from src/flag_gems/runtime/backend/_nvidia/tune_configs.yaml#fp8_fp4_mqa_logits.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ],
+  "workload_recovery": {
+    "method": "static-source-and-case-heuristic-v1",
+    "notes": [
+      "All scalar parameters are compile-time specialized.",
+      "Pointer types derive from source use, parameter names, and the case dtype.",
+      "The recovered workload checks CTA (0,0,0) with a one-CTA launch and is not evidence for the original full launch grid."
+    ],
+    "original_case_path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/corpus/upstream/suite3/kernels/triton/flaggems/flaggems-fp8-fp4-mqa-logits-kernel-1f446b51e2b6/cases/original-config-000-b5a94e5405.json",
+    "status": "HEURISTIC"
+  }
+}

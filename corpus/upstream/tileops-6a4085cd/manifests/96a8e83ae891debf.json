@@ -1,0 +1,60 @@
+{
+  "candidate_id": "96a8e83ae891debf",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/fft.py/L72-L622__fft_c2c_kernel._fft_lut_func__96a8e83ae891debf.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "df980e767b6022d08a1e069314c25354271742c8641356e8b1acfb294e6d9d3f",
+    "source_map": {
+      "end_line": 622,
+      "logical_path": "src/tileops/kernels/fft.py",
+      "start_line": 72
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "B",
+    "Callable",
+    "T",
+    "_PI",
+    "dtype",
+    "log2n",
+    "lut_size",
+    "math",
+    "n",
+    "real_dtype",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "f0d7edcee00551c4"
+  ],
+  "lexical_parents": [
+    "_fft_c2c_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/96a8e83ae891debf/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "B",
+    "dtype",
+    "log2n",
+    "lut_size",
+    "n",
+    "real_dtype"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 622,
+    "git_blob": "2fda92499e3533ef19c98612d9f9efae69eb3167",
+    "qualname": "_fft_c2c_kernel._fft_lut_func",
+    "relative_path": "src/tileops/kernels/fft.py",
+    "selected_source_sha256": "0e670ae34c0ca834d62a8adcc545e1f089662b4829bdcd5d2d95ad661d6dfc39",
+    "source_sha256": "cf04b0c949c5006065b0327031ef5ed0219a5fcf142b09ff276d34d77a73dd6d",
+    "start_line": 72
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "candidate_id": "dd6ffa6b8c0914db",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/gemm/bmm.py/L60-L111__bmm_kernel._bmm_func._bmm_main__dd6ffa6b8c0914db.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "5f09693fbe5f83e64acfdbb5741381806279268e7b5bc58464113ca62a00906b",
+    "source_map": {
+      "end_line": 111,
+      "logical_path": "src/tileops/kernels/gemm/bmm.py",
+      "start_line": 60
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_k",
+    "block_m",
+    "block_n",
+    "dtype",
+    "k",
+    "m",
+    "n",
+    "num_stages",
+    "threads",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_bmm_kernel",
+    "_bmm_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/dd6ffa6b8c0914db/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_k",
+    "block_m",
+    "block_n",
+    "dtype",
+    "k",
+    "m",
+    "n",
+    "num_stages",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 111,
+    "git_blob": "8390bc82e3bebddcfddb77368d4e6c412a1a9a7d",
+    "qualname": "_bmm_kernel._bmm_func._bmm_main",
+    "relative_path": "src/tileops/kernels/gemm/bmm.py",
+    "selected_source_sha256": "1ba4fd20a9ce31a41124fc377b94a5953d72abef6ec45aa7aa980eb011567580",
+    "source_sha256": "e4d71d7ba1d0c0f20af3d43e5c3ac65746417645cc6ed658de3fc424e1671dcc",
+    "start_line": 60
+  }
+}

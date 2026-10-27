@@ -1,0 +1,40 @@
+{
+  "candidate_id": "d4ae421351fb11b2",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/relu6.py/L27-L37__relu6_kernel__d4ae421351fb11b2.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "70c831dba68ca1a60e7ddff0eac7e4eed643088d5c366385ee95eddb20796fd5",
+    "source_map": {
+      "end_line": 37,
+      "logical_path": "src/flag_gems/ops/relu6.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/d4ae421351fb11b2/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 37,
+    "git_blob": "e4c00384b03007f7d09224b930dcd15799aa1106",
+    "qualname": "relu6_kernel",
+    "relative_path": "src/flag_gems/ops/relu6.py",
+    "selected_source_sha256": "9740ed1d51cd3e359c043ddce94981a751d82bf886850af17b819b1b04e6fed9",
+    "source_sha256": "d3d234fd978b31321079486c46570bae80ca79160ddc47c68661665189b8b874",
+    "start_line": 27
+  }
+}

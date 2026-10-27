@@ -1,0 +1,49 @@
+{
+  "candidate_id": "0a5f0f2f19d6505e",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/addmm.py/L42-L131__addmm_kernel__0a5f0f2f19d6505e.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "5f28de60de328eab1cd2954025e43c53b1798278e10a702b949c8ef3fa2aa7b6",
+    "source_map": {
+      "end_line": 131,
+      "logical_path": "src/flag_gems/ops/addmm.py",
+      "start_line": 42
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "flag_gems.utils.libtuner",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_accumulate_dot",
+    "ext",
+    "libentry",
+    "libtuner",
+    "runtime",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "0740ca4062d1bbce"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/0a5f0f2f19d6505e/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 131,
+    "git_blob": "f6539620d3f821dad7e26a05cc85c5ff0af16ac2",
+    "qualname": "addmm_kernel",
+    "relative_path": "src/flag_gems/ops/addmm.py",
+    "selected_source_sha256": "8e00b8b66eadb3748de83c2720a314ff1e8afeb1cd050a89c7cb8299d9b21560",
+    "source_sha256": "5015feda236e211638891784b17a681d77d12a7dfebe81208a04e85f2b5ec342",
+    "start_line": 42
+  }
+}

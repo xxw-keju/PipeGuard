@@ -1,0 +1,51 @@
+{
+  "bindings": {
+    "dim": -2,
+    "dtype": "torch.bfloat16",
+    "include_self": true,
+    "index_dtype": "torch.int64",
+    "reduce": "prod",
+    "shape": [
+      3,
+      5,
+      2
+    ]
+  },
+  "candidate_id": "3876fc1066f728f5",
+  "compiler": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-bccda9918e8eda07"
+      ],
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "test_end_line": 74,
+      "test_function": "test_index_reduce_",
+      "test_path": "tests/test_index_reduce.py",
+      "test_source_sha256": "352129f99eaee5a4f5e408562baada8343b51beba3e1b00930bb9ddcb13485bc",
+      "test_start_line": 51,
+      "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": false,
+  "origin": "upstream-test:tests/test_index_reduce.py:51-74#test_index_reduce_",
+  "recipe_id": "flaggems-root-3876fc1066f728f5-boundary-3c92af5399-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

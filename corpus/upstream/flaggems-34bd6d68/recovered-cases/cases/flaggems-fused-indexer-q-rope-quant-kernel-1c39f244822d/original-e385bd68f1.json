@@ -1,0 +1,121 @@
+{
+  "arguments": {
+    "cache_dtype": "torch.float32",
+    "num_tokens": 1,
+    "use_fp4": false
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-fused-indexer-q-rope-quant-kernel-1c39f244822d-original-e385bd68f1",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:pos_ptr",
+        "1": "global:index_q_ptr",
+        "2": "global:index_q_cos_sin_ptr",
+        "3": "global:index_q_fp8_ptr",
+        "4": "global:index_weights_ptr",
+        "5": "global:index_weights_out_ptr"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "INDEX_Q_HALF_ROT_DIM": 32,
+      "INDEX_Q_HEAD_DIM": 128,
+      "index_q_cos_sin_stride": 1,
+      "index_q_fp8_stride0": 1,
+      "index_q_fp8_stride1": 1,
+      "index_q_stride0": 1,
+      "index_q_stride1": 1,
+      "index_weights_head_scale": 1,
+      "index_weights_out_stride": 1,
+      "index_weights_softmax_scale": 1,
+      "index_weights_stride": 1
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "index_q_cos_sin_ptr": "*i64",
+      "index_q_fp8_ptr": "*i64",
+      "index_q_ptr": "*i64",
+      "index_weights_out_ptr": "*i64",
+      "index_weights_ptr": "*i64",
+      "pos_ptr": "*fp32"
+    }
+  },
+  "evidence": [
+    "flaggems-launch-b9422164d561752a",
+    "flaggems-test-b7f6d1a97b45e392",
+    "source-934365514a2c7148"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-fused-indexer-q-rope-quant-kernel-1c39f244822d",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_fused_indexer_q_rope_quant.py:111-161#test_fused_indexer_q_rope_quant",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ],
+  "workload_recovery": {
+    "method": "static-source-and-case-heuristic-v1",
+    "notes": [
+      "All scalar parameters are compile-time specialized.",
+      "Pointer types derive from source use, parameter names, and the case dtype.",
+      "The recovered workload checks CTA (0,0,0) with a one-CTA launch and is not evidence for the original full launch grid."
+    ],
+    "original_case_path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/corpus/upstream/suite3/kernels/triton/flaggems/flaggems-fused-indexer-q-rope-quant-kernel-1c39f244822d/cases/original-e385bd68f1.json",
+    "status": "HEURISTIC"
+  }
+}

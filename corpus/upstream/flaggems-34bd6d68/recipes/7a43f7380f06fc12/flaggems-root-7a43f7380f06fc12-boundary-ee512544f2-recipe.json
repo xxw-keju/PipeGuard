@@ -1,0 +1,51 @@
+{
+  "bindings": {
+    "contig": false,
+    "dtype": "torch.bfloat16",
+    "other_shape": [
+      512,
+      1
+    ],
+    "self_shape": [
+      512,
+      512
+    ]
+  },
+  "candidate_id": "7a43f7380f06fc12",
+  "compiler": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-990058229b499f4e"
+      ],
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "test_end_line": 59,
+      "test_function": "test_hypot_",
+      "test_path": "tests/test_hypot_.py",
+      "test_source_sha256": "6620e5fbb8ec6e5e5941426f19bb24761a7ce6295ad77a636517d4b642c7d10a",
+      "test_start_line": 36,
+      "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": false,
+  "origin": "upstream-test:tests/test_hypot_.py:36-59#test_hypot_",
+  "recipe_id": "flaggems-root-7a43f7380f06fc12-boundary-ee512544f2-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

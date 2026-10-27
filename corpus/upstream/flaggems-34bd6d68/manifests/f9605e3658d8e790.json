@@ -1,0 +1,43 @@
+{
+  "candidate_id": "f9605e3658d8e790",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/arcsin.py/L27-L31__arcsin_kernel__f9605e3658d8e790.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c985ffcbd9abdc4572f1e527f7ad3873de7b57b99c899153ae1d14b666c190d8",
+    "source_map": {
+      "end_line": 31,
+      "logical_path": "src/flag_gems/ops/arcsin.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_ASIN",
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/f9605e3658d8e790/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 31,
+    "git_blob": "ef96f9a8e08dba54f0e17b5ac40734866b3ee78c",
+    "qualname": "arcsin_kernel",
+    "relative_path": "src/flag_gems/ops/arcsin.py",
+    "selected_source_sha256": "5722c914d0c40fa54e1b8f00316060bad80c37a01e20e77ade18887546b64e3e",
+    "source_sha256": "5dc75ee1a250e1e3dfe99ec25398b4f3f95e745a2337113630416a64832c523a",
+    "start_line": 27
+  }
+}

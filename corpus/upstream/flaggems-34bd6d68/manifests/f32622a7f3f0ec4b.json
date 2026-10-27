@@ -1,0 +1,44 @@
+{
+  "candidate_id": "f32622a7f3f0ec4b",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/mhc/mhc_pre.py/L398-L463__mhc_pre_fused_kernel_hc_mult_4__f32622a7f3f0ec4b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "0fa698c0fcd3a601c06c35febf98aad759154eb72374a26ebea52bb0a9c58821",
+    "source_map": {
+      "end_line": 463,
+      "logical_path": "src/flag_gems/fused/mhc/mhc_pre.py",
+      "start_line": 398
+    }
+  },
+  "decorators": [
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_mhc_pre_fused_kernel_hc_mult_4_impl",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "3cbda2957b75565f"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/f32622a7f3f0ec4b/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 463,
+    "git_blob": "dc176d8e153744192451f62993f199582c44b566",
+    "qualname": "mhc_pre_fused_kernel_hc_mult_4",
+    "relative_path": "src/flag_gems/fused/mhc/mhc_pre.py",
+    "selected_source_sha256": "12bdc87a4b26cb85b5fe806c16d851f0517e96c5c50edf4faa60f620eb2f424b",
+    "source_sha256": "e1a32f89c8696c19b9978fdfdb21ef8985b87c75692a200efb9eb69bdfdb3aca",
+    "start_line": 398
+  }
+}

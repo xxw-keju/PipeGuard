@@ -1,0 +1,77 @@
+{
+  "candidate_id": "fd114193c369003e",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_prefill_varlen_fwd.py/L53-L223__gqa_prefill_varlen_fwd_kernel._gqa_prefill_varlen_fwd_func__fd114193c369003e.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e818506467f0fe979f1cd662b359e241a2e4bfdc86f5cdeed6e0d6ff1a410808",
+    "source_map": {
+      "end_line": 223,
+      "logical_path": "src/tileops/kernels/attention/gqa_prefill_varlen_fwd.py",
+      "start_line": 53
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "Callable",
+    "T",
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "heads_kv",
+    "is_causal",
+    "make_apply_softcap",
+    "make_online_softmax_with_mask_guard",
+    "make_rescale",
+    "scale",
+    "score_scale",
+    "softcap",
+    "tilelang",
+    "total_kv",
+    "total_q",
+    "use_softcap"
+  ],
+  "kernel_dependencies": [
+    "e94ca9fda0ea60c6"
+  ],
+  "lexical_parents": [
+    "_gqa_prefill_varlen_fwd_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/fd114193c369003e/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "heads_kv",
+    "is_causal",
+    "scale",
+    "score_scale",
+    "softcap",
+    "total_kv",
+    "total_q",
+    "use_softcap"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 223,
+    "git_blob": "7bd021a22845affdd7d83f453cd412330c7b7b78",
+    "qualname": "_gqa_prefill_varlen_fwd_kernel._gqa_prefill_varlen_fwd_func",
+    "relative_path": "src/tileops/kernels/attention/gqa_prefill_varlen_fwd.py",
+    "selected_source_sha256": "85d4c3dcbcdee663aae922852302b76d29d7cefc8f404dfb886be463448b5d51",
+    "source_sha256": "36729b1df76f2e121dc053890d455b2b3d1c10ef04ad608dbd548f44777d20de",
+    "start_line": 53
+  }
+}

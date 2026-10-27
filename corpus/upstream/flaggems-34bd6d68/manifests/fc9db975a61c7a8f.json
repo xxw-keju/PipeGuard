@@ -1,0 +1,42 @@
+{
+  "candidate_id": "fc9db975a61c7a8f",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/frexp.py/L27-L92__frexp_func__fc9db975a61c7a8f.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "cf1437f109efc31b6545eed3b24a73cffbe8b38ae20076fec8fd5a5da60139f8",
+    "source_map": {
+      "end_line": 92,
+      "logical_path": "src/flag_gems/ops/frexp.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/fc9db975a61c7a8f/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 92,
+    "git_blob": "e1b6c209fdaa30668eb142e1361aee7cf8f17f88",
+    "qualname": "_frexp_func",
+    "relative_path": "src/flag_gems/ops/frexp.py",
+    "selected_source_sha256": "9e197a716bd8fe853727c23b83ee88e60610419eab1333fd3e2da342a2b3e8e7",
+    "source_sha256": "ae33aa034b907ae5c6e07c18a1c81f2ff7863f1d002f4548220d3cbe3eaba77d",
+    "start_line": 27
+  }
+}

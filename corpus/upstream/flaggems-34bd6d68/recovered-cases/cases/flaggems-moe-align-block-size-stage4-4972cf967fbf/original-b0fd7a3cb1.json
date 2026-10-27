@@ -1,0 +1,115 @@
+{
+  "arguments": {
+    "block_size": 16,
+    "num_experts": 10,
+    "topk_ids_shape": [
+      1024,
+      10
+    ]
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-moe-align-block-size-stage4-4972cf967fbf-original-b0fd7a3cb1",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:topk_ids_ptr",
+        "1": "global:sorted_token_ids_ptr",
+        "2": "global:expert_ids_ptr",
+        "3": "global:tokens_cnts_ptr",
+        "4": "global:cumsum_ptr"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "block_size": 16,
+      "num_experts": 10,
+      "tokens_per_thread": 1
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "cumsum_ptr": "*fp32",
+      "expert_ids_ptr": "*i64",
+      "numel": "i32",
+      "sorted_token_ids_ptr": "*i64",
+      "tokens_cnts_ptr": "*fp32",
+      "topk_ids_ptr": "*i64"
+    }
+  },
+  "evidence": [
+    "flaggems-launch-3a8fa482f2c633c8",
+    "flaggems-test-602d312a3d50945a",
+    "source-6b1123b4dce987e5"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-moe-align-block-size-stage4-4972cf967fbf",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_moe_align_block_size.py:204-269#test_accuracy_moe_align_block_size",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ],
+  "workload_recovery": {
+    "method": "static-source-and-case-heuristic-v1",
+    "notes": [
+      "All scalar parameters are compile-time specialized.",
+      "Pointer types derive from source use, parameter names, and the case dtype.",
+      "The recovered workload checks CTA (0,0,0) with a one-CTA launch and is not evidence for the original full launch grid."
+    ],
+    "original_case_path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/corpus/upstream/suite3/kernels/triton/flaggems/flaggems-moe-align-block-size-stage4-4972cf967fbf/cases/original-b0fd7a3cb1.json",
+    "status": "HEURISTIC"
+  }
+}

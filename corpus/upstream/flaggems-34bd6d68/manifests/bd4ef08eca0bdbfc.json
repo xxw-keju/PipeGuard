@@ -1,0 +1,40 @@
+{
+  "candidate_id": "bd4ef08eca0bdbfc",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/rwkv_ka_fusion.py/L24-L62__rwkv_ka_fusion_kernel__bd4ef08eca0bdbfc.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f26a55ca8d3a38550f37f4d8545107d1cf5f425c12c5d303ba8175ede93f3927",
+    "source_map": {
+      "end_line": 62,
+      "logical_path": "src/flag_gems/fused/rwkv_ka_fusion.py",
+      "start_line": 24
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/bd4ef08eca0bdbfc/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 62,
+    "git_blob": "3154fd5282e20c8210e914a51cbf876f5dc4d703",
+    "qualname": "rwkv_ka_fusion_kernel",
+    "relative_path": "src/flag_gems/fused/rwkv_ka_fusion.py",
+    "selected_source_sha256": "a85a69623da6b1b785b530753dbabb957c7d409d82e57a9d788924a92534463e",
+    "source_sha256": "a6aa84a9a3436de2d8ca83e5e1815226744de825ea98669fb9145c94c039f003",
+    "start_line": 24
+  }
+}

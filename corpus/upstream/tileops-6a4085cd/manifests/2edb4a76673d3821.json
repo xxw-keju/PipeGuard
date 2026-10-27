@@ -1,0 +1,87 @@
+{
+  "candidate_id": "2edb4a76673d3821",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_fwd.py/L352-L462__gqa_prefill_fwd_kernel._gqa_prefill_fwd_func._gqa_prefill_fwd_main__2edb4a76673d3821.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e97474c3ec636c2c16d9a24608b5e43c0a68cdac40a8182b639634a725d8bb5b",
+    "source_map": {
+      "end_line": 462,
+      "logical_path": "src/tileops/kernels/attention/gqa_fwd.py",
+      "start_line": 352
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "apply_softcap",
+    "batch",
+    "block_m",
+    "block_n",
+    "causal_offset",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "is_causal",
+    "kv_shape",
+    "num_stages",
+    "o_shape",
+    "online_softmax",
+    "q_shape",
+    "rescale",
+    "scale",
+    "seq_len_kv",
+    "seq_len_q",
+    "threads",
+    "use_softcap"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gqa_prefill_fwd_kernel",
+    "_gqa_prefill_fwd_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/2edb4a76673d3821/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "apply_softcap",
+    "batch",
+    "block_m",
+    "block_n",
+    "causal_offset",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "is_causal",
+    "kv_shape",
+    "num_stages",
+    "o_shape",
+    "online_softmax",
+    "q_shape",
+    "rescale",
+    "scale",
+    "seq_len_kv",
+    "seq_len_q",
+    "threads",
+    "use_softcap"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 462,
+    "git_blob": "82b87c8358e7c9dfad4f19de7cd36f268a8caefd",
+    "qualname": "_gqa_prefill_fwd_kernel._gqa_prefill_fwd_func._gqa_prefill_fwd_main",
+    "relative_path": "src/tileops/kernels/attention/gqa_fwd.py",
+    "selected_source_sha256": "03838d9abc711fa3b596865591fcba7901c721856e7fc280fe710d73d8298fac",
+    "source_sha256": "ff7499fdf6df69bd0028461b99ced1f4cd3fb85abca5c8c790038ef07373bafa",
+    "start_line": 352
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "candidate_id": "ef33dd858ddf961d",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/mrope.py/L77-L141__mrope_pair_kernel__ef33dd858ddf961d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "491dfc4a80d531ef23e04df3602620f08d03716b97736aab3294877ee2f7e3cf",
+    "source_map": {
+      "end_line": 141,
+      "logical_path": "src/flag_gems/fused/mrope.py",
+      "start_line": 77
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_axis_for_pair",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "b49bcc0e7853a0c0"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/ef33dd858ddf961d/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 141,
+    "git_blob": "2f667fa04d14f8de07482d0c2a14c61791d4c2ea",
+    "qualname": "_mrope_pair_kernel",
+    "relative_path": "src/flag_gems/fused/mrope.py",
+    "selected_source_sha256": "d50c48a38531582cca934e54fcf9df8dac1f1cf1aa00bb8ca837ace073c5c41d",
+    "source_sha256": "e030bc2c8cf4fb1798eb40b3afb56000cb778ed8b42d22269521a6a3b921aec0",
+    "start_line": 77
+  }
+}

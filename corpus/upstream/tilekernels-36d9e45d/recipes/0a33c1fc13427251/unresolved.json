@@ -1,0 +1,37 @@
+{
+  "bindings": {},
+  "candidate_id": "0a33c1fc13427251",
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "0a33c1fc13427251-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "TILE_X",
+    "TILE_Y",
+    "concrete_specialization",
+    "count_clamp",
+    "get_sf_and_inv",
+    "hidden",
+    "in_dtype",
+    "num_blocks",
+    "num_expanded_tokens",
+    "num_groups",
+    "num_per_channels",
+    "num_threads",
+    "num_tokens",
+    "num_topk",
+    "out_config",
+    "sf_shape",
+    "sf_stride",
+    "store_sf",
+    "use_clamp",
+    "with_pos_to_expert",
+    "with_weight"
+  ]
+}

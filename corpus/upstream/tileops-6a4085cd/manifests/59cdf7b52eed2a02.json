@@ -1,0 +1,54 @@
+{
+  "candidate_id": "59cdf7b52eed2a02",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/moe/permute_align.py/L168-L186__make_scatter_kernel._scatter._scatter_main__59cdf7b52eed2a02.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "b8ceeab43177c80e5f50bdbaf191b353af06bfae50205977a3193938509653a7",
+    "source_map": {
+      "end_line": 186,
+      "logical_path": "src/tileops/kernels/moe/permute_align.py",
+      "start_line": 168
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_SCATTER_THREADS",
+    "max_padded",
+    "num_experts",
+    "numel",
+    "scatter_blocks",
+    "total_scatter_threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_scatter_kernel",
+    "_scatter"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/59cdf7b52eed2a02/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "max_padded",
+    "num_experts",
+    "numel",
+    "scatter_blocks",
+    "total_scatter_threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 186,
+    "git_blob": "43916c1ecce704e0878911e2d5180aaeb2c063f2",
+    "qualname": "_make_scatter_kernel._scatter._scatter_main",
+    "relative_path": "src/tileops/kernels/moe/permute_align.py",
+    "selected_source_sha256": "2ecd1fe82767c1a66ab2268e61dfd6dca29a875d48192e0857e6a2f51b806c3c",
+    "source_sha256": "4dd25dacee5cb3d86d7240bd20289869aedba85cab4c3381de308c4dd5b0d291",
+    "start_line": 168
+  }
+}

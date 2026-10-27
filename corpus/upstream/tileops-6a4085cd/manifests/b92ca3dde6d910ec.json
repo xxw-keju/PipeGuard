@@ -1,0 +1,65 @@
+{
+  "candidate_id": "b92ca3dde6d910ec",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py/L833-L874__dh_segment_boundary_scan_tl._func__b92ca3dde6d910ec.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "22ad9f54f3b6738a4e34d0eeeed8941cb3c7d31cc469eff0b2b03821879df69c",
+    "source_map": {
+      "end_line": 874,
+      "logical_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+      "start_line": 833
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "BV",
+    "T",
+    "accum_dtype",
+    "batch",
+    "dim_k",
+    "dtype",
+    "head",
+    "num_segments",
+    "num_v_tiles",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "52fd37a0a0b26682"
+  ],
+  "lexical_parents": [
+    "_dh_segment_boundary_scan_tl"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/b92ca3dde6d910ec/unresolved.json",
+    "tileops-6a4085cd/recipes/b92ca3dde6d910ec/tileops-6a4085cd-root-b92ca3dde6d910ec-boundary-2542e60d68-recipe.json",
+    "tileops-6a4085cd/recipes/b92ca3dde6d910ec/tileops-6a4085cd-root-b92ca3dde6d910ec-boundary-4739806ba8-recipe.json",
+    "tileops-6a4085cd/recipes/b92ca3dde6d910ec/tileops-6a4085cd-root-b92ca3dde6d910ec-boundary-dd43c27ca3-recipe.json",
+    "tileops-6a4085cd/recipes/b92ca3dde6d910ec/tileops-6a4085cd-root-b92ca3dde6d910ec-original-9d9824a462-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "BV",
+    "accum_dtype",
+    "batch",
+    "dim_k",
+    "dtype",
+    "head",
+    "num_segments",
+    "num_v_tiles"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 874,
+    "git_blob": "8e5c33a97fe8c7c54307fd1577c5ceef698647f9",
+    "qualname": "_dh_segment_boundary_scan_tl._func",
+    "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+    "selected_source_sha256": "07c3f012c9ce66eb7fb5e2ee8d29ef556167f7e0e9d069763afb1f7a08f1e6c8",
+    "source_sha256": "a679b2910c2571827fb5c58d51facfff1dad0a4ef3e01d9870ab43ad6d71ff1a",
+    "start_line": 833
+  }
+}

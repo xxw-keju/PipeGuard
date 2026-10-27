@@ -1,0 +1,43 @@
+{
+  "candidate_id": "eb3b59844bc92efb",
+  "candidate_kind": "HEURISTICS_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/geometric.py/L32-L73__geometric_kernel__eb3b59844bc92efb.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d680a76bd1879008d7fb5cde91472dc54c6a5883982c075ace14416065d1df0e",
+    "source_map": {
+      "end_line": 73,
+      "logical_path": "src/flag_gems/ops/geometric.py",
+      "start_line": 32
+    }
+  },
+  "decorators": [
+    "triton.heuristics",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "runtime",
+    "tl",
+    "triton",
+    "uint_to_uniform_float"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/eb3b59844bc92efb/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 73,
+    "git_blob": "247b60ef6c7f5da14e9b76123a0a7c1cd15482e3",
+    "qualname": "geometric_kernel",
+    "relative_path": "src/flag_gems/ops/geometric.py",
+    "selected_source_sha256": "29665e6c131aec09c1555fb1e2c95ac894b661835bb407072f7e0e9cb822fae3",
+    "source_sha256": "e87b8bea8e2316ce61f93a05acb5c327209b76ee421acc412464e54b8be77106",
+    "start_line": 32
+  }
+}

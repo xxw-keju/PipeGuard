@@ -1,0 +1,63 @@
+{
+  "candidate_id": "6294d5e3ae415be4",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/reduce.py/L463-L515__simple_reduce_kernel._func.main__6294d5e3ae415be4.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ffd4a61f16b8d3108c8567ae3bd553fdd0277d71d5245724da441f56ed511936",
+    "source_map": {
+      "end_line": 515,
+      "logical_path": "src/tileops/kernels/reduction/reduce.py",
+      "start_line": 463
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "N_padded",
+    "T",
+    "_needs_pad",
+    "_pad_val",
+    "block_m",
+    "dtype",
+    "op_kind",
+    "out_dtype",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_simple_reduce_kernel",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/6294d5e3ae415be4/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "N_padded",
+    "_needs_pad",
+    "_pad_val",
+    "block_m",
+    "dtype",
+    "op_kind",
+    "out_dtype",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 515,
+    "git_blob": "320ca23e14bc2eb1b15b79ff51413e629add6232",
+    "qualname": "_simple_reduce_kernel._func.main",
+    "relative_path": "src/tileops/kernels/reduction/reduce.py",
+    "selected_source_sha256": "5129cc8f321538621a2fce2520545ab0d16671986add37b20f484216c0142e86",
+    "source_sha256": "26ed7c5be84ffc4bd2b89c3d7d03f9104d534accb25b8e8642894d51b27afd6f",
+    "start_line": 463
+  }
+}

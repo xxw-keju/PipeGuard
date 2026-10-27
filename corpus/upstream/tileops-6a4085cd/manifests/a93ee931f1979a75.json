@@ -1,0 +1,81 @@
+{
+  "candidate_id": "a93ee931f1979a75",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_fwd_ws.py/L104-L496__gqa_fwd_ws_persistent_kernel.func.main__a93ee931f1979a75.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1d4a82dabb2a56256c0d4fd0c3f426b88136bca3fdc56d68b12aa19da50ad071",
+    "source_map": {
+      "end_line": 496,
+      "logical_path": "src/tileops/kernels/attention/gqa_fwd_ws.py",
+      "start_line": 104
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "NUM_SMS",
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_m",
+    "block_n",
+    "dim",
+    "dtype",
+    "groups",
+    "half_m",
+    "heads",
+    "heads_kv",
+    "kv_shape",
+    "q_shape",
+    "rescale_1",
+    "rescale_2",
+    "scale",
+    "seq_len",
+    "softmax_1",
+    "softmax_2",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gqa_fwd_ws_persistent_kernel",
+    "func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/a93ee931f1979a75/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_m",
+    "block_n",
+    "dim",
+    "dtype",
+    "groups",
+    "half_m",
+    "heads",
+    "heads_kv",
+    "kv_shape",
+    "q_shape",
+    "rescale_1",
+    "rescale_2",
+    "scale",
+    "seq_len",
+    "softmax_1",
+    "softmax_2"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 496,
+    "git_blob": "ba81d2efba6d0eb883cf43ce2224bd210290b27b",
+    "qualname": "_gqa_fwd_ws_persistent_kernel.func.main",
+    "relative_path": "src/tileops/kernels/attention/gqa_fwd_ws.py",
+    "selected_source_sha256": "ce67b46dcb162f5f1f297ab37fcf7570a34e787a0b11b290fcb3e43c3da0815d",
+    "source_sha256": "a2c40f86ab99071cd82578e5e2eb8a5a49d63855bb0158263632257a1ebbdd19",
+    "start_line": 104
+  }
+}

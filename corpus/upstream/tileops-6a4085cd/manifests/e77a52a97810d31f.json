@@ -1,0 +1,57 @@
+{
+  "candidate_id": "e77a52a97810d31f",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/elementwise/prelu.py/L27-L51__make_prelu_kernel.kernel__e77a52a97810d31f.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "cbdca2250f4b91066f334b153486c85b469d4382ac4bf95a8724c278ffc0b366",
+    "source_map": {
+      "end_line": 51,
+      "logical_path": "src/tileops/kernels/elementwise/prelu.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "C",
+    "N",
+    "T",
+    "dtype",
+    "inner_size",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "ae96d190e68919a3"
+  ],
+  "lexical_parents": [
+    "_make_prelu_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/e77a52a97810d31f/unresolved.json",
+    "tileops-6a4085cd/recipes/e77a52a97810d31f/tileops-6a4085cd-root-e77a52a97810d31f-boundary-9b224b4387-recipe.json",
+    "tileops-6a4085cd/recipes/e77a52a97810d31f/tileops-6a4085cd-root-e77a52a97810d31f-boundary-a80eb05f6b-recipe.json",
+    "tileops-6a4085cd/recipes/e77a52a97810d31f/tileops-6a4085cd-root-e77a52a97810d31f-boundary-b234271ebe-recipe.json",
+    "tileops-6a4085cd/recipes/e77a52a97810d31f/tileops-6a4085cd-root-e77a52a97810d31f-original-0f4ba334a7-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "C",
+    "N",
+    "dtype",
+    "inner_size"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 51,
+    "git_blob": "44f1d314bece3e2032a27b91cfaddf688504c0a0",
+    "qualname": "_make_prelu_kernel.kernel",
+    "relative_path": "src/tileops/kernels/elementwise/prelu.py",
+    "selected_source_sha256": "0edd4430379169f2c719e4acf1c908ea4f52d8acaa58e2694c7b49e7119a912a",
+    "source_sha256": "19f8e984abbbeb618dd29ca761606a0127e1f3c798cbd27fcbd73f87a42967f9",
+    "start_line": 27
+  }
+}

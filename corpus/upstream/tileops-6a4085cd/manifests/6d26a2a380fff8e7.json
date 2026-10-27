@@ -1,0 +1,51 @@
+{
+  "candidate_id": "6d26a2a380fff8e7",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/moe/moe_grouped_gemm_nopad.py/L82-L112__tile_scheduler_kernel._func._sched_main__6d26a2a380fff8e7.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1f66dc914f2786993fc8836575dda53a8b506beaddee38fee09173fc0b8d1290",
+    "source_map": {
+      "end_line": 112,
+      "logical_path": "src/tileops/kernels/moe/moe_grouped_gemm_nopad.py",
+      "start_line": 82
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_tiling",
+    "max_tiles",
+    "num_experts",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_tile_scheduler_kernel",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/6d26a2a380fff8e7/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_tiling",
+    "max_tiles",
+    "num_experts",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 112,
+    "git_blob": "176d0b3cc983a00dbae2c8d4d4f05fa685afa2d3",
+    "qualname": "_tile_scheduler_kernel._func._sched_main",
+    "relative_path": "src/tileops/kernels/moe/moe_grouped_gemm_nopad.py",
+    "selected_source_sha256": "0a420ef2f56db3ba67a98595bb978af170bf252fdecfb805723c4caafb54ed4b",
+    "source_sha256": "a0318fff26c14b4d5b1104ad01f8327b201e4dd8cb5cab03826bf526acdd06c3",
+    "start_line": 82
+  }
+}

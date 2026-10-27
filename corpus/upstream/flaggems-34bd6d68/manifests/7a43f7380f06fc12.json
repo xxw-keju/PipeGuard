@@ -1,0 +1,44 @@
+{
+  "candidate_id": "7a43f7380f06fc12",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/hypot_.py/L28-L43__hypot_inplace_kernel__7a43f7380f06fc12.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "50d2ff10ab8f550940a73ad990b871b895de0935aec95b7ab171a5236c30bf48",
+    "source_map": {
+      "end_line": 43,
+      "logical_path": "src/flag_gems/ops/hypot_.py",
+      "start_line": 28
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/7a43f7380f06fc12/unresolved.json",
+    "flaggems-34bd6d68/recipes/7a43f7380f06fc12/flaggems-root-7a43f7380f06fc12-boundary-2a585a154e-recipe.json",
+    "flaggems-34bd6d68/recipes/7a43f7380f06fc12/flaggems-root-7a43f7380f06fc12-boundary-3f87a77799-recipe.json",
+    "flaggems-34bd6d68/recipes/7a43f7380f06fc12/flaggems-root-7a43f7380f06fc12-boundary-ee512544f2-recipe.json",
+    "flaggems-34bd6d68/recipes/7a43f7380f06fc12/flaggems-root-7a43f7380f06fc12-original-b2903bbb0b-recipe.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 43,
+    "git_blob": "62d18d20d5728419feb4c20f5128fb01936e4882",
+    "qualname": "_hypot_inplace_kernel",
+    "relative_path": "src/flag_gems/ops/hypot_.py",
+    "selected_source_sha256": "bddd60df597e1aff963d4fecf35172e74de4deef3e7086b5c7ed877983949f64",
+    "source_sha256": "78f1e74c41637eca62d6550afcb75f58b40c3146ee2b50b5a2a681fbf653b730",
+    "start_line": 28
+  }
+}

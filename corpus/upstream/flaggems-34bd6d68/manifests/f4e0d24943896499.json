@@ -1,0 +1,42 @@
+{
+  "candidate_id": "f4e0d24943896499",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/rot90.py/L28-L119__rot90_kernel_2d__f4e0d24943896499.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "84e601f786090fa1b1771087b3c12abf4b24969dc4208949b62a8e0a32f0d192",
+    "source_map": {
+      "end_line": 119,
+      "logical_path": "src/flag_gems/ops/rot90.py",
+      "start_line": 28
+    }
+  },
+  "decorators": [
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "runtime",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/f4e0d24943896499/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 119,
+    "git_blob": "8ba526ed4067a0db09086b773c377285ff89a8fe",
+    "qualname": "rot90_kernel_2d",
+    "relative_path": "src/flag_gems/ops/rot90.py",
+    "selected_source_sha256": "7916a0dae02323811b282ffc1720ea6bc124b20283989633972546d872d1dc14",
+    "source_sha256": "5d4df2a98aee63e2103ede1d69fe8307cc79073dd9b9399199a2f08a3f5ebb54",
+    "start_line": 28
+  }
+}

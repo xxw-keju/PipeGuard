@@ -1,0 +1,72 @@
+{
+  "candidate_id": "8decb85a7714a960",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_bwd.py/L113-L219__gqa_bwd_wgmma_pipelined_kernel._gqa_bwd_wgmma_pipelined_func__8decb85a7714a960.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f5d66067b87430ec183170ecedb265cefd788424ee980d2aa2311e49c28adcfa",
+    "source_map": {
+      "end_line": 219,
+      "logical_path": "src/tileops/kernels/attention/gqa_bwd.py",
+      "start_line": 113
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "Callable",
+    "T",
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "heads_kv",
+    "is_causal",
+    "scale",
+    "seq_len",
+    "sm_scale",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "b276e42dde8d94cd"
+  ],
+  "lexical_parents": [
+    "_gqa_bwd_wgmma_pipelined_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/8decb85a7714a960/unresolved.json",
+    "tileops-6a4085cd/recipes/8decb85a7714a960/tileops-6a4085cd-root-8decb85a7714a960-boundary-ab082a42a0-recipe.json",
+    "tileops-6a4085cd/recipes/8decb85a7714a960/tileops-6a4085cd-root-8decb85a7714a960-boundary-c7192b122d-recipe.json",
+    "tileops-6a4085cd/recipes/8decb85a7714a960/tileops-6a4085cd-root-8decb85a7714a960-boundary-f5dfb98c9e-recipe.json",
+    "tileops-6a4085cd/recipes/8decb85a7714a960/tileops-6a4085cd-root-8decb85a7714a960-original-2323311a2a-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "heads_kv",
+    "is_causal",
+    "scale",
+    "seq_len",
+    "sm_scale"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 219,
+    "git_blob": "c205bc4443804edca5906fb66ea3a5932937cb47",
+    "qualname": "_gqa_bwd_wgmma_pipelined_kernel._gqa_bwd_wgmma_pipelined_func",
+    "relative_path": "src/tileops/kernels/attention/gqa_bwd.py",
+    "selected_source_sha256": "b7919769a3e8b29ba29af043ca02702a5a90b79b6ccac4e57882f786cd7f4df4",
+    "source_sha256": "f3d0207e83803d33c55771b5600ef1e868f2991874824d9c8f797507d130f6a3",
+    "start_line": 113
+  }
+}

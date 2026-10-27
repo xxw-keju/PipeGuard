@@ -1,0 +1,41 @@
+{
+  "candidate_id": "a3de667950b03355",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/diagonal_copy.py/L26-L29__copy_func__a3de667950b03355.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "84a483d23240253e42634d6349bcee9ea778e745c5dea38feefa52de8d173d5d",
+    "source_map": {
+      "end_line": 29,
+      "logical_path": "src/flag_gems/ops/diagonal_copy.py",
+      "start_line": 26
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/a3de667950b03355/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 29,
+    "git_blob": "a5dcda471e782423e15b6433bfa3e0cb3df58aa4",
+    "qualname": "copy_func",
+    "relative_path": "src/flag_gems/ops/diagonal_copy.py",
+    "selected_source_sha256": "c8af4ceecaf03f4e36716bd86a87e2cfd0033c1c71a4263e852d3f9588646f57",
+    "source_sha256": "d00048999d7a55ca3a6813f3b92c784aa0bf0b49d80321c008e82531feaf996d",
+    "start_line": 26
+  }
+}

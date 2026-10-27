@@ -1,0 +1,49 @@
+{
+  "bindings": {
+    "axis": 0,
+    "dtype": "torch.float16",
+    "quant_max": 127,
+    "quant_min": -128,
+    "shape": [
+      4,
+      4
+    ]
+  },
+  "candidate_id": "df2f2ea1a301e273",
+  "compiler": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-82a68e6952d4d524"
+      ],
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "test_end_line": 63,
+      "test_function": "test_accuracy_fake_quantize_per_channel_affine",
+      "test_path": "tests/test_fake_quantize_per_channel_affine.py",
+      "test_source_sha256": "2fb4ba104181a5c1900cb5eebfd5cac1c2a53c159958a31bdf32f903c699b6df",
+      "test_start_line": 25,
+      "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": false,
+  "origin": "upstream-test:tests/test_fake_quantize_per_channel_affine.py:25-63#test_accuracy_fake_quantize_per_channel_affine",
+  "recipe_id": "flaggems-root-df2f2ea1a301e273-boundary-f63b3f5c40-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

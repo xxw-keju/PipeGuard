@@ -1,0 +1,59 @@
+{
+  "candidate_id": "4f7d463c3e99475f",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/elementwise/sinusoidal.py/L38-L65__make_sinusoidal_kernel.kernel.main__4f7d463c3e99475f.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "70b0e7412aafd507f82b491d035ee410da1b653c2a99e11dff9d4c49bb194ec5",
+    "source_map": {
+      "end_line": 65,
+      "logical_path": "src/tileops/kernels/elementwise/sinusoidal.py",
+      "start_line": 38
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "cols",
+    "d_model",
+    "dtype",
+    "half",
+    "rows",
+    "seq_len",
+    "threads_arg",
+    "width"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_sinusoidal_kernel",
+    "kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/4f7d463c3e99475f/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "cols",
+    "d_model",
+    "dtype",
+    "half",
+    "rows",
+    "seq_len",
+    "threads_arg",
+    "width"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 65,
+    "git_blob": "c746ab33a1aaaddd93071e1c439870abfc5aaeab",
+    "qualname": "_make_sinusoidal_kernel.kernel.main",
+    "relative_path": "src/tileops/kernels/elementwise/sinusoidal.py",
+    "selected_source_sha256": "724caa2cf7b9c3ca6f95f2b01ffde77cfedcb9286c3b5e33d301cc3f170fec89",
+    "source_sha256": "6a2564ccc24d91425d695b53dcb3a78f78990d26418a1d48740905db36c64e50",
+    "start_line": 38
+  }
+}

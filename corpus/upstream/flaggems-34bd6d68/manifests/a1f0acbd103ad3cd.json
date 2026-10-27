@@ -1,0 +1,47 @@
+{
+  "candidate_id": "a1f0acbd103ad3cd",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/isfinite.py/L31-L34__isfinite_func__a1f0acbd103ad3cd.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "dd250ea49c7d1f9983189db2085f9dc380616e413bb80d6465275361b2f00e21",
+    "source_map": {
+      "end_line": 34,
+      "logical_path": "src/flag_gems/ops/isfinite.py",
+      "start_line": 31
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_finitef",
+    "_isfinited",
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/a1f0acbd103ad3cd/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_finitef",
+    "_isfinited"
+  ],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 34,
+    "git_blob": "435e53fb4edf56fe0063134c667db12443c01956",
+    "qualname": "isfinite_func",
+    "relative_path": "src/flag_gems/ops/isfinite.py",
+    "selected_source_sha256": "f1c6fa5cadf2d3deba3aa87b40222bfb3c4979a2144045337a205a4c64b8ecf3",
+    "source_sha256": "2a5be05ed1a9565366bf6563589500d8e61547a13566a199b85dd8dfe7b3100b",
+    "start_line": 31
+  }
+}

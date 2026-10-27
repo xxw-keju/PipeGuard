@@ -1,0 +1,41 @@
+{
+  "candidate_id": "55996f845b7f8816",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/lerp.py/L35-L42__lerp_scalar_kernel_head__55996f845b7f8816.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "88d3bffa39b6427376608d4d791b40c8b9f15fff9405039a531620e4fc295f7b",
+    "source_map": {
+      "end_line": 42,
+      "logical_path": "src/flag_gems/ops/lerp.py",
+      "start_line": 35
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/55996f845b7f8816/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 42,
+    "git_blob": "f483d8c756e6bdc7d75254d20f6e3048a05b0ba9",
+    "qualname": "lerp_scalar_kernel_head",
+    "relative_path": "src/flag_gems/ops/lerp.py",
+    "selected_source_sha256": "e8770aa3d1ec39f153fc34498316282da69ca1aedb0c4728c3d6e336c912885b",
+    "source_sha256": "649081331cec76d7f9e41e90faf859760f5340dbf243e8358537ab33585e6deb",
+    "start_line": 35
+  }
+}

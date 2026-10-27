@@ -1,0 +1,83 @@
+{
+  "candidate_id": "77913143e74c037d",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/convolution/conv2d.py/L543-L691__conv2d_symmetric_kernel._conv2d_symmetric_func__77913143e74c037d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "566fb12728a6f19df84e1098c4454bb949fe88dbdd78be63aa543d2517ee17c5",
+    "source_map": {
+      "end_line": 691,
+      "logical_path": "src/tileops/kernels/convolution/conv2d.py",
+      "start_line": 543
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "CONV_SWIZZLE_PANEL",
+    "T",
+    "accum_dtype",
+    "c_in",
+    "c_out",
+    "dilation",
+    "dtype",
+    "h",
+    "has_bias",
+    "k_total",
+    "kernel_size",
+    "n",
+    "out_h",
+    "out_hw",
+    "out_w",
+    "pad",
+    "stride",
+    "tilelang",
+    "w"
+  ],
+  "kernel_dependencies": [
+    "018d36a7a213dedf",
+    "99ca5de07459551a"
+  ],
+  "lexical_parents": [
+    "_conv2d_symmetric_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/77913143e74c037d/unresolved.json",
+    "tileops-6a4085cd/recipes/77913143e74c037d/tileops-6a4085cd-root-77913143e74c037d-boundary-303f9110f5-recipe.json",
+    "tileops-6a4085cd/recipes/77913143e74c037d/tileops-6a4085cd-root-77913143e74c037d-boundary-b4fa20990c-recipe.json",
+    "tileops-6a4085cd/recipes/77913143e74c037d/tileops-6a4085cd-root-77913143e74c037d-boundary-b61d30094f-recipe.json",
+    "tileops-6a4085cd/recipes/77913143e74c037d/tileops-6a4085cd-root-77913143e74c037d-original-9b791efb9a-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "c_in",
+    "c_out",
+    "dilation",
+    "dtype",
+    "h",
+    "has_bias",
+    "k_total",
+    "kernel_size",
+    "n",
+    "out_h",
+    "out_hw",
+    "out_w",
+    "pad",
+    "stride",
+    "w"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 691,
+    "git_blob": "8d965620c62ade53e51bfb418c88eebb8d9c6b60",
+    "qualname": "_conv2d_symmetric_kernel._conv2d_symmetric_func",
+    "relative_path": "src/tileops/kernels/convolution/conv2d.py",
+    "selected_source_sha256": "caa578b139f09e9b983e0a164c7e0c9e67e5ec68e5db098bf7c081102322e32f",
+    "source_sha256": "15c4d8d16676c5a97283d768bbf42da74385d71a05d6eab114aa27a34108d524",
+    "start_line": 543
+  }
+}

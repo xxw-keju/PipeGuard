@@ -1,0 +1,42 @@
+{
+  "candidate_id": "1985dcf421a83d07",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/DSA/indexer_k_tiled.py/L25-L105__triton_lighting_indexer_k_tiled__1985dcf421a83d07.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "845f626d981cc3a9860074c2915f54d227166a4445a7e885161a4fc2084d94ed",
+    "source_map": {
+      "end_line": 105,
+      "logical_path": "src/flag_gems/fused/DSA/indexer_k_tiled.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "indexer_fwd_configs",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/1985dcf421a83d07/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 105,
+    "git_blob": "8454e0cc74c032a9958fab67ce25e6bc0d4a7181",
+    "qualname": "triton_lighting_indexer_k_tiled",
+    "relative_path": "src/flag_gems/fused/DSA/indexer_k_tiled.py",
+    "selected_source_sha256": "22cdbb2aab252f62f75ba934ba362831998997968ac2c28a67434021c6b8fef4",
+    "source_sha256": "16ef376eabce2909fbfcc3dcac78809132e619d573448b225ca63ce2f2731257",
+    "start_line": 25
+  }
+}

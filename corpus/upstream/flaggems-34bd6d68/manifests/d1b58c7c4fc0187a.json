@@ -1,0 +1,40 @@
+{
+  "candidate_id": "d1b58c7c4fc0187a",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/margin_ranking_loss.py/L27-L65__margin_ranking_loss_kernel__d1b58c7c4fc0187a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "fac7cccc390768ffacd08270f1322205f67f6df2780feecc40e8f85a2674169b",
+    "source_map": {
+      "end_line": 65,
+      "logical_path": "src/flag_gems/ops/margin_ranking_loss.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/d1b58c7c4fc0187a/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 65,
+    "git_blob": "d6d31ffc9218170fc2baa18708c8ba7f35ddb724",
+    "qualname": "_margin_ranking_loss_kernel",
+    "relative_path": "src/flag_gems/ops/margin_ranking_loss.py",
+    "selected_source_sha256": "224b09d98595e18e01de514827aaae2ad8296201799ee8cf47ff73f0821f6848",
+    "source_sha256": "cd4324fa08c6e46167e2c4e75408e10e66e98b00b8f6f6fe5a8d018247a81628",
+    "start_line": 27
+  }
+}

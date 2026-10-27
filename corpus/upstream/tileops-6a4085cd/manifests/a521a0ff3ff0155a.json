@@ -1,0 +1,59 @@
+{
+  "candidate_id": "a521a0ff3ff0155a",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/elementwise/alibi.py/L29-L55__make_alibi_kernel.kernel__a521a0ff3ff0155a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "b5d94b5783a367323bec5f6518bb11bef016754cd8b4f009a08d56818f4b9ac2",
+    "source_map": {
+      "end_line": 55,
+      "logical_path": "src/tileops/kernels/elementwise/alibi.py",
+      "start_line": 29
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "N_total",
+    "S2",
+    "T",
+    "dtype",
+    "num_heads",
+    "seq_len",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "10eb4640f8bd1a86"
+  ],
+  "lexical_parents": [
+    "_make_alibi_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/a521a0ff3ff0155a/unresolved.json",
+    "tileops-6a4085cd/recipes/a521a0ff3ff0155a/tileops-6a4085cd-root-a521a0ff3ff0155a-boundary-5dcf59a046-recipe.json",
+    "tileops-6a4085cd/recipes/a521a0ff3ff0155a/tileops-6a4085cd-root-a521a0ff3ff0155a-boundary-a5cb2a3c92-recipe.json",
+    "tileops-6a4085cd/recipes/a521a0ff3ff0155a/tileops-6a4085cd-root-a521a0ff3ff0155a-boundary-b5616915ec-recipe.json",
+    "tileops-6a4085cd/recipes/a521a0ff3ff0155a/tileops-6a4085cd-root-a521a0ff3ff0155a-original-3577dcab46-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "N_total",
+    "S2",
+    "dtype",
+    "num_heads",
+    "seq_len"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 55,
+    "git_blob": "da55e6010001e150c73b3d2c4d51848de045694d",
+    "qualname": "_make_alibi_kernel.kernel",
+    "relative_path": "src/tileops/kernels/elementwise/alibi.py",
+    "selected_source_sha256": "3c160f34706c2c4ef2cdcb237f6c347e9d2a1877d4162e05f8fb56da3bef8240",
+    "source_sha256": "9ddaa7a51c4f1144315531b2084ba8621eac6b24c952754564b5d6da5d113a70",
+    "start_line": 29
+  }
+}

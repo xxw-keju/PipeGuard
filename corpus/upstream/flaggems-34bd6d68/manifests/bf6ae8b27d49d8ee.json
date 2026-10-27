@@ -1,0 +1,43 @@
+{
+  "candidate_id": "bf6ae8b27d49d8ee",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/gru.py/L444-L578__gru_persistent_kernel__bf6ae8b27d49d8ee.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6b5d31988c81a77e843fa9d474e01041d82554b1e99bafd56f6729c1dcb05f26",
+    "source_map": {
+      "end_line": 578,
+      "logical_path": "src/flag_gems/ops/gru.py",
+      "start_line": 444
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "tl_extra_shim",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/bf6ae8b27d49d8ee/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 578,
+    "git_blob": "a5c7c1ee5e254aeea2aa296fce0097faa585d0ea",
+    "qualname": "_gru_persistent_kernel",
+    "relative_path": "src/flag_gems/ops/gru.py",
+    "selected_source_sha256": "a70c06b2e6fe3943bbf43c1566db611070ab3206d52bc7385ef2cba31eae8e51",
+    "source_sha256": "a98219db3d66f3f9340223d8dddf2266dfb72e4e37bf4204b0fd697730f5fcc6",
+    "start_line": 444
+  }
+}

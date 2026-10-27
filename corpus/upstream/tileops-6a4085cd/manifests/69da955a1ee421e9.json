@@ -1,0 +1,59 @@
+{
+  "candidate_id": "69da955a1ee421e9",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/dropout.py/L50-L63__make_dropout_kernel.kernel.main__69da955a1ee421e9.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "561e0a38d19611887dbcb5df9aa5ea0ecb422895ca98f0db26f09239b352b9d4",
+    "source_map": {
+      "end_line": 63,
+      "logical_path": "src/tileops/kernels/dropout.py",
+      "start_line": 50
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "N",
+    "T",
+    "block_size",
+    "dtype",
+    "npt_arg",
+    "p",
+    "scale",
+    "seed",
+    "threads_arg"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_dropout_kernel",
+    "kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/69da955a1ee421e9/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "N",
+    "block_size",
+    "dtype",
+    "npt_arg",
+    "p",
+    "scale",
+    "seed",
+    "threads_arg"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 63,
+    "git_blob": "1aea00e525ec0fbd5146da8b2ef963f8ef398f99",
+    "qualname": "_make_dropout_kernel.kernel.main",
+    "relative_path": "src/tileops/kernels/dropout.py",
+    "selected_source_sha256": "6b47b9591941061ecc0873104336b5d99b821417ab697af9ebe465764dc047b2",
+    "source_sha256": "247bcc35aec8616113cdbc4d4c086aa673aba5dcc84e5e8acb7b30460437dc12",
+    "start_line": 50
+  }
+}

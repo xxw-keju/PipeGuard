@@ -1,0 +1,65 @@
+{
+  "candidate_id": "8ed81c3893bfd995",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/rope.py/L156-L197__make_rope_non_neox_1d.kernel__8ed81c3893bfd995.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "038ce8df82e9516c74ef3f6a8c86e3f02572ff72787b14c6c0d75f99a9e1242b",
+    "source_map": {
+      "end_line": 197,
+      "logical_path": "src/tileops/kernels/rope.py",
+      "start_line": 156
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "block_size",
+    "dtype",
+    "half",
+    "head_dim",
+    "n_pairs",
+    "rows_per_block",
+    "seq_len",
+    "staged",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "5b1472e654878aeb",
+    "a3705e444cf2dd9b",
+    "ccef35572b6d70e0",
+    "dd20650255efc348",
+    "fb28a50a18ce08ad"
+  ],
+  "lexical_parents": [
+    "_make_rope_non_neox_1d"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/8ed81c3893bfd995/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "block_size",
+    "dtype",
+    "half",
+    "head_dim",
+    "n_pairs",
+    "rows_per_block",
+    "seq_len",
+    "staged"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 197,
+    "git_blob": "f8ff3534ba5816b672ab89d86d90197e3dce3985",
+    "qualname": "_make_rope_non_neox_1d.kernel",
+    "relative_path": "src/tileops/kernels/rope.py",
+    "selected_source_sha256": "a18eefe729032c69b6da43ee2126927c0eef470cabd094fe2ebb643d6c970258",
+    "source_sha256": "a9d1e667f9c89cd7138b24c9e0582ef5ef600515d93f939a53b79f30fa756143",
+    "start_line": 156
+  }
+}

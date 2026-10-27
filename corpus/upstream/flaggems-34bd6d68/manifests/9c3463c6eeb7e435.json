@@ -1,0 +1,49 @@
+{
+  "candidate_id": "9c3463c6eeb7e435",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/prod.py/L157-L190__prod_kernel__9c3463c6eeb7e435.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d1c594bf0237b3965ee36a31044b9197ef7c0fe84b0c11eb464107a2185effc6",
+    "source_map": {
+      "end_line": 190,
+      "logical_path": "src/flag_gems/ops/prod.py",
+      "start_line": 157
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "flag_gems.utils.libtuner",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "libentry",
+    "libtuner",
+    "reduce_mul",
+    "runtime",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "cf5f67f00a07acf9"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/9c3463c6eeb7e435/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 190,
+    "git_blob": "8c5011e3b885529b36f65b661cbddc4c44a7bdd1",
+    "qualname": "prod_kernel",
+    "relative_path": "src/flag_gems/ops/prod.py",
+    "selected_source_sha256": "409c03958885c325116040f4f7b1025dec81f8d0db5be88abec4578f4900b41a",
+    "source_sha256": "4dbb067a9b1a60bd872be8788758a3022bfde4df45b1ea47679f23cc38fc3463",
+    "start_line": 157
+  }
+}

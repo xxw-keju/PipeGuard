@@ -1,0 +1,42 @@
+{
+  "candidate_id": "6c1ae9acc4feb91f",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/sqrt.py/L25-L28__sqrt_func__6c1ae9acc4feb91f.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "8ae618f0384584165374ac0b602a109e15209eaa4de979b8808d59248a32151b",
+    "source_map": {
+      "end_line": 28,
+      "logical_path": "src/flag_gems/ops/sqrt.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/6c1ae9acc4feb91f/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 28,
+    "git_blob": "2198bb4f0fd34464049580e5648b141d1c182f0d",
+    "qualname": "sqrt_func",
+    "relative_path": "src/flag_gems/ops/sqrt.py",
+    "selected_source_sha256": "21b31b3e5f5d71b7739059a4c13a91af3f49201f5b0f537436046784b9f03bd7",
+    "source_sha256": "e3ed47d99ec5447dc173265f29bd39fbcf56e9113ed007aa500d75326d04906c",
+    "start_line": 25
+  }
+}

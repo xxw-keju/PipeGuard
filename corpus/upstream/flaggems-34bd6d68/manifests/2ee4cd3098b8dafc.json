@@ -1,0 +1,44 @@
+{
+  "candidate_id": "2ee4cd3098b8dafc",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/im2col.py/L46-L130__im2col_kernel__2ee4cd3098b8dafc.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "eaa5523c40fe0d5814658f566b7d09172f7dd7b912a10ed64dec5f45ade6facd",
+    "source_map": {
+      "end_line": 130,
+      "logical_path": "src/flag_gems/ops/im2col.py",
+      "start_line": 46
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "runtime",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/2ee4cd3098b8dafc/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 130,
+    "git_blob": "d34ad9c1b6b16867fc9277ba3ab4b3a4684b32eb",
+    "qualname": "im2col_kernel",
+    "relative_path": "src/flag_gems/ops/im2col.py",
+    "selected_source_sha256": "97ba09a8be3768bd9127381d924d0593929be2cc8fa8dfc1778aed3e805ca34d",
+    "source_sha256": "761d8c47c5926cd864ccbf742ac38c81e4b5a74f13e6fa6d0d9860b3f37b7897",
+    "start_line": 46
+  }
+}

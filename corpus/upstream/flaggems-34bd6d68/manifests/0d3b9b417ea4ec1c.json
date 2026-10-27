@@ -1,0 +1,42 @@
+{
+  "candidate_id": "0d3b9b417ea4ec1c",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/binary_cross_entropy_with_logits.py/L42-L68__binary_cross_entropy_with_logits_pos_weight_kernel__0d3b9b417ea4ec1c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "fac3870c42fd6c7175e5475873899a7bb5d1aab912947c77b2cfa839be0afc37",
+    "source_map": {
+      "end_line": 68,
+      "logical_path": "src/flag_gems/ops/binary_cross_entropy_with_logits.py",
+      "start_line": 42
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/0d3b9b417ea4ec1c/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 68,
+    "git_blob": "38af96ae3253fe12e6b396539cd7e7a58e9a7009",
+    "qualname": "binary_cross_entropy_with_logits_pos_weight_kernel",
+    "relative_path": "src/flag_gems/ops/binary_cross_entropy_with_logits.py",
+    "selected_source_sha256": "835050cd2aa44d795213091d0bf4797bb52bbc67d97aa4e4386749876249a138",
+    "source_sha256": "764134cd8f51fba83bd91db6f59abca164c0b386a157d945069103e3e2841f15",
+    "start_line": 42
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "candidate_id": "6af870a58c0da04d",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/fused_marlin_moe.py/L1629-L1834__w4a16_mxfp4_moe_gemm_silu_kernel__6af870a58c0da04d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c1e4a9894a2ba5ed40460c176241c1a8a3f65c88d84842a99251bb364bc9c7d1",
+    "source_map": {
+      "end_line": 1834,
+      "logical_path": "src/flag_gems/fused/fused_marlin_moe.py",
+      "start_line": 1629
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "flag_gems.utils.libtuner",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_concat_k",
+    "_dequant_fp4_bf16",
+    "_dequant_fp4_bf16_fold",
+    "_dequant_fp4_fp16",
+    "_write_zeros_to_output",
+    "libentry",
+    "libtuner",
+    "runtime",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "2a9dd5fee40a62e8",
+    "2ffdd7ac3ea3c19c",
+    "37601895f8c4c00a",
+    "881ff82dfc7bb19d",
+    "e7c94100f89c9066"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/6af870a58c0da04d/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 1834,
+    "git_blob": "204ceb75dc7508650d86c9bfbe863994f39c2b51",
+    "qualname": "_w4a16_mxfp4_moe_gemm_silu_kernel",
+    "relative_path": "src/flag_gems/fused/fused_marlin_moe.py",
+    "selected_source_sha256": "0eaeb7f164fb3fecb54a9cd57ea6dd325cf597608f18ace6bb9f85a751545517",
+    "source_sha256": "c4820bc58152e40555885e63a47399f72987d88fb07a8628eb43f0916dbbbf28",
+    "start_line": 1629
+  }
+}

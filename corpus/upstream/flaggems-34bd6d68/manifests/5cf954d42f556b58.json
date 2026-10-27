@@ -1,0 +1,42 @@
+{
+  "candidate_id": "5cf954d42f556b58",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/log2.py/L26-L29__log2_func__5cf954d42f556b58.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "3d7848b591cff56fed3d5194c9be056e3506d9f1a90160aab955ba0eda03e558",
+    "source_map": {
+      "end_line": 29,
+      "logical_path": "src/flag_gems/ops/log2.py",
+      "start_line": 26
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/5cf954d42f556b58/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 29,
+    "git_blob": "d02bf907814e6d02d523e161b003c7219e1d3c09",
+    "qualname": "log2_func",
+    "relative_path": "src/flag_gems/ops/log2.py",
+    "selected_source_sha256": "c5b6e674a84ea477a53be42c4d651c5d26ee785f28ab35a1df37868212b1e218",
+    "source_sha256": "39edc048a19c4dcc7e77c1d67edbb7fcc41e3da6d52bf86cf6b1a78cc53daf0f",
+    "start_line": 26
+  }
+}

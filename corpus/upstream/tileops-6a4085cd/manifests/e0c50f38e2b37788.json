@@ -1,0 +1,72 @@
+{
+  "candidate_id": "e0c50f38e2b37788",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py/L909-L958__dh_segment_local_carry_tl._func.dh_segment_local_carry_kernel__e0c50f38e2b37788.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e4f2d6ac19ab691ef96f5616fbed3802a633f22dfea6685802efd7926bda2024",
+    "source_map": {
+      "end_line": 958,
+      "logical_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+      "start_line": 909
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "BV",
+    "LOG2E",
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_chunks",
+    "num_segments",
+    "num_v_tiles",
+    "segment_chunks",
+    "seq_len",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_dh_segment_local_carry_tl",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/e0c50f38e2b37788/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "BV",
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_chunks",
+    "num_segments",
+    "num_v_tiles",
+    "segment_chunks",
+    "seq_len",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 958,
+    "git_blob": "8e5c33a97fe8c7c54307fd1577c5ceef698647f9",
+    "qualname": "_dh_segment_local_carry_tl._func.dh_segment_local_carry_kernel",
+    "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+    "selected_source_sha256": "502e18ca5e3aa18417630639f074e41c2f0d9eef4600158c83177cb73311b478",
+    "source_sha256": "a679b2910c2571827fb5c58d51facfff1dad0a4ef3e01d9870ab43ad6d71ff1a",
+    "start_line": 909
+  }
+}

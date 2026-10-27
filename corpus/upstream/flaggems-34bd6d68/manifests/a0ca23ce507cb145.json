@@ -1,0 +1,43 @@
+{
+  "candidate_id": "a0ca23ce507cb145",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/rotary_embedding.py/L29-L115__apply_rotary_pos_emb_kernel__a0ca23ce507cb145.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "9b218cc966a9112c3b417896ed988c4bfba34dc7b37574ee741c5168e567f4d9",
+    "source_map": {
+      "end_line": 115,
+      "logical_path": "src/flag_gems/fused/rotary_embedding.py",
+      "start_line": 29
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/a0ca23ce507cb145/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 115,
+    "git_blob": "1e5c3e2794fe912602c7320f16fd2b94415231fe",
+    "qualname": "apply_rotary_pos_emb_kernel",
+    "relative_path": "src/flag_gems/fused/rotary_embedding.py",
+    "selected_source_sha256": "453fcbf9fa5215bd4ccc41c4ae3a8b6f626f5ccdb48050f7e30a0055291cc498",
+    "source_sha256": "3921b115b70d211a70b4495ec33b16dd3cf23f3147b0e9ad6b552539bae918c7",
+    "start_line": 29
+  }
+}

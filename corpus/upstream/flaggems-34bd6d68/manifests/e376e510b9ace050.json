@@ -1,0 +1,43 @@
+{
+  "candidate_id": "e376e510b9ace050",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/round.py/L44-L90__round_kernel__e376e510b9ace050.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "4978e65773a2978d5c2e1608ed93bd432be817a4c8fe45091c11bfe31280c922",
+    "source_map": {
+      "end_line": 90,
+      "logical_path": "src/flag_gems/ops/round.py",
+      "start_line": 44
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "round_half_to_even_impl",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "e2906f60b68bf233"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/e376e510b9ace050/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 90,
+    "git_blob": "d6f734e68e2b87b8668530e26e8413a60b321244",
+    "qualname": "round_kernel",
+    "relative_path": "src/flag_gems/ops/round.py",
+    "selected_source_sha256": "14dd0c11ebb61ef5cdb82455e0e56b6d7a3c30634657797bf54ce8ea1f6a27c6",
+    "source_sha256": "e4a911fda979f3b8d8b0962606ebaa9834f804661d94486ec2335522526b3483",
+    "start_line": 44
+  }
+}

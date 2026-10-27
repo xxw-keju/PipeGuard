@@ -1,0 +1,43 @@
+{
+  "candidate_id": "d2d0674fde11251d",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/renorm.py/L75-L115__renorm_kernel_scale__d2d0674fde11251d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "db9a42c2f7c2b39dc41a38f4c527a068a6ababc4a5716f945124653c8a3a0e01",
+    "source_map": {
+      "end_line": 115,
+      "logical_path": "src/flag_gems/ops/renorm.py",
+      "start_line": 75
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "tle",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/d2d0674fde11251d/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 115,
+    "git_blob": "108b4b909dfbef7e1af1c4ff7cb26bd156c4a18f",
+    "qualname": "renorm_kernel_scale",
+    "relative_path": "src/flag_gems/ops/renorm.py",
+    "selected_source_sha256": "1a3b3359080b1b5b3a581cb72b10ca0d93aa2715605b6e015dd1320ea1d31577",
+    "source_sha256": "a054ed6006075e324276bc5808cdb0d2255308788dfdce948761c3e10fc28b1b",
+    "start_line": 75
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "candidate_id": "3cbddcf8184bd41c",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/quantile.py/L109-L163__quantile_bitonic_kernel__3cbddcf8184bd41c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "555b7e634d28c0cf316f8f7ea99f125d73a48ef86f6d401095c17348d8aba985",
+    "source_map": {
+      "end_line": 163,
+      "logical_path": "src/flag_gems/ops/quantile.py",
+      "start_line": 109
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_get_finfo_val",
+    "argsort",
+    "ext",
+    "libentry",
+    "tl",
+    "tl_extra_shim",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/3cbddcf8184bd41c/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 163,
+    "git_blob": "a6f2f94ee67b19c60168b43b95f19df123f2ccef",
+    "qualname": "quantile_bitonic_kernel",
+    "relative_path": "src/flag_gems/ops/quantile.py",
+    "selected_source_sha256": "74681122ba042fd50bd9f616b1f63744ad92383d49eeac06ed81e46df67bf7c4",
+    "source_sha256": "99f5ccf672ede397755bcecf6ee9aa4663f84910be37b973e43adadf7d6d0a06",
+    "start_line": 109
+  }
+}

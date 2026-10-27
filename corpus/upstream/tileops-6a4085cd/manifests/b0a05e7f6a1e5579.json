@@ -1,0 +1,55 @@
+{
+  "candidate_id": "b0a05e7f6a1e5579",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/mhc/mhc_post.py/L18-L63__mhc_post_kernel._mhc_func__b0a05e7f6a1e5579.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "16f0ae11b5a5615cad6a4db8be8db519f9fae6fe0c4137e47150edd7efe1097f",
+    "source_map": {
+      "end_line": 63,
+      "logical_path": "src/tileops/kernels/mhc/mhc_post.py",
+      "start_line": 18
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "batch",
+    "c_x",
+    "dtype",
+    "n_expand",
+    "tilelang",
+    "x_dtype"
+  ],
+  "kernel_dependencies": [
+    "8e34ecc067b8989e"
+  ],
+  "lexical_parents": [
+    "_mhc_post_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/b0a05e7f6a1e5579/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "batch",
+    "c_x",
+    "dtype",
+    "n_expand",
+    "x_dtype"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 63,
+    "git_blob": "c3d9c71803df3efc1ec7e5b0e8956d37e5dfb3a4",
+    "qualname": "_mhc_post_kernel._mhc_func",
+    "relative_path": "src/tileops/kernels/mhc/mhc_post.py",
+    "selected_source_sha256": "977b905ae6283869fd3f4e152423bce7243ba7af91b055e53cc30d44001faab9",
+    "source_sha256": "9d3ff644adbda5ebced48c69cd0d04e27e4e7878b450621503659a94ec008c7f",
+    "start_line": 18
+  }
+}

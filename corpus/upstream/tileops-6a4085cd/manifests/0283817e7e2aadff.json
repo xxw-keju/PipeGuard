@@ -1,0 +1,68 @@
+{
+  "candidate_id": "0283817e7e2aadff",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/pool/adaptive_avg_pool2d.py/L27-L66__adaptive_avg_pool2d_kernel._adaptive_avg_pool2d_func__0283817e7e2aadff.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "363f5a590a99e9779ac5d6eba5b9242017b1f4bb446f02004b9cd5a3f2938e5f",
+    "source_map": {
+      "end_line": 66,
+      "logical_path": "src/tileops/kernels/pool/adaptive_avg_pool2d.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "adaptive_bin",
+    "c_in",
+    "dtype",
+    "h_in",
+    "max_kh",
+    "max_kw",
+    "n",
+    "out_h",
+    "out_w",
+    "tilelang",
+    "total_output",
+    "w_in"
+  ],
+  "kernel_dependencies": [
+    "b60adf207c8b5b64"
+  ],
+  "lexical_parents": [
+    "_adaptive_avg_pool2d_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/0283817e7e2aadff/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "c_in",
+    "dtype",
+    "h_in",
+    "max_kh",
+    "max_kw",
+    "n",
+    "out_h",
+    "out_w",
+    "total_output",
+    "w_in"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 66,
+    "git_blob": "4a3fe56cdeb8405ec1cdebc8fcc9a097906da26c",
+    "qualname": "_adaptive_avg_pool2d_kernel._adaptive_avg_pool2d_func",
+    "relative_path": "src/tileops/kernels/pool/adaptive_avg_pool2d.py",
+    "selected_source_sha256": "9a09b84e17fd8147b62377e5248b912d52101abcb3ab6727d5591243135eca85",
+    "source_sha256": "ec5cb0fbd78062a3855be873edf3334e2554716ce8819bed067c8f748ef2cba7",
+    "start_line": 27
+  }
+}

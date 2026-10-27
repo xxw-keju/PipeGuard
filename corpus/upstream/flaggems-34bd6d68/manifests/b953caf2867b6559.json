@@ -1,0 +1,43 @@
+{
+  "candidate_id": "b953caf2867b6559",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/cummax.py/L50-L80__add_base_max_kernel__b953caf2867b6559.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d52d48c09d82cf29c01a490ab965dd4e345d73834ac84a13c7697519bb1cc364",
+    "source_map": {
+      "end_line": 80,
+      "logical_path": "src/flag_gems/ops/cummax.py",
+      "start_line": 50
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/b953caf2867b6559/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 80,
+    "git_blob": "b29704babdf481b8c3848c5e0693e2a2a3adddfc",
+    "qualname": "add_base_max_kernel",
+    "relative_path": "src/flag_gems/ops/cummax.py",
+    "selected_source_sha256": "08919646413fec4c548523fab754a8e49731d523525067ce8481f34be52846c3",
+    "source_sha256": "7a813cd9055ac07405fce358e67df9f071e545a3884b8d935dc851c1c422e811",
+    "start_line": 50
+  }
+}

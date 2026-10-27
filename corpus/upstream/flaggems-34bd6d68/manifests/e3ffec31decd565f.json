@@ -1,0 +1,43 @@
+{
+  "candidate_id": "e3ffec31decd565f",
+  "candidate_kind": "HEURISTICS_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/randint_like.py/L34-L74__randint_kernel__e3ffec31decd565f.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "4bdb1a3d64cec5833b129d39a9e973cc68c1eb6e4d5e23e145fce0b1afec2ebf",
+    "source_map": {
+      "end_line": 74,
+      "logical_path": "src/flag_gems/ops/randint_like.py",
+      "start_line": 34
+    }
+  },
+  "decorators": [
+    "triton.heuristics",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "runtime",
+    "tl",
+    "triton",
+    "uint_to_uniform_float"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/e3ffec31decd565f/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 74,
+    "git_blob": "8b73207a6d836199cb8ad0503c469281f03468b4",
+    "qualname": "randint_kernel",
+    "relative_path": "src/flag_gems/ops/randint_like.py",
+    "selected_source_sha256": "2c4778e5209a7f096ce319c74d7050ae998017bf7bd0b8afdbd814cf7bc463f9",
+    "source_sha256": "bc5fdc42cb4166da5d0b961f0afbce7a361822b7a10f70b8acfd5c44b4d83d56",
+    "start_line": 34
+  }
+}

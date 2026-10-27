@@ -1,0 +1,97 @@
+{
+  "candidate_id": "420b4216b08f34e4",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/pool/avg_pool3d.py/L67-L155__avg_pool3d_kernel._avg_pool3d_func._avg_pool3d_main__420b4216b08f34e4.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1f4d34ee7acace5de19628a4bea9fcc5cab1afafeeb5dfbd7184c1b248a30e23",
+    "source_map": {
+      "end_line": 155,
+      "logical_path": "src/tileops/kernels/pool/avg_pool3d.py",
+      "start_line": 67
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "block_m",
+    "count_include_pad",
+    "d_in",
+    "divisor_override",
+    "dtype",
+    "h_in",
+    "kernel_d",
+    "kernel_h",
+    "kernel_w",
+    "out_d",
+    "out_h",
+    "out_w",
+    "pad_d",
+    "pad_h",
+    "pad_w",
+    "rows",
+    "stride_d",
+    "stride_h",
+    "stride_w",
+    "threads",
+    "tile_full",
+    "total",
+    "use_divisor_override",
+    "w_in",
+    "whole_window_divides",
+    "window_inside"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_avg_pool3d_kernel",
+    "_avg_pool3d_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/420b4216b08f34e4/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "block_m",
+    "count_include_pad",
+    "d_in",
+    "divisor_override",
+    "dtype",
+    "h_in",
+    "kernel_d",
+    "kernel_h",
+    "kernel_w",
+    "out_d",
+    "out_h",
+    "out_w",
+    "pad_d",
+    "pad_h",
+    "pad_w",
+    "rows",
+    "stride_d",
+    "stride_h",
+    "stride_w",
+    "threads",
+    "tile_full",
+    "total",
+    "use_divisor_override",
+    "w_in",
+    "whole_window_divides",
+    "window_inside"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 155,
+    "git_blob": "1b1ac19028fd3404edc4f508147a30b94fabaad1",
+    "qualname": "_avg_pool3d_kernel._avg_pool3d_func._avg_pool3d_main",
+    "relative_path": "src/tileops/kernels/pool/avg_pool3d.py",
+    "selected_source_sha256": "384e611e13636f4e982aa7cccce7736d8f93ffa75105eba9356742474575d0a4",
+    "source_sha256": "474a9f093882184af3990ad6286d0fd8458d3541cba0eff3683a125bc39c52bc",
+    "start_line": 67
+  }
+}

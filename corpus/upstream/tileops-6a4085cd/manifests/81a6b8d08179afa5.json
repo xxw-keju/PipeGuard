@@ -1,0 +1,82 @@
+{
+  "candidate_id": "81a6b8d08179afa5",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/gemm/dense.py/L915-L1072__gemm_coop2_kernel._gemm_coop2_func._gemm_coop2_main__81a6b8d08179afa5.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c617bfa9f53df524426702dd3d9dc0b3a1709c88d0d36fba9b32296b73e78e20",
+    "source_map": {
+      "end_line": 1072,
+      "logical_path": "src/tileops/kernels/gemm/dense.py",
+      "start_line": 915
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_CONSUMER_BAR_WG0",
+    "_CONSUMER_BAR_WG1",
+    "accum_dtype",
+    "block_k",
+    "block_m",
+    "block_n",
+    "decode",
+    "dtype",
+    "half_m",
+    "k",
+    "k_iters",
+    "m",
+    "max_waves",
+    "n",
+    "n_chunks",
+    "nr",
+    "num_stages",
+    "sm_count",
+    "sn",
+    "tilelang",
+    "total_tiles"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gemm_coop2_kernel",
+    "_gemm_coop2_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/81a6b8d08179afa5/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "block_k",
+    "block_m",
+    "block_n",
+    "decode",
+    "dtype",
+    "half_m",
+    "k",
+    "k_iters",
+    "m",
+    "max_waves",
+    "n",
+    "n_chunks",
+    "nr",
+    "num_stages",
+    "sm_count",
+    "sn",
+    "total_tiles"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 1072,
+    "git_blob": "eddbf8bcc75a35fe8b2902263f459502259880a0",
+    "qualname": "_gemm_coop2_kernel._gemm_coop2_func._gemm_coop2_main",
+    "relative_path": "src/tileops/kernels/gemm/dense.py",
+    "selected_source_sha256": "ef6929135474371f7664b5c55bc7ed4a4062a375edddc40883c62ec3d9348aad",
+    "source_sha256": "5c382dd03a6ec1f75bdcc0e937f6e31308068cbfdd3293a54ca639642501f1bf",
+    "start_line": 915
+  }
+}

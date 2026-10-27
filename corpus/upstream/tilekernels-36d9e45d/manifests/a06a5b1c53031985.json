@@ -1,0 +1,49 @@
+{
+  "candidate_id": "a06a5b1c53031985",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilekernels-36d9e45d/capsules/tile_kernels/quant/swiglu_forward_and_per_channel_cast_and_transpose_kernel.py/L9-L174__get_swiglu_forward_and_per_channel_cast_and_transpose_kernel__a06a5b1c53031985.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "62253b3a8caa4073ef0170ea5de662c320897ed9172a6ee0d13024461f267288",
+    "source_map": {
+      "end_line": 174,
+      "logical_path": "tile_kernels/quant/swiglu_forward_and_per_channel_cast_and_transpose_kernel.py",
+      "start_line": 9
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "CastOutputConfig",
+    "T",
+    "get_best_vectorize_size",
+    "get_sf_and_inv",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "10d315d340fbcb7c"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilekernels-36d9e45d/recipes/a06a5b1c53031985/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "CastOutputConfig",
+    "get_best_vectorize_size",
+    "get_sf_and_inv"
+  ],
+  "upstream": {
+    "commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+    "end_line": 174,
+    "git_blob": "509abf6bb9c5d90601f116979bb4b7c60b1bb483",
+    "qualname": "get_swiglu_forward_and_per_channel_cast_and_transpose_kernel",
+    "relative_path": "tile_kernels/quant/swiglu_forward_and_per_channel_cast_and_transpose_kernel.py",
+    "selected_source_sha256": "0945e0ea5726bbcfec2a2e26d15256b9002ad94a590d528acfa0500154a472cb",
+    "source_sha256": "ff87e42d0b1757ecaa2aefc615f663db116f6877bd424396461dfe3d6ba01472",
+    "start_line": 9
+  }
+}

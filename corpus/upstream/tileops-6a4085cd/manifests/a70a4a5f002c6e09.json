@@ -1,0 +1,59 @@
+{
+  "candidate_id": "a70a4a5f002c6e09",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/norm/fused_add_norm.py/L423-L449__fused_add_rms_norm_split_kernel._apply.main__a70a4a5f002c6e09.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "4ef5e522f15b28778be8bc518c8a1fd171a561fab87ed4016ed6c687732d8e79",
+    "source_map": {
+      "end_line": 449,
+      "logical_path": "src/tileops/kernels/norm/fused_add_norm.py",
+      "start_line": 423
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "N",
+    "T",
+    "accum",
+    "chunk",
+    "dtype",
+    "eps",
+    "per",
+    "splits",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_fused_add_rms_norm_split_kernel",
+    "_apply"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/a70a4a5f002c6e09/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "N",
+    "accum",
+    "chunk",
+    "dtype",
+    "eps",
+    "per",
+    "splits",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 449,
+    "git_blob": "f80ccd65569274bc60da21946f038651a3e340e3",
+    "qualname": "_fused_add_rms_norm_split_kernel._apply.main",
+    "relative_path": "src/tileops/kernels/norm/fused_add_norm.py",
+    "selected_source_sha256": "d969f043e9efdee079a854c9ca6f8c529426fb5759b62c94fa2d4de71e1c4fe2",
+    "source_sha256": "0e7e16774d06bdbd7fafdf2534c06f327b638574f3657d94578d9ecb447f4b6f",
+    "start_line": 423
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "candidate_id": "3954a0d24dd33de0",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/gemm/dense.py/L237-L325__gemm_fp8_kernel._gemm_fp8_func._gemm_fp8_main__3954a0d24dd33de0.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "574be3d749bc5a6428969ca3316f507d9e5247bb025795c6f125962a320a8e07",
+    "source_map": {
+      "end_line": 325,
+      "logical_path": "src/tileops/kernels/gemm/dense.py",
+      "start_line": 237
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "block_k",
+    "block_m",
+    "block_n",
+    "block_scaled",
+    "dtype",
+    "k",
+    "m",
+    "n",
+    "num_stages",
+    "out_dtype",
+    "scale_a_shape",
+    "scale_b_shape",
+    "threads",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gemm_fp8_kernel",
+    "_gemm_fp8_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/3954a0d24dd33de0/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "block_k",
+    "block_m",
+    "block_n",
+    "block_scaled",
+    "dtype",
+    "k",
+    "m",
+    "n",
+    "num_stages",
+    "out_dtype",
+    "scale_a_shape",
+    "scale_b_shape",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 325,
+    "git_blob": "eddbf8bcc75a35fe8b2902263f459502259880a0",
+    "qualname": "_gemm_fp8_kernel._gemm_fp8_func._gemm_fp8_main",
+    "relative_path": "src/tileops/kernels/gemm/dense.py",
+    "selected_source_sha256": "cd8b73050044119293d365a4dc1a2c9aab1aa11b54a434c3db27b5889a5d9718",
+    "source_sha256": "5c382dd03a6ec1f75bdcc0e937f6e31308068cbfdd3293a54ca639642501f1bf",
+    "start_line": 237
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "candidate_id": "fea33852d5bb8c28",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/deepseek_mla_decode.py/L608-L618__mla_decode_ws_kernel._mla_decode_ws_func.main_no_split__fea33852d5bb8c28.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c0ac61971d7f397e205692b573fa20dd62f889f935d66f980d63cbad70246870",
+    "source_map": {
+      "end_line": 618,
+      "logical_path": "src/tileops/kernels/attention/deepseek_mla_decode.py",
+      "start_line": 608
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "batch",
+    "dim",
+    "dtype",
+    "flash_attn",
+    "heads",
+    "kv_head_num",
+    "num_split",
+    "pe_dim",
+    "seqlen_kv"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_mla_decode_ws_kernel",
+    "_mla_decode_ws_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/fea33852d5bb8c28/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "batch",
+    "dim",
+    "dtype",
+    "flash_attn",
+    "heads",
+    "kv_head_num",
+    "num_split",
+    "pe_dim",
+    "seqlen_kv"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 618,
+    "git_blob": "c45b72cc263555d4ffdef2e2edf333be468466ce",
+    "qualname": "_mla_decode_ws_kernel._mla_decode_ws_func.main_no_split",
+    "relative_path": "src/tileops/kernels/attention/deepseek_mla_decode.py",
+    "selected_source_sha256": "864e5f4af4840814d28dd4dc51e4d54769b7d01aea32b67da613c3f45601a84f",
+    "source_sha256": "f9c181e90b37b0063040bc45148efe57d78f95586b4a83e9df734dc6988bad8f",
+    "start_line": 608
+  }
+}

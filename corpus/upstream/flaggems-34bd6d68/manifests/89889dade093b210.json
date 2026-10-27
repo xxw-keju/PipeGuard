@@ -1,0 +1,40 @@
+{
+  "candidate_id": "89889dade093b210",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/upsample_bicubic2d.py/L26-L33__cubic_weight__89889dade093b210.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c9b6cdaec7c63fe13aac222bb53bfab2fa7a3963d3160e5af347ef4a45080054",
+    "source_map": {
+      "end_line": 33,
+      "logical_path": "src/flag_gems/ops/upsample_bicubic2d.py",
+      "start_line": 26
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/89889dade093b210/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 33,
+    "git_blob": "9870859b842db627244206b3ec195219d5f8e8fc",
+    "qualname": "cubic_weight",
+    "relative_path": "src/flag_gems/ops/upsample_bicubic2d.py",
+    "selected_source_sha256": "a31dafa54ffd7847f6ee7448bfc53a7bbc202337b499db0b4c73a979d58b605b",
+    "source_sha256": "211f62887c68c90027371c7b75f62d6fb3558b0ff84401c39552a7f4210f4e33",
+    "start_line": 26
+  }
+}

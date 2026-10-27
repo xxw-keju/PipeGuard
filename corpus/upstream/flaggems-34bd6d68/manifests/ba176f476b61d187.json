@@ -1,0 +1,43 @@
+{
+  "candidate_id": "ba176f476b61d187",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/groupnorm.py/L87-L151__group_norm_backward_kernel__ba176f476b61d187.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "89d856f47d0c9cfcc78d6a81ec84d938b6ac9b5b889ad253ba1da0fa7723b272",
+    "source_map": {
+      "end_line": 151,
+      "logical_path": "src/flag_gems/ops/groupnorm.py",
+      "start_line": 87
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/ba176f476b61d187/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 151,
+    "git_blob": "1ca9c973787e689d4a1cbb34a75d34487c4b337e",
+    "qualname": "group_norm_backward_kernel",
+    "relative_path": "src/flag_gems/ops/groupnorm.py",
+    "selected_source_sha256": "9d2363ec9671ccc2acddc348a546df47e3bfed046252ebf873a3ea682cadf321",
+    "source_sha256": "684167bb8a6ae8c2c532a459e1fb912d0eba78a0132e766d0eefd8f59b67df06",
+    "start_line": 87
+  }
+}

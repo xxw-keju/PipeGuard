@@ -1,0 +1,60 @@
+{
+  "candidate_id": "4537a02752d58dd1",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/moe/shared_expert_mlp.py/L44-L65__silu_mul_fused_kernel._func._main__4537a02752d58dd1.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "3179dee589a2da0cd7f4091eb51cf8d2bf5af0fb25a8da848e653e461e4830d5",
+    "source_map": {
+      "end_line": 65,
+      "logical_path": "src/tileops/kernels/moe/shared_expert_mlp.py",
+      "start_line": 44
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "T",
+    "block_m",
+    "block_n",
+    "dtype",
+    "gate_up_shape",
+    "math",
+    "out_shape",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_silu_mul_fused_kernel",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/4537a02752d58dd1/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "block_m",
+    "block_n",
+    "dtype",
+    "gate_up_shape",
+    "out_shape",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 65,
+    "git_blob": "640e812a502250bce138125d0a448333c184b587",
+    "qualname": "_silu_mul_fused_kernel._func._main",
+    "relative_path": "src/tileops/kernels/moe/shared_expert_mlp.py",
+    "selected_source_sha256": "aa14721b00a21e5d37d5ce41d64fb4504e9f302f612b857a0628444d39e7ca8b",
+    "source_sha256": "593535e393ccd458b79fa293565d742271d35c7bbfb58a4796094ff6361b7842",
+    "start_line": 44
+  }
+}

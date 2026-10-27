@@ -1,0 +1,42 @@
+{
+  "candidate_id": "f56892ef3818ead7",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/polar.py/L26-L37__polar_kernel__f56892ef3818ead7.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c909264b651be78f9cd0141c6232c339b2e2f31c89f271d164f1fa903d1b1f3d",
+    "source_map": {
+      "end_line": 37,
+      "logical_path": "src/flag_gems/ops/polar.py",
+      "start_line": 26
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/f56892ef3818ead7/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 37,
+    "git_blob": "7b4c5ddd4de189e7a4799d3b1d06580bdd72338e",
+    "qualname": "polar_kernel",
+    "relative_path": "src/flag_gems/ops/polar.py",
+    "selected_source_sha256": "15bc9bc58554a3d43468474a411b314c782a3469fd602dd89e92e9a8b934a0ff",
+    "source_sha256": "04dde1c67e6bb5ccff253191071bc65e0adcaaeec9b0aa48b09a6639c9938c19",
+    "start_line": 26
+  }
+}

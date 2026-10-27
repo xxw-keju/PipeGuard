@@ -1,0 +1,41 @@
+{
+  "candidate_id": "6c1663b9aba09604",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/moe_sum.py/L24-L67__moe_sum_kernel__6c1663b9aba09604.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ea80a1a7cfdc3ef748bebb21a8fcc6cf987bb3b6a153d607523824d513d8f675",
+    "source_map": {
+      "end_line": 67,
+      "logical_path": "src/flag_gems/fused/moe_sum.py",
+      "start_line": 24
+    }
+  },
+  "decorators": [
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/6c1663b9aba09604/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 67,
+    "git_blob": "e5a32167b32b522e786533e1e742d025bd36d4d5",
+    "qualname": "moe_sum_kernel",
+    "relative_path": "src/flag_gems/fused/moe_sum.py",
+    "selected_source_sha256": "71da6c140e19b13375144e7c33eeeea24692fd5ae039e577bf912a1ae3a42b5b",
+    "source_sha256": "1d56ffe67db83c9fbc21bf73d2df4818d25cd6f44c689e60902fb7386c412651",
+    "start_line": 24
+  }
+}

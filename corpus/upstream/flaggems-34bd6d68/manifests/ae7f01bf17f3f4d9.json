@@ -1,0 +1,42 @@
+{
+  "candidate_id": "ae7f01bf17f3f4d9",
+  "candidate_kind": "HEURISTICS_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/upsample_trilinear3d.py/L30-L170__upsample_trilinear3d_kernel__ae7f01bf17f3f4d9.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "35912ae5e5bf79b27745045cf2b6dfc45947edb41e63c09febaba11334046391",
+    "source_map": {
+      "end_line": 170,
+      "logical_path": "src/flag_gems/ops/upsample_trilinear3d.py",
+      "start_line": 30
+    }
+  },
+  "decorators": [
+    "triton.heuristics",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "runtime",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/ae7f01bf17f3f4d9/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 170,
+    "git_blob": "2c00d6279acd3f51b0499b2b0209319875ae7aba",
+    "qualname": "upsample_trilinear3d_kernel",
+    "relative_path": "src/flag_gems/ops/upsample_trilinear3d.py",
+    "selected_source_sha256": "c96044d51b6e7fea1a191717ee6949467307544240ce15c54f1aa8ad5816d1f7",
+    "source_sha256": "a83c14e310826f2ea7ee3638a57201b04bd5059504b43b51ba7abe5a67b87f07",
+    "start_line": 30
+  }
+}

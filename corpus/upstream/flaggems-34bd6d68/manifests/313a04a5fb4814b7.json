@@ -1,0 +1,43 @@
+{
+  "candidate_id": "313a04a5fb4814b7",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/gelu.py/L31-L36__gelu_none__313a04a5fb4814b7.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "4c422ae70da028025172c8ad4db892f816addef87859f55fe63e71ee84b73f7d",
+    "source_map": {
+      "end_line": 36,
+      "logical_path": "src/flag_gems/ops/gelu.py",
+      "start_line": 31
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "erf",
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/313a04a5fb4814b7/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 36,
+    "git_blob": "11b84b223fedfbe68adfc202c2ce083fe6480b5f",
+    "qualname": "gelu_none",
+    "relative_path": "src/flag_gems/ops/gelu.py",
+    "selected_source_sha256": "3cf15e8256cfe00b492b1546bfd4896dbb6d2c9ce571d03f6caef7cdfcce71c9",
+    "source_sha256": "57549257ef74a72c2b7afe9c72a7a94ef8b0794a8214600b3f8867d942381d59",
+    "start_line": 31
+  }
+}

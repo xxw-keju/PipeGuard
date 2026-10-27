@@ -1,0 +1,38 @@
+{
+  "bindings": {},
+  "candidate_id": "54c89ef9f6a9552d",
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "54c89ef9f6a9552d-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "accum_dtype",
+    "apply_softcap_1",
+    "apply_softcap_2",
+    "apply_softcap_causal_mask",
+    "batch",
+    "block_m",
+    "block_n",
+    "concrete_specialization",
+    "dim",
+    "dtype",
+    "groups",
+    "half_m",
+    "half_m_blocks",
+    "hkv_sections",
+    "kv_shape",
+    "m_blocks",
+    "q_shape",
+    "rescale_1",
+    "rescale_2",
+    "softmax_1",
+    "softmax_2",
+    "use_softcap"
+  ]
+}

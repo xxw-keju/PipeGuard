@@ -1,0 +1,32 @@
+{
+  "bindings": {},
+  "candidate_id": "481002ea995614f8",
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "481002ea995614f8-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "TILE_K",
+    "TILE_M",
+    "VEC_K",
+    "VEC_M",
+    "concrete_specialization",
+    "get_sf_and_inv",
+    "hidden",
+    "in_config",
+    "num_per_channels",
+    "num_per_tokens",
+    "num_threads",
+    "num_threads_per_token",
+    "num_tokens",
+    "num_tokens_out",
+    "out_config",
+    "with_expand"
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "candidate_id": "50b0d25f7742a376",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/norm/group_norm.py/L196-L309__group_norm_kernel._func.main__50b0d25f7742a376.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "34310d0a685eee1c733dfba26b2cfa101c69bf58193e478c24ab16fcc210b30e",
+    "source_map": {
+      "end_line": 309,
+      "logical_path": "src/tileops/kernels/norm/group_norm.py",
+      "start_line": 196
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "C",
+    "D",
+    "D_padded",
+    "M",
+    "T",
+    "_channel_of",
+    "block_m",
+    "channels_per_group",
+    "dtype",
+    "guarded",
+    "num_groups",
+    "register_direct",
+    "row_constant_affine",
+    "row_reduce",
+    "spatial_size",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_group_norm_kernel",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/50b0d25f7742a376/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "C",
+    "D",
+    "D_padded",
+    "M",
+    "block_m",
+    "channels_per_group",
+    "dtype",
+    "guarded",
+    "num_groups",
+    "register_direct",
+    "row_constant_affine",
+    "row_reduce",
+    "spatial_size",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 309,
+    "git_blob": "35b9cbcb9c9b3b14a4a4731e168b0683ea2037d8",
+    "qualname": "_group_norm_kernel._func.main",
+    "relative_path": "src/tileops/kernels/norm/group_norm.py",
+    "selected_source_sha256": "ea7c4430104e304eb3274bbc5e6a0c65026ce41924f0756cbe141ade45f86000",
+    "source_sha256": "cd1bed5506ce7af7f71eed7051a2d5867dfb022875cf3deb34a247a74e3fbb87",
+    "start_line": 196
+  }
+}

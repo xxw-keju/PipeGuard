@@ -1,0 +1,44 @@
+{
+  "bindings": {
+    "bs": 1,
+    "hidden": 2560,
+    "mhc_mult": 4,
+    "num_layers": 10,
+    "num_post": 9,
+    "seq": 8192
+  },
+  "candidate_id": "638c3caa8752aeef",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 157,
+      "function": "test_mhc_multilayer_recompute_benchmark",
+      "kind": "UPSTREAM_TEST",
+      "path": "tests/mhc/test_multilayer_recompute.py",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source_sha256": "9a190bfedd6d251af75faf3cba441f6d91f765f1316fc0d13cb329b08c693334",
+      "start_line": 110,
+      "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5"
+    }
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-upstream_test:tests/mhc/test_multilayer_recompute.py:110-157#test_mhc_multilayer_recompute_benchmark",
+  "recipe_id": "tilekernels-36d9e45d-root-638c3caa8752aeef-original-a78b4702af-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

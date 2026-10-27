@@ -1,0 +1,73 @@
+{
+  "candidate_id": "0ae000af32e96ae4",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/mamba/da_cumsum.py/L74-L137__da_cumsum_fwd_placed_kernel.kernel_func__0ae000af32e96ae4.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f7d5e5e651cc1d8716a7a61828602ff9fadf2097296bf28d4f2dc83b7c479f08",
+    "source_map": {
+      "end_line": 137,
+      "logical_path": "src/tileops/kernels/mamba/da_cumsum.py",
+      "start_line": 74
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "B",
+    "C",
+    "H",
+    "Q",
+    "ROWS_PER_CTA",
+    "S",
+    "T",
+    "accum_dtype",
+    "dt_max",
+    "dt_min",
+    "dt_softplus",
+    "dtype",
+    "has_dt_bias",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "bb030781db536bcb"
+  ],
+  "lexical_parents": [
+    "_da_cumsum_fwd_placed_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/0ae000af32e96ae4/unresolved.json",
+    "tileops-6a4085cd/recipes/0ae000af32e96ae4/tileops-6a4085cd-root-0ae000af32e96ae4-boundary-0ceefb0019-recipe.json",
+    "tileops-6a4085cd/recipes/0ae000af32e96ae4/tileops-6a4085cd-root-0ae000af32e96ae4-boundary-bbda6a093e-recipe.json",
+    "tileops-6a4085cd/recipes/0ae000af32e96ae4/tileops-6a4085cd-root-0ae000af32e96ae4-boundary-ff333ffa49-recipe.json",
+    "tileops-6a4085cd/recipes/0ae000af32e96ae4/tileops-6a4085cd-root-0ae000af32e96ae4-original-b30c318d4b-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "B",
+    "C",
+    "H",
+    "Q",
+    "ROWS_PER_CTA",
+    "S",
+    "accum_dtype",
+    "dt_max",
+    "dt_min",
+    "dt_softplus",
+    "dtype",
+    "has_dt_bias"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 137,
+    "git_blob": "e0a880f7f10510eb0caa29dcc0dabe330a91f097",
+    "qualname": "_da_cumsum_fwd_placed_kernel.kernel_func",
+    "relative_path": "src/tileops/kernels/mamba/da_cumsum.py",
+    "selected_source_sha256": "1d0dd5e4a9284e676d2640cea7c6ad28c8e6a8cdebcd2c0958a76e8fc68641c0",
+    "source_sha256": "51f3613e360d07068ce824edc8888d33c5f1ebbfe5f404dbd825a471d6545065",
+    "start_line": 74
+  }
+}

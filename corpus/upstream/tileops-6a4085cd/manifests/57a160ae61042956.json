@@ -1,0 +1,74 @@
+{
+  "candidate_id": "57a160ae61042956",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/pool/adaptive_max_pool2d.py/L221-L273__adaptive_max_pool2d_with_indices_kernel._adaptive_max_pool2d_with_indices_func__57a160ae61042956.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "5c13ddccbe33faee4a9ea27812ffe50edb18e044f9a4ab9eb87668ee7f2fdbb4",
+    "source_map": {
+      "end_line": 273,
+      "logical_path": "src/tileops/kernels/pool/adaptive_max_pool2d.py",
+      "start_line": 221
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "adaptive_bin",
+    "dtype",
+    "h_in",
+    "idx_dtype",
+    "max_kh",
+    "max_kw",
+    "out_h",
+    "out_plane",
+    "out_w",
+    "rows",
+    "staging",
+    "tilelang",
+    "uniform_h",
+    "uniform_w",
+    "w_in"
+  ],
+  "kernel_dependencies": [
+    "50210847be7b7992"
+  ],
+  "lexical_parents": [
+    "_adaptive_max_pool2d_with_indices_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/57a160ae61042956/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "dtype",
+    "h_in",
+    "idx_dtype",
+    "max_kh",
+    "max_kw",
+    "out_h",
+    "out_plane",
+    "out_w",
+    "rows",
+    "staging",
+    "uniform_h",
+    "uniform_w",
+    "w_in"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 273,
+    "git_blob": "59aba71a253c061187745a383366f06fe932793b",
+    "qualname": "_adaptive_max_pool2d_with_indices_kernel._adaptive_max_pool2d_with_indices_func",
+    "relative_path": "src/tileops/kernels/pool/adaptive_max_pool2d.py",
+    "selected_source_sha256": "1fe86714b995ba14d5dbcccf933b02c5e88e1319dcc803f4ebbe2bc98d604d4c",
+    "source_sha256": "fa965de46f150e5d5970e54dddab38bf1a430fd42f71ea1d03ac4d377c699160",
+    "start_line": 221
+  }
+}

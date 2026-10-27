@@ -1,0 +1,50 @@
+{
+  "candidate_id": "92a46b8561518dc8",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilekernels-36d9e45d/capsules/tile_kernels/moe/normalize_weight_kernel.py/L18-L40__get_normalize_weight_kernel.normalize_weight_kernel__92a46b8561518dc8.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ecacfa5b6803d98656f5918215273398db0dec7df66fdc73f40e2dd78551efaa",
+    "source_map": {
+      "end_line": 40,
+      "logical_path": "tile_kernels/moe/normalize_weight_kernel.py",
+      "start_line": 18
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "num_blocks",
+    "num_threads",
+    "num_tokens",
+    "num_topk"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "get_normalize_weight_kernel"
+  ],
+  "recipe_paths": [
+    "tilekernels-36d9e45d/recipes/92a46b8561518dc8/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "num_blocks",
+    "num_threads",
+    "num_tokens",
+    "num_topk"
+  ],
+  "upstream": {
+    "commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+    "end_line": 40,
+    "git_blob": "236faa1c7b6441a9779d70e64a9d6b09ba7667d1",
+    "qualname": "get_normalize_weight_kernel.normalize_weight_kernel",
+    "relative_path": "tile_kernels/moe/normalize_weight_kernel.py",
+    "selected_source_sha256": "d2b5036e88f07f38ef9b1186aa982065817966dd35c199f4454338c309d5f6d3",
+    "source_sha256": "5288cf4464e07262b6ed76333508409908049be352e9b1215cb5df92ebc636af",
+    "start_line": 18
+  }
+}

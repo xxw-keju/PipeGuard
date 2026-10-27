@@ -1,0 +1,27 @@
+{
+  "bindings": {},
+  "candidate_id": "d179edb2ed53a3cb",
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "d179edb2ed53a3cb-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "concrete_specialization",
+    "num_aligned_experts",
+    "num_experts",
+    "num_experts_per_group",
+    "num_groups",
+    "num_threads",
+    "num_tokens",
+    "num_tokens_per_block",
+    "num_topk_groups",
+    "num_topk_sum",
+    "num_vectorize_for_grouped_expert"
+  ]
+}

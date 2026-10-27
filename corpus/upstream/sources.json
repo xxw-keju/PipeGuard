@@ -27,5 +27,53 @@
       "python/triton_kernels/tests/"
     ],
     "snapshot_version": "triton-snapshot-v2"
+  },
+  "tileops": {
+    "backend_commit": "907a88c8791ccf33b9874821bc875e7abf624367",
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "environment": "tl-pg",
+    "include_prefixes": [
+      "src/tileops/kernels/"
+    ],
+    "license": "MIT",
+    "python_import_roots": [
+      "src/"
+    ],
+    "repository_url": "https://github.com/tile-ai/TileOPs",
+    "snapshot_version": "tilelang-snapshot-v2"
+  },
+  "tilekernels": {
+    "backend_commit": "907a88c8791ccf33b9874821bc875e7abf624367",
+    "commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+    "environment": "tl-pg",
+    "include_prefixes": [
+      "tile_kernels/"
+    ],
+    "license": "MIT",
+    "python_import_roots": [
+      "./"
+    ],
+    "repository_url": "https://github.com/deepseek-ai/TileKernels",
+    "snapshot_version": "tilelang-snapshot-v2"
+  },
+  "flaggems": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "environment": "triton-pg",
+    "environment_note": "FlagGems v5.4.0-rc1.post1 targets a triton 3.6-generation toolchain (GAP R3, not provisioned); native test-replay recipes therefore stay UNSUPPORTED. The 111 kernel-representative replays run under triton-pg against the September static-source-and-case-heuristic-v1 recovered compile sections (workload_recovery.status=HEURISTIC, regression proxy only).",
+    "include_prefixes": [
+      "src/flag_gems/ops/",
+      "src/flag_gems/fused/",
+      "src/flag_gems/experimental_ops/",
+      "src/flag_gems/runtime/backend/_nvidia/",
+      "src/flag_gems/fused_moe_mxq.py",
+      "src/flag_gems/utils/"
+    ],
+    "license": "Apache-2.0",
+    "python_import_roots": [
+      "src/"
+    ],
+    "repository_url": "https://github.com/flagos-ai/FlagGems",
+    "snapshot_version": "triton-snapshot-v2",
+    "version": "v5.4.0-rc1.post1"
   }
 }

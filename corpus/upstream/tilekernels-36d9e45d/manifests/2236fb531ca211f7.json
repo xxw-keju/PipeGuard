@@ -1,0 +1,47 @@
+{
+  "candidate_id": "2236fb531ca211f7",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilekernels-36d9e45d/capsules/tile_kernels/mhc/norm_fn_kernel.py/L168-L205__mhc_pre_norm_fn_bwd_norm__2236fb531ca211f7.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6df787e60f1b4bacc617ddc55592af470adcf1c3c4e36b1d287264803d3960a3",
+    "source_map": {
+      "end_line": 205,
+      "logical_path": "tile_kernels/mhc/norm_fn_kernel.py",
+      "start_line": 168
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_PASS_CONFIGS",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "1ae3bb4d540ec160"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilekernels-36d9e45d/recipes/2236fb531ca211f7/unresolved.json",
+    "tilekernels-36d9e45d/recipes/2236fb531ca211f7/tilekernels-36d9e45d-root-2236fb531ca211f7-boundary-152ee6cc13-recipe.json",
+    "tilekernels-36d9e45d/recipes/2236fb531ca211f7/tilekernels-36d9e45d-root-2236fb531ca211f7-boundary-2aa49e89df-recipe.json",
+    "tilekernels-36d9e45d/recipes/2236fb531ca211f7/tilekernels-36d9e45d-root-2236fb531ca211f7-boundary-c10e09abc5-recipe.json",
+    "tilekernels-36d9e45d/recipes/2236fb531ca211f7/tilekernels-36d9e45d-root-2236fb531ca211f7-original-f0d41a2c35-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+    "end_line": 205,
+    "git_blob": "e8976daa5d62d2299494fc236ebe59527255f639",
+    "qualname": "_mhc_pre_norm_fn_bwd_norm",
+    "relative_path": "tile_kernels/mhc/norm_fn_kernel.py",
+    "selected_source_sha256": "4656f626f3f495cb35a4abdcf07fb5e4aa8c19adc4c324482f31605b36c2a20b",
+    "source_sha256": "bd6a212acd1d3f07c21260d82f271dacd68d3bb77eaf17ab22069698d166e4c2",
+    "start_line": 168
+  }
+}

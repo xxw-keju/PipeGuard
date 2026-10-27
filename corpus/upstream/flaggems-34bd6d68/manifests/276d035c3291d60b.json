@@ -1,0 +1,40 @@
+{
+  "candidate_id": "276d035c3291d60b",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/selu_.py/L27-L42__selu_kernel__276d035c3291d60b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "a800dfa63ed3590904784622a3f2a8747ac5bf5fc2e14c4e649bc9450dd5afa9",
+    "source_map": {
+      "end_line": 42,
+      "logical_path": "src/flag_gems/ops/selu_.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/276d035c3291d60b/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 42,
+    "git_blob": "d8b11d03f98f3058f5bfc8cdd5a676ddcc893e1e",
+    "qualname": "selu_kernel_",
+    "relative_path": "src/flag_gems/ops/selu_.py",
+    "selected_source_sha256": "993ba74be646bb9432083be76d98ad946826620995d79aea0a42eca889953fa0",
+    "source_sha256": "8c61a96160e558e75e52212dea952c0e71b1c7371d7d050152bb266c3a0a66fe",
+    "start_line": 27
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "candidate_id": "da2e577d1ba64ac9",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/deepseek_nsa_cmp_fwd.py/L53-L155__nsa_cmp_fwd_varlen_kernel._nsa_cmp_fwd_varlen_func._parallel_nsa_cmp_fw__039afb5__da2e577d1ba64ac9.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c34e47a0c1cab89b51244160df517854a45ed5e0f571180084e2aded3d9c949d",
+    "source_map": {
+      "end_line": 155,
+      "logical_path": "src/tileops/kernels/attention/deepseek_nsa_cmp_fwd.py",
+      "start_line": 53
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "LOG2E",
+    "T",
+    "accum_dtype",
+    "bc",
+    "bk",
+    "bs",
+    "bv",
+    "c_seq_len",
+    "chunk_offsets_shape",
+    "dim_v",
+    "dtype",
+    "group",
+    "head_kv",
+    "k_cmp_shape",
+    "lse_shape",
+    "o_shape",
+    "offsets_shape",
+    "q_shape",
+    "scale_log2",
+    "threads",
+    "token_indices_shape",
+    "v_cmp_shape"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_nsa_cmp_fwd_varlen_kernel",
+    "_nsa_cmp_fwd_varlen_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/da2e577d1ba64ac9/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "bc",
+    "bk",
+    "bs",
+    "bv",
+    "c_seq_len",
+    "chunk_offsets_shape",
+    "dim_v",
+    "dtype",
+    "group",
+    "head_kv",
+    "k_cmp_shape",
+    "lse_shape",
+    "o_shape",
+    "offsets_shape",
+    "q_shape",
+    "scale_log2",
+    "threads",
+    "token_indices_shape",
+    "v_cmp_shape"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 155,
+    "git_blob": "cfde0213f1d9ef2e77573bb59d718884513d9703",
+    "qualname": "_nsa_cmp_fwd_varlen_kernel._nsa_cmp_fwd_varlen_func._parallel_nsa_cmp_fwd_varlen_main",
+    "relative_path": "src/tileops/kernels/attention/deepseek_nsa_cmp_fwd.py",
+    "selected_source_sha256": "5564cb2b682ad2a409f7c761293575307d2f126e7966eeed986f812febac9025",
+    "source_sha256": "dfbeecb48aca9c8b171dbd46a398ff6da1bba27843f3297c1b6da962129a0d46",
+    "start_line": 53
+  }
+}

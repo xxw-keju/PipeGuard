@@ -1,0 +1,42 @@
+{
+  "candidate_id": "050fac76638d0bf9",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/gru.py/L62-L85__store_hx_slice_kernel__050fac76638d0bf9.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "bc2e72fba5c1c48aaa7cf380f1459c15c5f546b3bf43eb921e6f0baaa9f5cdab",
+    "source_map": {
+      "end_line": 85,
+      "logical_path": "src/flag_gems/ops/gru.py",
+      "start_line": 62
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/050fac76638d0bf9/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 85,
+    "git_blob": "a5c7c1ee5e254aeea2aa296fce0097faa585d0ea",
+    "qualname": "_store_hx_slice_kernel",
+    "relative_path": "src/flag_gems/ops/gru.py",
+    "selected_source_sha256": "063839c51fa2aadb05da44b4b04d4f3795e69479ed8354afd9dfaeb1c411db61",
+    "source_sha256": "a98219db3d66f3f9340223d8dddf2266dfb72e4e37bf4204b0fd697730f5fcc6",
+    "start_line": 62
+  }
+}

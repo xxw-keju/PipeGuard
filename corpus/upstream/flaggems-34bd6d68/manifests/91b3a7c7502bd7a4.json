@@ -1,0 +1,43 @@
+{
+  "candidate_id": "91b3a7c7502bd7a4",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/float_power_.py/L35-L38__float_power_func_tensor_scalar__91b3a7c7502bd7a4.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "04ae1ccc2f85b92184e467539ebf92dbcfefeb24d4477568dff3c8678f07c5ff",
+    "source_map": {
+      "end_line": 38,
+      "logical_path": "src/flag_gems/ops/float_power_.py",
+      "start_line": 35
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_pow",
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/91b3a7c7502bd7a4/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 38,
+    "git_blob": "8251ba7fb6684bb9ae2efcfa41319a0002d99f50",
+    "qualname": "float_power_func_tensor_scalar",
+    "relative_path": "src/flag_gems/ops/float_power_.py",
+    "selected_source_sha256": "b217a6a39713c3d543d2f4b76f9132092aac7216b57808539956aec6469d7214",
+    "source_sha256": "278575fd2b2e4ae5b2161e9fcba40c5d1bba0cab897b57aeae12b2e452c8006c",
+    "start_line": 35
+  }
+}

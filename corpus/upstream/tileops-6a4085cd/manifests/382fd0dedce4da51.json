@@ -1,0 +1,79 @@
+{
+  "candidate_id": "382fd0dedce4da51",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/mamba/ssd_chunk_state.py/L113-L250__ssd_chunk_state_fwd_kernel.kernel_func.main__382fd0dedce4da51.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "10f1d836a0bfe9298806e76199ec9bd3431b5d2123edd845d2b12eae8b04022b",
+    "source_map": {
+      "end_line": 250,
+      "logical_path": "src/tileops/kernels/mamba/ssd_chunk_state.py",
+      "start_line": 113
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "B",
+    "C",
+    "G",
+    "H",
+    "HEADS_PER_GROUP",
+    "N",
+    "P",
+    "Q",
+    "S",
+    "T",
+    "accum_dtype",
+    "block_l",
+    "block_n",
+    "block_p",
+    "dt_dtype",
+    "dtype",
+    "has_seq_idx",
+    "num_stages",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_ssd_chunk_state_fwd_kernel",
+    "kernel_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/382fd0dedce4da51/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "B",
+    "C",
+    "G",
+    "H",
+    "HEADS_PER_GROUP",
+    "N",
+    "P",
+    "Q",
+    "S",
+    "accum_dtype",
+    "block_l",
+    "block_n",
+    "block_p",
+    "dt_dtype",
+    "dtype",
+    "has_seq_idx",
+    "num_stages",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 250,
+    "git_blob": "f5a4a387e4667349325e8c1ed35f26047f0990a0",
+    "qualname": "_ssd_chunk_state_fwd_kernel.kernel_func.main",
+    "relative_path": "src/tileops/kernels/mamba/ssd_chunk_state.py",
+    "selected_source_sha256": "54f70aabedb0a6ca4701509f9507563d604bc15d3e87f4e4a468ce5a71da2a92",
+    "source_sha256": "c0e57ac759d2dfd742e1b4e950518d70fd086aff4a8fed1a58fadfd4a717ecfc",
+    "start_line": 113
+  }
+}

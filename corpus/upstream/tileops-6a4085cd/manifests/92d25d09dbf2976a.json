@@ -1,0 +1,68 @@
+{
+  "candidate_id": "92d25d09dbf2976a",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/argreduce.py/L304-L364__argreduce_output_kernel._func__92d25d09dbf2976a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d55ac0b8aa77c04bd4838e916f4cb143a91db58f8e4e27f4a90b24986658161f",
+    "source_map": {
+      "end_line": 364,
+      "logical_path": "src/tileops/kernels/reduction/argreduce.py",
+      "start_line": 304
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "SHARED_MEMORY_BUDGET_BYTES",
+    "T",
+    "_make_pair_ops",
+    "_ordering_key",
+    "dtype",
+    "elem_bytes",
+    "inner_stride",
+    "op_kind",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "1ec205306a262ccb",
+    "5e90c0bee1df850e",
+    "65c53bff2eb4ba4f",
+    "baa0ac54ae47eeeb",
+    "dfcfc665800cf243"
+  ],
+  "lexical_parents": [
+    "_argreduce_output_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/92d25d09dbf2976a/unresolved.json",
+    "tileops-6a4085cd/recipes/92d25d09dbf2976a/tileops-6a4085cd-root-92d25d09dbf2976a-boundary-008bd6bdbb-recipe.json",
+    "tileops-6a4085cd/recipes/92d25d09dbf2976a/tileops-6a4085cd-root-92d25d09dbf2976a-boundary-1fa8b6f622-recipe.json",
+    "tileops-6a4085cd/recipes/92d25d09dbf2976a/tileops-6a4085cd-root-92d25d09dbf2976a-boundary-7aa53e4a99-recipe.json",
+    "tileops-6a4085cd/recipes/92d25d09dbf2976a/tileops-6a4085cd-root-92d25d09dbf2976a-original-6dca2baed8-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "dtype",
+    "elem_bytes",
+    "inner_stride",
+    "op_kind"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 364,
+    "git_blob": "0ab600ca4858368a54c58cb048927b48221d1ad1",
+    "qualname": "_argreduce_output_kernel._func",
+    "relative_path": "src/tileops/kernels/reduction/argreduce.py",
+    "selected_source_sha256": "ca27e21cf76ca15e3b9f14a875b6fc040c335df4752922a7ff74d571855f6032",
+    "source_sha256": "9ee78705cb497eab60aa6b70a0cf7a1f01e9d369ae346b45820dc02b20da8d98",
+    "start_line": 304
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "candidate_id": "fd5cc9d1b5c3bcf4",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/gemm/bmm.py/L384-L574__bmm_fp8_persistent_ws_kernel._bmm_fp8_persistent_ws_func._bmm_fp8_persi__edd8711__fd5cc9d1b5c3bcf4.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ed1380f9e96ed3762a196fe8ad87a50368ff74e479e1a6013880321dc2338671",
+    "source_map": {
+      "end_line": 574,
+      "logical_path": "src/tileops/kernels/gemm/bmm.py",
+      "start_line": 384
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_swizzle_decode",
+    "accum_dtype",
+    "batch",
+    "block_k",
+    "block_m",
+    "block_n",
+    "dtype",
+    "grid_cta",
+    "half_m",
+    "k",
+    "k_iters",
+    "m",
+    "max_waves",
+    "n",
+    "num_pid_m",
+    "num_pid_n",
+    "num_stages",
+    "out_dtype",
+    "scale_a_shape",
+    "scale_b_shape",
+    "threads",
+    "tilelang",
+    "total_tiles"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_bmm_fp8_persistent_ws_kernel",
+    "_bmm_fp8_persistent_ws_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/fd5cc9d1b5c3bcf4/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_swizzle_decode",
+    "accum_dtype",
+    "batch",
+    "block_k",
+    "block_m",
+    "block_n",
+    "dtype",
+    "grid_cta",
+    "half_m",
+    "k",
+    "k_iters",
+    "m",
+    "max_waves",
+    "n",
+    "num_pid_m",
+    "num_pid_n",
+    "num_stages",
+    "out_dtype",
+    "scale_a_shape",
+    "scale_b_shape",
+    "threads",
+    "total_tiles"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 574,
+    "git_blob": "8390bc82e3bebddcfddb77368d4e6c412a1a9a7d",
+    "qualname": "_bmm_fp8_persistent_ws_kernel._bmm_fp8_persistent_ws_func._bmm_fp8_persistent_ws_main",
+    "relative_path": "src/tileops/kernels/gemm/bmm.py",
+    "selected_source_sha256": "f24bb36555f6b89105751b135aaf624fb49103a8783ac45ecd17fb562bceffc1",
+    "source_sha256": "e4d71d7ba1d0c0f20af3d43e5c3ac65746417645cc6ed658de3fc424e1671dcc",
+    "start_line": 384
+  }
+}

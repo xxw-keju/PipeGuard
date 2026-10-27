@@ -1,0 +1,43 @@
+{
+  "candidate_id": "9290e09b48579cc4",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/hadamard_transform.py/L478-L530__h5_fht_kernel__9290e09b48579cc4.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "08ffb079cfe34a3bdadfad7a12d803f57cf2bcc68b4bc75c5d0f3f0d0c585dba",
+    "source_map": {
+      "end_line": 530,
+      "logical_path": "src/flag_gems/ops/hadamard_transform.py",
+      "start_line": 478
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_butterfly_stage_1d",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "c09784d201847e00"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/9290e09b48579cc4/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 530,
+    "git_blob": "51488f2a53dfe8757a022b45af35aeba83f65747",
+    "qualname": "_h5_fht_kernel",
+    "relative_path": "src/flag_gems/ops/hadamard_transform.py",
+    "selected_source_sha256": "076c9511954c0684113151ff72053196d08fd75a8bbf4146404edcf37f413149",
+    "source_sha256": "02ecc81e18bcb2336acc771528a536ce99e92379f2e4bf66839f624a6c4ee271",
+    "start_line": 478
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "candidate_id": "fe67d1f3b897d4b4",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/normal.py/L46-L51__transform_func_float_tensor__fe67d1f3b897d4b4.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "2f0212bc76e1bd552a1025a8170dcd0bb414670a13c30b49bb0a21c0b064bede",
+    "source_map": {
+      "end_line": 51,
+      "logical_path": "src/flag_gems/ops/normal.py",
+      "start_line": 46
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/fe67d1f3b897d4b4/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 51,
+    "git_blob": "c2c7c8a2d14bb796bbe69656d054090cd6d3c8fb",
+    "qualname": "transform_func_float_tensor",
+    "relative_path": "src/flag_gems/ops/normal.py",
+    "selected_source_sha256": "26cefe9d14058eb15134a031960b6df72e0a8deae2052b0466df7eab76e48a89",
+    "source_sha256": "54cb11a3bea134e7d77a5401edf67d7555c8fb984552e06e7bf215db86001ceb",
+    "start_line": 46
+  }
+}

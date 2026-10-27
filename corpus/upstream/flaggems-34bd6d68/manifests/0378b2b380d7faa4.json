@@ -1,0 +1,39 @@
+{
+  "candidate_id": "0378b2b380d7faa4",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/cumprod.py/L62-L64__reduce_mul__0378b2b380d7faa4.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "a6bd8ffaee92c61f5bf1f670cf16c8bc292d6860b19ff5617abc55b2fa13cc56",
+    "source_map": {
+      "end_line": 64,
+      "logical_path": "src/flag_gems/ops/cumprod.py",
+      "start_line": 62
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/0378b2b380d7faa4/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 64,
+    "git_blob": "6fda6d8e15f8863e7b3cea1e208fd57ff1a4dc63",
+    "qualname": "reduce_mul",
+    "relative_path": "src/flag_gems/ops/cumprod.py",
+    "selected_source_sha256": "6df77e5c8c28112ab75abc67b075fa3fc5e723c5c110d2133dc21636726e9115",
+    "source_sha256": "33a763a562c6557d6c0c66d2b72067c5613cc29a085ddbc9caab99e62cb01962",
+    "start_line": 62
+  }
+}

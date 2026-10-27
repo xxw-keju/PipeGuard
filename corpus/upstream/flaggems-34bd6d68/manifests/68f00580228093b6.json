@@ -1,0 +1,43 @@
+{
+  "candidate_id": "68f00580228093b6",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/runtime/backend/_nvidia/fused/fused_add_rms_norm.py/L28-L61__fused_add_rms_norm_kernel__68f00580228093b6.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c1da10c584f5d72f4a4025e24fe97002591bea794e55684ce236b82eeb4db8ac",
+    "source_map": {
+      "end_line": 61,
+      "logical_path": "src/flag_gems/runtime/backend/_nvidia/fused/fused_add_rms_norm.py",
+      "start_line": 28
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/68f00580228093b6/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 61,
+    "git_blob": "599b8198ddf34795a07c3728ec541dda99bbfd1a",
+    "qualname": "fused_add_rms_norm_kernel",
+    "relative_path": "src/flag_gems/runtime/backend/_nvidia/fused/fused_add_rms_norm.py",
+    "selected_source_sha256": "cca7d0b6f4ab349a49eb3a7e11fdcc217d603c6f5a7f441f1b88c6ebc17633ab",
+    "source_sha256": "80b58f133863cfd97ed7a3c6286d6e002393b3420fa69ea1db7e3b180d01db22",
+    "start_line": 28
+  }
+}

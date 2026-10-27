@@ -1,0 +1,44 @@
+{
+  "candidate_id": "330ae233360a875d",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/cp_gather_indexer_k_quant_cache.py/L23-L111__cp_gather_indexer_quant_cache_kernel__330ae233360a875d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "7bdf39c3ebad840df4fbb2dda925ccdcf453c682714fdef6dd62539c5f6f788d",
+    "source_map": {
+      "end_line": 111,
+      "logical_path": "src/flag_gems/fused/cp_gather_indexer_k_quant_cache.py",
+      "start_line": 23
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/330ae233360a875d/unresolved.json",
+    "flaggems-34bd6d68/recipes/330ae233360a875d/flaggems-root-330ae233360a875d-boundary-3f8ffce248-recipe.json",
+    "flaggems-34bd6d68/recipes/330ae233360a875d/flaggems-root-330ae233360a875d-boundary-df985788b0-recipe.json",
+    "flaggems-34bd6d68/recipes/330ae233360a875d/flaggems-root-330ae233360a875d-boundary-ffd893ea0f-recipe.json",
+    "flaggems-34bd6d68/recipes/330ae233360a875d/flaggems-root-330ae233360a875d-original-dab62f51fe-recipe.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 111,
+    "git_blob": "e318c3bcb142c93ad6d1f7b28379444a48dc2b58",
+    "qualname": "_cp_gather_indexer_quant_cache_kernel",
+    "relative_path": "src/flag_gems/fused/cp_gather_indexer_k_quant_cache.py",
+    "selected_source_sha256": "69cd542a3185f7cfda710ba5613479554aa97f85f1c3bcda5502176529309e46",
+    "source_sha256": "30893e8d131154c02bbc6358e983e7b969e64267bc42c684ad5352ae4190fd3a",
+    "start_line": 23
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "candidate_id": "a52776c48a578dec",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gla/gla_bwd.py/L79-L164__gla_bwd_dh_kernel._dh_func._main__a52776c48a578dec.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "bc18662a22be73ce768ea02a6baf6a99c4db1e9de89fa0daca088868a018c8e5",
+    "source_map": {
+      "end_line": 164,
+      "logical_path": "src/tileops/kernels/linear_attention/gla/gla_bwd.py",
+      "start_line": 79
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "LOG2E",
+    "T",
+    "accum_dtype",
+    "batch",
+    "chunk_size",
+    "dh0_shape",
+    "dh_out_shape",
+    "dht_shape",
+    "dim_k",
+    "dim_v_part",
+    "do_shape",
+    "dtype",
+    "g_cumsum_shape",
+    "has_initial_state",
+    "heads",
+    "num_chunks",
+    "num_v_partitions",
+    "q_shape",
+    "scale",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gla_bwd_dh_kernel",
+    "_dh_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/a52776c48a578dec/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "chunk_size",
+    "dh0_shape",
+    "dh_out_shape",
+    "dht_shape",
+    "dim_k",
+    "dim_v_part",
+    "do_shape",
+    "dtype",
+    "g_cumsum_shape",
+    "has_initial_state",
+    "heads",
+    "num_chunks",
+    "num_v_partitions",
+    "q_shape",
+    "scale",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 164,
+    "git_blob": "695a2114b83f55f3f3a67d0f2b614a09dce8d5d1",
+    "qualname": "_gla_bwd_dh_kernel._dh_func._main",
+    "relative_path": "src/tileops/kernels/linear_attention/gla/gla_bwd.py",
+    "selected_source_sha256": "7896e6305004c3e0d6bd08c28347810b21526a61491319f6e4114b6e617e8173",
+    "source_sha256": "246a362fd38a9fd56a564131053018d43544a7bb8aa2172cf23fcf06ff81996e",
+    "start_line": 79
+  }
+}

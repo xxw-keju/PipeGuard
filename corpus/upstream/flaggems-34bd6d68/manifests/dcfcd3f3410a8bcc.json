@@ -1,0 +1,44 @@
+{
+  "candidate_id": "dcfcd3f3410a8bcc",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/polygamma.py/L215-L277__polygamma_zeta_func__dcfcd3f3410a8bcc.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f93d6df7bbc90f5c1a026837c78f531f691e63063817fac5f0b309c2dd3a187c",
+    "source_map": {
+      "end_line": 277,
+      "logical_path": "src/flag_gems/ops/polygamma.py",
+      "start_line": 215
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_lgamma",
+    "_pow",
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/dcfcd3f3410a8bcc/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 277,
+    "git_blob": "eb5426739d390a9519fbfc2978fce7fbb1ffcff5",
+    "qualname": "polygamma_zeta_func",
+    "relative_path": "src/flag_gems/ops/polygamma.py",
+    "selected_source_sha256": "51340d85efaf9718ab69de9b45d3d781e30234a0250ed6704e5c794994be9214",
+    "source_sha256": "5f5b9648834d34feb55da292c701ea6c5f5663d877c6dab834157eb31c8c1a5d",
+    "start_line": 215
+  }
+}

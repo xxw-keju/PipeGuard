@@ -1,0 +1,43 @@
+{
+  "candidate_id": "b88fcc5bafa2ee6c",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/bucketize.py/L29-L89__bucketize_kernel__b88fcc5bafa2ee6c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ba74cc482f360ce6bcb3316601bc10b0dc73eab1f1a94dff90fa465b257816d0",
+    "source_map": {
+      "end_line": 89,
+      "logical_path": "src/flag_gems/ops/bucketize.py",
+      "start_line": 29
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "tle",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/b88fcc5bafa2ee6c/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 89,
+    "git_blob": "2a69e501d4f342afdaa53fa0ddf807484a3215a8",
+    "qualname": "bucketize_kernel",
+    "relative_path": "src/flag_gems/ops/bucketize.py",
+    "selected_source_sha256": "617fd49c15cddb66d90d84374a3dd73e9a6c4ffaaa74eb10ec1ece7865e06919",
+    "source_sha256": "eb680fd3c4b9ffe5dcf8fe8dc4961c7098eff0180585791c19ef57a70fdef68d",
+    "start_line": 29
+  }
+}

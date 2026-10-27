@@ -1,0 +1,62 @@
+{
+  "candidate_id": "1c39a8ad9b0ad8e9",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/gemm/dense.py/L1116-L1237__gemm_coop2_splitk_kernel._gemm_coop2_splitk_func__1c39a8ad9b0ad8e9.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "cd442b320b463c004b87e97421acfdda600e0ba2da42a2ea78247dadb548dfc7",
+    "source_map": {
+      "end_line": 1237,
+      "logical_path": "src/tileops/kernels/gemm/dense.py",
+      "start_line": 1116
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "Callable",
+    "T",
+    "accum_dtype",
+    "block_m",
+    "dtype",
+    "k",
+    "m",
+    "n",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "a481f3d6fe46a096"
+  ],
+  "lexical_parents": [
+    "_gemm_coop2_splitk_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/1c39a8ad9b0ad8e9/unresolved.json",
+    "tileops-6a4085cd/recipes/1c39a8ad9b0ad8e9/tileops-6a4085cd-root-1c39a8ad9b0ad8e9-boundary-0ec9e62d82-recipe.json",
+    "tileops-6a4085cd/recipes/1c39a8ad9b0ad8e9/tileops-6a4085cd-root-1c39a8ad9b0ad8e9-boundary-98d2c4a7ca-recipe.json",
+    "tileops-6a4085cd/recipes/1c39a8ad9b0ad8e9/tileops-6a4085cd-root-1c39a8ad9b0ad8e9-boundary-fc896830c9-recipe.json",
+    "tileops-6a4085cd/recipes/1c39a8ad9b0ad8e9/tileops-6a4085cd-root-1c39a8ad9b0ad8e9-original-cc4ee0f218-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "block_m",
+    "dtype",
+    "k",
+    "m",
+    "n"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 1237,
+    "git_blob": "eddbf8bcc75a35fe8b2902263f459502259880a0",
+    "qualname": "_gemm_coop2_splitk_kernel._gemm_coop2_splitk_func",
+    "relative_path": "src/tileops/kernels/gemm/dense.py",
+    "selected_source_sha256": "e9270cf2ee7436de3c1b06c58df551fd54a7598d67c52da485d99a4e66244616",
+    "source_sha256": "5c382dd03a6ec1f75bdcc0e937f6e31308068cbfdd3293a54ca639642501f1bf",
+    "start_line": 1116
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "candidate_id": "ad002d2320312321",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/tan.py/L26-L30__tan_func__ad002d2320312321.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1c99710ce8399d4c6b83e0d422c140c8a2874241f12758cb9b9f5305e79c003f",
+    "source_map": {
+      "end_line": 30,
+      "logical_path": "src/flag_gems/ops/tan.py",
+      "start_line": 26
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "tl_extra_shim",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/ad002d2320312321/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 30,
+    "git_blob": "ac86fd413f784a5c78bd6e0ebb175c9c86688386",
+    "qualname": "tan_func",
+    "relative_path": "src/flag_gems/ops/tan.py",
+    "selected_source_sha256": "3bef9085f232eb1f96cdd18bf1cc6d37033b0c69576b69c6edf3adf42660343a",
+    "source_sha256": "7eb844cf7ee1b80c954f5df652866ff313ba9eee2f1c0c06ee4b482a7bd618df",
+    "start_line": 26
+  }
+}

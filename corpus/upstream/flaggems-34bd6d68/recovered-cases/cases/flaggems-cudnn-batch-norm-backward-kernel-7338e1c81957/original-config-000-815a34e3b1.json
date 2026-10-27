@@ -1,0 +1,135 @@
+{
+  "arguments": {
+    "affine": true,
+    "dtype": "torch.bfloat16",
+    "shape": [
+      16,
+      3
+    ]
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-cudnn-batch-norm-backward-kernel-7338e1c81957-original-4ef13f77fa-config-815a34e3b1",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:grad_output_pointer",
+        "1": "global:input_pointer",
+        "2": "global:weight_pointer",
+        "3": "global:mean_pointer",
+        "4": "global:var_pointer",
+        "5": "global:input_grad_pointer",
+        "6": "global:weight_grad_pointer",
+        "7": "global:bias_grad_pointer"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "BLOCK_M": 16,
+      "BLOCK_N": 1,
+      "batch_dim": 1,
+      "bias_grad_mask": 1,
+      "eps": 1.0,
+      "grad_output_batch_stride": 1,
+      "grad_output_feat_stride": 1,
+      "grad_output_spatial_stride": 1,
+      "input_batch_stride": 1,
+      "input_feat_stride": 1,
+      "input_grad_batch_stride": 1,
+      "input_grad_feat_stride": 1,
+      "input_grad_mask": 1,
+      "input_grad_spatial_stride": 1,
+      "input_spatial_stride": 1,
+      "spatial_dim": 1,
+      "weight_grad_mask": 1
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "maxnreg": null,
+      "num_ctas": 1,
+      "num_stages": 2,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "bias_grad_pointer": "*bf16",
+      "grad_output_pointer": "*bf16",
+      "input_grad_pointer": "*bf16",
+      "input_pointer": "*bf16",
+      "mean_pointer": "*fp32",
+      "var_pointer": "*bf16",
+      "weight_grad_pointer": "*bf16",
+      "weight_pointer": "*bf16"
+    }
+  },
+  "evidence": [
+    "flaggems-launch-90ecab02e2c06009",
+    "flaggems-test-98b9f46b768cb231",
+    "source-6262a19ee70df122"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-cudnn-batch-norm-backward-kernel-7338e1c81957",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_cudnn_batch_norm_backward.py:11-113#test_cudnn_batch_norm_backward",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned. Autotune candidate 0 from src/flag_gems/runtime/backend/_nvidia/tune_configs.yaml#batch_norm.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ],
+  "workload_recovery": {
+    "method": "static-source-and-case-heuristic-v1",
+    "notes": [
+      "All scalar parameters are compile-time specialized.",
+      "Pointer types derive from source use, parameter names, and the case dtype.",
+      "The recovered workload checks CTA (0,0,0) with a one-CTA launch and is not evidence for the original full launch grid."
+    ],
+    "original_case_path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/corpus/upstream/suite3/kernels/triton/flaggems/flaggems-cudnn-batch-norm-backward-kernel-7338e1c81957/cases/original-config-000-815a34e3b1.json",
+    "status": "HEURISTIC"
+  }
+}

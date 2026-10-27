@@ -1,0 +1,116 @@
+{
+  "arguments": {
+    "dim": 1,
+    "dtype": "torch.float16",
+    "input_sizes": [
+      32,
+      64
+    ],
+    "size": 16,
+    "step": 16
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-unfold-backward-kernel-1f14803a30c5-original-626df1d264",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:grad_in_ptr",
+        "1": "global:grad_out_ptr",
+        "2": "global:L"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "BLOCK": 1,
+      "D": 16,
+      "inner_total": 1,
+      "numel_in": 1,
+      "prod_after": 1,
+      "size": 16,
+      "step": 16
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "L": "*fp16",
+      "grad_in_ptr": "*fp16",
+      "grad_out_ptr": "*fp16"
+    }
+  },
+  "evidence": [
+    "flaggems-launch-b4471f95f7808da7",
+    "flaggems-test-333e0c344a35b42b",
+    "source-82ba0c059ee4a364"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-unfold-backward-kernel-1f14803a30c5",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_unfold_backward.py:23-52#test_unfold_backward",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ],
+  "workload_recovery": {
+    "method": "static-source-and-case-heuristic-v1",
+    "notes": [
+      "All scalar parameters are compile-time specialized.",
+      "Pointer types derive from source use, parameter names, and the case dtype.",
+      "The recovered workload checks CTA (0,0,0) with a one-CTA launch and is not evidence for the original full launch grid."
+    ],
+    "original_case_path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/corpus/upstream/suite3/kernels/triton/flaggems/flaggems-unfold-backward-kernel-1f14803a30c5/cases/original-626df1d264.json",
+    "status": "HEURISTIC"
+  }
+}

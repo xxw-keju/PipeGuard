@@ -1,0 +1,45 @@
+{
+  "candidate_id": "29942c4e63d8163d",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/igammac.py/L50-L199__igammac_kernel__29942c4e63d8163d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ef490de919e36e13e9444a08f58ba770d1bdf0cb9ba2c0f5ffbaa79298335753",
+    "source_map": {
+      "end_line": 199,
+      "logical_path": "src/flag_gems/ops/igammac.py",
+      "start_line": 50
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_igammac_autotune_configs",
+    "libentry",
+    "tl",
+    "tl_extra_shim",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/29942c4e63d8163d/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 199,
+    "git_blob": "2ef8f83d95c033a27ad0498c1e3b3c9904706cdf",
+    "qualname": "igammac_kernel",
+    "relative_path": "src/flag_gems/ops/igammac.py",
+    "selected_source_sha256": "1e4b7bf4beee53f9413665948b86b9d1f4cf280571d58c6c4f4c5a13978ff3a6",
+    "source_sha256": "30379c7ebd1849117ebb3b8c94296d9a334253ddb23c7445ecc333bf119c3fc4",
+    "start_line": 50
+  }
+}

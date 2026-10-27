@@ -1,0 +1,56 @@
+{
+  "candidate_id": "3463461b79c4bc3b",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/norm/batch_norm.py/L461-L501__batch_norm_fwd_train_split_kernel._apply_func__3463461b79c4bc3b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "847ed0d01976398c311a7d9834f26c06753fc31a0fcae730a8e00e4d9751c804",
+    "source_map": {
+      "end_line": 501,
+      "logical_path": "src/tileops/kernels/norm/batch_norm.py",
+      "start_line": 461
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "C",
+    "Callable",
+    "L",
+    "S",
+    "T",
+    "accum_dtype",
+    "dtype",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "54cff72fa9cc623f"
+  ],
+  "lexical_parents": [
+    "_batch_norm_fwd_train_split_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/3463461b79c4bc3b/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "C",
+    "L",
+    "S",
+    "accum_dtype",
+    "dtype"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 501,
+    "git_blob": "0ccb20ea41803be6d41bff30d9c76977b9657c6f",
+    "qualname": "_batch_norm_fwd_train_split_kernel._apply_func",
+    "relative_path": "src/tileops/kernels/norm/batch_norm.py",
+    "selected_source_sha256": "ab4463f55e05732bf1390f862524bf62345f712ad07c142a12ed2129ea15c381",
+    "source_sha256": "afbc631ec701d9859bc479c2ae128946f2db10c28ec4cab748f50a47d7a00d19",
+    "start_line": 461
+  }
+}

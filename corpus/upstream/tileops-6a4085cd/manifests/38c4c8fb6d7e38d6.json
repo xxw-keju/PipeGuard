@@ -1,0 +1,81 @@
+{
+  "candidate_id": "38c4c8fb6d7e38d6",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/pool/max_pool2d.py/L213-L263__max_pool2d_with_indices_kernel._max_pool2d_with_indices_func__38c4c8fb6d7e38d6.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "591b7210d097b15fb5906e0c2cd4b5ac5bcb22e25458e7bdf9ad4a4d5a61dd3d",
+    "source_map": {
+      "end_line": 263,
+      "logical_path": "src/tileops/kernels/pool/max_pool2d.py",
+      "start_line": 213
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "cols_inside",
+    "dilation_h",
+    "dilation_w",
+    "dtype",
+    "h_in",
+    "kernel_h",
+    "kernel_w",
+    "out_h",
+    "out_w",
+    "pad_h",
+    "pad_w",
+    "rows",
+    "rows_inside",
+    "stride_h",
+    "stride_w",
+    "tilelang",
+    "total",
+    "w_in"
+  ],
+  "kernel_dependencies": [
+    "2bc1f4f7255de57c"
+  ],
+  "lexical_parents": [
+    "_max_pool2d_with_indices_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/38c4c8fb6d7e38d6/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "cols_inside",
+    "dilation_h",
+    "dilation_w",
+    "dtype",
+    "h_in",
+    "kernel_h",
+    "kernel_w",
+    "out_h",
+    "out_w",
+    "pad_h",
+    "pad_w",
+    "rows",
+    "rows_inside",
+    "stride_h",
+    "stride_w",
+    "total",
+    "w_in"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 263,
+    "git_blob": "9e39212a93de87d623623bd0948f96dbb2d3410c",
+    "qualname": "_max_pool2d_with_indices_kernel._max_pool2d_with_indices_func",
+    "relative_path": "src/tileops/kernels/pool/max_pool2d.py",
+    "selected_source_sha256": "17cb192fe93d2bfcf32f6586894670ca0c9b9e0a44ee15001e005c3c36ba8a9c",
+    "source_sha256": "e826038df9715a46f6d6b0f8a279049462af9aed9760d763bad456254f6bbe9d",
+    "start_line": 213
+  }
+}

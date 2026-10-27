@@ -1,0 +1,54 @@
+{
+  "candidate_id": "ba1565da9110dd54",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/runtime/backend/_nvidia/hopper/ops/w8a8_block_fp8_bmm.py/L273-L402__w8a8_block_fp8_bmm_kernel__ba1565da9110dd54.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "10ec2882532f2bc99deef314faf4556446589448fbb6969565c66649dfaded85",
+    "source_map": {
+      "end_line": 402,
+      "logical_path": "src/flag_gems/runtime/backend/_nvidia/hopper/ops/w8a8_block_fp8_bmm.py",
+      "start_line": 273
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "flag_gems.utils.libtuner",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_TLEW8A8BlockFP8BMMTuner",
+    "_get_tle_w8a8_block_fp8_bmm_configs",
+    "_tle_w8a8_block_fp8_bmm_compute_partition",
+    "_tle_w8a8_block_fp8_bmm_load_partition",
+    "libentry",
+    "libtuner",
+    "tl",
+    "tle",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "a568a6ed3d619255",
+    "f148d02e60885c30"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/ba1565da9110dd54/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "tle"
+  ],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 402,
+    "git_blob": "99745fbf60ec538d66046ba15b5b3150b9331767",
+    "qualname": "w8a8_block_fp8_bmm_kernel",
+    "relative_path": "src/flag_gems/runtime/backend/_nvidia/hopper/ops/w8a8_block_fp8_bmm.py",
+    "selected_source_sha256": "df3537204b359244b5562bfdbf90032652135664bac83616ac1d410b31655bb5",
+    "source_sha256": "eb339307fc2c5cee350f5df30e73e3fe1f529664722fc61244d2f3360b2fe8e0",
+    "start_line": 273
+  }
+}

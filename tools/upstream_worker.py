@@ -5,12 +5,14 @@ import argparse
 import contextlib
 import hashlib
 import importlib.util
+import inspect
 import json
 import os
 import re
 import sys
 import time
 import traceback
+import types
 from pathlib import Path
 from typing import Any
 
@@ -455,6 +457,365 @@ def _record_unpaired_tilelang_modules(
         }
 
 
+# --- Suite3 normalized replay (GAP.md T3/R4): native project-workload recipes
+# --- are materialized through the audited suite3 normalized kernel.py form
+# --- (second supported capsule shape), then lowered/captured by the exact same
+# --- helpers as capsule recipes. No checker/capture code is touched.
+
+
+def _select_tileops_stage(obj: Any, kernel_id: str) -> Any:
+    if not isinstance(obj, tuple):
+        return obj
+    normalized_id = "-" + kernel_id.replace("_", "-") + "-"
+    matches = []
+    for candidate in obj:
+        function = getattr(getattr(candidate, "func", None), "orig_func", None)
+        name = getattr(function, "__name__", "").strip("_").replace("_", "-")
+        if name and f"-{name}-" in normalized_id:
+            matches.append(candidate)
+    if len(matches) != 1:
+        raise ValueError(f"AMBIGUOUS_TILEOPS_STAGE:{len(obj)}:{len(matches)}")
+    return matches[0]
+
+
+def _materialize_tileops(
+    module: Any,
+    case: dict[str, Any],
+    kernel_id: str,
+    tuning_defaults: dict[str, Any],
+) -> tuple[Any, dict[str, Any]]:
+    obj = _select_tileops_stage(module.build_kernel(case), kernel_id)
+    used_defaults: dict[str, Any] = {}
+    if hasattr(obj, "prim_func"):
+        return obj.prim_func, used_defaults
+    if not hasattr(obj, "get_tir"):
+        return obj, used_defaults
+    signature = obj.func.signature
+    supplied = case.get("build", {}).get("kernel_arguments", {})
+    unknown = sorted(set(supplied) - set(signature.parameters))
+    if unknown:
+        raise ValueError("UNKNOWN_TILEOPS_KERNEL_ARGUMENTS:" + ",".join(unknown))
+    arguments: dict[str, Any] = {}
+    for name, parameter in signature.parameters.items():
+        if name in supplied:
+            arguments[name] = supplied[name]
+        elif parameter.default is not inspect.Parameter.empty:
+            arguments[name] = parameter.default
+        elif name in tuning_defaults:
+            arguments[name] = tuning_defaults[name]
+            used_defaults[name] = tuning_defaults[name]
+        else:
+            raise ValueError("MISSING_TILEOPS_TUNING_ARGUMENT:" + name)
+    return obj.get_tir(**arguments), used_defaults
+
+
+def _static_integer_bindings(case: dict[str, Any]) -> dict[str, int]:
+    """Project-configuration integers usable as static scalar bindings
+    (ported from the September suite3 worker, GAP.md T3)."""
+    result: dict[str, int] = {}
+    sources = [
+        case.get("arguments", {}),
+        case.get("build", {}).get("factory_arguments", {}),
+        case.get("build", {}).get("kernel_arguments", {}),
+    ]
+    for source in sources:
+        for name, value in source.items():
+            if isinstance(value, bool) or not isinstance(value, int):
+                continue
+            if name in result and result[name] != value:
+                raise ValueError(f"CONFLICTING_STATIC_BINDING:{name}")
+            result[name] = value
+    arguments = case.get("arguments", {})
+    q_shape = arguments.get("q_shape")
+    if (
+        "seq_len_q" not in result
+        and isinstance(q_shape, list)
+        and len(q_shape) >= 2
+        and isinstance(q_shape[1], int)
+    ):
+        result["seq_len_q"] = q_shape[1]
+    token_count = None
+    if all(isinstance(arguments.get(name), int) for name in ("n0", "n1")):
+        token_count = arguments["n0"] * arguments["n1"]
+    elif all(isinstance(arguments.get(name), int) for name in ("bs", "seq")):
+        token_count = arguments["bs"] * arguments["seq"]
+    elif isinstance(arguments.get("n1"), int):
+        token_count = arguments["n1"]
+    if token_count is not None:
+        result.setdefault("num_tokens", token_count)
+        result.setdefault("n", token_count)
+    return result
+
+
+def _tilelang_static_grid(module: Any, static_bindings: dict[str, int]) -> list[int] | None:
+    from tilelang import tvm
+
+    axes = {"blockIdx.x": 0, "blockIdx.y": 1, "blockIdx.z": 2}
+    for function in module.functions.values():
+        attrs = dict(function.attrs) if function.attrs else {}
+        raw = attrs.get("thread_extent")
+        if raw is None or not hasattr(raw, "items"):
+            return None
+        grid = [1, 1, 1]
+        for key, value in raw.items():
+            axis = axes.get(str(key))
+            if axis is None:
+                continue
+            try:
+                grid[axis] = int(value)
+                continue
+            except (TypeError, ValueError):
+                pass
+            substitution: dict[Any, Any] = {}
+
+            def visit(node: Any) -> None:
+                name = getattr(node, "name", None)
+                if isinstance(node, tvm.tir.Var) and name in static_bindings:
+                    substitution[node] = tvm.tir.IntImm(node.dtype, static_bindings[name])
+
+            try:
+                tvm.tir.stmt_functor.post_order_visit(value, visit)
+                substituted = tvm.tir.stmt_functor.substitute(value, substitution)
+                grid[axis] = int(tvm.arith.Analyzer().simplify(substituted))
+            except Exception:
+                return None
+        return grid
+    return None
+
+
+def _apply_flaggems_toolchain_shim() -> None:
+    """September sitecustomize shim for running FlagGems normalized kernels
+    under the locked triton-pg toolchain (GAP.md P3/R3: heuristic proxy only;
+    the declared FlagGems triton-3.6 toolchain is not provisioned)."""
+    import triton
+
+    if not hasattr(triton, "__version__"):
+        triton.__version__ = "3.0.0"
+    try:
+        import triton.language.extra as extra
+        from triton.language.extra.cuda import libdevice
+        if not hasattr(extra, "libdevice"):
+            extra.libdevice = libdevice
+    except ImportError:
+        pass
+
+
+def _jit_flaggems_helpers(module: Any) -> None:
+    import triton
+
+    for helper_name in ("get_dtype_min", "get_dtype_max"):
+        helper = getattr(module, helper_name, None)
+        if inspect.isfunction(helper):
+            setattr(module, helper_name, triton.jit(helper))
+
+
+def _replay_selected_cta(case: dict[str, Any], recipe: dict[str, Any]) -> list[int]:
+    for candidate in (
+        case.get("compile", {}).get("selected_cta"),
+        case.get("execution", {}).get("selected_cta"),
+        (recipe.get("compiler") or {}).get("binding_evidence", {}).get("selected_cta"),
+    ):
+        if isinstance(candidate, list) and len(candidate) == 3:
+            return candidate
+    return [0, 0, 0]
+
+
+def _run_suite3_replay(request: dict[str, Any], output: Path, result: dict[str, Any]) -> dict[str, Any]:
+    recipe = request["recipe"]
+    replay = request["suite3_replay"]
+    dsl = request["dsl"]
+    corpus_root = Path(request["corpus_root"]).resolve(strict=True)
+    kernel_path = corpus_root / replay["kernel_path"]
+    case_path = corpus_root / replay["case_path"]
+    result["suite3_replay"] = {
+        key: replay[key]
+        for key in (
+            "replay_version", "project", "kernel_id", "case_id",
+            "kernel_path", "case_path", "kernel_sha256", "case_sha256",
+        )
+    }
+    if "workload_recovery" in replay:
+        result["suite3_replay"]["workload_recovery"] = replay["workload_recovery"]
+    if (
+        sha256_bytes(kernel_path.read_bytes()) != replay["kernel_sha256"]
+        or sha256_bytes(case_path.read_bytes()) != replay["case_sha256"]
+    ):
+        result["status"] = "INFRA_ERROR"
+        result["phase"] = "suite3_replay"
+        result["diagnostics"] = [_diagnostic(
+            "UPSTREAM_SUITE3_IDENTITY_DRIFT",
+            "suite3 normalized kernel or case content drifted from the selected join",
+        )]
+        return result
+    case = json.loads(case_path.read_text())
+    started = time.monotonic()
+    try:
+        phase = time.monotonic()
+        if dsl == "tilelang":
+            import tilelang  # noqa: F401
+        else:
+            import triton  # noqa: F401
+            if replay["project"] == "flaggems":
+                _apply_flaggems_toolchain_shim()
+        module = _load_module(
+            kernel_path,
+            f"pipeguard_suite3_{request['fingerprint'][:12]}",
+            [kernel_path.parent],
+        )
+        if dsl == "triton" and replay["project"] == "flaggems":
+            _jit_flaggems_helpers(module)
+        result["timings"]["import"] = time.monotonic() - phase
+    except Exception as error:
+        result["status"] = "IMPORT_ERROR"
+        result["phase"] = "import"
+        result["diagnostics"] = [_diagnostic(
+            "UPSTREAM_IMPORT_FAILED", str(error), error_type=type(error).__name__,
+            traceback=traceback.format_exc(limit=12),
+        )]
+        return result
+    case_compile = dict(case.get("compile", {}))
+    try:
+        phase = time.monotonic()
+        if dsl == "tilelang":
+            if replay["project"] == "tileops":
+                materialized, used_defaults = _materialize_tileops(
+                    module, case, replay["kernel_id"], replay.get("tuning_defaults", {})
+                )
+                result["suite3_replay"]["tuning_defaults_used"] = used_defaults
+            else:
+                # GAP.md R4: prefer factory materialization through get_tir so the
+                # worker never triggers full device compilation.
+                materialized = None
+                factory_arguments = case.get("build", {}).get("factory_arguments", {})
+                resolver = getattr(module, "_resolve_kernel", None)
+                if resolver is not None:
+                    resolved = resolver()
+                    implementation = getattr(resolved, "jit_impl", None)
+                    if implementation is not None and hasattr(implementation, "get_tir"):
+                        materialized = implementation.get_tir(**factory_arguments)
+                    elif hasattr(resolved, "get_tir"):
+                        materialized = resolved.get_tir(**factory_arguments)
+                if materialized is None:
+                    materialized = module.build_kernel(case)
+                    if hasattr(materialized, "prim_func"):
+                        materialized = materialized.prim_func
+            wrapper = types.SimpleNamespace(pipeguard_resolve=lambda **_: materialized)
+            replay_recipe = {
+                "materialization": {"mode": "direct", "args": [], "kwargs": {}, "resolver_kwargs": {}},
+                "compiler": {
+                    key: case_compile[key]
+                    for key in ("target_host", "pass_configs")
+                    if key in case_compile
+                },
+                "target": case.get("target") or recipe["target"],
+                "manifest_qualname": recipe["manifest_qualname"],
+            }
+            tvm, modules = _lower_tilelang(wrapper, replay_recipe, resolution="capsule")
+            if len(modules) != 1:
+                result["status"] = "UNSUPPORTED"
+                result["phase"] = "lowering_parity"
+                result["diagnostics"] = [_diagnostic(
+                    "UPSTREAM_SUITE3_MULTI_MODULE_UNSUPPORTED",
+                    "suite3 normalized replay requires exactly one device kernel",
+                    device_kernels=[name for name, _ in modules],
+                )]
+                return result
+            symbol, device_module = modules[0]
+            raw = tvm.ir.save_json(device_module)
+            raw_path = output / "device.tvm.json"
+            atomic_write(raw_path, raw)
+            result["artifacts"][f"raw_ir:{symbol}"] = {
+                "path": raw_path.name,
+                "sha256": sha256_text(raw),
+                "normalized_sha256": sha256_text(
+                    str(tvm.ir.structural_hash(device_module, map_free_vars=False))
+                ),
+            }
+            capture_compiler: dict[str, Any] = {
+                "selected_cta": _replay_selected_cta(case, recipe),
+            }
+            static_bindings = _static_integer_bindings(case)
+            grid = case_compile.get("grid") or _tilelang_static_grid(device_module, static_bindings)
+            if grid is not None:
+                capture_compiler["grid"] = grid
+                result["suite3_replay"]["launch_grid"] = grid
+            evidence = dict(
+                (recipe.get("compiler") or {}).get("binding_evidence")
+                or case_compile.get("binding_evidence")
+                or {}
+            )
+            if static_bindings:
+                # September static_bindings mechanism, routed through the
+                # supported scalar binding-evidence channel: values are
+                # project-configuration integers from the suite3 case.
+                evidence["derivation"] = "suite3-static-integer-bindings-v1"
+                evidence["scalar_values"] = static_bindings
+                result["suite3_replay"]["static_bindings"] = static_bindings
+            if evidence:
+                capture_compiler["binding_evidence"] = evidence
+        else:
+            kernel = module.build_kernel(case)
+            wrapper = types.SimpleNamespace(pipeguard_resolve=lambda **_: kernel)
+            missing = sorted({"signature", "constexprs", "grid_ctas"} - set(case_compile))
+            if missing:
+                raise ValueError("MISSING_COMPILE_FIELDS:" + ",".join(missing))
+            replay_recipe = {
+                "materialization": {"mode": "direct", "args": [], "kwargs": {}, "resolver_kwargs": {}},
+                "compiler": case_compile,
+                "target": case.get("target") or recipe["target"],
+                "manifest_qualname": recipe["manifest_qualname"],
+            }
+            symbol = "kernel"
+            raw = _lower_triton(wrapper, replay_recipe, resolution="capsule")
+            raw_path = output / "kernel.ttgir.mlir"
+            atomic_write(raw_path, raw)
+            result["artifacts"][f"raw_ir:{symbol}"] = {
+                "path": raw_path.name,
+                "sha256": sha256_text(raw),
+                "normalized_sha256": sha256_text(_normalize_triton_ir(raw)),
+            }
+            capture_compiler = dict(case_compile)
+            capture_compiler["selected_cta"] = _replay_selected_cta(case, recipe)
+        result["timings"]["lowering"] = time.monotonic() - phase
+    except Exception as error:
+        result["status"] = "LOWERING_ERROR"
+        result["phase"] = "lowering_parity"
+        result["diagnostics"] = [_diagnostic(
+            "UPSTREAM_SUITE3_MATERIALIZATION_FAILED",
+            str(error),
+            error_type=type(error).__name__,
+            traceback=traceback.format_exc(limit=20),
+        )]
+        return result
+    phase = time.monotonic()
+    capture_request = dict(request)
+    capture_request["recipe"] = {**recipe, "compiler": capture_compiler}
+    if dsl == "tilelang":
+        snapshot, diagnostic = _capture_tilelang(capture_request, raw_path, output)
+    else:
+        snapshot, diagnostic = _capture_triton(capture_request, raw_path, output)
+    result["timings"]["capture"] = time.monotonic() - phase
+    result["timings"]["total"] = time.monotonic() - started
+    if diagnostic is not None:
+        result["status"] = (
+            "PROFILE_SKIPPED" if diagnostic.get("code") in PROFILE_DIAGNOSTICS
+            else "UNSUPPORTED"
+        )
+        result["phase"] = "capture"
+        result["diagnostics"].append(diagnostic)
+        return result
+    assert snapshot is not None
+    snapshot_path = output / "snapshot.json"
+    snapshot_hash = _write_json(snapshot_path, snapshot)
+    result["artifacts"][f"snapshot:{symbol}"] = {
+        "path": snapshot_path.name,
+        "sha256": snapshot_hash,
+    }
+    result["status"] = "CAPTURED"
+    result["phase"] = "capture"
+    return result
+
+
 def run(request: dict[str, Any], output: Path) -> dict[str, Any]:
     output.mkdir(parents=True, exist_ok=True)
     result = _base_result(request)
@@ -463,13 +824,23 @@ def run(request: dict[str, Any], output: Path) -> dict[str, Any]:
     request = dict(request)
     request["recipe"] = recipe
     if not recipe.get("lowerable"):
+        if isinstance(request.get("suite3_replay"), dict):
+            return _run_suite3_replay(request, output, result)
         result["status"] = "UNSUPPORTED"
         result["phase"] = "recipe"
-        result["diagnostics"] = [_diagnostic(
-            "UPSTREAM_RECIPE_UNRESOLVED",
-            "candidate has no complete concrete specialization recipe",
-            unresolved=recipe.get("unresolved", []),
-        )]
+        if request.get("suite3_join_failure"):
+            result["diagnostics"] = [_diagnostic(
+                "UPSTREAM_SUITE3_JOIN_MISSING",
+                "native project recipe has no unambiguous suite3 normalized case",
+                reason=request["suite3_join_failure"],
+                unresolved=recipe.get("unresolved", []),
+            )]
+        else:
+            result["diagnostics"] = [_diagnostic(
+                "UPSTREAM_RECIPE_UNRESOLVED",
+                "candidate has no complete concrete specialization recipe",
+                unresolved=recipe.get("unresolved", []),
+            )]
         return result
     reference_mode = (recipe.get("reference") or {}).get("mode", "not_run")
     if reference_mode not in {"direct_original", "reference_replay"}:

@@ -1,0 +1,40 @@
+{
+  "candidate_id": "0f9f4cf837c7b2c8",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/runtime/backend/_nvidia/hopper/ops/fill.py/L26-L41__fill_scalar_kernel__0f9f4cf837c7b2c8.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "61ca054a51756e0dd10fd1e9d85e4985dc90b82e54f54e4aa2a2bd4265967805",
+    "source_map": {
+      "end_line": 41,
+      "logical_path": "src/flag_gems/runtime/backend/_nvidia/hopper/ops/fill.py",
+      "start_line": 26
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/0f9f4cf837c7b2c8/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 41,
+    "git_blob": "be814c32977d821f835707fad00aee0bd9219c4e",
+    "qualname": "fill_scalar_kernel",
+    "relative_path": "src/flag_gems/runtime/backend/_nvidia/hopper/ops/fill.py",
+    "selected_source_sha256": "3c90771de3e419ad263196e0c9ba9f6992448166e7af7f3e00357dc6804ce6c1",
+    "source_sha256": "317697fe397f1bbebd67190d335a8b1f7278f886972dd99ea21b21b62bae222b",
+    "start_line": 26
+  }
+}

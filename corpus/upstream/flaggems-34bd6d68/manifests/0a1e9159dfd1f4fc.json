@@ -1,0 +1,42 @@
+{
+  "candidate_id": "0a1e9159dfd1f4fc",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/rsqrt.py/L25-L28__rsqrt_func__0a1e9159dfd1f4fc.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "07ec291c3a4be4adc55835d4bdfaa6ed335b1d2e233f3a7074c183a34078b849",
+    "source_map": {
+      "end_line": 28,
+      "logical_path": "src/flag_gems/ops/rsqrt.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/0a1e9159dfd1f4fc/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 28,
+    "git_blob": "0c812d28dc0a75e149c08031a20d237b5fa722bf",
+    "qualname": "rsqrt_func",
+    "relative_path": "src/flag_gems/ops/rsqrt.py",
+    "selected_source_sha256": "02038ad3fd143e2a40c7faccdc2259e81be031705a3b75986628d7bd607e963b",
+    "source_sha256": "e86da63bd48533189bbc59f814ad969a56e57dfa8fed55b066eb520ea6dc5490",
+    "start_line": 25
+  }
+}

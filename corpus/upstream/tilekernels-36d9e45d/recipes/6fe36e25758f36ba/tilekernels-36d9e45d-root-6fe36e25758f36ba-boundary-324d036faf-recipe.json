@@ -1,0 +1,41 @@
+{
+  "bindings": {
+    "mhc_mult": 4,
+    "n0": 1,
+    "n1": 4096
+  },
+  "candidate_id": "6fe36e25758f36ba",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 103,
+      "function": "test_pre_split_mixes_comprehensive",
+      "kind": "UPSTREAM_TEST",
+      "path": "tests/mhc/test_pre_split_mixes.py",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source_sha256": "753bfda63e3600ca5afa95251a6dade1c1d3be55177ad4e2122b47edc593e1bd",
+      "start_line": 74,
+      "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5"
+    }
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-upstream_test:tests/mhc/test_pre_split_mixes.py:74-103#test_pre_split_mixes_comprehensive",
+  "recipe_id": "tilekernels-36d9e45d-root-6fe36e25758f36ba-boundary-324d036faf-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

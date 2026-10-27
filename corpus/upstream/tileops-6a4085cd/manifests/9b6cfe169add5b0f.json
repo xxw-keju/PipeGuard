@@ -1,0 +1,67 @@
+{
+  "candidate_id": "9b6cfe169add5b0f",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/mamba/da_cumsum.py/L174-L244__da_cumsum_fwd_kernel.kernel_func__9b6cfe169add5b0f.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ef266bb5374643eb8d96207d1c14f6e586d339fd33bbb6dccb083cc15a59fbe0",
+    "source_map": {
+      "end_line": 244,
+      "logical_path": "src/tileops/kernels/mamba/da_cumsum.py",
+      "start_line": 174
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "B",
+    "C",
+    "H",
+    "Q",
+    "S",
+    "T",
+    "accum_dtype",
+    "dt_max",
+    "dt_min",
+    "dt_softplus",
+    "dtype",
+    "has_dt_bias",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "f62885f44b8f2b16"
+  ],
+  "lexical_parents": [
+    "_da_cumsum_fwd_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/9b6cfe169add5b0f/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "B",
+    "C",
+    "H",
+    "Q",
+    "S",
+    "accum_dtype",
+    "dt_max",
+    "dt_min",
+    "dt_softplus",
+    "dtype",
+    "has_dt_bias"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 244,
+    "git_blob": "e0a880f7f10510eb0caa29dcc0dabe330a91f097",
+    "qualname": "_da_cumsum_fwd_kernel.kernel_func",
+    "relative_path": "src/tileops/kernels/mamba/da_cumsum.py",
+    "selected_source_sha256": "57a5c18dbb2aa9f176306be82ec5342ecc9f196ed9b65e31f98e8492b2da9220",
+    "source_sha256": "51f3613e360d07068ce824edc8888d33c5f1ebbfe5f404dbd825a471d6545065",
+    "start_line": 174
+  }
+}

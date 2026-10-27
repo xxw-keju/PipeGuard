@@ -1,0 +1,41 @@
+{
+  "candidate_id": "cbddf661b5e42bc8",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/mvlgamma.py/L47-L106__mvlgamma_kernel__cbddf661b5e42bc8.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "15afba7656f6034cedd124a6349de1f1fc5161e019b57e28625dca7ca660ba9b",
+    "source_map": {
+      "end_line": 106,
+      "logical_path": "src/flag_gems/ops/mvlgamma.py",
+      "start_line": 47
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_lgamma",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/cbddf661b5e42bc8/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 106,
+    "git_blob": "e8f9cf86600476a0ce4502db282ee9f9725a873c",
+    "qualname": "mvlgamma_kernel",
+    "relative_path": "src/flag_gems/ops/mvlgamma.py",
+    "selected_source_sha256": "bc7556ae80326db5f542ea9ab33a3abdeb5e142baaad65cb02bcc320ff0ae1e5",
+    "source_sha256": "0ded7e725ee862d00cf4a5171e62f2c8baf0247dc34968399d90b2bd4633905a",
+    "start_line": 47
+  }
+}

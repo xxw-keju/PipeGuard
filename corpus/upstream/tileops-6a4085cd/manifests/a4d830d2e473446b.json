@@ -1,0 +1,54 @@
+{
+  "candidate_id": "a4d830d2e473446b",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/cumulative.py/L647-L665__parallel_scan_carry_kernel._func__a4d830d2e473446b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6c469bdc172cb6c3d6573da943d88e2dba4f0fa147ea21ebdd5d7511d46eb7bc",
+    "source_map": {
+      "end_line": 665,
+      "logical_path": "src/tileops/kernels/reduction/cumulative.py",
+      "start_line": 647
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "T",
+    "n_tiles",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "23ca7d40ca183b03",
+    "62a5b38b3906c67c",
+    "8e0a4c4ee05de323",
+    "a56e4ed9848c0f86",
+    "ccf812d3b67dc421",
+    "d325320cc9b84bcc"
+  ],
+  "lexical_parents": [
+    "_parallel_scan_carry_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/a4d830d2e473446b/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "n_tiles"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 665,
+    "git_blob": "b8f740281ccc2c3fc39994648b6e4d486b91d36c",
+    "qualname": "_parallel_scan_carry_kernel._func",
+    "relative_path": "src/tileops/kernels/reduction/cumulative.py",
+    "selected_source_sha256": "610885d82c0d8e41b8538ec3e79a0995188649ab28a8f01085d4bfd857abd549",
+    "source_sha256": "efa3017b88943c3b8caa23082f9879c4ce9ac62736a84faf06af68a0c7093d71",
+    "start_line": 647
+  }
+}

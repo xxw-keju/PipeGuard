@@ -1,0 +1,124 @@
+{
+  "arguments": {
+    "bidirectional": true,
+    "dtype": "torch.float32",
+    "has_biases": true,
+    "hidden_size": 6,
+    "input_size": 10,
+    "lengths": [
+      7,
+      6,
+      5,
+      4,
+      3,
+      2
+    ],
+    "num_layers": 2
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-unpack-padded-kernel-b78900f17200-original-59deabd676",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:data_ptr",
+        "1": "global:x_ptr",
+        "2": "global:offsets_ptr",
+        "3": "global:batch_sizes_ptr"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "BLOCK_F": 16,
+      "batch_size": 1,
+      "data_stride_0": 1,
+      "input_size": 10,
+      "x_stride_b": 1,
+      "x_stride_f": 1,
+      "x_stride_s": 1
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "batch_sizes_ptr": "*fp32",
+      "data_ptr": "*fp32",
+      "offsets_ptr": "*i64",
+      "x_ptr": "*fp32"
+    }
+  },
+  "evidence": [
+    "flaggems-launch-3cb079e6a781d7b7",
+    "flaggems-test-a54487a6d3d47372",
+    "source-dcba3520d5cda0ce"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-unpack-padded-kernel-b78900f17200",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_gru.py:151-204#test_gru_data",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ],
+  "workload_recovery": {
+    "method": "static-source-and-case-heuristic-v1",
+    "notes": [
+      "All scalar parameters are compile-time specialized.",
+      "Pointer types derive from source use, parameter names, and the case dtype.",
+      "The recovered workload checks CTA (0,0,0) with a one-CTA launch and is not evidence for the original full launch grid."
+    ],
+    "original_case_path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/corpus/upstream/suite3/kernels/triton/flaggems/flaggems-unpack-padded-kernel-b78900f17200/cases/original-59deabd676.json",
+    "status": "HEURISTIC"
+  }
+}

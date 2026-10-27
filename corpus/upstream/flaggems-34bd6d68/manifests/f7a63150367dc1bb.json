@@ -1,0 +1,45 @@
+{
+  "candidate_id": "f7a63150367dc1bb",
+  "candidate_kind": "HEURISTICS_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/scatter_reduce.py/L709-L848__scatter_reduce_amax_kernel__f7a63150367dc1bb.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "4c993cfd7f9a55f154cc5e0801b7002ae91c85c9171cfb08a7ec7992c2377b47",
+    "source_map": {
+      "end_line": 848,
+      "logical_path": "src/flag_gems/ops/scatter_reduce.py",
+      "start_line": 709
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.heuristics",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "heur_block",
+    "heur_loop",
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/f7a63150367dc1bb/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 848,
+    "git_blob": "844601656cde5ea79709f9ebe93533eb0d537fe6",
+    "qualname": "scatter_reduce_amax_kernel",
+    "relative_path": "src/flag_gems/ops/scatter_reduce.py",
+    "selected_source_sha256": "13616bb4eab16d4df7ceaa246cc994699f5ceb5a5eb7fa635414f4de7d063374",
+    "source_sha256": "052a9941e92cac10b037917dd5e0795ab406d5f90935ba4b4ed67bcfc045e438",
+    "start_line": 709
+  }
+}

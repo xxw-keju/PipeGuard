@@ -1,0 +1,109 @@
+{
+  "arguments": {
+    "dtype": "torch.bfloat16",
+    "shape": [
+      2,
+      32
+    ]
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-nonzero-kernel-500126dea70d-original-847a5fbb0b",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:inp",
+        "1": "global:prefix_sum",
+        "2": "global:out",
+        "3": "global:shape"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "BLOCK_SIZE": 1024,
+      "n_elements": 64,
+      "ndim": 1
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "num_warps": 8
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "inp": "*bf16",
+      "out": "*bf16",
+      "prefix_sum": "*bf16",
+      "shape": "*bf16"
+    }
+  },
+  "evidence": [
+    "flaggems-launch-14d2a365e3b7820f",
+    "flaggems-test-b3535c7a1c0381c3",
+    "source-2cf7a9a9633b4500"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-nonzero-kernel-500126dea70d",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_nonzero.py:36-55#test_nonzero",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ],
+  "workload_recovery": {
+    "method": "static-source-and-case-heuristic-v1",
+    "notes": [
+      "All scalar parameters are compile-time specialized.",
+      "Pointer types derive from source use, parameter names, and the case dtype.",
+      "The recovered workload checks CTA (0,0,0) with a one-CTA launch and is not evidence for the original full launch grid."
+    ],
+    "original_case_path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/corpus/upstream/suite3/kernels/triton/flaggems/flaggems-nonzero-kernel-500126dea70d/cases/original-847a5fbb0b.json",
+    "status": "HEURISTIC"
+  }
+}

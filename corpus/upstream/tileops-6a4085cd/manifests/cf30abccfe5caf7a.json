@@ -1,0 +1,92 @@
+{
+  "candidate_id": "cf30abccfe5caf7a",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_fwd_fp8.py/L78-L603__gqa_fwd_fp8_bn224_tma_v_kernel.func.main__cf30abccfe5caf7a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e2701596d718f895f86427586f57bc666e24f2c6c0f93c732a20cd14bdeacd57",
+    "source_map": {
+      "end_line": 603,
+      "logical_path": "src/tileops/kernels/attention/gqa_fwd_fp8.py",
+      "start_line": 78
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "NUM_SMS",
+    "T",
+    "TMA_DTYPE_UINT8",
+    "TMA_INTERLEAVE_NONE",
+    "TMA_L2_PROMOTION_128B",
+    "TMA_OOB_FILL_NONE",
+    "TMA_SWIZZLE_128B",
+    "accum_dtype",
+    "batch",
+    "block_m",
+    "dim",
+    "fp8_dtype",
+    "groups",
+    "half_m",
+    "heads",
+    "heads_kv",
+    "kv_scale_shape",
+    "kv_shape",
+    "online_softmax_1",
+    "online_softmax_2",
+    "out_dtype",
+    "pv_accumulate_helper",
+    "q_scale_shape",
+    "q_shape",
+    "scale",
+    "scale_block",
+    "seq_len",
+    "tilelang",
+    "v_inplace_transform_helper"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gqa_fwd_fp8_bn224_tma_v_kernel",
+    "func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/cf30abccfe5caf7a/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_m",
+    "dim",
+    "fp8_dtype",
+    "groups",
+    "half_m",
+    "heads",
+    "heads_kv",
+    "kv_scale_shape",
+    "kv_shape",
+    "online_softmax_1",
+    "online_softmax_2",
+    "out_dtype",
+    "pv_accumulate_helper",
+    "q_scale_shape",
+    "q_shape",
+    "scale",
+    "scale_block",
+    "seq_len",
+    "v_inplace_transform_helper"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 603,
+    "git_blob": "c63df494b55589d330a297251e9c6b5316ae094d",
+    "qualname": "_gqa_fwd_fp8_bn224_tma_v_kernel.func.main",
+    "relative_path": "src/tileops/kernels/attention/gqa_fwd_fp8.py",
+    "selected_source_sha256": "af807af56d8ce4a6c48904f263b4c68fb49ed826a34567d6a5e597b019f5adcf",
+    "source_sha256": "ab0f7ad4b6608995b9ef2b995c086b7f0e6fd4bd35db08d2e40b0376e8af7a7c",
+    "start_line": 78
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "bindings": {
+    "dim": 0,
+    "dtype": "float16",
+    "label": "3d-non-last-axis-argmax",
+    "manifest": "src/tileops/manifest/reduction.yaml",
+    "operator": "ArgmaxFwdOp",
+    "row_index": 2,
+    "x_shape": [
+      4,
+      128,
+      4096
+    ]
+  },
+  "candidate_id": "e1e38595e0fcd366",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 590,
+      "function": "ArgmaxFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/reduction.yaml",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source_sha256": "c850a52b359bc1d96a8155e7e7f560b9cb0263a793316523dea19d4ca54cbf63",
+      "start_line": 546,
+      "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226"
+    }
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/reduction.yaml:546-590#ArgmaxFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-e1e38595e0fcd366-boundary-008bd6bdbb-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

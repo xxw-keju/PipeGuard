@@ -1,0 +1,43 @@
+{
+  "candidate_id": "94869ee8b1aec797",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/max_pool3d_with_indices_backward.py/L68-L116__max_pool3d_with_indices_backward_kernel__94869ee8b1aec797.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "9f157ac9bb6c99adbf8b8cadfb3a945beff17ed788c8b442e43a0ef5e77f3b80",
+    "source_map": {
+      "end_line": 116,
+      "logical_path": "src/flag_gems/ops/max_pool3d_with_indices_backward.py",
+      "start_line": 68
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/94869ee8b1aec797/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 116,
+    "git_blob": "c10eeb5ac632d50768d80759118a18c7f16852fe",
+    "qualname": "max_pool3d_with_indices_backward_kernel",
+    "relative_path": "src/flag_gems/ops/max_pool3d_with_indices_backward.py",
+    "selected_source_sha256": "4aa31fb049f50db1718997cdad67e37a6c26f39ca01641cd8d3f0d8e41101214",
+    "source_sha256": "b29d4709c202c56c3c5eba8165c449c9f3c2cd40ce6ef127bc7db4e155f6479d",
+    "start_line": 68
+  }
+}

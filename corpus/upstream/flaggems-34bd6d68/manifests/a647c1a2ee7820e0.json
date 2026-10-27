@@ -1,0 +1,46 @@
+{
+  "candidate_id": "a647c1a2ee7820e0",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/weightnorm.py/L166-L215__weight_norm_bwd_kernel_first__a647c1a2ee7820e0.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "860a204eb44f3fba604d4d5f2f256a9371768d97d767a9867b757cdb1d36c150",
+    "source_map": {
+      "end_line": 215,
+      "logical_path": "src/flag_gems/ops/weightnorm.py",
+      "start_line": 166
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "libentry",
+    "runtime",
+    "tl",
+    "tl_extra_shim",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/a647c1a2ee7820e0/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 215,
+    "git_blob": "acf634e92db691034aaf1728f691fc9b4924ada2",
+    "qualname": "weight_norm_bwd_kernel_first",
+    "relative_path": "src/flag_gems/ops/weightnorm.py",
+    "selected_source_sha256": "7ca8b973db689bb91dd95fbc329aaca967bb6aef7b20f6c37d32b1b1a5d12cf5",
+    "source_sha256": "f9498126cbd9812ed7c23f5f48edd6a0d97adccbbc9a6489030014403f7390b3",
+    "start_line": 166
+  }
+}

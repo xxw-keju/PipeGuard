@@ -1,0 +1,59 @@
+{
+  "candidate_id": "b68ebb718ef6fb94",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gated_deltanet/fused_prepare_compute_w_u.py/L166-L176__fused_prepare_compute_w_u_tl._fused_func.fused_prepare_compute_w_u_single_A__b68ebb718ef6fb94.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "990e044b73c64b92afa4f97205607678c91bdeb7893a2b1c8b29d61dd8d1cfda",
+    "source_map": {
+      "end_line": 176,
+      "logical_path": "src/tileops/kernels/linear_attention/gated_deltanet/fused_prepare_compute_w_u.py",
+      "start_line": 166
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_fused_body",
+    "batch",
+    "chunk_size",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "seq_len"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "fused_prepare_compute_w_u_tl",
+    "_fused_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/b68ebb718ef6fb94/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_fused_body",
+    "batch",
+    "chunk_size",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "seq_len"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 176,
+    "git_blob": "cc6eec63be5fd1fd8227ac44ce4139e2f9257ace",
+    "qualname": "fused_prepare_compute_w_u_tl._fused_func.fused_prepare_compute_w_u_single_A",
+    "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/fused_prepare_compute_w_u.py",
+    "selected_source_sha256": "014360d666a45de3e40cde5e3ebc05f9f79105f1f44ca600232bf0693e6d98c0",
+    "source_sha256": "6ee89042d31e3b5ec9e895100908f222cf36930bd36342195b9c5e7473d97e55",
+    "start_line": 166
+  }
+}

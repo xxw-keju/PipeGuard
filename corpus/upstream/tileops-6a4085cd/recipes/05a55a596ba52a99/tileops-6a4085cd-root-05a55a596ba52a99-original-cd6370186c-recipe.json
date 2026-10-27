@@ -1,0 +1,56 @@
+{
+  "bindings": {
+    "accum_dtype": "float32",
+    "batch": 1,
+    "chunk_size": 64,
+    "dim": 128,
+    "dtype": "float16",
+    "heads": 64,
+    "indices_shape": {
+      "__pipeguard_missing__": true
+    },
+    "label": "uniform-8k",
+    "manifest": "src/tileops/manifest/pool.yaml",
+    "offsets_shape": {
+      "__pipeguard_missing__": true
+    },
+    "operator": "MeanPoolingFwdOp",
+    "row_index": 0,
+    "seq_len": 8192,
+    "seq_lens": null
+  },
+  "candidate_id": "05a55a596ba52a99",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 840,
+      "function": "MeanPoolingFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/pool.yaml",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source_sha256": "e5ee3b01a4554df4373871dd8d732565cdda53d40e4e6278923fefc11fde1f58",
+      "start_line": 788,
+      "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226"
+    }
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/pool.yaml:788-840#MeanPoolingFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-05a55a596ba52a99-original-cd6370186c-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "candidate_id": "fce7685b254e9990",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/reduce.py/L755-L879__welford_reduce_kernel._func__fce7685b254e9990.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "a74f5eb5744d327ab6ae3f8a695f5089a3017165d317cfc40e0641a616b1abcc",
+    "source_map": {
+      "end_line": 879,
+      "logical_path": "src/tileops/kernels/reduction/reduce.py",
+      "start_line": 755
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "N_padded",
+    "T",
+    "_needs_pad",
+    "_out_dtype",
+    "_pair",
+    "correction",
+    "dtype",
+    "op_kind",
+    "out_idx",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "059f4a89eb793573",
+    "105d42d27665c23e",
+    "14da36bb5bdc07a5",
+    "3221ce797f9bf06d",
+    "343cf3d68282f5df",
+    "6294d5e3ae415be4",
+    "663552c929a55147",
+    "7d4a7d84d4a7e543",
+    "c0b9bd01c352c3d9"
+  ],
+  "lexical_parents": [
+    "_welford_reduce_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/fce7685b254e9990/unresolved.json",
+    "tileops-6a4085cd/recipes/fce7685b254e9990/tileops-6a4085cd-root-fce7685b254e9990-boundary-43f51e0fe3-recipe.json",
+    "tileops-6a4085cd/recipes/fce7685b254e9990/tileops-6a4085cd-root-fce7685b254e9990-boundary-7133368784-recipe.json",
+    "tileops-6a4085cd/recipes/fce7685b254e9990/tileops-6a4085cd-root-fce7685b254e9990-boundary-ffe280aea5-recipe.json",
+    "tileops-6a4085cd/recipes/fce7685b254e9990/tileops-6a4085cd-root-fce7685b254e9990-original-fa73986de6-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "N_padded",
+    "_needs_pad",
+    "_out_dtype",
+    "_pair",
+    "correction",
+    "dtype",
+    "op_kind",
+    "out_idx"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 879,
+    "git_blob": "320ca23e14bc2eb1b15b79ff51413e629add6232",
+    "qualname": "_welford_reduce_kernel._func",
+    "relative_path": "src/tileops/kernels/reduction/reduce.py",
+    "selected_source_sha256": "6c6b09d188dadf75ac085e68932423dd12ecbdcfc1ee26350c62ce345a7dc8f1",
+    "source_sha256": "26ed7c5be84ffc4bd2b89c3d7d03f9104d534accb25b8e8642894d51b27afd6f",
+    "start_line": 755
+  }
+}

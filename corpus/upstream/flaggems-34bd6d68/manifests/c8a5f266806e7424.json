@@ -1,0 +1,41 @@
+{
+  "candidate_id": "c8a5f266806e7424",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/is_nonzero.py/L27-L30__is_nonzero_func__c8a5f266806e7424.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6aad10bec33258327fb45a316dc1b30ebe8e9a74fc4fec6fabed6767eaac0b6b",
+    "source_map": {
+      "end_line": 30,
+      "logical_path": "src/flag_gems/ops/is_nonzero.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/c8a5f266806e7424/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 30,
+    "git_blob": "39f36ffaf0aaa3d46698ab8603dc68caf374adeb",
+    "qualname": "is_nonzero_func",
+    "relative_path": "src/flag_gems/ops/is_nonzero.py",
+    "selected_source_sha256": "ea0572cc9383ca99d34c15a270995fdef9c0c782d88d5c330a6c6f99d01593e1",
+    "source_sha256": "442c00f3605b1084bfdc247b65ddd66322d1001f33792ef924ab73bc1cb6029e",
+    "start_line": 27
+  }
+}

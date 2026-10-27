@@ -1,0 +1,43 @@
+{
+  "candidate_id": "f576a60fa09f07d6",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/kron.py/L80-L129__kron_kernel_for_batch_size_1__f576a60fa09f07d6.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "9c7946d1cb0db192656431d59d992f1801115f9c4b51732befc4aeb5b9d9192b",
+    "source_map": {
+      "end_line": 129,
+      "logical_path": "src/flag_gems/ops/kron.py",
+      "start_line": 80
+    }
+  },
+  "decorators": [
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "runtime",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/f576a60fa09f07d6/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 129,
+    "git_blob": "fa2904b1ff1260ea96c1ba6646a7e1bd43e823a7",
+    "qualname": "kron_kernel_for_batch_size_1",
+    "relative_path": "src/flag_gems/ops/kron.py",
+    "selected_source_sha256": "9dbbf0f314d2ffabccb04b7d1770f304661f79bb66db8aaba96b0f34518cc5a1",
+    "source_sha256": "ca02822baf57f8b1323b16052a16bd9eff18d87fa4a96057e5ba3f7da708762b",
+    "start_line": 80
+  }
+}

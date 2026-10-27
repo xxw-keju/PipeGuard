@@ -1,0 +1,85 @@
+{
+  "candidate_id": "8ba55ca7456721fd",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_fwd_ws.py/L528-L1028__gqa_fwd_ws_persistent_causal_kernel.func__8ba55ca7456721fd.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "2ee4faa1484ec5ba3940287706f83b39552e454fa609d717fa40f96e1fb35a95",
+    "source_map": {
+      "end_line": 1028,
+      "logical_path": "src/tileops/kernels/attention/gqa_fwd_ws.py",
+      "start_line": 528
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "NUM_SMS",
+    "T",
+    "_MATH_HELPER_PATH",
+    "_make_apply_softcap_causal_mask",
+    "_make_apply_softcap_no_mask_guard",
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "groups",
+    "half_m",
+    "half_m_blocks",
+    "heads",
+    "heads_kv",
+    "hkv_sections",
+    "m_blocks",
+    "make_online_softmax_with_mask_guard",
+    "make_rescale",
+    "scale",
+    "score_scale",
+    "seq_len",
+    "softcap",
+    "tilelang",
+    "use_softcap"
+  ],
+  "kernel_dependencies": [
+    "54c89ef9f6a9552d",
+    "a93ee931f1979a75"
+  ],
+  "lexical_parents": [
+    "_gqa_fwd_ws_persistent_causal_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/8ba55ca7456721fd/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "__file__",
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "groups",
+    "half_m",
+    "half_m_blocks",
+    "heads",
+    "heads_kv",
+    "hkv_sections",
+    "m_blocks",
+    "scale",
+    "score_scale",
+    "seq_len",
+    "softcap",
+    "use_softcap"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 1028,
+    "git_blob": "ba81d2efba6d0eb883cf43ce2224bd210290b27b",
+    "qualname": "_gqa_fwd_ws_persistent_causal_kernel.func",
+    "relative_path": "src/tileops/kernels/attention/gqa_fwd_ws.py",
+    "selected_source_sha256": "a0ba198a51f6066da2bfe1dec141d28bededbde5125d828e43eac8eb195cd45b",
+    "source_sha256": "a2c40f86ab99071cd82578e5e2eb8a5a49d63855bb0158263632257a1ebbdd19",
+    "start_line": 528
+  }
+}

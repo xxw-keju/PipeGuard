@@ -1,0 +1,95 @@
+{
+  "candidate_id": "b228bf94b3388fdc",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_fwd.py/L1065-L1299__gqa_prefill_paged_with_fp8_kv_cache_fwd_kernel._gqa_prefill_paged_with___e3d8860__b228bf94b3388fdc.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6a2e00293a8bbda8b8749483090ee1ccc079a26fca631e753534a2708771db10",
+    "source_map": {
+      "end_line": 1299,
+      "logical_path": "src/tileops/kernels/attention/gqa_fwd.py",
+      "start_line": 1065
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "apply_softcap",
+    "batch",
+    "block_m",
+    "block_n",
+    "block_table_shape",
+    "cache_dtype",
+    "dequantize_fp8",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "heads_kv",
+    "is_causal",
+    "kv_new_shape",
+    "kv_pages_shape",
+    "num_stages",
+    "o_shape",
+    "online_softmax",
+    "page_size",
+    "page_size_log2",
+    "q_shape",
+    "quantize_fp8",
+    "rescale",
+    "threads",
+    "use_softcap"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gqa_prefill_paged_with_fp8_kv_cache_fwd_kernel",
+    "_gqa_prefill_paged_with_fp8_kv_cache_fwd_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/b228bf94b3388fdc/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "apply_softcap",
+    "batch",
+    "block_m",
+    "block_n",
+    "block_table_shape",
+    "cache_dtype",
+    "dequantize_fp8",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "heads_kv",
+    "is_causal",
+    "kv_new_shape",
+    "kv_pages_shape",
+    "num_stages",
+    "o_shape",
+    "online_softmax",
+    "page_size",
+    "page_size_log2",
+    "q_shape",
+    "quantize_fp8",
+    "rescale",
+    "threads",
+    "use_softcap"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 1299,
+    "git_blob": "82b87c8358e7c9dfad4f19de7cd36f268a8caefd",
+    "qualname": "_gqa_prefill_paged_with_fp8_kv_cache_fwd_kernel._gqa_prefill_paged_with_fp8_kv_cache_fwd_func._gqa_prefill_paged_with_fp8_kv_cache_fwd_main",
+    "relative_path": "src/tileops/kernels/attention/gqa_fwd.py",
+    "selected_source_sha256": "6ee701a1f4e20eceec1d05fd1743ba2c3881502d84914f1f743180dc2c827977",
+    "source_sha256": "ff7499fdf6df69bd0028461b99ced1f4cd3fb85abca5c8c790038ef07373bafa",
+    "start_line": 1065
+  }
+}

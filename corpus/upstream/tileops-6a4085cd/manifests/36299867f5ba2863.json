@@ -1,0 +1,54 @@
+{
+  "candidate_id": "36299867f5ba2863",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/fp8_lightning_indexer.py/L22-L156__fp8_lightning_indexer_kernel._fp8_lightning_indexer_func__36299867f5ba2863.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "4d7bd1a5b8861a5fe59bf58b2ca7bc15760028b743a5e02ca6ef77eb647aefaf",
+    "source_map": {
+      "end_line": 156,
+      "logical_path": "src/tileops/kernels/fp8_lightning_indexer.py",
+      "start_line": 22
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_MIN_PIPELINED_BLOCK_Q",
+    "batch",
+    "heads",
+    "index_dim",
+    "kv_group",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "93e6cf5e93b19690"
+  ],
+  "lexical_parents": [
+    "_fp8_lightning_indexer_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/36299867f5ba2863/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "batch",
+    "heads",
+    "index_dim",
+    "kv_group"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 156,
+    "git_blob": "ab2ba8c6af88a1c698c573d5196b30674bc28fc2",
+    "qualname": "_fp8_lightning_indexer_kernel._fp8_lightning_indexer_func",
+    "relative_path": "src/tileops/kernels/fp8_lightning_indexer.py",
+    "selected_source_sha256": "0fd8fe6f870983b7f784884b33c0e00a26e6eb9e717ffaa8401f5015a6254291",
+    "source_sha256": "2bdde2ae0ebfebac8047180387dc83dc52465f1fc0b25b70b1f52b0d46194cd5",
+    "start_line": 22
+  }
+}

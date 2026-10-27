@@ -1,0 +1,42 @@
+{
+  "candidate_id": "85a43410e290dfc2",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/conv_transpose2d.py/L828-L949__conv_transpose2d_residue_static_kernel__85a43410e290dfc2.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "7bf2c218ae9a4edec4fc8d8510f74d4b3330e657c3deaf1ebe5e9572c7331582",
+    "source_map": {
+      "end_line": 949,
+      "logical_path": "src/flag_gems/ops/conv_transpose2d.py",
+      "start_line": 828
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/85a43410e290dfc2/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 949,
+    "git_blob": "a5c4aebcf97cb09c79540d3895f27b5f91e1a48a",
+    "qualname": "_conv_transpose2d_residue_static_kernel",
+    "relative_path": "src/flag_gems/ops/conv_transpose2d.py",
+    "selected_source_sha256": "3023342a5f75f866f17e80f74939071dd868e06665bb0ccbe4b74a294be84ef9",
+    "source_sha256": "15641e0a043e8a543c3ce83d475d9edf60c77366d56ed1f0b26345449ecbbd86",
+    "start_line": 828
+  }
+}

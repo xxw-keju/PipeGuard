@@ -1,0 +1,77 @@
+{
+  "candidate_id": "1b488eb3586a19be",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/mha_decode_paged.py/L39-L119__mha_decode_no_split_kernel._func.mha_decode_no_split__1b488eb3586a19be.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "96762fce0f663f88509c3e088d8ba29f58f628833bb8601e097dfb6f8a105a14",
+    "source_map": {
+      "end_line": 119,
+      "logical_path": "src/tileops/kernels/attention/mha_decode_paged.py",
+      "start_line": 39
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "dim",
+    "dtype",
+    "heads",
+    "is_causal",
+    "num_stages",
+    "online_softmax",
+    "page_size",
+    "rescale",
+    "scale",
+    "seqlen_q",
+    "shape_kv",
+    "shape_q",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_mha_decode_no_split_kernel",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/1b488eb3586a19be/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_M",
+    "block_N",
+    "dim",
+    "dtype",
+    "heads",
+    "is_causal",
+    "num_stages",
+    "online_softmax",
+    "page_size",
+    "rescale",
+    "scale",
+    "seqlen_q",
+    "shape_kv",
+    "shape_q",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 119,
+    "git_blob": "51615e6fd3f7a67532d3897ee0f535538ec08c69",
+    "qualname": "_mha_decode_no_split_kernel._func.mha_decode_no_split",
+    "relative_path": "src/tileops/kernels/attention/mha_decode_paged.py",
+    "selected_source_sha256": "931469c2f77717ba40653e1fefd6de0a7ae16a5403a4327df2a88993bc9c92f1",
+    "source_sha256": "5089d5f1274c20537672ad909fae5434e9a8e9a38cfc880545afcb08909b3d23",
+    "start_line": 39
+  }
+}

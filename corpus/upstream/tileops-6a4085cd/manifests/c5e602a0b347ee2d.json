@@ -1,0 +1,63 @@
+{
+  "candidate_id": "c5e602a0b347ee2d",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py/L511-L550__reduce_dh_recurrence_partials_tl._func__c5e602a0b347ee2d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "709e4c2956956fe751d8e9cdf01793834d3136b0af0db9cf5204c3807717853a",
+    "source_map": {
+      "end_line": 550,
+      "logical_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+      "start_line": 511
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "batch",
+    "block_C",
+    "dim_k",
+    "dtype",
+    "head",
+    "num_v_tiles",
+    "seq_len",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "b872cd642a070dc7"
+  ],
+  "lexical_parents": [
+    "_reduce_dh_recurrence_partials_tl"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/c5e602a0b347ee2d/unresolved.json",
+    "tileops-6a4085cd/recipes/c5e602a0b347ee2d/tileops-6a4085cd-root-c5e602a0b347ee2d-boundary-2542e60d68-recipe.json",
+    "tileops-6a4085cd/recipes/c5e602a0b347ee2d/tileops-6a4085cd-root-c5e602a0b347ee2d-boundary-4739806ba8-recipe.json",
+    "tileops-6a4085cd/recipes/c5e602a0b347ee2d/tileops-6a4085cd-root-c5e602a0b347ee2d-boundary-dd43c27ca3-recipe.json",
+    "tileops-6a4085cd/recipes/c5e602a0b347ee2d/tileops-6a4085cd-root-c5e602a0b347ee2d-original-9d9824a462-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "batch",
+    "block_C",
+    "dim_k",
+    "dtype",
+    "head",
+    "num_v_tiles",
+    "seq_len"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 550,
+    "git_blob": "8e5c33a97fe8c7c54307fd1577c5ceef698647f9",
+    "qualname": "_reduce_dh_recurrence_partials_tl._func",
+    "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+    "selected_source_sha256": "fca3e447677c93b099133f99ca7e69de1401b3f35547d0f228627302f90dde86",
+    "source_sha256": "a679b2910c2571827fb5c58d51facfff1dad0a4ef3e01d9870ab43ad6d71ff1a",
+    "start_line": 511
+  }
+}

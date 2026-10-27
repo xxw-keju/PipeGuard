@@ -1,0 +1,41 @@
+{
+  "candidate_id": "0e6596609ba22053",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/repeat_interleave.py/L79-L95__repeat_interleave_tensor_kernel__0e6596609ba22053.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c80d12455def667a64951bc34e07c32b3857c41990d9a2ddeeae2a6338742f7e",
+    "source_map": {
+      "end_line": 95,
+      "logical_path": "src/flag_gems/ops/repeat_interleave.py",
+      "start_line": 79
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/0e6596609ba22053/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 95,
+    "git_blob": "99904af2254d50de7cd7fc34de948655be55f5f8",
+    "qualname": "repeat_interleave_tensor_kernel",
+    "relative_path": "src/flag_gems/ops/repeat_interleave.py",
+    "selected_source_sha256": "cd92c882892771c4f7223bf6cfd507ede8e9b15d6027829b6fda16e2c3da2fd8",
+    "source_sha256": "43d9aac2928fe5512f94e2bd16855b6f99f994ac68a873a329a5138f370ccf68",
+    "start_line": 79
+  }
+}

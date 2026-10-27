@@ -1,0 +1,43 @@
+{
+  "candidate_id": "abf92960675a5a86",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/max_unpool3d.py/L13-L105__max_unpool3d_kernel__abf92960675a5a86.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "abaa0932274fc1204432f16975b717f42f137f6281eead097867579a4e47d5d5",
+    "source_map": {
+      "end_line": 105,
+      "logical_path": "src/flag_gems/ops/max_unpool3d.py",
+      "start_line": 13
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/abf92960675a5a86/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 105,
+    "git_blob": "b5bde32176e53dd358c8a9e77ba99c10dc9d9b9b",
+    "qualname": "max_unpool3d_kernel",
+    "relative_path": "src/flag_gems/ops/max_unpool3d.py",
+    "selected_source_sha256": "d86588d6a603abe7cc86cd2732c804f69f6f724725f0d5d33171f86c7c2f5598",
+    "source_sha256": "b4a54840924e14453da63b8b1d1f9c52d385552bb194736fb78296f1c8b5a5cb",
+    "start_line": 13
+  }
+}

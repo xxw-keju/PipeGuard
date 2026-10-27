@@ -1,0 +1,52 @@
+{
+  "candidate_id": "718e68ccdc0dfc44",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tilekernels-36d9e45d/capsules/tile_kernels/mhc/sinkhorn_kernel.py/L70-L163__mhc_sinkhorn_bwd.mhc_sinkhorn_backward_kernel__718e68ccdc0dfc44.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "2a32fbb97caabe0d9e331b3cc94e4cad3e82bb52c244af39fad8d3518031b5a1",
+    "source_map": {
+      "end_line": 163,
+      "logical_path": "tile_kernels/mhc/sinkhorn_kernel.py",
+      "start_line": 70
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "eps",
+    "hidden_size",
+    "num_tokens",
+    "repeat",
+    "token_block_size"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_mhc_sinkhorn_bwd"
+  ],
+  "recipe_paths": [
+    "tilekernels-36d9e45d/recipes/718e68ccdc0dfc44/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "eps",
+    "hidden_size",
+    "num_tokens",
+    "repeat",
+    "token_block_size"
+  ],
+  "upstream": {
+    "commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+    "end_line": 163,
+    "git_blob": "4e100e261e3a4ddbea96ff89d2fa175e7990c3c9",
+    "qualname": "_mhc_sinkhorn_bwd.mhc_sinkhorn_backward_kernel",
+    "relative_path": "tile_kernels/mhc/sinkhorn_kernel.py",
+    "selected_source_sha256": "0618aeeabbba32b31e5cf26113641c737570608b3330953a727b98e4e3c9993e",
+    "source_sha256": "e38d6a5d40b2ba8089e5dc7dffa421c47d4f2a93b2382ef0bcd05e3332fbe1e1",
+    "start_line": 70
+  }
+}

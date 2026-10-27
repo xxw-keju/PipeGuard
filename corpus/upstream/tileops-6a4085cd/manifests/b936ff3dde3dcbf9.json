@@ -1,0 +1,65 @@
+{
+  "candidate_id": "b936ff3dde3dcbf9",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/deltanet/deltanet_bwd.py/L241-L310__dh_recurrence_bwd_tl._func.dh_recurrence_bwd_kernel__b936ff3dde3dcbf9.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e10cf2ae7fc8ca8be36ef1818a1ebe26bf6daa182a09f4060bb5b48c481d409a",
+    "source_map": {
+      "end_line": 310,
+      "logical_path": "src/tileops/kernels/linear_attention/deltanet/deltanet_bwd.py",
+      "start_line": 241
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_chunks",
+    "num_stages",
+    "seq_len",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_dh_recurrence_bwd_tl",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/b936ff3dde3dcbf9/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_chunks",
+    "num_stages",
+    "seq_len",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 310,
+    "git_blob": "9e66ca6b4ee8c76ef42d1e58a2f6b76b56ad924a",
+    "qualname": "_dh_recurrence_bwd_tl._func.dh_recurrence_bwd_kernel",
+    "relative_path": "src/tileops/kernels/linear_attention/deltanet/deltanet_bwd.py",
+    "selected_source_sha256": "83d724dd67d6e91548132593aa349a868a71e137fb7d56724e730af3fd99ca80",
+    "source_sha256": "74faeaa0cf5a65af049e28295d2b255ba9d4545eac72b43a537d382e052df453",
+    "start_line": 241
+  }
+}

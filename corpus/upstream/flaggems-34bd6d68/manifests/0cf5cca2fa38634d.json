@@ -1,0 +1,43 @@
+{
+  "candidate_id": "0cf5cca2fa38634d",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/atan.py/L26-L29__atan_kernel__0cf5cca2fa38634d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6cab272f1cee4515b452482c9c1078c083027692d1d4863b5f9458aad7469f72",
+    "source_map": {
+      "end_line": 29,
+      "logical_path": "src/flag_gems/ops/atan.py",
+      "start_line": 26
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_atan",
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/0cf5cca2fa38634d/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 29,
+    "git_blob": "722b2ae8e767e2951a6d6e2917ecf46f06f7b325",
+    "qualname": "atan_kernel",
+    "relative_path": "src/flag_gems/ops/atan.py",
+    "selected_source_sha256": "c583772124c7d6167f303779aa94d1bf55bdb7bc7ce9abdab0471012326dce39",
+    "source_sha256": "a7ea9c5905c436c9be0692ebaedc9e82cf87575d2820485d36b81f727945c536",
+    "start_line": 26
+  }
+}

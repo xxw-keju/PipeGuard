@@ -1,0 +1,42 @@
+{
+  "candidate_id": "c8e127d60710048a",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/cosh.py/L25-L29__cosh_func__c8e127d60710048a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "0ffd8de089af17f38358369f40f69f340c66841b8574367307a14f9ddb13d9b1",
+    "source_map": {
+      "end_line": 29,
+      "logical_path": "src/flag_gems/ops/cosh.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/c8e127d60710048a/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 29,
+    "git_blob": "8c450bc4c04fcfc4953f31631eba5c515408b742",
+    "qualname": "cosh_func",
+    "relative_path": "src/flag_gems/ops/cosh.py",
+    "selected_source_sha256": "de10d94225402d85411897c76f2d974293fd979a2f7435ffd0640d59bf070b3d",
+    "source_sha256": "811c63abbec7e71fe38e6acf0dae9fbcc80541d6bc4e5655e889c67ed236a594",
+    "start_line": 25
+  }
+}

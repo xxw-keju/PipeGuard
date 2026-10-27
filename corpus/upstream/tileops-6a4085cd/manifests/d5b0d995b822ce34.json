@@ -1,0 +1,67 @@
+{
+  "candidate_id": "d5b0d995b822ce34",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gla/gla_fwd.py/L34-L72__gla_precompute_g_kernel._fn__d5b0d995b822ce34.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "24599ec875f76c56044db4c20cb4e5e022464475f5a9be09f814b72b5bad2c4e",
+    "source_map": {
+      "end_line": 72,
+      "logical_path": "src/tileops/kernels/linear_attention/gla/gla_fwd.py",
+      "start_line": 34
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "chunk_size",
+    "dim_k",
+    "dtype",
+    "heads",
+    "num_chunks",
+    "seq_len",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "25bcec3bb61886e5",
+    "4f0b1aaa6536f2f8",
+    "7839643c2f7f0432"
+  ],
+  "lexical_parents": [
+    "_gla_precompute_g_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/d5b0d995b822ce34/unresolved.json",
+    "tileops-6a4085cd/recipes/d5b0d995b822ce34/tileops-6a4085cd-root-d5b0d995b822ce34-boundary-72dc800085-recipe.json",
+    "tileops-6a4085cd/recipes/d5b0d995b822ce34/tileops-6a4085cd-root-d5b0d995b822ce34-boundary-a1b3888985-recipe.json",
+    "tileops-6a4085cd/recipes/d5b0d995b822ce34/tileops-6a4085cd-root-d5b0d995b822ce34-boundary-d947d737a8-recipe.json",
+    "tileops-6a4085cd/recipes/d5b0d995b822ce34/tileops-6a4085cd-root-d5b0d995b822ce34-original-9e6721cbeb-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "chunk_size",
+    "dim_k",
+    "dtype",
+    "heads",
+    "num_chunks",
+    "seq_len"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 72,
+    "git_blob": "ac69443c53fa2949cab0e9995a30c3b4e3e0d198",
+    "qualname": "_gla_precompute_g_kernel._fn",
+    "relative_path": "src/tileops/kernels/linear_attention/gla/gla_fwd.py",
+    "selected_source_sha256": "93e8835f9bbf680cb2e6f6352e98d0a197ba950fd34b36f851c7841401a9ba5f",
+    "source_sha256": "2d705431f6eaee6b6ef0244a342dbdbf47baf39a2a2548ece26a006b7893eb8c",
+    "start_line": 34
+  }
+}

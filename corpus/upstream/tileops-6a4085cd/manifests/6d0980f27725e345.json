@@ -1,0 +1,61 @@
+{
+  "candidate_id": "6d0980f27725e345",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py/L207-L237__prefill_chunk_local_cumsum_bhtd_tl._func__6d0980f27725e345.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "dd45e491deb82bcc21930c3aa0d492e052f2fe17793b17ac9ef15c358c38cb9b",
+    "source_map": {
+      "end_line": 237,
+      "logical_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+      "start_line": 207
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "batch",
+    "chunk_size",
+    "dtype",
+    "head",
+    "num_chunks",
+    "seq_len",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "bbb84ec7f053a45e"
+  ],
+  "lexical_parents": [
+    "_prefill_chunk_local_cumsum_bhtd_tl"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/6d0980f27725e345/unresolved.json",
+    "tileops-6a4085cd/recipes/6d0980f27725e345/tileops-6a4085cd-root-6d0980f27725e345-boundary-784470494a-recipe.json",
+    "tileops-6a4085cd/recipes/6d0980f27725e345/tileops-6a4085cd-root-6d0980f27725e345-boundary-972c184d72-recipe.json",
+    "tileops-6a4085cd/recipes/6d0980f27725e345/tileops-6a4085cd-root-6d0980f27725e345-boundary-bd520a7c36-recipe.json",
+    "tileops-6a4085cd/recipes/6d0980f27725e345/tileops-6a4085cd-root-6d0980f27725e345-original-9bf9b84578-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "batch",
+    "chunk_size",
+    "dtype",
+    "head",
+    "num_chunks",
+    "seq_len"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 237,
+    "git_blob": "f17f222201df2565859754ee60b1ae9c1589ab6f",
+    "qualname": "_prefill_chunk_local_cumsum_bhtd_tl._func",
+    "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+    "selected_source_sha256": "ad3b5924cd19922937164d6c2f86ae52a3516b1a3df0ea665df58c706b68cb26",
+    "source_sha256": "df6831a09ec97ec92771e1e4aac4f69560b8990dce47f811f0ea25a32cf9d2f1",
+    "start_line": 207
+  }
+}

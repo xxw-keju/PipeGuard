@@ -1,0 +1,48 @@
+{
+  "bindings": {
+    "dtype": "float16",
+    "ffn_size": 2048,
+    "hidden_size": 7168,
+    "label": "qwen3-235b-decode",
+    "manifest": "src/tileops/manifest/moe.yaml",
+    "num_experts": 128,
+    "num_tokens": 512,
+    "operator": "FusedMoEExpertsNopadPersistent3WGFwdOp",
+    "row_index": 0,
+    "top_k": 8
+  },
+  "candidate_id": "c435582e9feb0ff8",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 218,
+      "function": "FusedMoEExpertsNopadPersistent3WGFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/moe.yaml",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source_sha256": "ee7c14d61c6d2335feea5c471bc5aff6a54170a8459f869b6cb806f233e7d569",
+      "start_line": 147,
+      "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226"
+    }
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/moe.yaml:147-218#FusedMoEExpertsNopadPersistent3WGFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-c435582e9feb0ff8-original-ba9a6e56e6-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

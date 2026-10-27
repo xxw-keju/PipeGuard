@@ -1,0 +1,40 @@
+{
+  "candidate_id": "f8aef5c1b20f5c00",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/ctc_loss.py/L43-L51__logaddexp__f8aef5c1b20f5c00.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6c94b57f679bccd55826cada5fdf85dd67dcb18ff1599a01ddcea38d9a5d8b4a",
+    "source_map": {
+      "end_line": 51,
+      "logical_path": "src/flag_gems/ops/ctc_loss.py",
+      "start_line": 43
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/f8aef5c1b20f5c00/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 51,
+    "git_blob": "2570fe2f0e15f4736d927bb0be4eae96ae75b983",
+    "qualname": "_logaddexp",
+    "relative_path": "src/flag_gems/ops/ctc_loss.py",
+    "selected_source_sha256": "84526180a03f92ad8a6d7a582d025b6b269ee0911c05dee8f305d3a44b4ba0cc",
+    "source_sha256": "13509d87125435ba53dff17266604fe5379573a754557bf8489490a0e6ef60f4",
+    "start_line": 43
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "candidate_id": "dc306b6e1c9b595c",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/experimental_ops/multiply.py/L22-L30__multiply_tt_kernel__dc306b6e1c9b595c.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "803ab36dd34910d510074e65d28d0a81b016146c74df86dd2e5908757e417f29",
+    "source_map": {
+      "end_line": 30,
+      "logical_path": "src/flag_gems/experimental_ops/multiply.py",
+      "start_line": 22
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/dc306b6e1c9b595c/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 30,
+    "git_blob": "6205f194807fd3c6bf84d14b9687d339bb973071",
+    "qualname": "_multiply_tt_kernel",
+    "relative_path": "src/flag_gems/experimental_ops/multiply.py",
+    "selected_source_sha256": "2209371936022b05d5ee8eaa3ff01b3cdaf83df0b3a62babb3b04c5e30499d89",
+    "source_sha256": "4b068666307a436f8f6d8fe71cade541ad354adb60461ed52634ee703213ca77",
+    "start_line": 22
+  }
+}

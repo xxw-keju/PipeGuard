@@ -1,0 +1,43 @@
+{
+  "candidate_id": "f43f7fa6d3d463fa",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/nextafter.py/L26-L104__nextafter_func__f43f7fa6d3d463fa.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "a4fca0ae96ddf685ef05a1899b566e789cb908b2cdfddceac191e41c97e52313",
+    "source_map": {
+      "end_line": 104,
+      "logical_path": "src/flag_gems/ops/nextafter.py",
+      "start_line": 26
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "tl_extra_shim",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/f43f7fa6d3d463fa/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 104,
+    "git_blob": "309d9eb3d8889c0c1f27a62ef8873c1c4a1c380b",
+    "qualname": "nextafter_func",
+    "relative_path": "src/flag_gems/ops/nextafter.py",
+    "selected_source_sha256": "755efbab310febe88d7d163ae1dd4c72c27f7d4731af012200ffe31c1a92f9f2",
+    "source_sha256": "78d8a02d03181c394e7b7b0989983427278210fedba575a19344713d70d4068d",
+    "start_line": 26
+  }
+}

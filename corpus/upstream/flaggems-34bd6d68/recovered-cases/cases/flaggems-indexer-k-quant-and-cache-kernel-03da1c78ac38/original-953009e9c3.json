@@ -1,0 +1,118 @@
+{
+  "arguments": {
+    "block_size": 16,
+    "dtype": "torch.bfloat16",
+    "head_dim": 128,
+    "num_blocks": 4,
+    "num_tokens": 19,
+    "quant_block_size": 128,
+    "scale_fmt": "ue8m0"
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-indexer-k-quant-and-cache-kernel-03da1c78ac38-original-953009e9c3",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:k_ptr",
+        "1": "global:kv_cache_ptr",
+        "2": "global:kv_cache_scale_ptr",
+        "3": "global:slot_mapping_ptr"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "IS_FNUZ": false,
+      "QUANT_BLOCK_SIZE": 1,
+      "USE_UE8M0": false,
+      "block_size": 16,
+      "head_dim": 128,
+      "kv_cache_scale_stride": 1,
+      "kv_cache_value_stride": 1,
+      "num_quant_blocks": 16
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "k_ptr": "*bf16",
+      "kv_cache_ptr": "*bf16",
+      "kv_cache_scale_ptr": "*fp32",
+      "slot_mapping_ptr": "*i64"
+    }
+  },
+  "evidence": [
+    "flaggems-launch-b22b3338275285a9",
+    "flaggems-test-07552102c10442d8",
+    "source-97864f7c0d5b1ddf"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-indexer-k-quant-and-cache-kernel-03da1c78ac38",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_indexer_k_quant_and_cache.py:195-239#test_indexer_k_quant_and_cache_matches_reference",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ],
+  "workload_recovery": {
+    "method": "static-source-and-case-heuristic-v1",
+    "notes": [
+      "All scalar parameters are compile-time specialized.",
+      "Pointer types derive from source use, parameter names, and the case dtype.",
+      "The recovered workload checks CTA (0,0,0) with a one-CTA launch and is not evidence for the original full launch grid."
+    ],
+    "original_case_path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/corpus/upstream/suite3/kernels/triton/flaggems/flaggems-indexer-k-quant-and-cache-kernel-03da1c78ac38/cases/original-953009e9c3.json",
+    "status": "HEURISTIC"
+  }
+}

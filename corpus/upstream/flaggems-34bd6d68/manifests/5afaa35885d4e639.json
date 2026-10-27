@@ -1,0 +1,40 @@
+{
+  "candidate_id": "5afaa35885d4e639",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/experimental_ops/sigmoid.py/L20-L31__sigmoid_kernel__5afaa35885d4e639.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "b0575690104734d40e75081e9281a183ca77a7c0f83d915d2ebce61b3d34b1fa",
+    "source_map": {
+      "end_line": 31,
+      "logical_path": "src/flag_gems/experimental_ops/sigmoid.py",
+      "start_line": 20
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/5afaa35885d4e639/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 31,
+    "git_blob": "bfe9948fc8eba8c1f593b380f5609236b585dc82",
+    "qualname": "sigmoid_kernel",
+    "relative_path": "src/flag_gems/experimental_ops/sigmoid.py",
+    "selected_source_sha256": "d43f1bf21bbd899797e9c32feff0d807d829cec25646f967e2373b5663d8ec41",
+    "source_sha256": "b31a4ded420b64c979b899e38bf085357963d93c202f1d7f70e74d450efcd12d",
+    "start_line": 20
+  }
+}

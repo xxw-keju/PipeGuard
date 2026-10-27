@@ -1,0 +1,41 @@
+{
+  "candidate_id": "e29875ccf5d8d959",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/geglu.py/L32-L69__geglu_kernel__e29875ccf5d8d959.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "eecbf4c02147346ace08d8c5691e12f505a34ac3c9e148feac7876ab7313b051",
+    "source_map": {
+      "end_line": 69,
+      "logical_path": "src/flag_gems/fused/geglu.py",
+      "start_line": 32
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tanh",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/e29875ccf5d8d959/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 69,
+    "git_blob": "f387e6639ebb2f243327890ba9701658e12930a7",
+    "qualname": "geglu_kernel",
+    "relative_path": "src/flag_gems/fused/geglu.py",
+    "selected_source_sha256": "c86bfeb1c08d437ecb6516307411188bfc0f3efdf0fcc43a385f749932c0c98f",
+    "source_sha256": "0e2e4634054009d5905db462f53d17e544228f56fe6bcbdb2c0df3e895eac052",
+    "start_line": 32
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "candidate_id": "78a0fc6851392184",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilekernels-36d9e45d/capsules/tile_kernels/quant/swiglu_forward_and_per_token_cast_kernel.py/L11-L172__get_swiglu_forward_and_per_token_cast_kernel__78a0fc6851392184.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e961cf4aee01bbe3097938d7350dd3d8d6db5a82bd1805d22d59bde9ec933b42",
+    "source_map": {
+      "end_line": 172,
+      "logical_path": "tile_kernels/quant/swiglu_forward_and_per_token_cast_kernel.py",
+      "start_line": 11
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "CastOutputConfig",
+    "Optional",
+    "T",
+    "get_sf_and_inv",
+    "get_sf_shape",
+    "is_power_of_two",
+    "store_sf",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "0a33c1fc13427251"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilekernels-36d9e45d/recipes/78a0fc6851392184/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "CastOutputConfig",
+    "get_sf_and_inv",
+    "get_sf_shape",
+    "store_sf"
+  ],
+  "upstream": {
+    "commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+    "end_line": 172,
+    "git_blob": "c0a6ffa3b030eafccae9ee810807721356b45a67",
+    "qualname": "get_swiglu_forward_and_per_token_cast_kernel",
+    "relative_path": "tile_kernels/quant/swiglu_forward_and_per_token_cast_kernel.py",
+    "selected_source_sha256": "fc20559e86c913726dd0843668f9bebdac8ab99a7fb5b199e360d161248f0378",
+    "source_sha256": "ac783f25b138f27f97c3b415cbed764362dec5d3c1dff4067cee95b37440fe1e",
+    "start_line": 11
+  }
+}

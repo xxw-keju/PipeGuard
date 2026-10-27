@@ -1,0 +1,47 @@
+{
+  "candidate_id": "9d53a77e17fe1142",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilekernels-36d9e45d/capsules/tile_kernels/moe/top2_sum_gate_kernel.py/L19-L303__get_top2_sum_gate_kernel__9d53a77e17fe1142.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "c7c0de5a3168491a33375eb3774896636505840f9b88d6b94042d37429ee2118",
+    "source_map": {
+      "end_line": 303,
+      "logical_path": "tile_kernels/moe/top2_sum_gate_kernel.py",
+      "start_line": 19
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "align",
+    "ceil_div",
+    "get_topk_group_idx",
+    "softplus",
+    "tilelang",
+    "warp_reduce_sum"
+  ],
+  "kernel_dependencies": [
+    "47c195d87b69abb3"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilekernels-36d9e45d/recipes/9d53a77e17fe1142/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+    "end_line": 303,
+    "git_blob": "768b52c1e697f651d82175abb965ef726e334c46",
+    "qualname": "get_top2_sum_gate_kernel",
+    "relative_path": "tile_kernels/moe/top2_sum_gate_kernel.py",
+    "selected_source_sha256": "a45ccaa3ff861f9ec72af4b54c6b40c1dbfd0c12897e435c2aa42ec30af65d99",
+    "source_sha256": "43e8aae39ddb7388a4004282780858022f739eec9abb1e47a4d62ce8cde6b6f6",
+    "start_line": 19
+  }
+}

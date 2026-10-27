@@ -1,0 +1,83 @@
+{
+  "candidate_id": "a1dfd3e2edccb982",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/convolution/conv1d.py/L258-L367__conv1d_group_kernel._conv1d_group_func__a1dfd3e2edccb982.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e34df546c0b45ebb72216cad0906e61778b0229b0d440b652d3f34aec61d58b3",
+    "source_map": {
+      "end_line": 367,
+      "logical_path": "src/tileops/kernels/convolution/conv1d.py",
+      "start_line": 258
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "CONV_SWIZZLE_PANEL",
+    "T",
+    "accum_dtype",
+    "c_in",
+    "c_in_g",
+    "c_out",
+    "c_out_g",
+    "dilation_l",
+    "dtype",
+    "groups",
+    "has_bias",
+    "k_total",
+    "kernel_l",
+    "l_in",
+    "n",
+    "out_l",
+    "pad_left",
+    "stride_l",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "72a04b0a66369b23",
+    "d1835874084980bd"
+  ],
+  "lexical_parents": [
+    "_conv1d_group_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/a1dfd3e2edccb982/unresolved.json",
+    "tileops-6a4085cd/recipes/a1dfd3e2edccb982/tileops-6a4085cd-root-a1dfd3e2edccb982-boundary-16cfccacf2-recipe.json",
+    "tileops-6a4085cd/recipes/a1dfd3e2edccb982/tileops-6a4085cd-root-a1dfd3e2edccb982-boundary-5417e0e6cd-recipe.json",
+    "tileops-6a4085cd/recipes/a1dfd3e2edccb982/tileops-6a4085cd-root-a1dfd3e2edccb982-boundary-fe3bb5ce92-recipe.json",
+    "tileops-6a4085cd/recipes/a1dfd3e2edccb982/tileops-6a4085cd-root-a1dfd3e2edccb982-original-5ecc53d316-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "c_in",
+    "c_in_g",
+    "c_out",
+    "c_out_g",
+    "dilation_l",
+    "dtype",
+    "groups",
+    "has_bias",
+    "k_total",
+    "kernel_l",
+    "l_in",
+    "n",
+    "out_l",
+    "pad_left",
+    "stride_l"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 367,
+    "git_blob": "faa8921e1918515a10238e90fae6018572d49b04",
+    "qualname": "_conv1d_group_kernel._conv1d_group_func",
+    "relative_path": "src/tileops/kernels/convolution/conv1d.py",
+    "selected_source_sha256": "deca5ab4cb637c3149796dcfe27732ea77268b1c80f7973ff4beaab7d43febdf",
+    "source_sha256": "1a91ad0a4c7281d04e3b5ee70064507b85fc54e27b4512254991f5e5be71fdef",
+    "start_line": 258
+  }
+}

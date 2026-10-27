@@ -1,0 +1,43 @@
+{
+  "candidate_id": "987abc41f4a8ed5d",
+  "candidate_kind": "HEURISTICS_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/alpha_dropout.py/L51-L104__alpha_dropout_forward_kernel__987abc41f4a8ed5d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "fff3b7b661e13775656c29f77ae99d61a3521f94ad0d9167f3bc5c23daf856bc",
+    "source_map": {
+      "end_line": 104,
+      "logical_path": "src/flag_gems/ops/alpha_dropout.py",
+      "start_line": 51
+    }
+  },
+  "decorators": [
+    "triton.heuristics",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "runtime",
+    "tl",
+    "triton",
+    "uint_to_uniform_float"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/987abc41f4a8ed5d/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 104,
+    "git_blob": "1fcdc46c6eb6eedb3ffa6e7bca3a47643ca9122a",
+    "qualname": "alpha_dropout_forward_kernel",
+    "relative_path": "src/flag_gems/ops/alpha_dropout.py",
+    "selected_source_sha256": "dce7853f534f121be1bcfd20a8cb0577bc9545edd03266843d2538519cc9fa2e",
+    "source_sha256": "3e3eb41acba9f617a71ee89040af3f4665383a018be5848158bba1dd29d0e5b8",
+    "start_line": 51
+  }
+}

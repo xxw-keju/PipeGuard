@@ -1,0 +1,64 @@
+{
+  "candidate_id": "d96a83587804fe6a",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gated_deltanet_recurrence.py/L527-L594__gated_deltanet_decode_fp32_tl._decode_func__d96a83587804fe6a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "133112c0d0b7c4274beb508d512806c5a0059b73e9720af9e32bf7903421b56c",
+    "source_map": {
+      "end_line": 594,
+      "logical_path": "src/tileops/kernels/linear_attention/gated_deltanet_recurrence.py",
+      "start_line": 527
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "LOG2E",
+    "T",
+    "accum_dtype",
+    "batch",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "k_tile",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "4cd20e2e5bc2f540"
+  ],
+  "lexical_parents": [
+    "_gated_deltanet_decode_fp32_tl"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/d96a83587804fe6a/unresolved.json",
+    "tileops-6a4085cd/recipes/d96a83587804fe6a/tileops-6a4085cd-root-d96a83587804fe6a-boundary-0c4e77bc5e-recipe.json",
+    "tileops-6a4085cd/recipes/d96a83587804fe6a/tileops-6a4085cd-root-d96a83587804fe6a-boundary-31371cbc60-recipe.json",
+    "tileops-6a4085cd/recipes/d96a83587804fe6a/tileops-6a4085cd-root-d96a83587804fe6a-boundary-331a8198ac-recipe.json",
+    "tileops-6a4085cd/recipes/d96a83587804fe6a/tileops-6a4085cd-root-d96a83587804fe6a-original-d55d1eaea1-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "k_tile"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 594,
+    "git_blob": "39c3aec89d6c423200b27c6a3b263c0bc7f78e7a",
+    "qualname": "_gated_deltanet_decode_fp32_tl._decode_func",
+    "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet_recurrence.py",
+    "selected_source_sha256": "5df9c853a8675b32d7ec88ad812fe1a9ac7547f9d71580cf4d5cf91b6dcdd429",
+    "source_sha256": "15c6c43151de7a54a6c2ad30a56f0d967105431497a85a540c9157837d694fca",
+    "start_line": 527
+  }
+}

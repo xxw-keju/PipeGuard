@@ -1,0 +1,43 @@
+{
+  "candidate_id": "fdb2e456d2727b02",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/nansum.py/L17-L30__nan_to_zero_kernel__fdb2e456d2727b02.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "0ab77191e2fbe870b86f314c4b0c7ec68e8b1cf11a7e4ffc6370935d0fa1f168",
+    "source_map": {
+      "end_line": 30,
+      "logical_path": "src/flag_gems/ops/nansum.py",
+      "start_line": 17
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/fdb2e456d2727b02/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 30,
+    "git_blob": "8b13b04422aa5c0b51a2032976b08b970e8f0051",
+    "qualname": "_nan_to_zero_kernel",
+    "relative_path": "src/flag_gems/ops/nansum.py",
+    "selected_source_sha256": "ad5269d41d39f134891bc8c49697598b917eeec98cdae3c7922aac140679d3b9",
+    "source_sha256": "cf0837f2bfaffca7b56e6accb20544e3f909055afc5f6481238dfc886fa4d549",
+    "start_line": 17
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "candidate_id": "c42247cd221dd928",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/std.py/L65-L114__std_fused_dim_kernel__c42247cd221dd928.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "2c3d817a9e9981f5bd687c28667b3dcffad60e8c55ebba23e14faf2c13877e54",
+    "source_map": {
+      "end_line": 114,
+      "logical_path": "src/flag_gems/ops/std.py",
+      "start_line": 65
+    }
+  },
+  "decorators": [
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "runtime",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/c42247cd221dd928/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 114,
+    "git_blob": "7786ae4dd8c22c30b939481495a6acaf8c5430bb",
+    "qualname": "_std_fused_dim_kernel",
+    "relative_path": "src/flag_gems/ops/std.py",
+    "selected_source_sha256": "ea238680b29f17192c7ce1ebc1a2254660f2ddb1c7ffb33a741ca74103ccc3e6",
+    "source_sha256": "868f445c7ff8c6beddc9780a607da2d18c9d082edaf6796c1832202e9eece8f3",
+    "start_line": 65
+  }
+}

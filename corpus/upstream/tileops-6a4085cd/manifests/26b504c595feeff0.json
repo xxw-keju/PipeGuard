@@ -1,0 +1,53 @@
+{
+  "candidate_id": "26b504c595feeff0",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/elementwise/arithmetic.py/L375-L398__make_lerp_tensor_kernel.kernel__26b504c595feeff0.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e12d5f3c0251432a063eabc27bd04bbdbf95c0a31d0db39b2ad2d482e26631a3",
+    "source_map": {
+      "end_line": 398,
+      "logical_path": "src/tileops/kernels/elementwise/arithmetic.py",
+      "start_line": 375
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "N",
+    "T",
+    "dtype",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "9ca03ef88aebbe8d"
+  ],
+  "lexical_parents": [
+    "_make_lerp_tensor_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/26b504c595feeff0/unresolved.json",
+    "tileops-6a4085cd/recipes/26b504c595feeff0/tileops-6a4085cd-root-26b504c595feeff0-boundary-07b4790695-recipe.json",
+    "tileops-6a4085cd/recipes/26b504c595feeff0/tileops-6a4085cd-root-26b504c595feeff0-boundary-5cddd817a1-recipe.json",
+    "tileops-6a4085cd/recipes/26b504c595feeff0/tileops-6a4085cd-root-26b504c595feeff0-boundary-c90af521ca-recipe.json",
+    "tileops-6a4085cd/recipes/26b504c595feeff0/tileops-6a4085cd-root-26b504c595feeff0-original-cf08398011-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "N",
+    "dtype"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 398,
+    "git_blob": "e3c41fea389768988dbeb72bb1365fef143c16c9",
+    "qualname": "_make_lerp_tensor_kernel.kernel",
+    "relative_path": "src/tileops/kernels/elementwise/arithmetic.py",
+    "selected_source_sha256": "744030d5e2e4af26a5050c387ed245ca72805dcb00bd94b516bd0b0336964cc9",
+    "source_sha256": "ccf2730c7f01f0ef8a947bf31de1196ffb60846a54d332117cca1cfbc62e6775",
+    "start_line": 375
+  }
+}

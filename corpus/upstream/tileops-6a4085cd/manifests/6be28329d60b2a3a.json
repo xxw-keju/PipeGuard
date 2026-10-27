@@ -1,0 +1,65 @@
+{
+  "candidate_id": "6be28329d60b2a3a",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/logical_reduce.py/L157-L199__logical_reduce_edge_fused._func.main__6be28329d60b2a3a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "5d73aadd01ffbdea3bbcf2684d22f515ec5df11d28d6cd5527ba8026ab7ce4bc",
+    "source_map": {
+      "end_line": 199,
+      "logical_path": "src/tileops/kernels/reduction/logical_reduce.py",
+      "start_line": 157
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "dtype",
+    "init_val",
+    "kept",
+    "lead",
+    "needs_pad",
+    "op_kind",
+    "out_dtype",
+    "pad_val",
+    "threads",
+    "trail",
+    "trail_padded"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_logical_reduce_edge_fused",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/6be28329d60b2a3a/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "dtype",
+    "init_val",
+    "kept",
+    "lead",
+    "needs_pad",
+    "op_kind",
+    "out_dtype",
+    "pad_val",
+    "threads",
+    "trail",
+    "trail_padded"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 199,
+    "git_blob": "3c1be4810f285d2805a4a4748a171d971d06b0d0",
+    "qualname": "_logical_reduce_edge_fused._func.main",
+    "relative_path": "src/tileops/kernels/reduction/logical_reduce.py",
+    "selected_source_sha256": "ac93cf645e7779be30fbb02d050231f64d48c267e33bd75ec7859132a6ae74d7",
+    "source_sha256": "9525d80d367f2e3c599e4c5024a84e839f66ccd4a65493137c111bfa426f2195",
+    "start_line": 157
+  }
+}

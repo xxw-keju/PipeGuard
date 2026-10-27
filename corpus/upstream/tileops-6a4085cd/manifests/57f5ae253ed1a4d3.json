@@ -1,0 +1,84 @@
+{
+  "candidate_id": "57f5ae253ed1a4d3",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/reduce.py/L667-L731__prod_reduce_kernel._func__57f5ae253ed1a4d3.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "b7bcd09a1db1ed1382d307420c562371f2a99b62d433689851d8c8d720fb0595",
+    "source_map": {
+      "end_line": 731,
+      "logical_path": "src/tileops/kernels/reduction/reduce.py",
+      "start_line": 667
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "T",
+    "WARP_LANES",
+    "_PROD_POLICY",
+    "_WARP_STAGES",
+    "chunk",
+    "dtype",
+    "exact",
+    "full_tiles",
+    "num_warps",
+    "threads",
+    "tilelang",
+    "tiles",
+    "vec_elems",
+    "vec_groups",
+    "vectorized"
+  ],
+  "kernel_dependencies": [
+    "059f4a89eb793573",
+    "105d42d27665c23e",
+    "14da36bb5bdc07a5",
+    "3221ce797f9bf06d",
+    "343cf3d68282f5df",
+    "6294d5e3ae415be4",
+    "663552c929a55147",
+    "7d4a7d84d4a7e543",
+    "c0b9bd01c352c3d9"
+  ],
+  "lexical_parents": [
+    "_prod_reduce_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/57f5ae253ed1a4d3/unresolved.json",
+    "tileops-6a4085cd/recipes/57f5ae253ed1a4d3/tileops-6a4085cd-root-57f5ae253ed1a4d3-boundary-43f51e0fe3-recipe.json",
+    "tileops-6a4085cd/recipes/57f5ae253ed1a4d3/tileops-6a4085cd-root-57f5ae253ed1a4d3-boundary-7133368784-recipe.json",
+    "tileops-6a4085cd/recipes/57f5ae253ed1a4d3/tileops-6a4085cd-root-57f5ae253ed1a4d3-boundary-ffe280aea5-recipe.json",
+    "tileops-6a4085cd/recipes/57f5ae253ed1a4d3/tileops-6a4085cd-root-57f5ae253ed1a4d3-original-fa73986de6-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "chunk",
+    "dtype",
+    "exact",
+    "full_tiles",
+    "num_warps",
+    "threads",
+    "tiles",
+    "vec_elems",
+    "vec_groups",
+    "vectorized"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 731,
+    "git_blob": "320ca23e14bc2eb1b15b79ff51413e629add6232",
+    "qualname": "_prod_reduce_kernel._func",
+    "relative_path": "src/tileops/kernels/reduction/reduce.py",
+    "selected_source_sha256": "2085d99f465b7424152fbe75d49134b6298ede75a1a665e8c4bc2eceea6f4002",
+    "source_sha256": "26ed7c5be84ffc4bd2b89c3d7d03f9104d534accb25b8e8642894d51b27afd6f",
+    "start_line": 667
+  }
+}

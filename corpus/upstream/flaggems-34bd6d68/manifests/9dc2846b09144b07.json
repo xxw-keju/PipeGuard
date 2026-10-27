@@ -1,0 +1,40 @@
+{
+  "candidate_id": "9dc2846b09144b07",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/rnn_relu.py/L181-L208__init_hidden__9dc2846b09144b07.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1109881cea10f0c86097767d3c776ec3223bbc0d351f22dae8980063be40d446",
+    "source_map": {
+      "end_line": 208,
+      "logical_path": "src/flag_gems/ops/rnn_relu.py",
+      "start_line": 181
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/9dc2846b09144b07/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 208,
+    "git_blob": "153d4d51d86a148a14e1384230482368f2b01bc8",
+    "qualname": "_init_hidden",
+    "relative_path": "src/flag_gems/ops/rnn_relu.py",
+    "selected_source_sha256": "99cf7a40ec5edb9bed767ae25cb9993fc2013a351d152ec19fffa6d66b50f108",
+    "source_sha256": "81f4a19e6b8effdb0d852bce28a1c9d2856de8d316c313a0ff799adf1f2106d7",
+    "start_line": 181
+  }
+}

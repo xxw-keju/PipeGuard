@@ -1,0 +1,43 @@
+{
+  "candidate_id": "dc59809cf4602920",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/arange.py/L29-L39__arange_func__dc59809cf4602920.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "9ac3cbac1980f543c14abc79faa08a42b4ede1f0524b184a291fe8e907246e1c",
+    "source_map": {
+      "end_line": 39,
+      "logical_path": "src/flag_gems/ops/arange.py",
+      "start_line": 29
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/dc59809cf4602920/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 39,
+    "git_blob": "331e2be89bcb92effc089f0cf11dc2d92d0dd873",
+    "qualname": "arange_func",
+    "relative_path": "src/flag_gems/ops/arange.py",
+    "selected_source_sha256": "4c5fec22513adec86ace47c4ca3cd1bd8323fb44d2e2cbd7622afc3dad154d51",
+    "source_sha256": "136facf402fbbad25c846615a1bacb800870014faf137b2b554e817f62969332",
+    "start_line": 29
+  }
+}

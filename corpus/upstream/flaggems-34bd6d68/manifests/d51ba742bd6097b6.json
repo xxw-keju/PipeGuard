@@ -1,0 +1,42 @@
+{
+  "candidate_id": "d51ba742bd6097b6",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/randint.py/L29-L65__randint_kernel__d51ba742bd6097b6.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "0cec00c19e58c05e952808e2b5b6be2a838fe2b5c4605a001d8ab3256bd6570a",
+    "source_map": {
+      "end_line": 65,
+      "logical_path": "src/flag_gems/ops/randint.py",
+      "start_line": 29
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/d51ba742bd6097b6/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 65,
+    "git_blob": "cb097015f91cc80ce609f31a4533dc9822e31cad",
+    "qualname": "randint_kernel",
+    "relative_path": "src/flag_gems/ops/randint.py",
+    "selected_source_sha256": "128ac892df03b0a2fa59f28a44690b749bff7bb82187d674ecd45e9d0265e7e4",
+    "source_sha256": "68bec1a058b5217c8ea88ee962de54c0045528e0d43e40ad13cf517287f5c8aa",
+    "start_line": 29
+  }
+}

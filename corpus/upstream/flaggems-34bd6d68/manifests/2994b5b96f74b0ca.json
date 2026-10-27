@@ -1,0 +1,44 @@
+{
+  "candidate_id": "2994b5b96f74b0ca",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/binomial.py/L100-L113__binomial_normal__2994b5b96f74b0ca.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f4215833c9297e5e24fb7c102df084dc605b4d99bbf293b89129b1f61daf5ccf",
+    "source_map": {
+      "end_line": 113,
+      "logical_path": "src/flag_gems/ops/binomial.py",
+      "start_line": 100
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "high_precision_fast_sin_cos",
+    "tl",
+    "triton",
+    "uint_to_uniform_float"
+  ],
+  "kernel_dependencies": [
+    "deb2f0e1f576c36c"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/2994b5b96f74b0ca/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 113,
+    "git_blob": "5141de392875c2d4325b7636aa88ace8e0dc702f",
+    "qualname": "binomial_normal",
+    "relative_path": "src/flag_gems/ops/binomial.py",
+    "selected_source_sha256": "edc097384684a0a0c439b14934bd821a881a4a5c446a6768f16644f5bfad2fa6",
+    "source_sha256": "208b81592d405869c0bf411773fde64adf2b7ac56a20e2ddff35bf354f493ef5",
+    "start_line": 100
+  }
+}

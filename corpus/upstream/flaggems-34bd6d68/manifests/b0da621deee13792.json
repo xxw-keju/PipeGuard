@@ -1,0 +1,43 @@
+{
+  "candidate_id": "b0da621deee13792",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/tanh.py/L27-L30__tanh_kernel__b0da621deee13792.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "5bdb72dcd1b35043d194463373880dcf9c3db0e04451701d4057a3475ed93c24",
+    "source_map": {
+      "end_line": 30,
+      "logical_path": "src/flag_gems/ops/tanh.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_tanh",
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/b0da621deee13792/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 30,
+    "git_blob": "2ffec01e5fc586e490764a55b8d458acb0f2d84e",
+    "qualname": "tanh_kernel",
+    "relative_path": "src/flag_gems/ops/tanh.py",
+    "selected_source_sha256": "50a493bbb655b12dbe6f40571d07e873cf7c004bb638788b1e058f74f1ad8dd6",
+    "source_sha256": "7d26e1db1474bb5ba8f7b7193eb10b8645b808e3de97c11b5922a3dbf72cddb8",
+    "start_line": 27
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "candidate_id": "a7723b04a8d6bf23",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/tril.py/L103-L123__tril_flat_kernel__a7723b04a8d6bf23.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "3e570d49cd14bc7cc0137978c9efd026cb55db4ccecacb7d80668d9db0e83b2c",
+    "source_map": {
+      "end_line": 123,
+      "logical_path": "src/flag_gems/ops/tril.py",
+      "start_line": 103
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/a7723b04a8d6bf23/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 123,
+    "git_blob": "c826315667f32cf0e092855d27f46cac98cb3abd",
+    "qualname": "_tril_flat_kernel",
+    "relative_path": "src/flag_gems/ops/tril.py",
+    "selected_source_sha256": "232fc1594352a14fefd136bb136479690aae0214c858ba0b7a333899bcc87660",
+    "source_sha256": "4acbd58a6ba388b85a6725af241aab2922c611887a011b1d6ae4f3f64b6866b4",
+    "start_line": 103
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "candidate_id": "25d2c595800039d5",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused_moe_mxq.py/L266-L384__fused_moe_kernel_fp16_swiglu__25d2c595800039d5.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "9439666dfded12036175c852a1557113eb38da8c85e45aeea91168dcc8168180",
+    "source_map": {
+      "end_line": 384,
+      "logical_path": "src/flag_gems/fused_moe_mxq.py",
+      "start_line": 266
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/25d2c595800039d5/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 384,
+    "git_blob": "1b22a2a8ce59103ad9cbb0c132a6284d5fd609d7",
+    "qualname": "fused_moe_kernel_fp16_swiglu",
+    "relative_path": "src/flag_gems/fused_moe_mxq.py",
+    "selected_source_sha256": "13004f733d88533d2f6d84d047c9125e6fce84e34c9e11fd54928ad2576eb1cc",
+    "source_sha256": "e0df29031bc5d216f431dd10de3bdc653ec93aced4259992f15f33043ae0f323",
+    "start_line": 266
+  }
+}

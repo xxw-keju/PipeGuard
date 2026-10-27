@@ -1,0 +1,80 @@
+{
+  "candidate_id": "3f4b85135f711e64",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_sliding_window_varlen_fwd.py/L175-L315__gqa_sw_fwd_varlen_wgmma_pipelined_kernel._gqa_sw_fwd_varlen_wgmma_pipelined_func__3f4b85135f711e64.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e099c63394db1e4a26935b0630bdc72d9b87bc87bf32751c26d2b03bbaa8ca51",
+    "source_map": {
+      "end_line": 315,
+      "logical_path": "src/tileops/kernels/attention/gqa_sliding_window_varlen_fwd.py",
+      "start_line": 175
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_make_apply_mask",
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "groups",
+    "has_window",
+    "heads",
+    "heads_kv",
+    "is_causal",
+    "make_online_softmax_with_mask_guard",
+    "make_rescale",
+    "scale",
+    "tilelang",
+    "total_k",
+    "total_q",
+    "window_size_left",
+    "window_size_right"
+  ],
+  "kernel_dependencies": [
+    "ca5aa3b007759c89"
+  ],
+  "lexical_parents": [
+    "_gqa_sw_fwd_varlen_wgmma_pipelined_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/3f4b85135f711e64/unresolved.json",
+    "tileops-6a4085cd/recipes/3f4b85135f711e64/tileops-6a4085cd-root-3f4b85135f711e64-boundary-06a78e53f5-recipe.json",
+    "tileops-6a4085cd/recipes/3f4b85135f711e64/tileops-6a4085cd-root-3f4b85135f711e64-boundary-5b23a6e39b-recipe.json",
+    "tileops-6a4085cd/recipes/3f4b85135f711e64/tileops-6a4085cd-root-3f4b85135f711e64-boundary-69f8d3593d-recipe.json",
+    "tileops-6a4085cd/recipes/3f4b85135f711e64/tileops-6a4085cd-root-3f4b85135f711e64-original-321837a394-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "dim",
+    "dtype",
+    "groups",
+    "has_window",
+    "heads",
+    "heads_kv",
+    "is_causal",
+    "scale",
+    "total_k",
+    "total_q",
+    "window_size_left",
+    "window_size_right"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 315,
+    "git_blob": "9fed580b759d43bf444cabbfd231e313e2b20925",
+    "qualname": "_gqa_sw_fwd_varlen_wgmma_pipelined_kernel._gqa_sw_fwd_varlen_wgmma_pipelined_func",
+    "relative_path": "src/tileops/kernels/attention/gqa_sliding_window_varlen_fwd.py",
+    "selected_source_sha256": "33855586badda7c2a603c7f87efce86ec20ed8ef483e3f49cc9ee8ffe4b416f0",
+    "source_sha256": "6e4ec6ee3e22e5378945f6103382a7a31071fa7b23affee703b0724848692db6",
+    "start_line": 175
+  }
+}

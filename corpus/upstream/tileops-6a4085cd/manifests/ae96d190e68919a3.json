@@ -1,0 +1,57 @@
+{
+  "candidate_id": "ae96d190e68919a3",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/elementwise/prelu.py/L31-L49__make_prelu_kernel.kernel.main__ae96d190e68919a3.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "098cd23f4194374b270cbab65bdc80d2fa985b7fc6e628fe7c7d246230d2736d",
+    "source_map": {
+      "end_line": 49,
+      "logical_path": "src/tileops/kernels/elementwise/prelu.py",
+      "start_line": 31
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "C",
+    "N",
+    "T",
+    "block_size",
+    "dtype",
+    "inner_size",
+    "npt_arg",
+    "threads_arg"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_prelu_kernel",
+    "kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/ae96d190e68919a3/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "C",
+    "N",
+    "block_size",
+    "dtype",
+    "inner_size",
+    "npt_arg",
+    "threads_arg"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 49,
+    "git_blob": "44f1d314bece3e2032a27b91cfaddf688504c0a0",
+    "qualname": "_make_prelu_kernel.kernel.main",
+    "relative_path": "src/tileops/kernels/elementwise/prelu.py",
+    "selected_source_sha256": "0e17a889e31954957b0dc34e53cb83ac5f1a3ea8acf2511ab7c4b265c1c2f8d0",
+    "source_sha256": "19f8e984abbbeb618dd29ca761606a0127e1f3c798cbd27fcbd73f87a42967f9",
+    "start_line": 31
+  }
+}

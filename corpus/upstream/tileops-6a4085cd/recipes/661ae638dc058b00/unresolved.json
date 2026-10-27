@@ -1,0 +1,24 @@
+{
+  "bindings": {},
+  "candidate_id": "661ae638dc058b00",
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "661ae638dc058b00-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "batch",
+    "concrete_specialization",
+    "dtype",
+    "indices_dtype",
+    "kv_group",
+    "seq_len",
+    "seq_len_kv",
+    "threads"
+  ]
+}

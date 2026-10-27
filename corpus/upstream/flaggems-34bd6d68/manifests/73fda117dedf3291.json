@@ -1,0 +1,44 @@
+{
+  "candidate_id": "73fda117dedf3291",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/leaky_relu.py/L61-L77__leaky_relu_kernel__73fda117dedf3291.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "d4e8fe9c140e218e6ba79cd85b3ced79014b4260c5b7b7315d9b28a65be9dda0",
+    "source_map": {
+      "end_line": 77,
+      "logical_path": "src/flag_gems/ops/leaky_relu.py",
+      "start_line": 61
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_leaky_relu_autotune_configs",
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/73fda117dedf3291/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 77,
+    "git_blob": "3333764afc13e7dd290acd6a4a39a3e014244b80",
+    "qualname": "_leaky_relu_kernel",
+    "relative_path": "src/flag_gems/ops/leaky_relu.py",
+    "selected_source_sha256": "ce13cd9a94e88712af022bbc7e13cb3bbfe5fbf4490ba608a7cdeff13a3b85dc",
+    "source_sha256": "fe6357e9a3fbe238097cc626eee749c93b9d354c7d7ae309002867fa687de09f",
+    "start_line": 61
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "candidate_id": "1f950f5cfffdbd85",
+  "candidate_kind": "HEURISTICS_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/uniform.py/L31-L61__uniform_kernel__1f950f5cfffdbd85.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "42bb06e2e393841d45bd5903607103450ed7ffe565554a925ebce815c182d9f0",
+    "source_map": {
+      "end_line": 61,
+      "logical_path": "src/flag_gems/ops/uniform.py",
+      "start_line": 31
+    }
+  },
+  "decorators": [
+    "triton.heuristics",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "runtime",
+    "tl",
+    "triton",
+    "uint_to_uniform_float"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/1f950f5cfffdbd85/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 61,
+    "git_blob": "451bf8d5b3a309cecf729b753b10a421a35e5bb4",
+    "qualname": "uniform_kernel",
+    "relative_path": "src/flag_gems/ops/uniform.py",
+    "selected_source_sha256": "d5e727646028a894dffc6921bf5478060db566b7e2a01ba4829f50cb17f5b53a",
+    "source_sha256": "db4a6d95d10d84443b9c0e68ace185044dc3a7f22dc3159557da0a765796e3ab",
+    "start_line": 31
+  }
+}

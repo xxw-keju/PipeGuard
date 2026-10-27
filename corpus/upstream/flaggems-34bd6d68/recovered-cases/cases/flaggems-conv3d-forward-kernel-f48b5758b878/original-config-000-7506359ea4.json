@@ -1,0 +1,164 @@
+{
+  "arguments": {
+    "bias": true,
+    "dilation": 1,
+    "dtype": "torch.float16",
+    "groups": 1,
+    "kernel": [
+      1,
+      2,
+      3,
+      3,
+      3
+    ],
+    "padding": 0,
+    "shape": [
+      1,
+      2,
+      5,
+      5,
+      5
+    ],
+    "stride": 1
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-conv3d-forward-kernel-f48b5758b878-original-cc0c567757-config-7506359ea4",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:input_pointer",
+        "1": "global:weight_pointer",
+        "2": "global:output_pointer",
+        "3": "global:bias_pointer"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "BLOCK_CI": 16,
+      "BLOCK_CO": 16,
+      "BLOCK_NI_DO_HO_WO": 512,
+      "dilation_depth": 1,
+      "dilation_height": 1,
+      "dilation_width": 1,
+      "groups": 1,
+      "in_n": 1,
+      "input_c_stride": 1,
+      "input_depth": 1,
+      "input_depth_stride": 1,
+      "input_height": 1,
+      "input_height_stride": 1,
+      "input_n_stride": 1,
+      "input_width": 1,
+      "input_width_stride": 1,
+      "out_c": 1,
+      "out_depth": 1,
+      "out_height": 1,
+      "out_width": 1,
+      "output_c_stride": 1,
+      "output_depth_stride": 1,
+      "output_height_stride": 1,
+      "output_n_stride": 1,
+      "output_width_stride": 1,
+      "padding_depth": 0,
+      "padding_height": 0,
+      "padding_width": 0,
+      "stride_depth": 1,
+      "stride_height": 1,
+      "stride_width": 1,
+      "weight_c": 1,
+      "weight_c_stride": 1,
+      "weight_depth": 1,
+      "weight_depth_stride": 1,
+      "weight_height": 1,
+      "weight_height_stride": 1,
+      "weight_n_stride": 1,
+      "weight_width": 1,
+      "weight_width_stride": 1
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "maxnreg": null,
+      "num_ctas": 1,
+      "num_stages": 2,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "bias_pointer": "*fp16",
+      "input_pointer": "*fp16",
+      "output_pointer": "*fp16",
+      "weight_pointer": "*fp16"
+    }
+  },
+  "evidence": [
+    "flaggems-launch-17878588f05265ea",
+    "flaggems-test-d3e766e1b32e8395",
+    "source-e46c39049053c2ef"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-conv3d-forward-kernel-f48b5758b878",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_conv3d.py:61-110#test_conv3d",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned. Autotune candidate 0 from src/flag_gems/runtime/backend/_nvidia/tune_configs.yaml#conv3d_forward.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ],
+  "workload_recovery": {
+    "method": "static-source-and-case-heuristic-v1",
+    "notes": [
+      "All scalar parameters are compile-time specialized.",
+      "Pointer types derive from source use, parameter names, and the case dtype.",
+      "The recovered workload checks CTA (0,0,0) with a one-CTA launch and is not evidence for the original full launch grid."
+    ],
+    "original_case_path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/corpus/upstream/suite3/kernels/triton/flaggems/flaggems-conv3d-forward-kernel-f48b5758b878/cases/original-config-000-7506359ea4.json",
+    "status": "HEURISTIC"
+  }
+}

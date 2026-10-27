@@ -1,0 +1,58 @@
+{
+  "bindings": {
+    "bench_skip_reason": {
+      "__pipeguard_missing__": true
+    },
+    "dtype": "float16",
+    "kv_shape": [
+      4096,
+      8,
+      128
+    ],
+    "label": "serving-8b-p64-softcap50",
+    "manifest": "src/tileops/manifest/attention.yaml",
+    "operator": "GroupedQueryAttentionDecodePagedWithKVCacheFwdOp",
+    "page_size": 64,
+    "q_shape": [
+      32,
+      32,
+      128
+    ],
+    "row_index": 7,
+    "softcap": 50.0
+  },
+  "candidate_id": "d2d5c6120323d538",
+  "compiler": {
+    "binding_evidence": {
+      "end_line": 527,
+      "function": "GroupedQueryAttentionDecodePagedWithKVCacheFwdOp",
+      "kind": "MANIFEST_WORKLOAD",
+      "path": "src/tileops/manifest/attention.yaml",
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "source_sha256": "968e02b6011dddce5e96a99462e98a83aa40d3a80cadf44c63b267eb9e3e0b41",
+      "start_line": 471,
+      "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226"
+    }
+  },
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "upstream-manifest_workload:src/tileops/manifest/attention.yaml:471-527#GroupedQueryAttentionDecodePagedWithKVCacheFwdOp",
+  "recipe_id": "tileops-6a4085cd-root-d2d5c6120323d538-boundary-8ac8090672-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "native_factory_materialization",
+    "source_specification_to_kernel_binding"
+  ]
+}

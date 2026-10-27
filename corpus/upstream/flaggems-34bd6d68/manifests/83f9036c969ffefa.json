@@ -1,0 +1,40 @@
+{
+  "candidate_id": "83f9036c969ffefa",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/miopen_batch_norm.py/L41-L44__miopen_batch_norm_rsqrt_kernel__83f9036c969ffefa.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "cdf1d70b6755e13eedb032bc5fff5a53fe11a9c13738fb260ba84afc325a8075",
+    "source_map": {
+      "end_line": 44,
+      "logical_path": "src/flag_gems/ops/miopen_batch_norm.py",
+      "start_line": 41
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_rsqrt",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/83f9036c969ffefa/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 44,
+    "git_blob": "78d57f8873fad43f5d9dc78a10211fdc932c9233",
+    "qualname": "_miopen_batch_norm_rsqrt_kernel",
+    "relative_path": "src/flag_gems/ops/miopen_batch_norm.py",
+    "selected_source_sha256": "2c5db2a1fa2a1419c661b4cd9124f181b8d5f4f760a1e1710efa25bdc7418c0e",
+    "source_sha256": "64cc8713e3910671a3267791b60597bd2a76841f8f96bc30fc9a45aaf9d5ba56",
+    "start_line": 41
+  }
+}

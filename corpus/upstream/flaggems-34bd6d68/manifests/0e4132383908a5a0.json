@@ -1,0 +1,41 @@
+{
+  "candidate_id": "0e4132383908a5a0",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/rsub.py/L30-L35__rsub_func_tensor_scalar__0e4132383908a5a0.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ead86311e4facecbce1a5ac43916138ccf53fccf94dc40ddbbdd10516adad11e",
+    "source_map": {
+      "end_line": 35,
+      "logical_path": "src/flag_gems/ops/rsub.py",
+      "start_line": 30
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/0e4132383908a5a0/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 35,
+    "git_blob": "a4d363a600ffc96a074610dbbeb0afa64d745e63",
+    "qualname": "rsub_func_tensor_scalar",
+    "relative_path": "src/flag_gems/ops/rsub.py",
+    "selected_source_sha256": "86791240976eb790da4d625b74a11647bfe22952a495324b77a50876264fa567",
+    "source_sha256": "58f57072b5941fef1799c5e108e0eb61c0446f162e84baacbbf3a11cd08abbaf",
+    "start_line": 30
+  }
+}

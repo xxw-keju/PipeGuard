@@ -1,0 +1,44 @@
+{
+  "candidate_id": "e0f65f8a427486c8",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/fp8_lightning_indexer.py/L161-L196__clean_logits__e0f65f8a427486c8.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "92bebe7b737ded3b48ff88a78e109fbe827353e853f1a76f75f98d2314cee9e2",
+    "source_map": {
+      "end_line": 196,
+      "logical_path": "src/tileops/kernels/fp8_lightning_indexer.py",
+      "start_line": 161
+    }
+  },
+  "decorators": [
+    "functools.lru_cache",
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "functools",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "661ae638dc058b00"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/e0f65f8a427486c8/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 196,
+    "git_blob": "ab2ba8c6af88a1c698c573d5196b30674bc28fc2",
+    "qualname": "clean_logits_",
+    "relative_path": "src/tileops/kernels/fp8_lightning_indexer.py",
+    "selected_source_sha256": "d2467474b91fe9138a2cf11f71d1ecf117b8c2e3b333a727122207b5bbc76848",
+    "source_sha256": "2bdde2ae0ebfebac8047180387dc83dc52465f1fc0b25b70b1f52b0d46194cd5",
+    "start_line": 161
+  }
+}

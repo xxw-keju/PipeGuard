@@ -1,0 +1,89 @@
+{
+  "candidate_id": "d70fdb923495bf0a",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/deepseek_dsa_decode.py/L148-L426__sparse_mla_kernel._sparse_mla_fwd_func._sparse_mla_fwd_main__d70fdb923495bf0a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "61dbcc34ca3cdee07764dd378b5165bb0127f105b8de15740f61bf181638ea29",
+    "source_map": {
+      "end_line": 426,
+      "logical_path": "src/tileops/kernels/attention/deepseek_dsa_decode.py",
+      "start_line": 148
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "cp0",
+    "d",
+    "d_tail",
+    "dtype",
+    "h_per_block",
+    "i_block",
+    "indices_dtype",
+    "indices_shape",
+    "kv_group",
+    "kv_shape",
+    "kv_stride",
+    "n_i",
+    "o_shape",
+    "padded_h",
+    "q_shape",
+    "q_start_index_s",
+    "replicate_h",
+    "seq_len",
+    "sm_scale",
+    "stride_kv",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_sparse_mla_kernel",
+    "_sparse_mla_fwd_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/d70fdb923495bf0a/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "cp0",
+    "d",
+    "d_tail",
+    "dtype",
+    "h_per_block",
+    "i_block",
+    "indices_dtype",
+    "indices_shape",
+    "kv_group",
+    "kv_shape",
+    "kv_stride",
+    "n_i",
+    "o_shape",
+    "padded_h",
+    "q_shape",
+    "q_start_index_s",
+    "replicate_h",
+    "seq_len",
+    "sm_scale",
+    "stride_kv",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 426,
+    "git_blob": "bd7eedb59b9713afcbb4c861a672d1dc53d97176",
+    "qualname": "_sparse_mla_kernel._sparse_mla_fwd_func._sparse_mla_fwd_main",
+    "relative_path": "src/tileops/kernels/attention/deepseek_dsa_decode.py",
+    "selected_source_sha256": "c4aaf254f9d0e75b010082f209b38b769dda83971877dce07ac81313f98a5dde",
+    "source_sha256": "2cde92ddea947c0474e98c503176dd07ecc4aac3695a88cf940bdae4379819aa",
+    "start_line": 148
+  }
+}

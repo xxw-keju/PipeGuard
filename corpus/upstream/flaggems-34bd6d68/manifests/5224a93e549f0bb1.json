@@ -1,0 +1,42 @@
+{
+  "candidate_id": "5224a93e549f0bb1",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/ceil.py/L25-L28__ceil_func__5224a93e549f0bb1.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "0f874377eeb344b9f799ee5f331eaa68ca8a22bc0f58b33815bcce26e44446e5",
+    "source_map": {
+      "end_line": 28,
+      "logical_path": "src/flag_gems/ops/ceil.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/5224a93e549f0bb1/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 28,
+    "git_blob": "334c34e31d6a2f316ea1f5cc86c39f073aff9dcb",
+    "qualname": "ceil_func",
+    "relative_path": "src/flag_gems/ops/ceil.py",
+    "selected_source_sha256": "cff70b77c8139f622173dfbd9eff20ac93b5db50522ed849a3291ca957af61f1",
+    "source_sha256": "d89541bbb39ae935fc0a8518aaf6b87ff77524b18a2e744da7d48102f45978dc",
+    "start_line": 25
+  }
+}

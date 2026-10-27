@@ -1,0 +1,47 @@
+{
+  "candidate_id": "4fc815f65dfae36b",
+  "candidate_kind": "HEURISTICS_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/baddbmm.py/L31-L148__baddbmm_kernel__4fc815f65dfae36b.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "0152ba990fa00fe07d8ddf633a022ec414d5f83a32bf3aa2484689b0552304ab",
+    "source_map": {
+      "end_line": 148,
+      "logical_path": "src/flag_gems/ops/baddbmm.py",
+      "start_line": 31
+    }
+  },
+  "decorators": [
+    "utils.libentry",
+    "utils.libtuner",
+    "triton.heuristics",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "libentry",
+    "libtuner",
+    "runtime",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/4fc815f65dfae36b/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 148,
+    "git_blob": "c8bae454446de37cab4a6410a60190c1e10f0772",
+    "qualname": "baddbmm_kernel",
+    "relative_path": "src/flag_gems/ops/baddbmm.py",
+    "selected_source_sha256": "8a7201036642a4aee00ed148210636a514cdfab67b5c85b3c074e52a9b34ef46",
+    "source_sha256": "9443c7749837dfee0650e5e6f7367fa4c7d3076b10a6b3ebd622b35c1380da3b",
+    "start_line": 31
+  }
+}

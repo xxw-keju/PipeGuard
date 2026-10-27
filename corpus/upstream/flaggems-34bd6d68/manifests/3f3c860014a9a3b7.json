@@ -1,0 +1,45 @@
+{
+  "candidate_id": "3f3c860014a9a3b7",
+  "candidate_kind": "AUTOTUNE_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/triu.py/L57-L87__triu_batch_kernel__3f3c860014a9a3b7.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1e8a7db2f3a9cf39d21606cf965d2d46d24e058d0b013bd98c325e54e1447588",
+    "source_map": {
+      "end_line": 87,
+      "logical_path": "src/flag_gems/ops/triu.py",
+      "start_line": 57
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.autotune",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "libentry",
+    "runtime",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/3f3c860014a9a3b7/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 87,
+    "git_blob": "1c4bfc3289225bb02db3c386da39969fcc9f5920",
+    "qualname": "triu_batch_kernel",
+    "relative_path": "src/flag_gems/ops/triu.py",
+    "selected_source_sha256": "626ad86b072621f94b9fc0408ba8dcdd13f02dfdf0450246062b8cdb84e7e5ea",
+    "source_sha256": "669789e6da55b3409783327b70a373b6fa8514ecb08e639d69f36f7bf298c2d9",
+    "start_line": 57
+  }
+}

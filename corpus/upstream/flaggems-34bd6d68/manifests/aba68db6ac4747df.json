@@ -1,0 +1,43 @@
+{
+  "candidate_id": "aba68db6ac4747df",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/linspace.py/L27-L47__linspace_kernel__aba68db6ac4747df.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e14f835c0924e05d4db91f645552fdcaa7c004f7b46b5a88ce7c88bf6c965d16",
+    "source_map": {
+      "end_line": 47,
+      "logical_path": "src/flag_gems/ops/linspace.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "ext",
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/aba68db6ac4747df/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 47,
+    "git_blob": "1292798d2d5d4eb4fe8c52a5da5343864f553367",
+    "qualname": "linspace_kernel",
+    "relative_path": "src/flag_gems/ops/linspace.py",
+    "selected_source_sha256": "207a24e71364aac764ba289e6708af29bc0a40cfbdf99b5411ad879c07d5b312",
+    "source_sha256": "ffb36aa20466c7a37a51e786fffa27b7931d6fc2d3e607140499bc422c32be6a",
+    "start_line": 27
+  }
+}

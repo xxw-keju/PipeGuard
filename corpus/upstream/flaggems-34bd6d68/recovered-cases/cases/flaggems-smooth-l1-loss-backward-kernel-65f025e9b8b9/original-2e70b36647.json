@@ -1,0 +1,118 @@
+{
+  "arguments": {
+    "beta": 0.0,
+    "dtype": "torch.bfloat16",
+    "reduction": 0,
+    "shape": [
+      0
+    ],
+    "target_shape": [
+      0
+    ]
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-smooth-l1-loss-backward-kernel-65f025e9b8b9-original-2e70b36647",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:grad_output",
+        "1": "global:inp",
+        "2": "global:target",
+        "3": "global:out"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "BLOCK_SIZE": 1,
+      "GRAD_OUTPUT_SCALAR": false,
+      "beta": 0.0,
+      "n_elements": 1,
+      "reduction": 0,
+      "reduction_elements": 1
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "grad_output": "*bf16",
+      "inp": "*bf16",
+      "out": "*bf16",
+      "target": "*bf16"
+    }
+  },
+  "evidence": [
+    "flaggems-launch-9b180c705dd1ce5f",
+    "flaggems-test-3d391c685829db5f",
+    "source-f66e219091455fc2"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-smooth-l1-loss-backward-kernel-65f025e9b8b9",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_smooth_l1_loss.py:61-111#test_smooth_l1_loss_backward",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ],
+  "workload_recovery": {
+    "method": "static-source-and-case-heuristic-v1",
+    "notes": [
+      "All scalar parameters are compile-time specialized.",
+      "Pointer types derive from source use, parameter names, and the case dtype.",
+      "The recovered workload checks CTA (0,0,0) with a one-CTA launch and is not evidence for the original full launch grid."
+    ],
+    "original_case_path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/corpus/upstream/suite3/kernels/triton/flaggems/flaggems-smooth-l1-loss-backward-kernel-65f025e9b8b9/cases/original-2e70b36647.json",
+    "status": "HEURISTIC"
+  }
+}

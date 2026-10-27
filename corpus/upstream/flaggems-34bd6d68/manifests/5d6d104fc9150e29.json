@@ -1,0 +1,51 @@
+{
+  "candidate_id": "5d6d104fc9150e29",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/topk.py/L91-L122__topk_single_stage_kernel__5d6d104fc9150e29.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "404c0136706e2de4f59b6e5679bb310751159392f2ad640b117ab2cd2f520070",
+    "source_map": {
+      "end_line": 122,
+      "logical_path": "src/flag_gems/ops/topk.py",
+      "start_line": 91
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_MAX_INT32_VAL",
+    "_MIN_INT32_VAL",
+    "argsort",
+    "libentry",
+    "tl",
+    "tle",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "87662fc8cc2f3513"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/5d6d104fc9150e29/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_log2",
+    "zeros_like"
+  ],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 122,
+    "git_blob": "d05997e2155b06ad4286aa173a26ec55a6fa0bcd",
+    "qualname": "topk_single_stage_kernel",
+    "relative_path": "src/flag_gems/ops/topk.py",
+    "selected_source_sha256": "32c6294281de7111c891615ff4e0b6ecce5472e928b9039c92f871ad54238088",
+    "source_sha256": "e6d433c2ab1fd63da45ac2d93d3ebed902453637f6a25aaf983b616b17ed7a65",
+    "start_line": 91
+  }
+}

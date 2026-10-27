@@ -1,0 +1,50 @@
+{
+  "bindings": {
+    "dtype": "torch.bfloat16",
+    "quant_max": 127,
+    "quant_min": -128,
+    "scale": 0.125,
+    "shape": [
+      2,
+      19,
+      7
+    ]
+  },
+  "candidate_id": "b40c08dbbd607733",
+  "compiler": {
+    "binding_evidence": {
+      "kind": "UPSTREAM_TEST_REPLAY",
+      "launch_occurrence_ids": [
+        "launch-6aaf76a520635b10"
+      ],
+      "selected_cta": [
+        0,
+        0,
+        0
+      ],
+      "test_end_line": 42,
+      "test_function": "test_accuracy_fake_quantize_per_tensor_affine",
+      "test_path": "tests/test_fake_quantize_per_tensor_affine.py",
+      "test_source_sha256": "9611fc1a44198377c50cf49abeb824b37f9887bc2fd38c32af3befcee6aa7951",
+      "test_start_line": 23,
+      "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62"
+    }
+  },
+  "dsl": "triton",
+  "lowerable": false,
+  "origin": "upstream-test:tests/test_fake_quantize_per_tensor_affine.py:23-42#test_accuracy_fake_quantize_per_tensor_affine",
+  "recipe_id": "flaggems-root-b40c08dbbd607733-boundary-373bb5d73e-recipe",
+  "reference": {
+    "mode": "not_run"
+  },
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ]
+}

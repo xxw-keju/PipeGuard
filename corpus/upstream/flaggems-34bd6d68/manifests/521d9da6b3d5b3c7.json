@@ -1,0 +1,40 @@
+{
+  "candidate_id": "521d9da6b3d5b3c7",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/embedding_dense_backward.py/L70-L100__embedding_dense_backward_kernel_scale_by_freq__521d9da6b3d5b3c7.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "084612430f24accbc063af2aac546238a7a36d3868aa81ed74a9cd7f5266598e",
+    "source_map": {
+      "end_line": 100,
+      "logical_path": "src/flag_gems/ops/embedding_dense_backward.py",
+      "start_line": 70
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/521d9da6b3d5b3c7/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 100,
+    "git_blob": "30a9ecdcac2c8d53f578372b5f81033dc1f75991",
+    "qualname": "_embedding_dense_backward_kernel_scale_by_freq",
+    "relative_path": "src/flag_gems/ops/embedding_dense_backward.py",
+    "selected_source_sha256": "6400e754e2372ad83cdded192451d21b8c8b2b5f1bec434b56bfd91bd8022f82",
+    "source_sha256": "7f28f60d77ef087943f43da45ccf8ad77f411d4b1ff7cbc61f2f91c578da98ef",
+    "start_line": 70
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "candidate_id": "453991f7d81fa190",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/moe/permute_align.py/L53-L146__make_align_kernel._align._align_main__453991f7d81fa190.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "4e93b53a97dee765c5bc15f82d0bbb9fa6a5d80bae8526083cc5b3cc563ba2e3",
+    "source_map": {
+      "end_line": 146,
+      "logical_path": "src/tileops/kernels/moe/permute_align.py",
+      "start_line": 53
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "block_size",
+    "max_num_blocks",
+    "max_padded",
+    "num_experts",
+    "numel",
+    "threads"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_make_align_kernel",
+    "_align"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/453991f7d81fa190/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "block_size",
+    "max_num_blocks",
+    "max_padded",
+    "num_experts",
+    "numel",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 146,
+    "git_blob": "43916c1ecce704e0878911e2d5180aaeb2c063f2",
+    "qualname": "_make_align_kernel._align._align_main",
+    "relative_path": "src/tileops/kernels/moe/permute_align.py",
+    "selected_source_sha256": "83fc471e05f8d8b9d9e6144c28ec527c630e7d2f17e28067a7338469722e04b2",
+    "source_sha256": "4dd25dacee5cb3d86d7240bd20289869aedba85cab4c3381de308c4dd5b0d291",
+    "start_line": 53
+  }
+}

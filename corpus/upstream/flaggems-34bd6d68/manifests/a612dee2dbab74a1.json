@@ -1,0 +1,50 @@
+{
+  "candidate_id": "a612dee2dbab74a1",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/attention.py/L581-L834__attn_bwd__a612dee2dbab74a1.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "66634121708b772172b23a7a877439ca1a90254159a6525e6715087d5b401487",
+    "source_map": {
+      "end_line": 834,
+      "logical_path": "src/flag_gems/ops/attention.py",
+      "start_line": 581
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "flag_gems.utils.libtuner",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_attn_bwd_dkdv",
+    "_attn_bwd_dq",
+    "config_backward",
+    "libentry",
+    "libtuner",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "319faee28959cecc",
+    "80d7a7e46d9a8d43"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/a612dee2dbab74a1/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 834,
+    "git_blob": "a209eda171f2189b3967481dd931cbe5ad7fc721",
+    "qualname": "_attn_bwd",
+    "relative_path": "src/flag_gems/ops/attention.py",
+    "selected_source_sha256": "0aaeb43cff705d0157d6ec0aaf3040534d63eec88fa1a38ab28465e9c908e180",
+    "source_sha256": "d0d520f5b2b561d7e852dc628ee05ab2f900c26fd47e3e0efbc8938aa8c23708",
+    "start_line": 581
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "candidate_id": "5a41a99246fbc5e9",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/gqa_decode.py/L194-L203__gqa_decode_no_split_kernel._func.gqa_decode_no_split_rope__5a41a99246fbc5e9.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "12f0179194a149626640031be5a64a5511e57fe2455a1975b63ee50a9730a67d",
+    "source_map": {
+      "end_line": 203,
+      "logical_path": "src/tileops/kernels/attention/gqa_decode.py",
+      "start_line": 194
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "compute",
+    "dtype",
+    "rope_shape",
+    "shape_k",
+    "shape_o",
+    "shape_q",
+    "shape_v"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_gqa_decode_no_split_kernel",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/5a41a99246fbc5e9/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "compute",
+    "dtype",
+    "rope_shape",
+    "shape_k",
+    "shape_o",
+    "shape_q",
+    "shape_v"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 203,
+    "git_blob": "034d50cec9d83e7bb7443535ff357d9a9f2cca8c",
+    "qualname": "_gqa_decode_no_split_kernel._func.gqa_decode_no_split_rope",
+    "relative_path": "src/tileops/kernels/attention/gqa_decode.py",
+    "selected_source_sha256": "887203c25e15ea253d2754efafcec2fc427427cd5ca805874f68c37072c60fe4",
+    "source_sha256": "3b47429a161c358dcd72d5b5055674c5bcd2307e3db8f1ebc1ce3f09b2447177",
+    "start_line": 194
+  }
+}

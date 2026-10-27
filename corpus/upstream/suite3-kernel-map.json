@@ -1,0 +1,3504 @@
+{
+  "schema": "pipeguard-t3-suite3-kernel-map-v1",
+  "description": "Join between the September suite3 kernel inventory (paper counts 111/136/20) and the per-project source-index candidates. Every suite3 kernel maps 1:1 to one source-index candidate via its source-<candidate_id> evidence.",
+  "projects": {
+    "tileops": {
+      "source_id": "tileops-6a4085cd",
+      "suite3_kernel_count": 136,
+      "auto_recipe_root_count": 138,
+      "auto_recipe_roots_not_in_suite3": [
+        "4b65c412a8d8bf68",
+        "4d5f097c31440cdd"
+      ],
+      "kernels": [
+        {
+          "suite3_kernel_id": "tileops-ada-layer-norm-kernel-func-27c954c0d48a",
+          "candidate_id": "258582c4f5b23afe",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/norm/ada_layer_norm.py",
+          "symbol": "_ada_layer_norm_kernel._func",
+          "lines": [
+            58,
+            210
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-argreduce-cta-kernel-func-c22492789153",
+          "candidate_id": "bc05e93c60bde923",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/argreduce.py",
+          "symbol": "_argreduce_cta_kernel._func",
+          "lines": [
+            382,
+            437
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-argreduce-multicta-final-kernel-func-e5725a2bcbb6",
+          "candidate_id": "15c257664cf60fe4",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/argreduce.py",
+          "symbol": "_argreduce_multicta_final_kernel._func",
+          "lines": [
+            535,
+            568
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-argreduce-multicta-partial-kernel-func-9e6e4c2caede",
+          "candidate_id": "e1e38595e0fcd366",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/argreduce.py",
+          "symbol": "_argreduce_multicta_partial_kernel._func",
+          "lines": [
+            457,
+            514
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-argreduce-output-kernel-func-019af51f94cd",
+          "candidate_id": "92d25d09dbf2976a",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/argreduce.py",
+          "symbol": "_argreduce_output_kernel._func",
+          "lines": [
+            304,
+            364
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-argreduce-warp-kernel-func-9b14ac46eb92",
+          "candidate_id": "c8c5a92def615b70",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/argreduce.py",
+          "symbol": "_argreduce_warp_kernel._func",
+          "lines": [
+            239,
+            274
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-bmm-fp8-kernel-bmm-fp8-func-f11cef0df581",
+          "candidate_id": "971939b4659a4419",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/gemm/bmm.py",
+          "symbol": "_bmm_fp8_kernel._bmm_fp8_func",
+          "lines": [
+            129,
+            220
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-bmm-fp8-persistent-kernel-bmm-fp8-persistent-func-e63ecd0890b9",
+          "candidate_id": "86d1d5b0a42fd4b6",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/gemm/bmm.py",
+          "symbol": "_bmm_fp8_persistent_kernel._bmm_fp8_persistent_func",
+          "lines": [
+            237,
+            312
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-bmm-fp8-persistent-ws-kernel-bmm-fp8-persistent-ws-func-57b61f0a8997",
+          "candidate_id": "3a42def4bd68a11e",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/gemm/bmm.py",
+          "symbol": "_bmm_fp8_persistent_ws_kernel._bmm_fp8_persistent_ws_func",
+          "lines": [
+            329,
+            576
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-bmm-kernel-bmm-func-f9e3d87aba89",
+          "candidate_id": "c24b40b889b4d566",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/gemm/bmm.py",
+          "symbol": "_bmm_kernel._bmm_func",
+          "lines": [
+            48,
+            113
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-bwd-parallel-tl-func-d364e29b3eea",
+          "candidate_id": "6188dd7359525395",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+          "symbol": "_bwd_parallel_tl._func",
+          "lines": [
+            54,
+            239
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-bwd-parallel-tl-func-ebfb98925f44",
+          "candidate_id": "c17266c652bbbd08",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/deltanet/deltanet_bwd.py",
+          "symbol": "_bwd_parallel_tl._func",
+          "lines": [
+            56,
+            196
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-conv1d-direct-kernel-conv1d-direct-func-1600b1adeae6",
+          "candidate_id": "16adb601620a8603",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/convolution/conv1d.py",
+          "symbol": "_conv1d_direct_kernel._conv1d_direct_func",
+          "lines": [
+            163,
+            230
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-conv1d-group-kernel-conv1d-group-func-27e09d58ddb5",
+          "candidate_id": "a1dfd3e2edccb982",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/convolution/conv1d.py",
+          "symbol": "_conv1d_group_kernel._conv1d_group_func",
+          "lines": [
+            258,
+            367
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-conv1d-kernel-conv1d-func-e7c5ac1ee87b",
+          "candidate_id": "60297ff42e6b3776",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/convolution/conv1d.py",
+          "symbol": "_conv1d_kernel._conv1d_func",
+          "lines": [
+            45,
+            141
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-conv1d-pointwise-kernel-conv1d-pointwise-func-139d270751e1",
+          "candidate_id": "505d3c328736a1e7",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/convolution/conv1d.py",
+          "symbol": "_conv1d_pointwise_kernel._conv1d_pointwise_func",
+          "lines": [
+            383,
+            466
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-conv2d-1x1-kernel-conv2d-1x1-func-bd76db2edbb5",
+          "candidate_id": "0a51f13815b7314f",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/convolution/conv2d.py",
+          "symbol": "_conv2d_1x1_kernel._conv2d_1x1_func",
+          "lines": [
+            49,
+            120
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-conv2d-depthwise-kernel-conv2d-depthwise-func-659ac5136ba0",
+          "candidate_id": "5f6f39dd5a3ded08",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/convolution/conv2d.py",
+          "symbol": "_conv2d_depthwise_kernel._conv2d_depthwise_func",
+          "lines": [
+            440,
+            518
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-conv2d-group-kernel-conv2d-group-func-a7141350c6d8",
+          "candidate_id": "4c946242136b51b5",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/convolution/conv2d.py",
+          "symbol": "_conv2d_group_kernel._conv2d_group_func",
+          "lines": [
+            286,
+            406
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-conv2d-kernel-conv2d-func-77160c7a30c6",
+          "candidate_id": "cd1fcdbe4e9a170f",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/convolution/conv2d.py",
+          "symbol": "_conv2d_kernel._conv2d_func",
+          "lines": [
+            150,
+            252
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-conv2d-symmetric-kernel-conv2d-symmetric-func-9e03ff838e35",
+          "candidate_id": "77913143e74c037d",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/convolution/conv2d.py",
+          "symbol": "_conv2d_symmetric_kernel._conv2d_symmetric_func",
+          "lines": [
+            543,
+            691
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-conv3d-group-kernel-conv3d-group-func-997e719f28c4",
+          "candidate_id": "83427d1f813b65b6",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/convolution/conv3d.py",
+          "symbol": "_conv3d_group_kernel._conv3d_group_func",
+          "lines": [
+            199,
+            325
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-conv3d-kernel-conv3d-func-b8d515a5828e",
+          "candidate_id": "5429ca842353941e",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/convolution/conv3d.py",
+          "symbol": "_conv3d_kernel._conv3d_func",
+          "lines": [
+            53,
+            159
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-conv3d-ndhwc-kernel-conv3d-ndhwc-func-9c73b506e452",
+          "candidate_id": "50efd9e2f608ea40",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/convolution/conv3d.py",
+          "symbol": "_conv3d_ndhwc_kernel._conv3d_ndhwc_func",
+          "lines": [
+            392,
+            611
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-da-cumsum-fwd-placed-kernel-kernel-func-0a8d13b1c3dd",
+          "candidate_id": "0ae000af32e96ae4",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/mamba/da_cumsum.py",
+          "symbol": "_da_cumsum_fwd_placed_kernel.kernel_func",
+          "lines": [
+            74,
+            137
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-deltanet-decode-fp32-tl-decode-func-32aaf7147e7d",
+          "candidate_id": "200e9eae7a044eee",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/deltanet_recurrence.py",
+          "symbol": "_deltanet_decode_fp32_tl._decode_func",
+          "lines": [
+            554,
+            615
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-deltanet-decode-raw-cuda-flastyle-tl-decode-func-bf1a56e530f4",
+          "candidate_id": "6c9b43fb98097437",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/deltanet_recurrence.py",
+          "symbol": "_deltanet_decode_raw_cuda_flastyle_tl._decode_func",
+          "lines": [
+            67,
+            130
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-deltanet-decode-tl-decode-func-0f925e2f3dfc",
+          "candidate_id": "d5f5aaece1231f49",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/deltanet_recurrence.py",
+          "symbol": "_deltanet_decode_tl._decode_func",
+          "lines": [
+            148,
+            231
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-dh-correction-from-carry-tl-func-1a46d7cc9955",
+          "candidate_id": "5a9ae3c8f51a404a",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+          "symbol": "_dh_correction_from_carry_tl._func",
+          "lines": [
+            630,
+            725
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-dh-recurrence-bwd-tl-func-180e8c1d347b",
+          "candidate_id": "84aa0ca603959d67",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/deltanet/deltanet_bwd.py",
+          "symbol": "_dh_recurrence_bwd_tl._func",
+          "lines": [
+            233,
+            312
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-dh-recurrence-bwd-tl-func-2a775c287590",
+          "candidate_id": "55344679220b0e0d",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+          "symbol": "_dh_recurrence_bwd_tl._func",
+          "lines": [
+            367,
+            485
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-dh-segment-boundary-scan-tl-func-36e8842bebeb",
+          "candidate_id": "b92ca3dde6d910ec",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+          "symbol": "_dh_segment_boundary_scan_tl._func",
+          "lines": [
+            833,
+            874
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-dh-segment-local-carry-tl-func-eceea5ec8830",
+          "candidate_id": "fbc28afa253b2edc",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+          "symbol": "_dh_segment_local_carry_tl._func",
+          "lines": [
+            901,
+            960
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-dh-segment-summary-tl-func-75227765ed51",
+          "candidate_id": "9ede4c648d96d970",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+          "symbol": "_dh_segment_summary_tl._func",
+          "lines": [
+            752,
+            806
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-flashattn-bwd-preprocess-kernel-c65e23b62534",
+          "candidate_id": "bc7aa0f392d72ccb",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/attention/gqa_bwd.py",
+          "symbol": "_flashattn_bwd_preprocess_kernel",
+          "lines": [
+            18,
+            47
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-fused-add-layer-norm-kernel-func-11740a5e48c9",
+          "candidate_id": "74b4e75699f40bf7",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/norm/fused_add_norm.py",
+          "symbol": "_fused_add_layer_norm_kernel._func",
+          "lines": [
+            44,
+            129
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-fused-add-rms-norm-kernel-func-f68501636be9",
+          "candidate_id": "257362afe1bdc04a",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/norm/fused_add_norm.py",
+          "symbol": "_fused_add_rms_norm_kernel._func",
+          "lines": [
+            236,
+            342
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-fused-add-rms-norm-split-kernel-apply-e4227ef4ad14",
+          "candidate_id": "6a1fe7ea2f47b849",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/norm/fused_add_norm.py",
+          "symbol": "_fused_add_rms_norm_split_kernel._apply",
+          "lines": [
+            419,
+            451
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-fused-topk-kernel-func-6b74a1aceddd",
+          "candidate_id": "0e6dc3744797a17a",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/moe/fused_topk.py",
+          "symbol": "_fused_topk_kernel._func",
+          "lines": [
+            70,
+            300
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gated-deltanet-decode-fp32-tl-decode-func-9ae135952b2c",
+          "candidate_id": "d96a83587804fe6a",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet_recurrence.py",
+          "symbol": "_gated_deltanet_decode_fp32_tl._decode_func",
+          "lines": [
+            527,
+            594
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gated-deltanet-decode-raw-cuda-flastyle-tl-decode-func-a8146e620cc3",
+          "candidate_id": "1374b83dc374487c",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet_recurrence.py",
+          "symbol": "_gated_deltanet_decode_raw_cuda_flastyle_tl._decode_func",
+          "lines": [
+            70,
+            135
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gated-deltanet-decode-tl-decode-func-29067513fc13",
+          "candidate_id": "0751515ec058607f",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet_recurrence.py",
+          "symbol": "_gated_deltanet_decode_tl._decode_func",
+          "lines": [
+            153,
+            241
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gemm-coop2-kernel-gemm-coop2-func-612725fe91f3",
+          "candidate_id": "557cc37d1354752b",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/gemm/dense.py",
+          "symbol": "_gemm_coop2_kernel._gemm_coop2_func",
+          "lines": [
+            884,
+            1074
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-gemm-coop2-splitk-kernel-gemm-coop2-splitk-func-e9abb8e8c099",
+          "candidate_id": "1c39a8ad9b0ad8e9",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/gemm/dense.py",
+          "symbol": "_gemm_coop2_splitk_kernel._gemm_coop2_splitk_func",
+          "lines": [
+            1116,
+            1237
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-gemm-coop2s-kernel-gemm-coop2s-func-1d5225094906",
+          "candidate_id": "fdfc7f80d3537cfd",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/gemm/dense.py",
+          "symbol": "_gemm_coop2s_kernel._gemm_coop2s_func",
+          "lines": [
+            1469,
+            1600
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-gemm-fp8-kernel-gemm-fp8-func-00b769c62338",
+          "candidate_id": "3cad75a760ccfbd0",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/gemm/dense.py",
+          "symbol": "_gemm_fp8_kernel._gemm_fp8_func",
+          "lines": [
+            214,
+            418
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gemm-kernel-gemm-func-a5820c42bf1e",
+          "candidate_id": "ba0f389ba6ad8683",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/gemm/dense.py",
+          "symbol": "_gemm_kernel._gemm_func",
+          "lines": [
+            474,
+            633
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gemm-simple-kernel-gemm-simple-func-4f66c03c1972",
+          "candidate_id": "8abb4aa8d0b61232",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/gemm/dense.py",
+          "symbol": "_gemm_simple_kernel._gemm_simple_func",
+          "lines": [
+            1305,
+            1357
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gemm-small-batch-kernel-gemm-small-batch-func-61781b73464e",
+          "candidate_id": "9958dd9ec945e0ce",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/gemm/dense.py",
+          "symbol": "_gemm_small_batch_kernel._gemm_small_batch_func",
+          "lines": [
+            2004,
+            2053
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gemm-splitk-kernel-gemm-splitk-func-bccbeef1cd05",
+          "candidate_id": "d18eb6cb373ea0dc",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/gemm/dense.py",
+          "symbol": "_gemm_splitk_kernel._gemm_splitk_func",
+          "lines": [
+            667,
+            783
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gemm-swap-ab-kernel-gemm-swap-ab-func-e124b603e556",
+          "candidate_id": "bfa8e7d4f86fbfd2",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/gemm/dense.py",
+          "symbol": "_gemm_swap_ab_kernel._gemm_swap_ab_func",
+          "lines": [
+            1400,
+            1427
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-gemm-w4a16-kernel-build-afa7e58c67c6",
+          "candidate_id": "4be1cd5414da0032",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/gemm/w4a16.py",
+          "symbol": "_gemm_w4a16_kernel.build",
+          "lines": [
+            29,
+            165
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gla-bwd-dh-kernel-dh-func-7218f2e31094",
+          "candidate_id": "b4973a33de87bda8",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gla/gla_bwd.py",
+          "symbol": "_gla_bwd_dh_kernel._dh_func",
+          "lines": [
+            63,
+            166
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gla-bwd-fused-kernel-fused-func-946b0981599b",
+          "candidate_id": "9a3b0bdce0541a8b",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gla/gla_bwd.py",
+          "symbol": "_gla_bwd_fused_kernel._fused_func",
+          "lines": [
+            200,
+            521
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gla-decode-fp32-tl-decode-func-558bf78ff4c9",
+          "candidate_id": "e3f657871bfb6b4e",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gla_recurrence.py",
+          "symbol": "_gla_decode_fp32_tl._decode_func",
+          "lines": [
+            332,
+            400
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gla-decode-tl-decode-func-12c6743c7d7d",
+          "candidate_id": "ee8e41095ebe5b40",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gla_recurrence.py",
+          "symbol": "_gla_decode_tl._decode_func",
+          "lines": [
+            52,
+            133
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gla-fwd-h-kernel-h-func-b42835d96302",
+          "candidate_id": "1b32c8eb4b2b3138",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gla/gla_fwd.py",
+          "symbol": "_gla_fwd_h_kernel._h_func",
+          "lines": [
+            115,
+            221
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gla-fwd-o-kernel-o-func-a18e3138f046",
+          "candidate_id": "9896ceb4df9cfc86",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gla/gla_fwd.py",
+          "symbol": "_gla_fwd_o_kernel._o_func",
+          "lines": [
+            249,
+            343
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gla-precompute-g-kernel-fn-ae641601236a",
+          "candidate_id": "d5b0d995b822ce34",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gla/gla_fwd.py",
+          "symbol": "_gla_precompute_g_kernel._fn",
+          "lines": [
+            34,
+            72
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gqa-bwd-wgmma-pipelined-kernel-gqa-bwd-wgmma-pipelined-func-7affb34879d1",
+          "candidate_id": "8decb85a7714a960",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/attention/gqa_bwd.py",
+          "symbol": "_gqa_bwd_wgmma_pipelined_kernel._gqa_bwd_wgmma_pipelined_func",
+          "lines": [
+            113,
+            219
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gqa-decode-no-split-paged-kernel-func-b4b0ad5862e4",
+          "candidate_id": "d2d5c6120323d538",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/attention/gqa_decode_paged.py",
+          "symbol": "_gqa_decode_no_split_paged_kernel._func",
+          "lines": [
+            53,
+            160
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gqa-decode-split-paged-kernel-func-33c0fb354622",
+          "candidate_id": "7412fef4d73ad1d1",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/attention/gqa_decode_paged.py",
+          "symbol": "_gqa_decode_split_paged_kernel._func",
+          "lines": [
+            177,
+            377
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gqa-dense-causal-ws-kernel-4f39691367f7",
+          "candidate_id": "d9a5f912915958b8",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/attention/gqa_dense.py",
+          "symbol": "_gqa_dense_causal_ws_kernel",
+          "lines": [
+            223,
+            602
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gqa-prefill-paged-with-fp8-kv-cache-fwd-kernel-gqa-prefill-paged-with-fp8-kv-cache-fwd-func-c257985fc2bf",
+          "candidate_id": "6d486ddf9b1ffdc8",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/attention/gqa_fwd.py",
+          "symbol": "_gqa_prefill_paged_with_fp8_kv_cache_fwd_kernel._gqa_prefill_paged_with_fp8_kv_cache_fwd_func",
+          "lines": [
+            1029,
+            1301
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-gqa-prefill-paged-with-kv-cache-fwd-kernel-gqa-prefill-paged-with-kv-cache-fwd-func-a3e611f43194",
+          "candidate_id": "450dd7d25f208e57",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/attention/gqa_fwd.py",
+          "symbol": "_gqa_prefill_paged_with_kv_cache_fwd_kernel._gqa_prefill_paged_with_kv_cache_fwd_func",
+          "lines": [
+            623,
+            857
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-gqa-prefill-paged-with-kv-cache-rope-append-kernel-gqa-prefill-paged-with-kv-cache-rope-append-func-36b8303f1812",
+          "candidate_id": "b4db407e9d599b0a",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/attention/gqa_fwd.py",
+          "symbol": "_gqa_prefill_paged_with_kv_cache_rope_append_kernel._gqa_prefill_paged_with_kv_cache_rope_append_func",
+          "lines": [
+            1481,
+            1584
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-gqa-prefill-paged-with-kv-cache-rope-fwd-kernel-gqa-prefill-paged-with-kv-cache-rope-fwd-func-4a295d4198a1",
+          "candidate_id": "86b03d4268d95ab1",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/attention/gqa_fwd.py",
+          "symbol": "_gqa_prefill_paged_with_kv_cache_rope_fwd_kernel._gqa_prefill_paged_with_kv_cache_rope_fwd_func",
+          "lines": [
+            1693,
+            1931
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-gqa-sw-fwd-varlen-wgmma-pipelined-kernel-gqa-sw-fwd-varlen-wgmma-pipelined-func-08bc886462a1",
+          "candidate_id": "3f4b85135f711e64",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/attention/gqa_sliding_window_varlen_fwd.py",
+          "symbol": "_gqa_sw_fwd_varlen_wgmma_pipelined_kernel._gqa_sw_fwd_varlen_wgmma_pipelined_func",
+          "lines": [
+            175,
+            315
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-gqa-sw-fwd-wgmma-pipelined-kernel-gqa-sw-fwd-wgmma-pipelined-func-8c375099a6f3",
+          "candidate_id": "5b8b36dff9273dc1",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/attention/gqa_dense.py",
+          "symbol": "_gqa_sw_fwd_wgmma_pipelined_kernel._gqa_sw_fwd_wgmma_pipelined_func",
+          "lines": [
+            699,
+            857
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-group-norm-kernel-func-4906adb87370",
+          "candidate_id": "d0983ba12b8e5b43",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/norm/group_norm.py",
+          "symbol": "_group_norm_kernel._func",
+          "lines": [
+            182,
+            311
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-group-norm-no-affine-kernel-func-8da70c7adb09",
+          "candidate_id": "153634e92cc707cb",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/norm/group_norm.py",
+          "symbol": "_group_norm_no_affine_kernel._func",
+          "lines": [
+            424,
+            509
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-grouped-gemm-kernel-grouped-gemm-func-448c149c1b75",
+          "candidate_id": "cff367fd9287673a",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/grouped_gemm/grouped_gemm.py",
+          "symbol": "_grouped_gemm_kernel._grouped_gemm_func",
+          "lines": [
+            36,
+            182
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-h-recurrence-tl-func-3027e3a1b6e4",
+          "candidate_id": "5ef504a021c08672",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_fwd.py",
+          "symbol": "_h_recurrence_tl._func",
+          "lines": [
+            63,
+            140
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-h-recurrence-tl-func-b7adb92ff42c",
+          "candidate_id": "36bc35e1135427c1",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/deltanet/deltanet_fwd.py",
+          "symbol": "_h_recurrence_tl._func",
+          "lines": [
+            64,
+            132
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-inf-merge-kernel-func-5c3e9edb945c",
+          "candidate_id": "34700d42c7188c12",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/vector_norm.py",
+          "symbol": "_inf_merge_kernel._func",
+          "lines": [
+            206,
+            229
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-layer-norm-kernel-func-e1fde058bcd4",
+          "candidate_id": "174c56dd4b98cfe6",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/norm/layer_norm.py",
+          "symbol": "_layer_norm_kernel._func",
+          "lines": [
+            38,
+            172
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-logical-reduce-kernel-func-26b2102f3f60",
+          "candidate_id": "ab5b54c7cc005123",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/logical_reduce.py",
+          "symbol": "_logical_reduce_kernel._func",
+          "lines": [
+            231,
+            291
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-logical-reduce-kernel-tiled-func-6054e5c7f147",
+          "candidate_id": "7329bf1ce10b27b2",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/logical_reduce.py",
+          "symbol": "_logical_reduce_kernel_tiled._func",
+          "lines": [
+            311,
+            397
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-logsumexp-kernel-single-func-a4a64f9a4aae",
+          "candidate_id": "24a13e2962b2aa7f",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/logsumexp.py",
+          "symbol": "_logsumexp_kernel_single._func",
+          "lines": [
+            162,
+            208
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-logsumexp-kernel-streaming-func-ff31949354c3",
+          "candidate_id": "de96b43d3ff90606",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/logsumexp.py",
+          "symbol": "_logsumexp_kernel_streaming._func",
+          "lines": [
+            335,
+            413
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-logsumexp-kernel-tiled-func-ea3982ee6a5f",
+          "candidate_id": "d251d9aad758d183",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/logsumexp.py",
+          "symbol": "_logsumexp_kernel_tiled._func",
+          "lines": [
+            233,
+            305
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-logsumexp-split-fold-kernel-func-1307acc8d2c1",
+          "candidate_id": "203587c87db99370",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/logsumexp.py",
+          "symbol": "_logsumexp_split_fold_kernel._func",
+          "lines": [
+            122,
+            140
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-make-alibi-kernel-kernel-2e589675f92b",
+          "candidate_id": "a521a0ff3ff0155a",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/elementwise/alibi.py",
+          "symbol": "_make_alibi_kernel.kernel",
+          "lines": [
+            29,
+            55
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-make-align-kernel-align-e5cea2a8caec",
+          "candidate_id": "3a37e865be805046",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/moe/permute_align.py",
+          "symbol": "_make_align_kernel._align",
+          "lines": [
+            51,
+            148
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-make-aligned-per-row-scan-scan-e7b8b2479207",
+          "candidate_id": "3a669c7977de3b47",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/moe/permute_contiguous.py",
+          "symbol": "_make_aligned_per_row_scan._scan",
+          "lines": [
+            120,
+            198
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-make-clamp-tensor-kernel-kernel-12cd71b4fce5",
+          "candidate_id": "9e07f1961d7f3061",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/elementwise/clamp.py",
+          "symbol": "_make_clamp_tensor_kernel.kernel",
+          "lines": [
+            103,
+            129
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-make-gather-gather-b2ae84c0cea8",
+          "candidate_id": "9f244fb9ee3beaaf",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/moe/permute_contiguous.py",
+          "symbol": "_make_gather._gather",
+          "lines": [
+            220,
+            251
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-make-lerp-tensor-kernel-kernel-eb81f7274f10",
+          "candidate_id": "26b504c595feeff0",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/elementwise/arithmetic.py",
+          "symbol": "_make_lerp_tensor_kernel.kernel",
+          "lines": [
+            375,
+            398
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-make-prelu-kernel-kernel-4fbb76f9306a",
+          "candidate_id": "e77a52a97810d31f",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/elementwise/prelu.py",
+          "symbol": "_make_prelu_kernel.kernel",
+          "lines": [
+            27,
+            51
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-make-scatter-kernel-scatter-443cf6f1adba",
+          "candidate_id": "4ec99123da6daf2e",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/moe/permute_align.py",
+          "symbol": "_make_scatter_kernel._scatter",
+          "lines": [
+            166,
+            188
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-make-sinusoidal-kernel-kernel-5456ba49e314",
+          "candidate_id": "c955c279da83cca6",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/elementwise/sinusoidal.py",
+          "symbol": "_make_sinusoidal_kernel.kernel",
+          "lines": [
+            36,
+            67
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-make-small-batch-kernel-small-4b1ab515d604",
+          "candidate_id": "54f879f06af5d733",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/moe/permute_align.py",
+          "symbol": "_make_small_batch_kernel._small",
+          "lines": [
+            213,
+            290
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-make-softplus-kernel-kernel-20a9787addc8",
+          "candidate_id": "a7c8c6fd3e083464",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/elementwise/activations.py",
+          "symbol": "_make_softplus_kernel.kernel",
+          "lines": [
+            277,
+            302
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-make-tight-scan-scan-b36d54c9041c",
+          "candidate_id": "74b4ae91dca68e3c",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/moe/permute_contiguous.py",
+          "symbol": "_make_tight_scan._scan",
+          "lines": [
+            77,
+            104
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-make-where-kernel-kernel-680775acfeff",
+          "candidate_id": "38f99edba284bc42",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/elementwise/where.py",
+          "symbol": "_make_where_kernel.kernel",
+          "lines": [
+            28,
+            55
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-mean-pooling-kernel-mean-pooling-func-bbba16b056f4",
+          "candidate_id": "05a55a596ba52a99",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/pool/mean_pooling.py",
+          "symbol": "_mean_pooling_kernel._mean_pooling_func",
+          "lines": [
+            26,
+            85
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-merge-bwd-outputs-tl-func-b5956ac0e55e",
+          "candidate_id": "919418eae0d3bac7",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+          "symbol": "_merge_bwd_outputs_tl._func",
+          "lines": [
+            567,
+            607
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-mha-decode-no-split-kernel-func-37033e4c35e3",
+          "candidate_id": "21c7ff087a7e268a",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/attention/mha_decode_paged.py",
+          "symbol": "_mha_decode_no_split_kernel._func",
+          "lines": [
+            25,
+            121
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-mha-decode-split-kernel-func-a65064848753",
+          "candidate_id": "11cb4ee58385d9be",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/attention/mha_decode_paged.py",
+          "symbol": "_mha_decode_split_kernel._func",
+          "lines": [
+            134,
+            431
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-mla-decode-ws-kernel-mla-decode-ws-func-d1ba19cd7e79",
+          "candidate_id": "b9b10e657af89a8a",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/attention/deepseek_mla_decode.py",
+          "symbol": "_mla_decode_ws_kernel._mla_decode_ws_func",
+          "lines": [
+            24,
+            623
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-moe-grouped-gemm-kernel-func-fafd4b55419a",
+          "candidate_id": "c435582e9feb0ff8",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/moe/moe_grouped_gemm_nopad.py",
+          "symbol": "_moe_grouped_gemm_kernel._func",
+          "lines": [
+            148,
+            246
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-output-o-tl-func-59caf80a9a39",
+          "candidate_id": "1856f33666b24ead",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/deltanet/deltanet_fwd.py",
+          "symbol": "_output_o_tl._func",
+          "lines": [
+            159,
+            210
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-output-o-tl-func-94d24701be93",
+          "candidate_id": "a8b91eb03ffa1a40",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_fwd.py",
+          "symbol": "_output_o_tl._func",
+          "lines": [
+            167,
+            225
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-packed-kernel-func-a12c4f4dad84",
+          "candidate_id": "b40825a24e33ded3",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/logical_reduce.py",
+          "symbol": "_packed_kernel._func",
+          "lines": [
+            500,
+            529
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-prefill-blocksolve-a-bthd-tl-func-0908a313aaaf",
+          "candidate_id": "6b3d8e52055a3aec",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+          "symbol": "_prefill_blocksolve_A_bthd_tl._func",
+          "lines": [
+            414,
+            800
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-prefill-chunk-local-cumsum-bhtd-tl-func-e5b5cb19e27e",
+          "candidate_id": "6d0980f27725e345",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+          "symbol": "_prefill_chunk_local_cumsum_bhtd_tl._func",
+          "lines": [
+            207,
+            237
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-prefill-chunk-local-cumsum-bthd-tl-func-63eca8d176ff",
+          "candidate_id": "0a80d33c51f86efe",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+          "symbol": "_prefill_chunk_local_cumsum_bthd_tl._func",
+          "lines": [
+            366,
+            390
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-prefill-dense-group-start-scan-bthd-tl-func-257d73d871ae",
+          "candidate_id": "7cc9356fcb853ef5",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+          "symbol": "_prefill_dense_group_start_scan_bthd_tl._func",
+          "lines": [
+            1405,
+            1445
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-prefill-group-transition-summary-bthd-tl-func-d0a7732c4f99",
+          "candidate_id": "67d46a1db5c1c96b",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+          "symbol": "_prefill_group_transition_summary_bthd_tl._func",
+          "lines": [
+            1300,
+            1385
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-prefill-grouped-replay-bthd-tl-func-1783cf545d63",
+          "candidate_id": "75b716f84bd5bc21",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+          "symbol": "_prefill_grouped_replay_bthd_tl._func",
+          "lines": [
+            1469,
+            1552
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-prefill-h-recurrence-bthd-tl-func-52062b7f4c14",
+          "candidate_id": "f8c35dbab78acf51",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+          "symbol": "_prefill_h_recurrence_bthd_tl._func",
+          "lines": [
+            1126,
+            1200
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-prefill-output-o-bthd-tl-func-13af631072bc",
+          "candidate_id": "421b2a8ebbecf910",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+          "symbol": "_prefill_output_o_bthd_tl._func",
+          "lines": [
+            1219,
+            1275
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-prefill-prepare-w-u-bhtd-tl-fused-func-433bdc023162",
+          "candidate_id": "25ed5777a8fe45c3",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+          "symbol": "_prefill_prepare_w_u_bhtd_tl._fused_func",
+          "lines": [
+            257,
+            351
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-prefill-prepare-w-u-bthd-tl-fused-func-a85f49a6c47e",
+          "candidate_id": "f2fee71d4ea83c5d",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+          "symbol": "_prefill_prepare_w_u_bthd_tl._fused_func",
+          "lines": [
+            1021,
+            1104
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-prefill-recompute-w-u-from-a-bthd-tl-func-7d270dfdbac0",
+          "candidate_id": "19c7f3d8b4c11043",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+          "symbol": "_prefill_recompute_w_u_from_A_bthd_tl._func",
+          "lines": [
+            898,
+            1002
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-prod-reduce-kernel-func-fb5d26426516",
+          "candidate_id": "57f5ae253ed1a4d3",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/reduce.py",
+          "symbol": "_prod_reduce_kernel._func",
+          "lines": [
+            667,
+            731
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-reduce-dh-recurrence-partials-tl-func-fbb53b4afc61",
+          "candidate_id": "c5e602a0b347ee2d",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+          "symbol": "_reduce_dh_recurrence_partials_tl._func",
+          "lines": [
+            511,
+            550
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-rms-norm-kernel-func-d133ff8c23d3",
+          "candidate_id": "bd9dbf94ce190d6b",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/norm/rms_norm.py",
+          "symbol": "_rms_norm_kernel._func",
+          "lines": [
+            35,
+            111
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-simple-reduce-kernel-func-e631c46c1878",
+          "candidate_id": "51657621298d1ef1",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/reduce.py",
+          "symbol": "_simple_reduce_kernel._func",
+          "lines": [
+            461,
+            517
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-simple-reduce-kernel-tiled-func-6a2dc01d1958",
+          "candidate_id": "445286fc51d4f64e",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/reduce.py",
+          "symbol": "_simple_reduce_kernel_tiled._func",
+          "lines": [
+            537,
+            615
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-softmax-fused-split-kernel-func-c6fe64baa981",
+          "candidate_id": "3aefa2de5e53a17d",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/softmax.py",
+          "symbol": "_softmax_fused_split_kernel._func",
+          "lines": [
+            532,
+            599
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-softmax-kernel-single-func-78903faa8392",
+          "candidate_id": "0ac162e947ca9253",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/softmax.py",
+          "symbol": "_softmax_kernel_single._func",
+          "lines": [
+            81,
+            152
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-softmax-kernel-tiled-func-a7e99f4e0af2",
+          "candidate_id": "4d84bf1d8e6a17f5",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/softmax.py",
+          "symbol": "_softmax_kernel_tiled._func",
+          "lines": [
+            320,
+            431
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-softmax-split-finalize-kernel-func-7d3d23cb1a33",
+          "candidate_id": "97db5d5dd7dd7822",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/softmax.py",
+          "symbol": "_softmax_split_finalize_kernel._func",
+          "lines": [
+            467,
+            506
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-splitk-reduce-kernel-splitk-reduce-func-7fffeacb8e76",
+          "candidate_id": "9805b94eb83dab39",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/gemm/dense.py",
+          "symbol": "_splitk_reduce_kernel._splitk_reduce_func",
+          "lines": [
+            804,
+            827
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-ssd-chunk-scan-fwd-kernel-kernel-func-6c5227ec4dbb",
+          "candidate_id": "5b64cce665470f8c",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/mamba/ssd_chunk_scan.py",
+          "symbol": "_ssd_chunk_scan_fwd_kernel.kernel_func",
+          "lines": [
+            91,
+            467
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-ssd-chunk-state-fwd-kernel-kernel-func-6e8c968444ec",
+          "candidate_id": "90cf3d0be3ba256a",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/mamba/ssd_chunk_state.py",
+          "symbol": "_ssd_chunk_state_fwd_kernel.kernel_func",
+          "lines": [
+            105,
+            252
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-ssd-decode-kernel-kernel-func-925b7ae03703",
+          "candidate_id": "000e690263ca382b",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/mamba/ssd_decode.py",
+          "symbol": "_ssd_decode_kernel.kernel_func",
+          "lines": [
+            88,
+            224
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-ssd-state-passing-fwd-kernel-kernel-func-c4d45dd0d81e",
+          "candidate_id": "2135bd40bb72dd0a",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/mamba/ssd_state_passing.py",
+          "symbol": "_ssd_state_passing_fwd_kernel.kernel_func",
+          "lines": [
+            80,
+            226
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tileops-stream-kernel-func-37f86bf1e9fd",
+          "candidate_id": "d7e19ded69837252",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/reduce.py",
+          "symbol": "_stream_kernel._func",
+          "lines": [
+            372,
+            399
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-tile-scheduler-kernel-func-977b43cd1c82",
+          "candidate_id": "4cb495af4d986aaa",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/moe/moe_grouped_gemm_nopad.py",
+          "symbol": "_tile_scheduler_kernel._func",
+          "lines": [
+            80,
+            114
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-vector-norm-kernel-func-36e6d3d94da5",
+          "candidate_id": "2883fb775a04cedd",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/vector_norm.py",
+          "symbol": "_vector_norm_kernel._func",
+          "lines": [
+            90,
+            126
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-vector-norm-kernel-tiled-func-c85a2f7852c9",
+          "candidate_id": "6b2ca798583d1be2",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/vector_norm.py",
+          "symbol": "_vector_norm_kernel_tiled._func",
+          "lines": [
+            147,
+            192
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-welford-merge-kernel-func-341177d1ed1d",
+          "candidate_id": "b145cee70216cbb0",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/reduce.py",
+          "symbol": "_welford_merge_kernel._func",
+          "lines": [
+            1157,
+            1197
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-welford-reduce-kernel-func-ed90a585d51a",
+          "candidate_id": "fce7685b254e9990",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/reduce.py",
+          "symbol": "_welford_reduce_kernel._func",
+          "lines": [
+            755,
+            879
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        },
+        {
+          "suite3_kernel_id": "tileops-welford-reduce-kernel-tiled-func-600c7d29c45c",
+          "candidate_id": "d5aa11739d59c701",
+          "upstream_commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+          "relative_path": "src/tileops/kernels/reduction/reduce.py",
+          "symbol": "_welford_reduce_kernel_tiled._func",
+          "lines": [
+            903,
+            1137
+          ],
+          "case_count": 3,
+          "native_runnable_case_count": 3
+        }
+      ]
+    },
+    "tilekernels": {
+      "source_id": "tilekernels-36d9e45d",
+      "suite3_kernel_count": 20,
+      "auto_recipe_root_count": 20,
+      "auto_recipe_roots_not_in_suite3": [],
+      "kernels": [
+        {
+          "suite3_kernel_id": "tilekernels-expand-to-mhc-bwd-tl-102b1cd21366",
+          "candidate_id": "b1ba25a2db04d049",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/expand_kernel.py",
+          "symbol": "expand_to_mhc_bwd_tl",
+          "lines": [
+            34,
+            60
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-expand-to-mhc-fwd-tl-3e4650d918b5",
+          "candidate_id": "68fd9160238ddcb4",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/expand_kernel.py",
+          "symbol": "expand_to_mhc_fwd_tl",
+          "lines": [
+            6,
+            31
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-fn-normw-merge-bwd-0953aa0f3678",
+          "candidate_id": "060a25f48480593c",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/norm_fn_kernel.py",
+          "symbol": "_mhc_fn_normw_merge_bwd",
+          "lines": [
+            31,
+            61
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-fn-normw-merge-fwd-dd3312bc4cec",
+          "candidate_id": "ef7a0c6cbfff0d59",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/norm_fn_kernel.py",
+          "symbol": "_mhc_fn_normw_merge_fwd",
+          "lines": [
+            11,
+            28
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-head-compute-mix-bwd-cec1fc82d641",
+          "candidate_id": "3501718041c606a6",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/head_compute_mix_kernel.py",
+          "symbol": "_mhc_head_compute_mix_bwd",
+          "lines": [
+            36,
+            85
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-head-compute-mix-fwd-6f37a407a242",
+          "candidate_id": "c92aac561a362982",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/head_compute_mix_kernel.py",
+          "symbol": "_mhc_head_compute_mix_fwd",
+          "lines": [
+            10,
+            33
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-multilayer-recompute-kernel-232aa8d3f699",
+          "candidate_id": "638c3caa8752aeef",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/multilayer_recompute_kernel.py",
+          "symbol": "_mhc_multilayer_recompute_kernel",
+          "lines": [
+            41,
+            151
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-post-bwd-0e249cd746e1",
+          "candidate_id": "9b264da9fd49061a",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/post_kernel.py",
+          "symbol": "_mhc_post_bwd",
+          "lines": [
+            61,
+            146
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-post-fwd-89b92176d3cf",
+          "candidate_id": "46b736dcf4d04d1d",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/post_kernel.py",
+          "symbol": "_mhc_post_fwd",
+          "lines": [
+            8,
+            58
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-pre-apply-mix-bwd-eae52ea2eecd",
+          "candidate_id": "368373c91eab0921",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/pre_apply_mix_kernel.py",
+          "symbol": "_mhc_pre_apply_mix_bwd",
+          "lines": [
+            57,
+            110
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-pre-apply-mix-fwd-53eb95b89ff8",
+          "candidate_id": "60087d3b21fb1173",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/pre_apply_mix_kernel.py",
+          "symbol": "_mhc_pre_apply_mix_fwd",
+          "lines": [
+            14,
+            54
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-pre-big-fuse-0cdd3da96f58",
+          "candidate_id": "191c60b235a18906",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/pre_big_fuse_kernel.py",
+          "symbol": "_mhc_pre_big_fuse",
+          "lines": [
+            8,
+            131
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-pre-norm-fn-bwd-mul-6c6c29615366",
+          "candidate_id": "12f642213335523f",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/norm_fn_kernel.py",
+          "symbol": "_mhc_pre_norm_fn_bwd_mul",
+          "lines": [
+            208,
+            285
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-pre-norm-fn-bwd-norm-459ffdfde9da",
+          "candidate_id": "2236fb531ca211f7",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/norm_fn_kernel.py",
+          "symbol": "_mhc_pre_norm_fn_bwd_norm",
+          "lines": [
+            168,
+            205
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-pre-norm-fn-fwd-mul-4188fcbd2805",
+          "candidate_id": "df42f908651cb8f7",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/norm_fn_kernel.py",
+          "symbol": "_mhc_pre_norm_fn_fwd_mul",
+          "lines": [
+            64,
+            123
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-pre-norm-fn-fwd-norm-7c9270ba6091",
+          "candidate_id": "11e947343b720d8e",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/norm_fn_kernel.py",
+          "symbol": "_mhc_pre_norm_fn_fwd_norm",
+          "lines": [
+            126,
+            165
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-pre-split-mixes-bwd-3c8024c64e9f",
+          "candidate_id": "aabad961a871f04d",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/pre_split_mixes_kernel.py",
+          "symbol": "_mhc_pre_split_mixes_bwd",
+          "lines": [
+            70,
+            163
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-pre-split-mixes-fwd-15e224b1e9d0",
+          "candidate_id": "6fe36e25758f36ba",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/pre_split_mixes_kernel.py",
+          "symbol": "_mhc_pre_split_mixes_fwd",
+          "lines": [
+            10,
+            67
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-sinkhorn-bwd-7368335f2a29",
+          "candidate_id": "bf6115ae7df875c6",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/sinkhorn_kernel.py",
+          "symbol": "_mhc_sinkhorn_bwd",
+          "lines": [
+            61,
+            165
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        },
+        {
+          "suite3_kernel_id": "tilekernels-mhc-sinkhorn-fwd-3eac1d486523",
+          "candidate_id": "d3b30b7b16ac531c",
+          "upstream_commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+          "relative_path": "tile_kernels/mhc/sinkhorn_kernel.py",
+          "symbol": "_mhc_sinkhorn_fwd",
+          "lines": [
+            10,
+            58
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 4
+        }
+      ]
+    },
+    "flaggems": {
+      "source_id": "flaggems-34bd6d68",
+      "suite3_kernel_count": 111,
+      "auto_recipe_root_count": 111,
+      "auto_recipe_roots_not_in_suite3": [],
+      "kernels": [
+        {
+          "suite3_kernel_id": "flaggems-adaptive-avg-pool2d-backward-kernel-1e0981f46a47",
+          "candidate_id": "f95dec87d6c9c3fd",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/_adaptive_avg_pool2d_backward.py",
+          "symbol": "_adaptive_avg_pool2d_backward_kernel",
+          "lines": [
+            28,
+            149
+          ],
+          "case_count": 28,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-adaptive-avg-pool2d-kernel-0746beb62daa",
+          "candidate_id": "0abbbad10a6873ae",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/adaptive_avg_pool2d.py",
+          "symbol": "adaptive_avg_pool2d_kernel",
+          "lines": [
+            26,
+            138
+          ],
+          "case_count": 28,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-adaptive-max-pool2d-backward-kernel-242b17f6c6c4",
+          "candidate_id": "af7e34734aa80c2b",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/adaptive_max_pool2d_backward.py",
+          "symbol": "adaptive_max_pool2d_backward_kernel",
+          "lines": [
+            28,
+            75
+          ],
+          "case_count": 16,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-adaptive-max-pool2d-forward-kernel-30483819e428",
+          "candidate_id": "3111d4fc5d676c3b",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/adaptive_max_pool2d.py",
+          "symbol": "adaptive_max_pool2d_forward_kernel",
+          "lines": [
+            29,
+            126
+          ],
+          "case_count": 28,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-adaptive-max-pool3d-backward-kernel-36319ff8fe2c",
+          "candidate_id": "8e6967841980c523",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/adaptive_max_pool3d_backward.py",
+          "symbol": "adaptive_max_pool3d_backward_kernel",
+          "lines": [
+            28,
+            115
+          ],
+          "case_count": 16,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-add-kernel-97f91c248102",
+          "candidate_id": "c7cf6cb2ae46b934",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/runtime/backend/_nvidia/ops/add.py",
+          "symbol": "add_kernel",
+          "lines": [
+            20,
+            46
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-addbmm-kernel-6dbb2cb1ea46",
+          "candidate_id": "68aceb9b90e6d994",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/addbmm.py",
+          "symbol": "addbmm_kernel",
+          "lines": [
+            16,
+            104
+          ],
+          "case_count": 32,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-addmv-kernel-b90b1cba5181",
+          "candidate_id": "6c282e31ea61d7c0",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/addmv.py",
+          "symbol": "addmv_kernel",
+          "lines": [
+            28,
+            82
+          ],
+          "case_count": 48,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-all-kernel-1-db3a2e1334d8",
+          "candidate_id": "12a3c29e15e94449",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/all.py",
+          "symbol": "all_kernel_1",
+          "lines": [
+            72,
+            88
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-all-kernel-2-0e079d0afc9d",
+          "candidate_id": "83fa2e7523941f8f",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/all.py",
+          "symbol": "all_kernel_2",
+          "lines": [
+            91,
+            99
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-any-kernel-1-ed04f7259cc2",
+          "candidate_id": "85629358311e8070",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/any.py",
+          "symbol": "any_kernel_1",
+          "lines": [
+            76,
+            92
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-any-kernel-2-eb7ca8652496",
+          "candidate_id": "15c339d528d54631",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/any.py",
+          "symbol": "any_kernel_2",
+          "lines": [
+            95,
+            103
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-avg-pool2d-backward-kernel-48158c15e1de",
+          "candidate_id": "92772b11bb64607b",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/avg_pool2d.py",
+          "symbol": "avg_pool2d_backward_kernel",
+          "lines": [
+            144,
+            269
+          ],
+          "case_count": 24,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-avg-pool2d-forward-kernel-8e4096d90b3d",
+          "candidate_id": "c32f38651f4b9556",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/avg_pool2d.py",
+          "symbol": "avg_pool2d_forward_kernel",
+          "lines": [
+            46,
+            141
+          ],
+          "case_count": 36,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-batch-norm-forward-kernel-0a775bff89dc",
+          "candidate_id": "4bbcfed5f7a699cf",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/batch_norm.py",
+          "symbol": "batch_norm_forward_kernel",
+          "lines": [
+            53,
+            188
+          ],
+          "case_count": 12,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-batch-norm-no-update-kernel-9908168035cf",
+          "candidate_id": "30f197ba37295366",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/_batch_norm_no_update.py",
+          "symbol": "batch_norm_no_update_kernel",
+          "lines": [
+            50,
+            124
+          ],
+          "case_count": 12,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-batch-norm-with-update-kernel-f5aff8898391",
+          "candidate_id": "91598114888225cb",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/_batch_norm_with_update_functional.py",
+          "symbol": "batch_norm_with_update_kernel",
+          "lines": [
+            50,
+            180
+          ],
+          "case_count": 12,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-batch-offsets-kernel-dc494191d28a",
+          "candidate_id": "02a8580a7a61a146",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/gru.py",
+          "symbol": "_batch_offsets_kernel",
+          "lines": [
+            108,
+            124
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-bilinear-kernel-330c2480c720",
+          "candidate_id": "d4e11d33c7d58002",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/bilinear.py",
+          "symbol": "bilinear_kernel",
+          "lines": [
+            27,
+            102
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-blackman-window-kernel-f3f0cafd5dc0",
+          "candidate_id": "e36e4d823eefe121",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/blackman_window.py",
+          "symbol": "blackman_window_kernel",
+          "lines": [
+            31,
+            68
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-block-cumsum-kernel-e69269bb1ba7",
+          "candidate_id": "889be0171351976d",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/cumsum.py",
+          "symbol": "block_cumsum_kernel",
+          "lines": [
+            408,
+            474
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-block-update-kernel-c870cf0a0b3e",
+          "candidate_id": "39920c1e16967c9c",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/cumsum.py",
+          "symbol": "block_update_kernel",
+          "lines": [
+            477,
+            531
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-broadcast-to-kernel-3d7e956f3aef",
+          "candidate_id": "e2bd74d2f83fb223",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/broadcast_to.py",
+          "symbol": "broadcast_to_kernel",
+          "lines": [
+            27,
+            60
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-cauchy-kernel-fbbbc67ce6ad",
+          "candidate_id": "ec6c4dbc9a1c104a",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/cauchy.py",
+          "symbol": "cauchy_kernel",
+          "lines": [
+            56,
+            91
+          ],
+          "case_count": 24,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-cholesky-kernel-83c0d06c7346",
+          "candidate_id": "18e963dc6d66db07",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/linalg_cholesky.py",
+          "symbol": "cholesky_kernel",
+          "lines": [
+            28,
+            64
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-compute-linear-combination-kernel-c916dce0d6c8",
+          "candidate_id": "cfa2978d164b119e",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/_compute_linear_combination.py",
+          "symbol": "_compute_linear_combination_kernel",
+          "lines": [
+            39,
+            99
+          ],
+          "case_count": 88,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-conj-physical-kernel-3ff9754783c4",
+          "candidate_id": "ae164f9673635af3",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/conj_physical_.py",
+          "symbol": "conj_physical__kernel",
+          "lines": [
+            12,
+            21
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-conj-physical-kernel-5a7c560563ad",
+          "candidate_id": "98b96cecb05bde4e",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/conj_physical.py",
+          "symbol": "conj_physical_kernel",
+          "lines": [
+            27,
+            43
+          ],
+          "case_count": 24,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-conv-transpose1d-forward-kernel-859c66aa8ff9",
+          "candidate_id": "b95657ee90a75ca9",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/conv_transpose1d.py",
+          "symbol": "conv_transpose1d_forward_kernel",
+          "lines": [
+            58,
+            214
+          ],
+          "case_count": 48,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-conv3d-forward-kernel-f48b5758b878",
+          "candidate_id": "e46c39049053c2ef",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/conv3d.py",
+          "symbol": "conv3d_forward_kernel",
+          "lines": [
+            52,
+            228
+          ],
+          "case_count": 44,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-cp-gather-indexer-quant-cache-kernel-9ca5a0f9379b",
+          "candidate_id": "330ae233360a875d",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/cp_gather_indexer_k_quant_cache.py",
+          "symbol": "_cp_gather_indexer_quant_cache_kernel",
+          "lines": [
+            23,
+            111
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-cudnn-batch-norm-backward-kernel-7338e1c81957",
+          "candidate_id": "6262a19ee70df122",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/cudnn_batch_norm_backward.py",
+          "symbol": "cudnn_batch_norm_backward_kernel",
+          "lines": [
+            35,
+            172
+          ],
+          "case_count": 12,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-dequantize-kernel-4cd2a064d74e",
+          "candidate_id": "6f7928bdb59757a4",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/dequantize.py",
+          "symbol": "dequantize_kernel",
+          "lines": [
+            25,
+            35
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-embedding-bag-dense-backward-kernel-2d88f32d99f8",
+          "candidate_id": "dd038b7dffc2de68",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/_embedding_bag_dense_backward.py",
+          "symbol": "_embedding_bag_dense_backward_kernel",
+          "lines": [
+            28,
+            118
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-fake-quantize-per-channel-affine-kernel-8f946c09fca4",
+          "candidate_id": "df2f2ea1a301e273",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/fake_quantize_per_channel_affine.py",
+          "symbol": "fake_quantize_per_channel_affine_kernel",
+          "lines": [
+            38,
+            68
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-fake-quantize-per-tensor-affine-kernel-e20cfdb1afe2",
+          "candidate_id": "b40c08dbbd607733",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/fake_quantize_per_tensor_affine.py",
+          "symbol": "fake_quantize_per_tensor_affine_kernel",
+          "lines": [
+            29,
+            51
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-fp8-fp4-mqa-logits-kernel-1f446b51e2b6",
+          "candidate_id": "fea22172b94daba2",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/fp8_fp4_mqa_logits.py",
+          "symbol": "_fp8_fp4_mqa_logits_kernel",
+          "lines": [
+            27,
+            130
+          ],
+          "case_count": 576,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-fractional-max-pool2d-backward-kernel-55e59efc6c32",
+          "candidate_id": "3d6f39a081f9154e",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/fractional_max_pool2d.py",
+          "symbol": "fractional_max_pool2d_backward_kernel",
+          "lines": [
+            131,
+            193
+          ],
+          "case_count": 324,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-fractional-max-pool2d-forward-kernel-d329b399cecc",
+          "candidate_id": "5d32ba19384dda27",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/fractional_max_pool2d.py",
+          "symbol": "fractional_max_pool2d_forward_kernel",
+          "lines": [
+            14,
+            128
+          ],
+          "case_count": 324,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-fused-indexer-q-rope-quant-kernel-1c39f244822d",
+          "candidate_id": "934365514a2c7148",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/fused_indexer_q_rope_quant.py",
+          "symbol": "_fused_indexer_q_rope_quant_kernel",
+          "lines": [
+            68,
+            170
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-fused-qkv-kernel-feb5816461f7",
+          "candidate_id": "274e00da976946bc",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/fused_deepseek_v4_qnorm_rope_kv_rope_insert.py",
+          "symbol": "_fused_qkv_kernel",
+          "lines": [
+            36,
+            151
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-fused-topk-kernel-171d056b1d6f",
+          "candidate_id": "66ca4bcbcca1f264",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/topk_softplus_sqrt.py",
+          "symbol": "_fused_topk_kernel",
+          "lines": [
+            33,
+            109
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-group-idx-and-topk-triton-dc06eca8815e",
+          "candidate_id": "841cbeae6245f6ad",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/grouped_topk.py",
+          "symbol": "group_idx_and_topk_triton",
+          "lines": [
+            81,
+            242
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-hc-head-fused-kernel-57ebd73a7c62",
+          "candidate_id": "9e646356433b882d",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/mhc/hc_head_fused_kernel.py",
+          "symbol": "_hc_head_fused_kernel",
+          "lines": [
+            24,
+            175
+          ],
+          "case_count": 20,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-heaviside-inplace-kernel-125becf98413",
+          "candidate_id": "6d5459d25934ab77",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/heaviside_.py",
+          "symbol": "_heaviside_inplace_kernel",
+          "lines": [
+            28,
+            45
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-histc-kernel-simple-c5f07765ea2b",
+          "candidate_id": "cba74b6482484ec3",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/histc.py",
+          "symbol": "histc_kernel_simple",
+          "lines": [
+            82,
+            122
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-hstack-copy-func-kernel-4-f9567f6e1946",
+          "candidate_id": "c4fafaa8ed4d7a11",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/hstack.py",
+          "symbol": "hstack_copy_func_kernel_4",
+          "lines": [
+            25,
+            89
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-hypot-inplace-kernel-642382feaf63",
+          "candidate_id": "7a43f7380f06fc12",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/hypot_.py",
+          "symbol": "_hypot_inplace_kernel",
+          "lines": [
+            28,
+            43
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-index-reduce-flat-kernel-8caf819ee6eb",
+          "candidate_id": "3876fc1066f728f5",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/index_reduce.py",
+          "symbol": "_index_reduce_flat_kernel",
+          "lines": [
+            118,
+            190
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-indexer-k-quant-and-cache-kernel-03da1c78ac38",
+          "candidate_id": "97864f7c0d5b1ddf",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/indexer_k_quant_and_cache.py",
+          "symbol": "_indexer_k_quant_and_cache_kernel",
+          "lines": [
+            44,
+            97
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-ldl-factor-kernel-87fedd7fd697",
+          "candidate_id": "97450fa1c4fa4d54",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/linalg_ldl_factor.py",
+          "symbol": "ldl_factor_kernel",
+          "lines": [
+            31,
+            165
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-matmul-bias-activation-kernel-25effdbe7bb6",
+          "candidate_id": "807368809d272123",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/matmul_bias_activation.py",
+          "symbol": "matmul_bias_activation_kernel",
+          "lines": [
+            33,
+            91
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-max-kernel-1-75106fbe64ac",
+          "candidate_id": "302b2c28cda3ffeb",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/max.py",
+          "symbol": "max_kernel_1",
+          "lines": [
+            32,
+            48
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-max-kernel-2-ef718354b967",
+          "candidate_id": "11e92dd62d9918c7",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/max.py",
+          "symbol": "max_kernel_2",
+          "lines": [
+            51,
+            60
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-max-pool2d-forward-kernel-0cb4f1ba9d84",
+          "candidate_id": "30c2d0828ab48ffd",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/max_pool2d_with_indices.py",
+          "symbol": "max_pool2d_forward_kernel",
+          "lines": [
+            48,
+            141
+          ],
+          "case_count": 48,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-max-unpool2d-kernel-f2cdbda525ee",
+          "candidate_id": "606f6c9eb7122f50",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/max_unpool2d.py",
+          "symbol": "max_unpool2d_kernel",
+          "lines": [
+            28,
+            107
+          ],
+          "case_count": 24,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-mean-kernel-1-a1bf04302d11",
+          "candidate_id": "46c08f2664e9e59d",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/mean.py",
+          "symbol": "mean_kernel_1",
+          "lines": [
+            32,
+            56
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-mean-kernel-2-0c9c55c535a5",
+          "candidate_id": "48c3a290e9c07d98",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/mean.py",
+          "symbol": "mean_kernel_2",
+          "lines": [
+            59,
+            76
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-min-kernel-1-5ac7da5e19e8",
+          "candidate_id": "378eaaf233a7e9fa",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/min.py",
+          "symbol": "min_kernel_1",
+          "lines": [
+            32,
+            48
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-min-kernel-2-8c2799069ae5",
+          "candidate_id": "41b8fb0d7c95d7c9",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/min.py",
+          "symbol": "min_kernel_2",
+          "lines": [
+            51,
+            60
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-moe-align-block-size-stage1-947f1b68e577",
+          "candidate_id": "648a8106a160f662",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/moe_align_block_size.py",
+          "symbol": "moe_align_block_size_stage1",
+          "lines": [
+            404,
+            435
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-moe-align-block-size-stage3-c289b3c2336c",
+          "candidate_id": "39551f2256f5b43d",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/moe_align_block_size.py",
+          "symbol": "moe_align_block_size_stage3",
+          "lines": [
+            465,
+            485
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-moe-align-block-size-stage4-4972cf967fbf",
+          "candidate_id": "6b1123b4dce987e5",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/moe_align_block_size.py",
+          "symbol": "moe_align_block_size_stage4",
+          "lines": [
+            488,
+            517
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-mqa-logits-kernel-135168ac1fdd",
+          "candidate_id": "1f0cdaa878b1486e",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/fp8_fp4_paged_mqa_logits.py",
+          "symbol": "_mqa_logits_kernel",
+          "lines": [
+            34,
+            121
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-nested-sum-backward-kernel-091aa9281a08",
+          "candidate_id": "6a87aacc0972bba6",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/_nested_sum_backward.py",
+          "symbol": "_nested_sum_backward_kernel",
+          "lines": [
+            25,
+            47
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-nll-loss2d-finalize-kernel-b9502203dca4",
+          "candidate_id": "c5c3887c7e588759",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/nll_loss2d.py",
+          "symbol": "_nll_loss2d_finalize_kernel",
+          "lines": [
+            127,
+            149
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-nll-loss2d-reduce-kernel-d8722e126b6a",
+          "candidate_id": "9a8fb8c0e6fd177f",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/nll_loss2d.py",
+          "symbol": "_nll_loss2d_reduce_kernel",
+          "lines": [
+            71,
+            124
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-nonzero-kernel-500126dea70d",
+          "candidate_id": "2cf7a9a9633b4500",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/nonzero.py",
+          "symbol": "nonzero_kernel",
+          "lines": [
+            29,
+            56
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-pack-4bit-weight-kernel-0401e51a8a3f",
+          "candidate_id": "6d4be80fdc9ee53a",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/_dyn_quant_pack_4bit_weight.py",
+          "symbol": "_pack_4bit_weight_kernel",
+          "lines": [
+            28,
+            70
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-pack-output-kernel-2658db538c1d",
+          "candidate_id": "63cf05f4055b461d",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/gru.py",
+          "symbol": "_pack_output_kernel",
+          "lines": [
+            165,
+            203
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-pack-seq-kernel-d133b048a551",
+          "candidate_id": "7f021634db081f2f",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/pack_seq.py",
+          "symbol": "_pack_seq_kernel",
+          "lines": [
+            37,
+            90
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-paged-mqa-logits-metadata-kernel-c4d3cce70985",
+          "candidate_id": "250c8ce44e6881e9",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/get_paged_mqa_logits_metadata.py",
+          "symbol": "_paged_mqa_logits_metadata_kernel",
+          "lines": [
+            24,
+            73
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-permute-kernel-7633b1b369a4",
+          "candidate_id": "5dcaeb89b25e7bc4",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/experimental_ops/permute.py",
+          "symbol": "permute_kernel",
+          "lines": [
+            20,
+            49
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-prelu-kernel-21bcfa64503a",
+          "candidate_id": "bd282cdf559cbaf8",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/prelu.py",
+          "symbol": "prelu_kernel",
+          "lines": [
+            27,
+            53
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-prepare-pass1-kernel-be49d25d2399",
+          "candidate_id": "c41665377bda9918",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/get_scheduler_metadata.py",
+          "symbol": "_prepare_pass1_kernel",
+          "lines": [
+            445,
+            514
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-prod-kernel-mid-9ec808bcae5b",
+          "candidate_id": "6d2ff495acb30d64",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/prod.py",
+          "symbol": "prod_kernel_mid",
+          "lines": [
+            36,
+            51
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-prod-kernel-result-5db1990b8137",
+          "candidate_id": "9d8f58413106a52e",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/prod.py",
+          "symbol": "prod_kernel_result",
+          "lines": [
+            54,
+            62
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-reflection-pad2d-backward-kernel-0dd47f6806ea",
+          "candidate_id": "5d762d0eb7b60b50",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/reflection_pad2d_backward.py",
+          "symbol": "reflection_pad2d_backward_kernel",
+          "lines": [
+            28,
+            190
+          ],
+          "case_count": 28,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-renorm-kernel-3cd744035c6b",
+          "candidate_id": "e716b9a020209f36",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/renorm_.py",
+          "symbol": "renorm_kernel",
+          "lines": [
+            28,
+            47
+          ],
+          "case_count": 20,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-replicationpad3d-kernel-eb665ffb2bd3",
+          "candidate_id": "65d4ce3304c1a7db",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/replication_pad3d.py",
+          "symbol": "replicationpad3d_kernel",
+          "lines": [
+            27,
+            92
+          ],
+          "case_count": 16,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-reshape-and-cache-kernel-dff71419d14a",
+          "candidate_id": "cab1f101f342f0b4",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/reshape_and_cache.py",
+          "symbol": "reshape_and_cache_kernel",
+          "lines": [
+            26,
+            80
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-rmsnorm-bwd-dx-kernel-f63efd6583b6",
+          "candidate_id": "f68f2fded7b17945",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/te_rmsnorm.py",
+          "symbol": "rmsnorm_bwd_dx_kernel",
+          "lines": [
+            271,
+            348
+          ],
+          "case_count": 192,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-safe-softmax-kernel-0a39ae5e2ca3",
+          "candidate_id": "328e1ecb079fdb43",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/_safe_softmax.py",
+          "symbol": "_safe_softmax_kernel",
+          "lines": [
+            27,
+            49
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-safe-softmax-kernel-8525f237419a",
+          "candidate_id": "ad6dfba10b3055ef",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/runtime/backend/_nvidia/turing/ops/_safe_softmax.py",
+          "symbol": "_safe_softmax_kernel",
+          "lines": [
+            26,
+            63
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-scalar-tensor-kernel-fc4d932eb71b",
+          "candidate_id": "8247c7d18cfcb201",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/scalar_tensor.py",
+          "symbol": "scalar_tensor_kernel",
+          "lines": [
+            26,
+            28
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-scaled-softmax-backward-kernel-cbd322655069",
+          "candidate_id": "c046d3eb617ac64f",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/scaled_softmax.py",
+          "symbol": "scaled_softmax_backward_kernel",
+          "lines": [
+            175,
+            254
+          ],
+          "case_count": 80,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-scaled-softmax-forward-kernel-e4c98f6a8719",
+          "candidate_id": "4664aff015d0de09",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/scaled_softmax.py",
+          "symbol": "scaled_softmax_forward_kernel",
+          "lines": [
+            50,
+            136
+          ],
+          "case_count": 80,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-select-backward-kernel-187b071370bd",
+          "candidate_id": "21a9fa388a306ed7",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/select_backward.py",
+          "symbol": "_select_backward_kernel",
+          "lines": [
+            26,
+            47
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-slice-backward-kernel-771993da00be",
+          "candidate_id": "7935bc72ada5d167",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/slice_backward.py",
+          "symbol": "slice_backward_kernel",
+          "lines": [
+            24,
+            54
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-smooth-l1-loss-backward-kernel-65f025e9b8b9",
+          "candidate_id": "f66e219091455fc2",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/smooth_l1_loss.py",
+          "symbol": "_smooth_l1_loss_backward_kernel",
+          "lines": [
+            87,
+            121
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-soft-margin-loss-backward-kernel-bdecee5173b3",
+          "candidate_id": "f3d8fc6a0cafce91",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/soft_margin_loss_backward.py",
+          "symbol": "_soft_margin_loss_backward_kernel",
+          "lines": [
+            25,
+            59
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-sparse-attn-triton-kernel-863495eee20b",
+          "candidate_id": "21064c19bf61850c",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/sparse_attention.py",
+          "symbol": "sparse_attn_triton_kernel",
+          "lines": [
+            25,
+            122
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-stack-copy-func-kernel-4-039c07f5e7f8",
+          "candidate_id": "20183368a2ef81c4",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/stack.py",
+          "symbol": "stack_copy_func_kernel_4",
+          "lines": [
+            25,
+            84
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-sum-kernel-1-0518aea48c0c",
+          "candidate_id": "5ad84f4a0c93dc63",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/sum.py",
+          "symbol": "sum_kernel_1",
+          "lines": [
+            32,
+            55
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-sum-kernel-2-4bfc2d818d0d",
+          "candidate_id": "e1034519f6c61d55",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/sum.py",
+          "symbol": "sum_kernel_2",
+          "lines": [
+            58,
+            73
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-sym-constrain-range-kernel-262c5a47533e",
+          "candidate_id": "0ec65b2c166281e8",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/sym_constrain_range.py",
+          "symbol": "sym_constrain_range_kernel",
+          "lines": [
+            35,
+            52
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-symmetric-matmul-kernel-371d17088cb6",
+          "candidate_id": "74d2db30cda906db",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/cholesky_inverse.py",
+          "symbol": "symmetric_matmul_kernel",
+          "lines": [
+            96,
+            154
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-topk-with-k2-triton-2b856c75bc95",
+          "candidate_id": "65f20934d7369880",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/grouped_topk.py",
+          "symbol": "topk_with_k2_triton",
+          "lines": [
+            24,
+            78
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-trace-kernel-ebf21451367f",
+          "candidate_id": "889b82d0d0830756",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/trace.py",
+          "symbol": "trace_kernel",
+          "lines": [
+            27,
+            66
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-triangular-inverse-kernel-69051dae7818",
+          "candidate_id": "fb3cb5cdbc937df2",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/cholesky_inverse.py",
+          "symbol": "triangular_inverse_kernel",
+          "lines": [
+            14,
+            93
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-unbind-copy-kernel-7471c3f4696b",
+          "candidate_id": "d88349287b6ac8d8",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/unbind_copy.py",
+          "symbol": "unbind_copy_kernel",
+          "lines": [
+            28,
+            72
+          ],
+          "case_count": 24,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-unfold-backward-kernel-1f14803a30c5",
+          "candidate_id": "82ba0c059ee4a364",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/unfold_backward.py",
+          "symbol": "_unfold_backward_kernel",
+          "lines": [
+            24,
+            55
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-unpack-padded-kernel-b78900f17200",
+          "candidate_id": "dcba3520d5cda0ce",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/gru.py",
+          "symbol": "_unpack_padded_kernel",
+          "lines": [
+            127,
+            162
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-unpack-seq-triton-kernel-aaf748454e46",
+          "candidate_id": "3a54c6dc3f4a31b7",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/fused/unpack_seq.py",
+          "symbol": "_unpack_seq_triton_kernel",
+          "lines": [
+            35,
+            76
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-upsample-bicubic2d-row-kernel-41a4e9cc757f",
+          "candidate_id": "03b5a861ac0fe4e5",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/upsample_bicubic2d.py",
+          "symbol": "_upsample_bicubic2d_row_kernel",
+          "lines": [
+            36,
+            168
+          ],
+          "case_count": 20,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-upsample-nearest2d-kernel-16864cc066df",
+          "candidate_id": "9f85be140b558012",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/upsample_nearest2d.py",
+          "symbol": "upsample_nearest2d_kernel",
+          "lines": [
+            29,
+            80
+          ],
+          "case_count": 16,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-upsample-nearest3d-kernel-0d0af84cc8a3",
+          "candidate_id": "9246b058d958eea8",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/upsample_nearest3d.py",
+          "symbol": "upsample_nearest3d_kernel",
+          "lines": [
+            29,
+            106
+          ],
+          "case_count": 16,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-view-copy-kernel-1ddee531752b",
+          "candidate_id": "22082f5eca65792f",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/view_copy.py",
+          "symbol": "_view_copy_kernel",
+          "lines": [
+            27,
+            34
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-vstack-kernel-376cdee26c5e",
+          "candidate_id": "441c0f7e7e9405b7",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/vstack.py",
+          "symbol": "vstack_kernel",
+          "lines": [
+            29,
+            77
+          ],
+          "case_count": 64,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-w8a8-block-fp8-matmul-kernel-b0b5f5348028",
+          "candidate_id": "c55c1805677e61ca",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/w8a8_block_fp8_matmul.py",
+          "symbol": "w8a8_block_fp8_matmul_kernel",
+          "lines": [
+            51,
+            122
+          ],
+          "case_count": 4,
+          "native_runnable_case_count": 0
+        },
+        {
+          "suite3_kernel_id": "flaggems-weight-int8pack-mm-kernel-00885806b39d",
+          "candidate_id": "b86ab7c54f652ff5",
+          "upstream_commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+          "relative_path": "src/flag_gems/ops/weight_int8pack_mm.py",
+          "symbol": "weight_int8pack_mm_kernel",
+          "lines": [
+            29,
+            133
+          ],
+          "case_count": 32,
+          "native_runnable_case_count": 0
+        }
+      ]
+    }
+  }
+}

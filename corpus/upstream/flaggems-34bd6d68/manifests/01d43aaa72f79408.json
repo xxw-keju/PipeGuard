@@ -1,0 +1,43 @@
+{
+  "candidate_id": "01d43aaa72f79408",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/isnan.py/L27-L30__isnan_func__01d43aaa72f79408.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "867d4cfe46f2af316d17e24e84b00f6b33bd3d22b504b94e6c8d7f8c1068068a",
+    "source_map": {
+      "end_line": 30,
+      "logical_path": "src/flag_gems/ops/isnan.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_isnan",
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/01d43aaa72f79408/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 30,
+    "git_blob": "d96581b4082c2eab27c2c5c403ff6102ad6c5745",
+    "qualname": "isnan_func",
+    "relative_path": "src/flag_gems/ops/isnan.py",
+    "selected_source_sha256": "33ae0e7f928ea8c1d6f3367a76a0cc854ead4069cb5837a0468eab72a5b0873c",
+    "source_sha256": "949116ce0950d4fe9c8c83344acd4cf07f0bb3b759d207a6b756519d717cd8c9",
+    "start_line": 27
+  }
+}

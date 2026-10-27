@@ -1,0 +1,42 @@
+{
+  "candidate_id": "c1ae9e6cedabfe82",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/erf.py/L25-L29__erf_func__c1ae9e6cedabfe82.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "4f7ca95d5e402df2dbd2ec8f729d4aea71473c0ffe6811c8fd262b3e2273a3da",
+    "source_map": {
+      "end_line": 29,
+      "logical_path": "src/flag_gems/ops/erf.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/c1ae9e6cedabfe82/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 29,
+    "git_blob": "0f992bd136bc90c92a31c6b3219868b3bc6b2c62",
+    "qualname": "erf_func",
+    "relative_path": "src/flag_gems/ops/erf.py",
+    "selected_source_sha256": "c33ac0b3a400981127b664e329f78377319ec3c225d491c8b4ae96b23406c463",
+    "source_sha256": "6068f99ce84e6bc2daae401653d567284da84cbbdc59684e09ff040d56e90bf6",
+    "start_line": 25
+  }
+}

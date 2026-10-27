@@ -1,0 +1,43 @@
+{
+  "candidate_id": "40463faf1a4b32c2",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/frac_.py/L27-L33__frac_func__40463faf1a4b32c2.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "9ab1f4664154c0f42c1fa55edeb84dda64a347950a72d9d1479c69a3d33070b4",
+    "source_map": {
+      "end_line": 33,
+      "logical_path": "src/flag_gems/ops/frac_.py",
+      "start_line": 27
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton",
+    "trunc"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/40463faf1a4b32c2/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 33,
+    "git_blob": "6ee9ea7e85473aa360e8f975552cc5f812c09b48",
+    "qualname": "frac_func",
+    "relative_path": "src/flag_gems/ops/frac_.py",
+    "selected_source_sha256": "839c6d14d0086f87aa2b21037447d05339b1d8f2c25ae37adfa450f6df4e6e11",
+    "source_sha256": "9c686bf0dedf63141b1889e0ad79cf5aea27a5e5ae0b049d5a84d46aeb8bd886",
+    "start_line": 27
+  }
+}

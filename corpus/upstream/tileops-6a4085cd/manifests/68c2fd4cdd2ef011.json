@@ -1,0 +1,69 @@
+{
+  "candidate_id": "68c2fd4cdd2ef011",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/deepseek_nsa_fwd.py/L31-L153__nsa_fwd_varlen_kernel._nsa_fwd_varlen_func__68c2fd4cdd2ef011.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e0ffc13fda789e2689a3138732569e4ed3cf7a759a6eac14eaf07f631fcbece3",
+    "source_map": {
+      "end_line": 153,
+      "logical_path": "src/tileops/kernels/attention/deepseek_nsa_fwd.py",
+      "start_line": 31
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_size",
+    "c_seq_len",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "is_causal",
+    "make_online_softmax",
+    "make_rescale",
+    "scale",
+    "selected_blocks",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "91dd4d80459d0fec"
+  ],
+  "lexical_parents": [
+    "_nsa_fwd_varlen_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/68c2fd4cdd2ef011/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_size",
+    "c_seq_len",
+    "dim",
+    "dtype",
+    "groups",
+    "heads",
+    "is_causal",
+    "scale",
+    "selected_blocks"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 153,
+    "git_blob": "2c0369fef8a3a776f3d9ca88a2a34cc355febdd5",
+    "qualname": "_nsa_fwd_varlen_kernel._nsa_fwd_varlen_func",
+    "relative_path": "src/tileops/kernels/attention/deepseek_nsa_fwd.py",
+    "selected_source_sha256": "03fa1104e8a6fd5450f62509d384c9f85deb802f6cb895453af1246b25d6e89e",
+    "source_sha256": "9b8c7906be1c9d7c9f8aa2a24d151e7da1ed5028b0c09b60b4f9dfaa4f352d04",
+    "start_line": 31
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "candidate_id": "bb63f0e2b8c38c31",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/deepseek_nsa_topk.py/L78-L221__nsa_topk_varlen_kernel._nsa_topk_varlen_func._parallel_nsa_topk_varlen_main__bb63f0e2b8c38c31.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "e0c2b6630365baefe02f724a0b2aa3319797bd2ca4a67faacb192bd0847b1d50",
+    "source_map": {
+      "end_line": 221,
+      "logical_path": "src/tileops/kernels/attention/deepseek_nsa_topk.py",
+      "start_line": 78
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "LOG2E",
+    "T",
+    "accum_dtype",
+    "bc",
+    "bk",
+    "block_indices_shape",
+    "bs",
+    "c_seq_len",
+    "chunk_offsets_shape",
+    "dtype",
+    "group",
+    "head_kv",
+    "k_cmp_shape",
+    "lse_shape",
+    "odd_even_sort",
+    "offsets_shape",
+    "q_shape",
+    "scale",
+    "scale_log2",
+    "selected_block_num",
+    "threads",
+    "token_indices_shape"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_nsa_topk_varlen_kernel",
+    "_nsa_topk_varlen_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/bb63f0e2b8c38c31/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "bc",
+    "bk",
+    "block_indices_shape",
+    "bs",
+    "c_seq_len",
+    "chunk_offsets_shape",
+    "dtype",
+    "group",
+    "head_kv",
+    "k_cmp_shape",
+    "lse_shape",
+    "odd_even_sort",
+    "offsets_shape",
+    "q_shape",
+    "scale",
+    "scale_log2",
+    "selected_block_num",
+    "threads",
+    "token_indices_shape"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 221,
+    "git_blob": "e16b44640b9d2eb8b46dcd43322a44c62c24203d",
+    "qualname": "_nsa_topk_varlen_kernel._nsa_topk_varlen_func._parallel_nsa_topk_varlen_main",
+    "relative_path": "src/tileops/kernels/attention/deepseek_nsa_topk.py",
+    "selected_source_sha256": "bea2cb736a0dd3648afaaf3741c599076aca4f4af681d2a23c90fd3d7adae7e0",
+    "source_sha256": "dfda7421a099c5e91f5f71685816818dccfb51e628390eaf32ca80073174c052",
+    "start_line": 78
+  }
+}

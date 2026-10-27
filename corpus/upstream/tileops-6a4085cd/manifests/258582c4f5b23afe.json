@@ -1,0 +1,69 @@
+{
+  "candidate_id": "258582c4f5b23afe",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/norm/ada_layer_norm.py/L58-L210__ada_layer_norm_kernel._func__258582c4f5b23afe.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "13d38e87346d4a0ec5259afa6a4c0426a7d6b2557a3398c741312b59d7e4d192",
+    "source_map": {
+      "end_line": 210,
+      "logical_path": "src/tileops/kernels/norm/ada_layer_norm.py",
+      "start_line": 58
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "N_padded",
+    "T",
+    "async_copy_elems",
+    "dtype",
+    "eps",
+    "has_gate",
+    "make_row_reduce",
+    "needs_pad",
+    "tilelang",
+    "use_cp_async"
+  ],
+  "kernel_dependencies": [
+    "20b3c36173819624",
+    "8d7db930a4cdf789"
+  ],
+  "lexical_parents": [
+    "_ada_layer_norm_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/258582c4f5b23afe/unresolved.json",
+    "tileops-6a4085cd/recipes/258582c4f5b23afe/tileops-6a4085cd-root-258582c4f5b23afe-boundary-52dfc7874d-recipe.json",
+    "tileops-6a4085cd/recipes/258582c4f5b23afe/tileops-6a4085cd-root-258582c4f5b23afe-boundary-f0ad96dc87-recipe.json",
+    "tileops-6a4085cd/recipes/258582c4f5b23afe/tileops-6a4085cd-root-258582c4f5b23afe-boundary-f33f63c90e-recipe.json",
+    "tileops-6a4085cd/recipes/258582c4f5b23afe/tileops-6a4085cd-root-258582c4f5b23afe-original-74ace1b61a-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "N_padded",
+    "async_copy_elems",
+    "dtype",
+    "eps",
+    "has_gate",
+    "needs_pad",
+    "use_cp_async"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 210,
+    "git_blob": "b74d54e5a0b01270eb01c95abbd4aac13b59da69",
+    "qualname": "_ada_layer_norm_kernel._func",
+    "relative_path": "src/tileops/kernels/norm/ada_layer_norm.py",
+    "selected_source_sha256": "11b09584564695a61533675b224b0aba9b90588bdb2ffe82e329a67afbc3eec3",
+    "source_sha256": "efc1ee668f80c4070859b24d2ad289e6295a51e3eb190008e265ff75d2b5c646",
+    "start_line": 58
+  }
+}

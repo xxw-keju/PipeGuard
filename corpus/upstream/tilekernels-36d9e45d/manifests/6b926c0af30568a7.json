@@ -1,0 +1,56 @@
+{
+  "candidate_id": "6b926c0af30568a7",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tilekernels-36d9e45d/capsules/tile_kernels/quant/per_token_cast_to_e5m6_kernel.py/L67-L156__get_per_token_cast_to_e5m6_kernel__6b926c0af30568a7.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "b41cc5e1a2049573948a8ec6954ae833c22cacb62b5cb0fa739902ad0b919939",
+    "source_map": {
+      "end_line": 156,
+      "logical_path": "tile_kernels/quant/per_token_cast_to_e5m6_kernel.py",
+      "start_line": 67
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "CastInputConfig",
+    "CastOutputConfig",
+    "T",
+    "align",
+    "float_to_e5m6",
+    "get_sf_and_inv_e5m6",
+    "get_sf_shape",
+    "math",
+    "store_sf",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "a571498aa3b14911"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "tilekernels-36d9e45d/recipes/6b926c0af30568a7/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "CastInputConfig",
+    "CastOutputConfig",
+    "align",
+    "get_sf_shape",
+    "store_sf"
+  ],
+  "upstream": {
+    "commit": "36d9e45d38e204ebb87e6f6e833821eee0482fe5",
+    "end_line": 156,
+    "git_blob": "0956c1314b6d62cafca55d169744f0e2711b6536",
+    "qualname": "get_per_token_cast_to_e5m6_kernel",
+    "relative_path": "tile_kernels/quant/per_token_cast_to_e5m6_kernel.py",
+    "selected_source_sha256": "80524087e60a2b0377cef3ff650782b26ced101056938a26af9574a4a20f4e27",
+    "source_sha256": "fed9295763ac4000a790afed426cb23f8893576c8bfa8ad2ae24ae896a988305",
+    "start_line": 67
+  }
+}

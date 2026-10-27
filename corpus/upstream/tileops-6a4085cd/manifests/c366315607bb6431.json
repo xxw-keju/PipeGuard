@@ -1,0 +1,84 @@
+{
+  "candidate_id": "c366315607bb6431",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/attention/deepseek_nsa_cmp_fwd.py/L44-L157__nsa_cmp_fwd_varlen_kernel._nsa_cmp_fwd_varlen_func__c366315607bb6431.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6131518267e23d2c308bb3034b4fb82fea22087cce2cbf5814ec699a50110368",
+    "source_map": {
+      "end_line": 157,
+      "logical_path": "src/tileops/kernels/attention/deepseek_nsa_cmp_fwd.py",
+      "start_line": 44
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "LOG2E",
+    "T",
+    "accum_dtype",
+    "bc",
+    "bk",
+    "bs",
+    "bv",
+    "c_seq_len",
+    "chunk_offsets_shape",
+    "dim_v",
+    "dtype",
+    "group",
+    "head_kv",
+    "k_cmp_shape",
+    "lse_shape",
+    "o_shape",
+    "offsets_shape",
+    "q_shape",
+    "scale_log2",
+    "tilelang",
+    "token_indices_shape",
+    "v_cmp_shape"
+  ],
+  "kernel_dependencies": [
+    "da2e577d1ba64ac9"
+  ],
+  "lexical_parents": [
+    "_nsa_cmp_fwd_varlen_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/c366315607bb6431/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "bc",
+    "bk",
+    "bs",
+    "bv",
+    "c_seq_len",
+    "chunk_offsets_shape",
+    "dim_v",
+    "dtype",
+    "group",
+    "head_kv",
+    "k_cmp_shape",
+    "lse_shape",
+    "o_shape",
+    "offsets_shape",
+    "q_shape",
+    "scale_log2",
+    "token_indices_shape",
+    "v_cmp_shape"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 157,
+    "git_blob": "cfde0213f1d9ef2e77573bb59d718884513d9703",
+    "qualname": "_nsa_cmp_fwd_varlen_kernel._nsa_cmp_fwd_varlen_func",
+    "relative_path": "src/tileops/kernels/attention/deepseek_nsa_cmp_fwd.py",
+    "selected_source_sha256": "f9737b5d2a3eb9861df02e9d85ed6b2caa9f62c3aca49be55a02941b238c668c",
+    "source_sha256": "dfbeecb48aca9c8b171dbd46a398ff6da1bba27843f3297c1b6da962129a0d46",
+    "start_line": 44
+  }
+}

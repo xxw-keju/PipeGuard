@@ -1,0 +1,43 @@
+{
+  "candidate_id": "f2b523b47dace4a4",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/nan_to_num.py/L28-L39__nan_to_num_func__f2b523b47dace4a4.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "edfd4c8a9c832406be3cc918ccc6741048167944ecf6d202ca7e5e6d68022197",
+    "source_map": {
+      "end_line": 39,
+      "logical_path": "src/flag_gems/ops/nan_to_num.py",
+      "start_line": 28
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_isnan",
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/f2b523b47dace4a4/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 39,
+    "git_blob": "891242978fc0b29420d383d32a544f2d3c388133",
+    "qualname": "nan_to_num_func",
+    "relative_path": "src/flag_gems/ops/nan_to_num.py",
+    "selected_source_sha256": "e793ba1e634aa8256de741f1722b35d1d9c30f506823d76b0ebf354afa1b2976",
+    "source_sha256": "98aa6e1d1296e15343e349e03948d4427849b5a5777ec9d7de464416c16eb27e",
+    "start_line": 28
+  }
+}

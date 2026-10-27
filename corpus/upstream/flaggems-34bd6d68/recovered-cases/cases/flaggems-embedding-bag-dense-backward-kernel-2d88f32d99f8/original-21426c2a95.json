@@ -1,0 +1,117 @@
+{
+  "arguments": {
+    "dtype": "torch.bfloat16",
+    "embedding_dim": 16,
+    "num_bags": 3
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-embedding-bag-dense-backward-kernel-2d88f32d99f8-original-21426c2a95",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:grad_ptr",
+        "1": "global:indices_ptr",
+        "2": "global:offset2bag_ptr",
+        "3": "global:bag_size_ptr",
+        "4": "global:grad_weight_ptr",
+        "5": "global:per_sample_weights_ptr"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "BLOCK_D": 16,
+      "EMBED_DIM": 16,
+      "has_per_sample_weights": false,
+      "mode": 1,
+      "num_weights": 1,
+      "padding_idx": 0,
+      "scale_grad_by_freq": 1
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "num_ctas": 1,
+      "num_stages": 3,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "bag_size_ptr": "*i64",
+      "grad_ptr": "*bf16",
+      "grad_weight_ptr": "*bf16",
+      "indices_ptr": "*i64",
+      "offset2bag_ptr": "*i64",
+      "per_sample_weights_ptr": "*bf16"
+    }
+  },
+  "evidence": [
+    "flaggems-launch-e6fb109e842c1e45",
+    "flaggems-test-89ba5a8f77be9240",
+    "source-dd038b7dffc2de68"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-embedding-bag-dense-backward-kernel-2d88f32d99f8",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_embedding_bag_dense_backward.py:9-86#test_embedding_bag_dense_backward",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ],
+  "workload_recovery": {
+    "method": "static-source-and-case-heuristic-v1",
+    "notes": [
+      "All scalar parameters are compile-time specialized.",
+      "Pointer types derive from source use, parameter names, and the case dtype.",
+      "The recovered workload checks CTA (0,0,0) with a one-CTA launch and is not evidence for the original full launch grid."
+    ],
+    "original_case_path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/corpus/upstream/suite3/kernels/triton/flaggems/flaggems-embedding-bag-dense-backward-kernel-2d88f32d99f8/cases/original-21426c2a95.json",
+    "status": "HEURISTIC"
+  }
+}

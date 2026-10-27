@@ -1,0 +1,56 @@
+{
+  "candidate_id": "1e6f04a66a270721",
+  "candidate_kind": "HEURISTICS_JIT",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/flash_kernel.py/L766-L1106__flash_fwd_splitkv_kernel__1e6f04a66a270721.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "a4242b89ce1d7b7c9940cfd747cb319eee64567a86b85e11874d8eec0a85ecaa",
+    "source_map": {
+      "end_line": 1106,
+      "logical_path": "src/flag_gems/ops/flash_kernel.py",
+      "start_line": 766
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.heuristics",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "apply_alibi",
+    "apply_mask",
+    "apply_softcap",
+    "block_m_splitkv_heuristic_spec_args",
+    "block_n_splitkv_heuristic_spec_args",
+    "flash_fwd_splitkv_kernel_heur_block_k",
+    "is_even_mn_spec_args",
+    "libentry",
+    "softmax_rescale",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "1eabb313f9e7c60e",
+    "376b8adb30b50d8a",
+    "3d5a47c1346aa2aa",
+    "7d211f10de10da69"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/1e6f04a66a270721/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 1106,
+    "git_blob": "134075b148126a010734e49effedc554da801b68",
+    "qualname": "flash_fwd_splitkv_kernel",
+    "relative_path": "src/flag_gems/ops/flash_kernel.py",
+    "selected_source_sha256": "1ceadb16679ae943e36dea64adcacaab1346143b86d7d082d9d15c93666b6ef6",
+    "source_sha256": "eef0202e6c0ed08bef8098adede1a603c63354c54b54a19414e210b675157265",
+    "start_line": 766
+  }
+}

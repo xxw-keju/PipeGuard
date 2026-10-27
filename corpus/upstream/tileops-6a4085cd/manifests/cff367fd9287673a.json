@@ -1,0 +1,68 @@
+{
+  "candidate_id": "cff367fd9287673a",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/grouped_gemm/grouped_gemm.py/L36-L182__grouped_gemm_kernel._grouped_gemm_func__cff367fd9287673a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "bde25b6539c123bca779419c63bb9ff726af53fb56c581b49c0cf467d55ef89d",
+    "source_map": {
+      "end_line": 182,
+      "logical_path": "src/tileops/kernels/grouped_gemm/grouped_gemm.py",
+      "start_line": 36
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "GroupTiling",
+    "K",
+    "N",
+    "T",
+    "accum_dtype",
+    "batch_count",
+    "batch_sum",
+    "dtype",
+    "math",
+    "tilelang",
+    "transpose_a",
+    "transpose_b"
+  ],
+  "kernel_dependencies": [
+    "3b4ffdcaa8835642",
+    "660215de39c7a280"
+  ],
+  "lexical_parents": [
+    "_grouped_gemm_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/cff367fd9287673a/unresolved.json",
+    "tileops-6a4085cd/recipes/cff367fd9287673a/tileops-6a4085cd-root-cff367fd9287673a-boundary-58e6b8f685-recipe.json",
+    "tileops-6a4085cd/recipes/cff367fd9287673a/tileops-6a4085cd-root-cff367fd9287673a-boundary-b57e1c1945-recipe.json",
+    "tileops-6a4085cd/recipes/cff367fd9287673a/tileops-6a4085cd-root-cff367fd9287673a-boundary-f93e9fdf52-recipe.json",
+    "tileops-6a4085cd/recipes/cff367fd9287673a/tileops-6a4085cd-root-cff367fd9287673a-original-d10d8068b4-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "K",
+    "N",
+    "accum_dtype",
+    "batch_count",
+    "batch_sum",
+    "dtype",
+    "transpose_a",
+    "transpose_b"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 182,
+    "git_blob": "485bb5c7058a702cbe16d1f014b1100e29bc9062",
+    "qualname": "_grouped_gemm_kernel._grouped_gemm_func",
+    "relative_path": "src/tileops/kernels/grouped_gemm/grouped_gemm.py",
+    "selected_source_sha256": "c8c7b363469c2f902267ee888dd10d1c8846ac8a75a398864ccc268153f24434",
+    "source_sha256": "f4088f670146ec47ec8286ee246f9e8588c5f2e73226dbd0def0c658c38f04a0",
+    "start_line": 36
+  }
+}

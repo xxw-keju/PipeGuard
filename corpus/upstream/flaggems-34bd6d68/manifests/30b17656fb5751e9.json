@@ -1,0 +1,43 @@
+{
+  "candidate_id": "30b17656fb5751e9",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/flash_mla_with_kvcache_model1.py/L1211-L1296__model1_sched_kernel__30b17656fb5751e9.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "105dace1022c93522b2f55067b31f6176883960c4949c47f7e6e54e9726eda07",
+    "source_map": {
+      "end_line": 1296,
+      "logical_path": "src/flag_gems/fused/flash_mla_with_kvcache_model1.py",
+      "start_line": 1211
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "_valid_blocks_tile",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [
+    "2e55c11230ffa485"
+  ],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/30b17656fb5751e9/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 1296,
+    "git_blob": "552aece10566d0cad70167d207261018502402be",
+    "qualname": "_model1_sched_kernel",
+    "relative_path": "src/flag_gems/fused/flash_mla_with_kvcache_model1.py",
+    "selected_source_sha256": "2ed892634ce31b875c364e2e2484c8e012ac6cc213af713603376bc2b3e0649a",
+    "source_sha256": "deb75a2e20ee70e98e724a59889f8afeea09a077e27156d2299942b58aaefaaf",
+    "start_line": 1211
+  }
+}

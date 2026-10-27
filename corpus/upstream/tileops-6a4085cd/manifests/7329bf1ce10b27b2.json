@@ -1,0 +1,70 @@
+{
+  "candidate_id": "7329bf1ce10b27b2",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/logical_reduce.py/L311-L397__logical_reduce_kernel_tiled._func__7329bf1ce10b27b2.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "3692b8a059a5ebf5ed18fbb2847563908bd6fa9f4d237c7be63fae03daea705d",
+    "source_map": {
+      "end_line": 397,
+      "logical_path": "src/tileops/kernels/reduction/logical_reduce.py",
+      "start_line": 311
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "T",
+    "_pad_val",
+    "_past_n",
+    "dtype",
+    "num_tiles",
+    "op_kind",
+    "out_dtype",
+    "tile_n",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "0253ce7873ffa569",
+    "66464020f7ba8e43",
+    "6be28329d60b2a3a",
+    "b4e6db775ff73e29"
+  ],
+  "lexical_parents": [
+    "_logical_reduce_kernel_tiled"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/7329bf1ce10b27b2/unresolved.json",
+    "tileops-6a4085cd/recipes/7329bf1ce10b27b2/tileops-6a4085cd-root-7329bf1ce10b27b2-boundary-123cb4f6d7-recipe.json",
+    "tileops-6a4085cd/recipes/7329bf1ce10b27b2/tileops-6a4085cd-root-7329bf1ce10b27b2-boundary-27ddebae2d-recipe.json",
+    "tileops-6a4085cd/recipes/7329bf1ce10b27b2/tileops-6a4085cd-root-7329bf1ce10b27b2-boundary-7167cab9dd-recipe.json",
+    "tileops-6a4085cd/recipes/7329bf1ce10b27b2/tileops-6a4085cd-root-7329bf1ce10b27b2-original-3adb0216c7-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "_pad_val",
+    "_past_n",
+    "dtype",
+    "num_tiles",
+    "op_kind",
+    "out_dtype",
+    "tile_n"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 397,
+    "git_blob": "3c1be4810f285d2805a4a4748a171d971d06b0d0",
+    "qualname": "_logical_reduce_kernel_tiled._func",
+    "relative_path": "src/tileops/kernels/reduction/logical_reduce.py",
+    "selected_source_sha256": "b41c846d1f33069555dfe30d3378ce83ae79793ecdc2b213ed8ad9e878888dab",
+    "source_sha256": "9525d80d367f2e3c599e4c5024a84e839f66ccd4a65493137c111bfa426f2195",
+    "start_line": 311
+  }
+}

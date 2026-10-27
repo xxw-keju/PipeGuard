@@ -1,0 +1,41 @@
+{
+  "candidate_id": "8fa1a5b828eb1642",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/square.py/L24-L27__square_func__8fa1a5b828eb1642.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "72235c9719f6efac579522b4c48c851696bdf5eb625a9a720a0464f83679fcbf",
+    "source_map": {
+      "end_line": 27,
+      "logical_path": "src/flag_gems/ops/square.py",
+      "start_line": 24
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/8fa1a5b828eb1642/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 27,
+    "git_blob": "00441ac429b9bcc6cf2a09c4d0574363778be1c5",
+    "qualname": "square_func",
+    "relative_path": "src/flag_gems/ops/square.py",
+    "selected_source_sha256": "5f511909621a5ab74e82063e626b10ee5061aa4af9c397028f25365eab991f20",
+    "source_sha256": "86a5cbf8cd2d117f624020d74b6902bbd2fdae078500edd6daa0a9b66dcc0120",
+    "start_line": 24
+  }
+}

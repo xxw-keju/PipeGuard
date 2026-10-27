@@ -1,0 +1,73 @@
+{
+  "candidate_id": "55344679220b0e0d",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py/L367-L485__dh_recurrence_bwd_tl._func__55344679220b0e0d.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "852aeec8eb3dcfe0c448ea053b3577a05ca2e85a1d7ef8c78335ef33e3b44bba",
+    "source_map": {
+      "end_line": 485,
+      "logical_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+      "start_line": 367
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "BV",
+    "LOG2E",
+    "T",
+    "_make_dh_correction_from_carry_macro",
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_chunks",
+    "num_v_tiles",
+    "seq_len",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "c4335917839c86d7"
+  ],
+  "lexical_parents": [
+    "_dh_recurrence_bwd_tl"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/55344679220b0e0d/unresolved.json",
+    "tileops-6a4085cd/recipes/55344679220b0e0d/tileops-6a4085cd-root-55344679220b0e0d-boundary-2542e60d68-recipe.json",
+    "tileops-6a4085cd/recipes/55344679220b0e0d/tileops-6a4085cd-root-55344679220b0e0d-boundary-4739806ba8-recipe.json",
+    "tileops-6a4085cd/recipes/55344679220b0e0d/tileops-6a4085cd-root-55344679220b0e0d-boundary-dd43c27ca3-recipe.json",
+    "tileops-6a4085cd/recipes/55344679220b0e0d/tileops-6a4085cd-root-55344679220b0e0d-original-9d9824a462-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "BV",
+    "accum_dtype",
+    "batch",
+    "block_C",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_chunks",
+    "num_v_tiles",
+    "seq_len"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 485,
+    "git_blob": "8e5c33a97fe8c7c54307fd1577c5ceef698647f9",
+    "qualname": "_dh_recurrence_bwd_tl._func",
+    "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_bwd.py",
+    "selected_source_sha256": "06ef5429a675039e33428a9f4f14ea705611e7458eb9705bf0ceb6ed47a02d98",
+    "source_sha256": "a679b2910c2571827fb5c58d51facfff1dad0a4ef3e01d9870ab43ad6d71ff1a",
+    "start_line": 367
+  }
+}

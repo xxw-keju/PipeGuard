@@ -1,0 +1,65 @@
+{
+  "candidate_id": "05dd75990aa50f53",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/fp8_quant.py/L25-L60__fp8_quant_kernel._fp8_quant_fwd_func._fp8_quant_fwd_main__05dd75990aa50f53.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "3dc5f218f75940e95c15650dee3afea695ac93c4fe0238f6cbf484bfb0727b54",
+    "source_map": {
+      "end_line": 60,
+      "logical_path": "src/tileops/kernels/fp8_quant.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "batch",
+    "block_m",
+    "fp8_max",
+    "fp8_max_inv",
+    "fp8_min",
+    "in_dtype",
+    "index_dim",
+    "kv_group",
+    "out_dtype",
+    "scale_dtype",
+    "seq_len_kv"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_fp8_quant_kernel",
+    "_fp8_quant_fwd_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/05dd75990aa50f53/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "batch",
+    "block_m",
+    "fp8_max",
+    "fp8_max_inv",
+    "fp8_min",
+    "in_dtype",
+    "index_dim",
+    "kv_group",
+    "out_dtype",
+    "scale_dtype",
+    "seq_len_kv"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 60,
+    "git_blob": "67e4476262faf9db3e2b3c55cf011e2e75b054e9",
+    "qualname": "_fp8_quant_kernel._fp8_quant_fwd_func._fp8_quant_fwd_main",
+    "relative_path": "src/tileops/kernels/fp8_quant.py",
+    "selected_source_sha256": "9a978ad7d92fec6f2515f42a46c473d02332b0d8cfd0693e2dfa12034d702f25",
+    "source_sha256": "3c8558a51a1d315d44d0d49436d5548555a972e461cee6c3dbe5fe86e8f48fef",
+    "start_line": 25
+  }
+}

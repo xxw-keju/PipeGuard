@@ -1,0 +1,80 @@
+{
+  "candidate_id": "de96b43d3ff90606",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/logsumexp.py/L335-L413__logsumexp_kernel_streaming._func__de96b43d3ff90606.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "6ca813cfcd19886c988b888a4fefa07180b6a3b95dfafee5d4d71af1535a982e",
+    "source_map": {
+      "end_line": 413,
+      "logical_path": "src/tileops/kernels/reduction/logsumexp.py",
+      "start_line": 335
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "LOG2E",
+    "M",
+    "N",
+    "T",
+    "WARP_LANES",
+    "ceil",
+    "chunk",
+    "cols_per_thread",
+    "dtype",
+    "floor",
+    "num_chunks",
+    "num_warps",
+    "threads",
+    "tilelang",
+    "vec_elems",
+    "vec_groups",
+    "warp_stages"
+  ],
+  "kernel_dependencies": [
+    "3be49743bb4b3fdc",
+    "9cc9332ad6134410",
+    "cd6a7b1763efb6a0",
+    "d761da4bdffcb495"
+  ],
+  "lexical_parents": [
+    "_logsumexp_kernel_streaming"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/de96b43d3ff90606/unresolved.json",
+    "tileops-6a4085cd/recipes/de96b43d3ff90606/tileops-6a4085cd-root-de96b43d3ff90606-boundary-bd784d898f-recipe.json",
+    "tileops-6a4085cd/recipes/de96b43d3ff90606/tileops-6a4085cd-root-de96b43d3ff90606-boundary-d66a40ec04-recipe.json",
+    "tileops-6a4085cd/recipes/de96b43d3ff90606/tileops-6a4085cd-root-de96b43d3ff90606-boundary-da58423af4-recipe.json",
+    "tileops-6a4085cd/recipes/de96b43d3ff90606/tileops-6a4085cd-root-de96b43d3ff90606-original-b899826a68-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "ceil",
+    "chunk",
+    "cols_per_thread",
+    "dtype",
+    "floor",
+    "num_chunks",
+    "num_warps",
+    "threads",
+    "vec_elems",
+    "vec_groups",
+    "warp_stages"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 413,
+    "git_blob": "c058d9fc3f595d7e541677ecfaeb273794604fe5",
+    "qualname": "_logsumexp_kernel_streaming._func",
+    "relative_path": "src/tileops/kernels/reduction/logsumexp.py",
+    "selected_source_sha256": "fb98c716a0f1613561aa1451fcd0f3a683a3739630da0d4080c997eecce134e0",
+    "source_sha256": "e4657d98707c16b2e25e9eb1bde9797b626d5388a4e975d5d48c436344d33a57",
+    "start_line": 335
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "candidate_id": "c955c279da83cca6",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/elementwise/sinusoidal.py/L36-L67__make_sinusoidal_kernel.kernel__c955c279da83cca6.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "80741c9155d4579eb2f4d2b1333bf83feff670867d4c21d3151d176a6b52c013",
+    "source_map": {
+      "end_line": 67,
+      "logical_path": "src/tileops/kernels/elementwise/sinusoidal.py",
+      "start_line": 36
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "cols",
+    "d_model",
+    "dtype",
+    "half",
+    "rows",
+    "seq_len",
+    "tilelang",
+    "width"
+  ],
+  "kernel_dependencies": [
+    "4f7d463c3e99475f"
+  ],
+  "lexical_parents": [
+    "_make_sinusoidal_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/c955c279da83cca6/unresolved.json",
+    "tileops-6a4085cd/recipes/c955c279da83cca6/tileops-6a4085cd-root-c955c279da83cca6-boundary-0e1c18ff01-recipe.json",
+    "tileops-6a4085cd/recipes/c955c279da83cca6/tileops-6a4085cd-root-c955c279da83cca6-boundary-4ea55f424e-recipe.json",
+    "tileops-6a4085cd/recipes/c955c279da83cca6/tileops-6a4085cd-root-c955c279da83cca6-boundary-7f1ad53534-recipe.json",
+    "tileops-6a4085cd/recipes/c955c279da83cca6/tileops-6a4085cd-root-c955c279da83cca6-original-86acc9985f-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "cols",
+    "d_model",
+    "dtype",
+    "half",
+    "rows",
+    "seq_len",
+    "width"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 67,
+    "git_blob": "c746ab33a1aaaddd93071e1c439870abfc5aaeab",
+    "qualname": "_make_sinusoidal_kernel.kernel",
+    "relative_path": "src/tileops/kernels/elementwise/sinusoidal.py",
+    "selected_source_sha256": "9e34db601939bd22e4267b61dbb179429cc854e407b398ff504d0164702b4289",
+    "source_sha256": "6a2564ccc24d91425d695b53dcb3a78f78990d26418a1d48740905db36c64e50",
+    "start_line": 36
+  }
+}

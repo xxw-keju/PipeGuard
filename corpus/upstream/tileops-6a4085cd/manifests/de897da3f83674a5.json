@@ -1,0 +1,57 @@
+{
+  "candidate_id": "de897da3f83674a5",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/gemm/dense.py/L812-L825__splitk_reduce_kernel._splitk_reduce_func._splitk_reduce_main__de897da3f83674a5.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "f2cc2bb780db6840994e20bffb4671a4f7a7522280d2ecb9099910d553de4b23",
+    "source_map": {
+      "end_line": 825,
+      "logical_path": "src/tileops/kernels/gemm/dense.py",
+      "start_line": 812
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "_slice_sum",
+    "accum_dtype",
+    "dtype",
+    "elems_per_cta",
+    "m",
+    "n",
+    "split_k"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_splitk_reduce_kernel",
+    "_splitk_reduce_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/de897da3f83674a5/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "_slice_sum",
+    "accum_dtype",
+    "dtype",
+    "elems_per_cta",
+    "m",
+    "n",
+    "split_k"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 825,
+    "git_blob": "eddbf8bcc75a35fe8b2902263f459502259880a0",
+    "qualname": "_splitk_reduce_kernel._splitk_reduce_func._splitk_reduce_main",
+    "relative_path": "src/tileops/kernels/gemm/dense.py",
+    "selected_source_sha256": "4eef058d4629bde20c7adc0bf6214b30af169e876afc9b0473859356d695f298",
+    "source_sha256": "5c382dd03a6ec1f75bdcc0e937f6e31308068cbfdd3293a54ca639642501f1bf",
+    "start_line": 812
+  }
+}

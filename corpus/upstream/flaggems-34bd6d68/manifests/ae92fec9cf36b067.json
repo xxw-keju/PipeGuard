@@ -1,0 +1,42 @@
+{
+  "candidate_id": "ae92fec9cf36b067",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/special_legendre_polynomial_p.py/L28-L78__special_legendre_polynomial_p_forward__ae92fec9cf36b067.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "a95fd5c5419047d0b974cba49e17000cc1dc56de65d562d07693de8513e54cac",
+    "source_map": {
+      "end_line": 78,
+      "logical_path": "src/flag_gems/ops/special_legendre_polynomial_p.py",
+      "start_line": 28
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/ae92fec9cf36b067/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 78,
+    "git_blob": "1ce9412fda764e0c5df78dad882b428d697db49d",
+    "qualname": "special_legendre_polynomial_p_forward",
+    "relative_path": "src/flag_gems/ops/special_legendre_polynomial_p.py",
+    "selected_source_sha256": "55e5e4b97fa1ef24fb890229c8206f1574e12fb89c0a491c74c6b442d966ab1d",
+    "source_sha256": "d6f06e3927e709a3d6f51ff548342555b26fa1415c8654cfe589fc546d65ea30",
+    "start_line": 28
+  }
+}

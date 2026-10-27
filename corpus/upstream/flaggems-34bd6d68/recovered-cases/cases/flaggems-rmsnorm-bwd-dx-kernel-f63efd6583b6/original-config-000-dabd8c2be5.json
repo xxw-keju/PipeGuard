@@ -1,0 +1,117 @@
+{
+  "arguments": {
+    "dtype": "torch.bfloat16",
+    "shape": [
+      32,
+      128
+    ],
+    "zero_centered_gamma": false
+  },
+  "boundary": {
+    "delta": [],
+    "dimensions": []
+  },
+  "build": {},
+  "case_id": "flaggems-rmsnorm-bwd-dx-kernel-f63efd6583b6-original-5a52fccc98-config-dabd8c2be5",
+  "compile": {
+    "attrs": {},
+    "binding_evidence": {
+      "array_attributes": {},
+      "evidence_version": "triton-binding-evidence-v1",
+      "pointer_allocations": {
+        "0": "global:dx_ptr",
+        "1": "global:dz_ptr",
+        "2": "global:x_ptr",
+        "3": "global:weight_ptr",
+        "4": "global:rsigma_ptr"
+      },
+      "unit_attributes": {}
+    },
+    "constexprs": {
+      "BLOCK_COL_SIZE": 256,
+      "BLOCK_ROW_SIZE": 1,
+      "M": 32,
+      "N": 4096,
+      "zero_centered_gamma": false
+    },
+    "grid": [
+      1,
+      1,
+      1
+    ],
+    "grid_ctas": 1,
+    "options": {
+      "maxnreg": null,
+      "num_ctas": 1,
+      "num_stages": 2,
+      "num_warps": 4
+    },
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "signature": {
+      "dx_ptr": "*bf16",
+      "dz_ptr": "*bf16",
+      "rsigma_ptr": "*bf16",
+      "weight_ptr": "*bf16",
+      "x_ptr": "*bf16"
+    }
+  },
+  "evidence": [
+    "flaggems-launch-8446065c0045906d",
+    "flaggems-test-b0a97f243a4a4608",
+    "source-f68f2fded7b17945"
+  ],
+  "execution": {
+    "claim_scope": "SINGLE_CTA",
+    "engine": "maximal",
+    "selected_cta": [
+      0,
+      0,
+      0
+    ],
+    "symbol_policy": "ALL",
+    "symbols": []
+  },
+  "expected": {
+    "allowed_diagnostic_codes": [],
+    "status": "UNASSESSED"
+  },
+  "ground_truth": {
+    "class": "UNKNOWN",
+    "evidence_ids": [],
+    "method": "UNADJUDICATED",
+    "rationale": "The upstream test supplies legal input provenance, but no checker result is used as independent semantic ground truth.",
+    "status": "UNADJUDICATED"
+  },
+  "kernel_id": "flaggems-rmsnorm-bwd-dx-kernel-f63efd6583b6",
+  "kind": "ORIGINAL",
+  "origin": "upstream-test:tests/test_te_rmsnorm.py:210-250#test_te_rmsnorm_bwd",
+  "reason": "Exact source-replay specialization selected from an official FlagGems test parameter matrix; native capture is intentionally deferred until the declared toolchain is pinned. Autotune candidate 0 from src/flag_gems/runtime/backend/_nvidia/tune_configs.yaml#rmsnorm_bwd_dx.",
+  "reference": {
+    "mode": "not_run"
+  },
+  "rules": [],
+  "runnable": false,
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "flaggems_triton_3_6_toolchain",
+    "native_test_replay_materialization"
+  ],
+  "workload_recovery": {
+    "method": "static-source-and-case-heuristic-v1",
+    "notes": [
+      "All scalar parameters are compile-time specialized.",
+      "Pointer types derive from source use, parameter names, and the case dtype.",
+      "The recovered workload checks CTA (0,0,0) with a one-CTA launch and is not evidence for the original full launch grid."
+    ],
+    "original_case_path": "/mnt/project_dft/xuwen/PipeGuard-asplos/PipeGuard-tilelang2/corpus/upstream/suite3/kernels/triton/flaggems/flaggems-rmsnorm-bwd-dx-kernel-f63efd6583b6/cases/original-config-000-dabd8c2be5.json",
+    "status": "HEURISTIC"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "candidate_id": "60ab3afb7f1a8782",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/huber_loss.py/L90-L115__huber_loss_fused_kernel__60ab3afb7f1a8782.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "2af5e5611c214f27e210583d888759e7554fb866500a81c4433c3cc314cb54bd",
+    "source_map": {
+      "end_line": 115,
+      "logical_path": "src/flag_gems/ops/huber_loss.py",
+      "start_line": 90
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.libentry",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "libentry",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/60ab3afb7f1a8782/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 115,
+    "git_blob": "338891a7e85b1f53fda7fb4f0048da1e56f02d1c",
+    "qualname": "_huber_loss_fused_kernel",
+    "relative_path": "src/flag_gems/ops/huber_loss.py",
+    "selected_source_sha256": "8fb78fc0fd8044712b683db3dab1b4b20586d97c0e88fa794121735fc2a80968",
+    "source_sha256": "e306ae59123aa5aa181fabdbac4b7ad8ed09105652fa81ec0ffdf2c290e965bd",
+    "start_line": 90
+  }
+}

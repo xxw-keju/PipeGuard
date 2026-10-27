@@ -1,0 +1,65 @@
+{
+  "candidate_id": "f8972e0444ab519a",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/engram/engram_decode.py/L71-L230__engram_decode_kernel._func__f8972e0444ab519a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "b34a66cbdb8e42703004d569c140e311aa2e5e12efe61e47223f6c94516f9d74",
+    "source_map": {
+      "end_line": 230,
+      "logical_path": "src/tileops/kernels/engram/engram_decode.py",
+      "start_line": 71
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "d",
+    "d_mem",
+    "d_padded",
+    "dilation",
+    "dtype",
+    "eps",
+    "max_conv_len",
+    "tilelang",
+    "w"
+  ],
+  "kernel_dependencies": [
+    "20774224ac076791"
+  ],
+  "lexical_parents": [
+    "_engram_decode_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/f8972e0444ab519a/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "d",
+    "d_mem",
+    "d_padded",
+    "dilation",
+    "dtype",
+    "eps",
+    "max_conv_len",
+    "w"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 230,
+    "git_blob": "b48c4473430fde0db9ecfb3e44f19480f59bc7f0",
+    "qualname": "_engram_decode_kernel._func",
+    "relative_path": "src/tileops/kernels/engram/engram_decode.py",
+    "selected_source_sha256": "db543e1ab5c8c0bd7f1430d281a195e2cf34d4566ef2966a5e622a3a4a80ed4b",
+    "source_sha256": "55a301863758389f9a6c22c26a2117ec8e42ea70ab01e35a8bef7ebf1c5e7035",
+    "start_line": 71
+  }
+}

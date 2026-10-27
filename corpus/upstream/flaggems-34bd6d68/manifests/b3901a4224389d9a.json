@@ -1,0 +1,40 @@
+{
+  "candidate_id": "b3901a4224389d9a",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/experimental_ops/unsqueeze.py/L20-L50__unsqueeze_kernel__b3901a4224389d9a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "a7c631735fc5f3a0d28d301266f6f1a87dcf4a438d925375033ae46cbdaacea2",
+    "source_map": {
+      "end_line": 50,
+      "logical_path": "src/flag_gems/experimental_ops/unsqueeze.py",
+      "start_line": 20
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/b3901a4224389d9a/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 50,
+    "git_blob": "3a5ae8957ec486b4ed9b8a4cdb76df1da7be46db",
+    "qualname": "unsqueeze_kernel",
+    "relative_path": "src/flag_gems/experimental_ops/unsqueeze.py",
+    "selected_source_sha256": "a921e447ad972d92acf4d9b608f5577eb132aed5fb250af2a066c7c3c9c0ecb6",
+    "source_sha256": "ce54eb9a02bf109b0c8d3de65d88c790e2f91de107b4a1bce3f872db41193d1b",
+    "start_line": 20
+  }
+}

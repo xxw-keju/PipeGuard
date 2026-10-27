@@ -1,0 +1,65 @@
+{
+  "candidate_id": "3582f852a8cda310",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/reduction/softmax.py/L191-L316__softmax_kernel_tiled._func__3582f852a8cda310.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "47300a7f8e7e1feeadbc156a3881a8cb3694724c5657ac78fdaa8c47cd86fe60",
+    "source_map": {
+      "end_line": 316,
+      "logical_path": "src/tileops/kernels/reduction/softmax.py",
+      "start_line": 191
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "M",
+    "N",
+    "T",
+    "_needs_mask",
+    "_neg_inf",
+    "dtype",
+    "num_tiles",
+    "tile_n",
+    "tilelang",
+    "total_cols"
+  ],
+  "kernel_dependencies": [
+    "20e6dff1c04d686b",
+    "40a55c25cda83455",
+    "a36c96dfeffb3fa0",
+    "ab16c33824989769",
+    "d32569285da421fb"
+  ],
+  "lexical_parents": [
+    "_softmax_kernel_tiled"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/3582f852a8cda310/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "M",
+    "N",
+    "_needs_mask",
+    "_neg_inf",
+    "dtype",
+    "num_tiles",
+    "tile_n",
+    "total_cols"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 316,
+    "git_blob": "58e5ec5ca4f79da63bd0b58fd55e305eb38577f0",
+    "qualname": "_softmax_kernel_tiled._func",
+    "relative_path": "src/tileops/kernels/reduction/softmax.py",
+    "selected_source_sha256": "f036ec36c48c2921bf06c1e2b7669621b1227b635ba54a05a1b72518ef898201",
+    "source_sha256": "6dd6b21c5aabf92075899f8541c12d972b9a6c57ac94598c52e677603f8779e8",
+    "start_line": 191
+  }
+}

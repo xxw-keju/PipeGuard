@@ -1,0 +1,22 @@
+{
+  "bindings": {},
+  "candidate_id": "f6b6e4e09fc7c1bb",
+  "dsl": "tilelang",
+  "lowerable": false,
+  "origin": "static-discovery",
+  "recipe_id": "f6b6e4e09fc7c1bb-unresolved",
+  "schema_version": "pipeguard-upstream-recipe-v1",
+  "target": {
+    "arch": "sm_90a",
+    "backend": "cuda",
+    "warp_size": 32
+  },
+  "unresolved": [
+    "CastInputConfig",
+    "CastOutputConfig",
+    "concrete_specialization",
+    "get_sf_shape",
+    "load_sf",
+    "store_sf"
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "candidate_id": "d0983ba12b8e5b43",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/norm/group_norm.py/L182-L311__group_norm_kernel._func__d0983ba12b8e5b43.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "70a107a184eac969260b61ed794b2f28159a7b7da544ac02304b1ef1b83206c0",
+    "source_map": {
+      "end_line": 311,
+      "logical_path": "src/tileops/kernels/norm/group_norm.py",
+      "start_line": 182
+    }
+  },
+  "decorators": [
+    "tilelang.jit"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "C",
+    "D",
+    "D_padded",
+    "M",
+    "T",
+    "_channel_of",
+    "_holds_row_in_registers",
+    "channels_per_group",
+    "dtype",
+    "eps",
+    "make_row_reduce",
+    "make_shifted_row_reduce",
+    "num_groups",
+    "spatial_size",
+    "tilelang"
+  ],
+  "kernel_dependencies": [
+    "12bdf1010b3d921d",
+    "50b0d25f7742a376"
+  ],
+  "lexical_parents": [
+    "_group_norm_kernel"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/d0983ba12b8e5b43/unresolved.json",
+    "tileops-6a4085cd/recipes/d0983ba12b8e5b43/tileops-6a4085cd-root-d0983ba12b8e5b43-boundary-28435fb0d7-recipe.json",
+    "tileops-6a4085cd/recipes/d0983ba12b8e5b43/tileops-6a4085cd-root-d0983ba12b8e5b43-boundary-427ed64668-recipe.json",
+    "tileops-6a4085cd/recipes/d0983ba12b8e5b43/tileops-6a4085cd-root-d0983ba12b8e5b43-boundary-6678ef6617-recipe.json",
+    "tileops-6a4085cd/recipes/d0983ba12b8e5b43/tileops-6a4085cd-root-d0983ba12b8e5b43-original-10f2ee48be-recipe.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "C",
+    "D",
+    "D_padded",
+    "M",
+    "channels_per_group",
+    "dtype",
+    "eps",
+    "num_groups",
+    "spatial_size"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 311,
+    "git_blob": "35b9cbcb9c9b3b14a4a4731e168b0683ea2037d8",
+    "qualname": "_group_norm_kernel._func",
+    "relative_path": "src/tileops/kernels/norm/group_norm.py",
+    "selected_source_sha256": "c2daac997d4ec1e394e7b0245ad9b8c6c870e14805cd5fb3330050467e1b2a27",
+    "source_sha256": "cd1bed5506ce7af7f71eed7051a2d5867dfb022875cf3deb34a247a74e3fbb87",
+    "start_line": 182
+  }
+}

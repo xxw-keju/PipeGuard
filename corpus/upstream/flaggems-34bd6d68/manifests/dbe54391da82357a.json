@@ -1,0 +1,42 @@
+{
+  "candidate_id": "dbe54391da82357a",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/ops/reciprocal.py/L25-L28__reciprocal_func__dbe54391da82357a.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "1eafb49fe7ca2fe50179a789487a776c616c72964b80df159b9fcb3f4bbc6734",
+    "source_map": {
+      "end_line": 28,
+      "logical_path": "src/flag_gems/ops/reciprocal.py",
+      "start_line": 25
+    }
+  },
+  "decorators": [
+    "flag_gems.utils.pointwise_dynamic",
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "pointwise_dynamic",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/dbe54391da82357a/unresolved.json"
+  ],
+  "role": "UNCLASSIFIED",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 28,
+    "git_blob": "421b321554cdf5658a4e509e69b7153fac8b8f98",
+    "qualname": "reciprocal_func",
+    "relative_path": "src/flag_gems/ops/reciprocal.py",
+    "selected_source_sha256": "55028db65fd9f3e9020e70f3a0a00c57e448358ceb2681561063f3daac52a0d0",
+    "source_sha256": "de6f0ab29edeae015606afb920a1aed4eec62172f4e115483648ba62c0a105d9",
+    "start_line": 25
+  }
+}

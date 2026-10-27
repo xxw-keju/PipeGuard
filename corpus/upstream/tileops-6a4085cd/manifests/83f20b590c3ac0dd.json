@@ -1,0 +1,67 @@
+{
+  "candidate_id": "83f20b590c3ac0dd",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/pool/mean_pooling.py/L28-L83__mean_pooling_kernel._mean_pooling_func._mean_pooling_main__83f20b590c3ac0dd.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "4725138d9d89e4c85d96a4e8177ebd916900e47d637e91dca3cdb754efd928c9",
+    "source_map": {
+      "end_line": 83,
+      "logical_path": "src/tileops/kernels/pool/mean_pooling.py",
+      "start_line": 28
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch_size",
+    "bdim",
+    "chunk_size",
+    "chunks_per_batch",
+    "dim",
+    "dtype",
+    "heads",
+    "seq_len",
+    "seq_num",
+    "threads",
+    "use_offsets"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_mean_pooling_kernel",
+    "_mean_pooling_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/83f20b590c3ac0dd/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch_size",
+    "bdim",
+    "chunk_size",
+    "chunks_per_batch",
+    "dim",
+    "dtype",
+    "heads",
+    "seq_len",
+    "seq_num",
+    "threads",
+    "use_offsets"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 83,
+    "git_blob": "c319a35347b3e772736893902eb2322cf81c0b7b",
+    "qualname": "_mean_pooling_kernel._mean_pooling_func._mean_pooling_main",
+    "relative_path": "src/tileops/kernels/pool/mean_pooling.py",
+    "selected_source_sha256": "63e499a180aad9bb158ccef50e5777449808258538241037dd514f55c4925d2a",
+    "source_sha256": "d0c2ed8c0e63017ce74a1e5f885f0745bf49e3a9907f80d22f1bc06ddf136465",
+    "start_line": 28
+  }
+}

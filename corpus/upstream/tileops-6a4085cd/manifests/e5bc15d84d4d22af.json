@@ -1,0 +1,70 @@
+{
+  "candidate_id": "e5bc15d84d4d22af",
+  "candidate_kind": "PRIMFUNC",
+  "capsule": {
+    "path": "tileops-6a4085cd/capsules/src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py/L906-L1000__prefill_recompute_w_u_from_A_bthd_tl._func.recompute_w_u_from_A_bthd__e5bc15d84d4d22af.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "b465b04506e4942ccc8041dcb58326f43425c69a23e65914abc8082993fe10cd",
+    "source_map": {
+      "end_line": 1000,
+      "logical_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+      "start_line": 906
+    }
+  },
+  "decorators": [
+    "tilelang.language.prim_func"
+  ],
+  "dsl": "tilelang",
+  "free_names": [
+    "T",
+    "accum_dtype",
+    "batch",
+    "block_c",
+    "block_d",
+    "chunk_size",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_k_tiles",
+    "num_v_tiles",
+    "seq_len",
+    "threads",
+    "tilelang"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [
+    "_prefill_recompute_w_u_from_A_bthd_tl",
+    "_func"
+  ],
+  "recipe_paths": [
+    "tileops-6a4085cd/recipes/e5bc15d84d4d22af/unresolved.json"
+  ],
+  "role": "HELPER",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [
+    "accum_dtype",
+    "batch",
+    "block_c",
+    "block_d",
+    "chunk_size",
+    "dim_k",
+    "dim_v",
+    "dtype",
+    "head",
+    "num_k_tiles",
+    "num_v_tiles",
+    "seq_len",
+    "threads"
+  ],
+  "upstream": {
+    "commit": "6a4085cddb32f9a0f22bc8c99c2bbadbceff7226",
+    "end_line": 1000,
+    "git_blob": "f17f222201df2565859754ee60b1ae9c1589ab6f",
+    "qualname": "_prefill_recompute_w_u_from_A_bthd_tl._func.recompute_w_u_from_A_bthd",
+    "relative_path": "src/tileops/kernels/linear_attention/gated_deltanet/gated_deltanet_prefill.py",
+    "selected_source_sha256": "34e56222315be599269f4d8d6c9cda006ab078aa741aada432ae4723d8e1d4dd",
+    "source_sha256": "df6831a09ec97ec92771e1e4aac4f69560b8990dce47f811f0ea25a32cf9d2f1",
+    "start_line": 906
+  }
+}

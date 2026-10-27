@@ -1,0 +1,41 @@
+{
+  "candidate_id": "a02139d66eb35dcf",
+  "candidate_kind": "JIT_ENTRY",
+  "capsule": {
+    "path": "flaggems-34bd6d68/capsules/src/flag_gems/fused/swiglu.py/L71-L129__dswiglu_kernel__a02139d66eb35dcf.py",
+    "resolver": "pipeguard_resolve",
+    "sha256": "ef02c7ea2dca1341f1415eba5ad402f85cd704c31194418640534e226f750d9a",
+    "source_map": {
+      "end_line": 129,
+      "logical_path": "src/flag_gems/fused/swiglu.py",
+      "start_line": 71
+    }
+  },
+  "decorators": [
+    "triton.jit"
+  ],
+  "dsl": "triton",
+  "free_names": [
+    "sigmoid",
+    "tl",
+    "triton"
+  ],
+  "kernel_dependencies": [],
+  "lexical_parents": [],
+  "recipe_paths": [
+    "flaggems-34bd6d68/recipes/a02139d66eb35dcf/unresolved.json"
+  ],
+  "role": "ROOT",
+  "schema_version": "pipeguard-upstream-capsule-v1",
+  "unresolved_bindings": [],
+  "upstream": {
+    "commit": "34bd6d68928c8b0039c42987840929da52aa6a62",
+    "end_line": 129,
+    "git_blob": "9e1193915c34bc311283f6efcc36b591eb30d3a8",
+    "qualname": "dswiglu_kernel",
+    "relative_path": "src/flag_gems/fused/swiglu.py",
+    "selected_source_sha256": "07750b083c78ea1e001eea676380eda36b1c125b1ff10923128be7bfb6a7aaf2",
+    "source_sha256": "ed648c3a568b80b2650d92255bd1f0f58be873c7e7d8c7b3c91feeb6c4347cc4",
+    "start_line": 71
+  }
+}
