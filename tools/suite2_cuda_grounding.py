@@ -18,9 +18,13 @@ Statuses:
                    pattern hit.
 
 The built-in default table was derived by inspecting the lowered artifacts
-of the suite2-210 freeze (see suite/suite2/ADMISSION-GATES.md for what this
-text-level gate can and cannot establish; the authoritative grounding is the
-capture snapshot plus execution evidence). Override or extend it with
+of the suite2-210 freeze and updated for the 2026-10 structural-diversity
+redesign (suite/suite2/REDESIGN-TILELANG.md, REDESIGN-TRITON.md): with five
+deliberately distinct protocol skeletons per cell, each family rule is the
+*intersection* of what all five variants must exhibit (see
+suite/suite2/ADMISSION-GATES.md for what this text-level gate can and cannot
+establish; the authoritative grounding is the capture snapshot plus execution
+evidence). Override or extend it with
 ``--config rules.json`` (same shape as ``--dump-config`` output; a family
 key present in the override replaces the built-in rule for that family).
 
@@ -52,63 +56,84 @@ def rule(required: list[tuple[str, str, bool]], forbidden: list[tuple[str, str, 
 
 
 # Family table. Keys: "<dsl>:<primitive>:<result_class>", with "<dsl>:<primitive>:*"
-# as fallback. Patterns were derived from (and verified against all five
-# variants of) the suite2-210 freeze lowered artifacts.
+# as fallback. Patterns were derived from the suite2-210 freeze lowered
+# artifacts and reworked for the structural-diversity redesign
+# (REDESIGN-TILELANG.md / REDESIGN-TRITON.md): each rule is the intersection
+# of all five per-cell skeletons, verified against the redesigned recapture.
 DEFAULT_RULES: dict[str, dict[str, Any]] = {
     # ---------------- tilelang (kernel.cu) ----------------
     # The labeled construct for Barrier is __syncthreads itself. SAFE must
     # have it; SYNC_HAZARD keeps it (the hazard is divergent/conditional
-    # execution, which text matching cannot establish); DATA_HAZARD must not
-    # have one *between the conflicting accesses* — position is not checkable
-    # at text level, so the forbid is advisory (NEEDS_REVIEW, never FAIL).
+    # execution, which text matching cannot establish). DATA_HAZARD variants
+    # may legitimately contain a *non-repairing* barrier (too late, wrong
+    # scope, or the mbarrier-init barrier), so no forbid applies; position is
+    # not checkable at text level.
     "tilelang:Barrier:SAFE": rule([("syncthreads", r"__syncthreads\s*\(", True)]),
     "tilelang:Barrier:SYNC_HAZARD": rule([("syncthreads", r"__syncthreads\s*\(", True)]),
-    "tilelang:Barrier:DATA_HAZARD": rule(
-        [("kernel_entry", r"__global__\s+void", True)],
-        [("syncthreads", r"__syncthreads\s*\(", False)],
-    ),
-    # Memory: plain global accesses; only the SYNC_HAZARD class carries a
-    # named construct (the misplaced/divergent barrier).
+    "tilelang:Barrier:DATA_HAZARD": rule([("kernel_entry", r"__global__\s+void", True)]),
+    # Memory: plain global/shared accesses. SYNC_HAZARD's labeled construct
+    # is *some* synchronization that fails (CTA barrier, named partial
+    # barrier, or mbarrier wait). DATA_HAZARD may carry a non-repairing
+    # barrier (see Barrier above), so no forbid.
     "tilelang:Memory:SAFE": rule([("kernel_entry", r"__global__\s+void", True)]),
-    "tilelang:Memory:DATA_HAZARD": rule(
-        [("kernel_entry", r"__global__\s+void", True)],
-        [("syncthreads", r"__syncthreads\s*\(", False)],
-    ),
-    "tilelang:Memory:SYNC_HAZARD": rule([("syncthreads", r"__syncthreads\s*\(", True)]),
+    "tilelang:Memory:DATA_HAZARD": rule([("kernel_entry", r"__global__\s+void", True)]),
+    "tilelang:Memory:SYNC_HAZARD": rule([
+        ("sync_construct", r"__syncthreads\s*\(|__sync_thread_partial\(|\.wait\(", True),
+    ]),
     # mbarrier family: mbarrier intrinsics must survive in kernel.cu.
+    # DATA_HAZARD variants include missing-wait and dead-guarded protocols,
+    # so only the barrier allocation (init) is common to all five.
+    "tilelang:mbarrier:DATA_HAZARD": rule([("mbarrier_init", r"\.init\(", True)]),
     "tilelang:mbarrier:*": rule([
         ("mbarrier_init", r"\.init\(", True),
         ("mbarrier_arrive", r"\.arrive\(\)", True),
         ("mbarrier_wait", r"\.wait\(", True),
         ("fence_barrier_init", r"tl::fence_barrier_init", True),
     ]),
-    "tilelang:TMA:*": rule([
+    # TMA: the suite has both load-side (mbarrier-completed) and store-side
+    # (tma_store_wait-completed) variants; DATA_HAZARD includes wait-removed
+    # idioms, so only the TMA op itself is common to the hazard cell.
+    "tilelang:TMA:SAFE": rule([
+        ("tma_op", r"tl::tma_(load|store)\(", True),
+        ("completion_wait", r"\.wait\(|tl::tma_store_wait", True),
+    ]),
+    "tilelang:TMA:DATA_HAZARD": rule([("tma_op", r"tl::tma_(load|store)\(", True)]),
+    "tilelang:TMA:SYNC_HAZARD": rule([
         ("tma_load", r"tl::tma_load\(", True),
-        ("expect_transaction", r"\.expect_transaction\(", True),
         ("mbarrier_init", r"\.init\(", True),
         ("mbarrier_wait", r"\.wait\(", True),
     ]),
-    "tilelang:cp.async:*": rule([
+    # cp.async: DATA_HAZARD includes commit-without-wait idioms (no wait);
+    # SYNC_HAZARD includes wait-before-commit / divergent-commit idioms
+    # (no unconditional commit).
+    "tilelang:cp.async:SAFE": rule([
         ("cp_async_issue", r"tl::cp_async_gs<", True),
         ("cp_async_commit", r"tl::cp_async_commit\(", True),
         ("cp_async_wait", r"tl::cp_async_wait<", True),
+    ]),
+    "tilelang:cp.async:DATA_HAZARD": rule([
+        ("cp_async_issue", r"tl::cp_async_gs", True),
+        ("cp_async_commit", r"tl::cp_async_commit|cp\.async\.commit_group", True),
+    ]),
+    "tilelang:cp.async:SYNC_HAZARD": rule([
+        ("cp_async_issue", r"tl::cp_async_gs", True),
+        ("cp_async_wait", r"tl::cp_async_wait|cp\.async\.wait_group", True),
     ]),
     "tilelang:WGMMA:*": rule([
         ("wgmma_issue", r"tl::wgmma_", True),
         ("warpgroup_fence_operand", r"tl::warpgroup_fence_operand", True),
     ]),
-    # Proxy: SAFE needs the async-proxy fence before the TMA store; the
-    # DATA_HAZARD polarity omits it (advisory forbid — the hazard is the
-    # *placement*, not mere presence). SYNC_HAZARD lowers through the wgmma
-    # pipeline in this suite.
+    # Proxy: SAFE needs the async-proxy fence plus a TMA op (load- and
+    # store-side variants both exist). DATA_HAZARD variants include
+    # second-generation-unfenced idioms where an earlier fence legitimately
+    # appears, so presence of a fence is not forbidden; the hazard is the
+    # *placement*, which text matching cannot establish. SYNC_HAZARD lowers
+    # through the wgmma pipeline in this suite.
     "tilelang:Proxy:SAFE": rule([
         ("fence_proxy_async", r"tl::fence_proxy_async", True),
-        ("tma_store", r"tl::tma_store", True),
+        ("tma_op", r"tl::tma_(load|store)\(", True),
     ]),
-    "tilelang:Proxy:DATA_HAZARD": rule(
-        [("tma_store", r"tl::tma_store", True)],
-        [("fence_proxy_async", r"tl::fence_proxy_async", False)],
-    ),
+    "tilelang:Proxy:DATA_HAZARD": rule([("tma_op", r"tl::tma_(load|store)\(", True)]),
     "tilelang:Proxy:SYNC_HAZARD": rule([
         ("fence_proxy_async", r"tl::fence_proxy_async", True),
         ("wgmma_issue", r"tl::wgmma_", True),
@@ -123,9 +148,11 @@ DEFAULT_RULES: dict[str, dict[str, Any]] = {
         [("store_op", r"\bttg\.local_store\b|\btt\.store\b", True)],
         [("ttg_barrier", r"\bttg\.barrier\b", False)],
     ),
-    "triton:Memory:SAFE": rule([("load", r"\btt\.load\b", True), ("store", r"\btt\.store\b", True)]),
+    # Memory: the write-write variants (disjoint/same-address WAW) carry no
+    # tt.load at all, so only the store is common to all five skeletons.
+    "triton:Memory:SAFE": rule([("store", r"\btt\.store\b", True)]),
     "triton:Memory:DATA_HAZARD": rule(
-        [("load", r"\btt\.load\b", True), ("store", r"\btt\.store\b", True)],
+        [("store", r"\btt\.store\b", True)],
         [("ttg_barrier", r"\bttg\.barrier\b", False)],
     ),
     "triton:Memory:SYNC_HAZARD": rule([
@@ -142,13 +169,19 @@ DEFAULT_RULES: dict[str, dict[str, Any]] = {
         ("arrive_barrier", r"\bttng\.arrive_barrier\b", True),
         ("wait_barrier", r"\bttng\.wait_barrier\b", True),
     ]),
-    # The mbarrier DATA_HAZARD family drives the mbarrier through a TMA
-    # transaction (barrier_expect + async TMA copy) rather than arrive ops.
+    # The redesigned mbarrier DATA_HAZARD family uses plain arrive/wait
+    # protocols (no TMA transaction); the missing-wait variant legitimately
+    # carries no wait_barrier, so only init + arrive are common to all five.
     "triton:mbarrier:DATA_HAZARD": rule([
         ("init_barrier", r"\bttng\.init_barrier\b", True),
-        ("wait_barrier", r"\bttng\.wait_barrier\b", True),
-        ("barrier_expect", r"\bttng\.barrier_expect\b", True),
+        ("arrive_barrier", r"\bttng\.arrive_barrier\b", True),
+    ]),
+    # TMA DATA_HAZARD includes missing-wait idioms, so wait_barrier is not
+    # required there; SAFE and SYNC_HAZARD always wait.
+    "triton:TMA:DATA_HAZARD": rule([
         ("tma_copy_g2l", r"\bttng\.async_tma_copy_global_to_local\b", True),
+        ("barrier_expect", r"\bttng\.barrier_expect\b", True),
+        ("init_barrier", r"\bttng\.init_barrier\b", True),
     ]),
     "triton:TMA:*": rule([
         ("tma_copy_g2l", r"\bttng\.async_tma_copy_global_to_local\b", True),
@@ -156,9 +189,20 @@ DEFAULT_RULES: dict[str, dict[str, Any]] = {
         ("init_barrier", r"\bttng\.init_barrier\b", True),
         ("wait_barrier", r"\bttng\.wait_barrier\b", True),
     ]),
-    "triton:cp.async:*": rule([
+    # cp.async DATA_HAZARD includes missing-wait idioms (no async_wait);
+    # SYNC_HAZARD includes wait-before-commit / bare-wait idioms (no
+    # async_commit_group); only SAFE requires the full issue/commit/wait set.
+    "triton:cp.async:SAFE": rule([
         ("async_copy", r"\bttg\.async_copy_global_to_local\b", True),
         ("async_commit", r"\bttg\.async_commit_group\b", True),
+        ("async_wait", r"\bttg\.async_wait\b", True),
+    ]),
+    "triton:cp.async:DATA_HAZARD": rule([
+        ("async_copy", r"\bttg\.async_copy_global_to_local\b", True),
+        ("async_commit", r"\bttg\.async_commit_group\b", True),
+    ]),
+    "triton:cp.async:SYNC_HAZARD": rule([
+        ("async_copy", r"\bttg\.async_copy_global_to_local\b", True),
         ("async_wait", r"\bttg\.async_wait\b", True),
     ]),
     "triton:WGMMA:*": rule([
