@@ -5,6 +5,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -151,6 +152,191 @@ def _tilelang_buffer_values(
     }
 
 
+_TRITON_POINTER_ALLOCATIONS = {
+    "triton-softmax": {"output_ptr": "output", "input_ptr": "input"},
+    "triton-layer-norm": {
+        "X": "x", "Y": "y", "W": "w", "B": "b", "Mean": "mean", "Rstd": "rstd",
+    },
+    "triton-grouped-gemm": {
+        "group_a_ptrs": "a_ptrs",
+        "group_b_ptrs": "b_ptrs",
+        "group_c_ptrs": "c_ptrs",
+        "group_gemm_sizes": "sizes",
+        "g_lds": "lds",
+    },
+    "triton-fused-attention": {
+        "M": "m", "desc_q": "q", "desc_k": "k", "desc_v": "v", "desc_o": "o",
+    },
+}
+_TRITON_FAULT_POINTER_ALLOCATIONS = {
+    "pipeguard_scratch": "pipeguard_scratch",
+    "pipeguard_wide": "pipeguard_auxiliary",
+}
+
+
+def _triton_scalar_bindings(case_id: str, recipe: dict[str, Any]) -> dict[str, int]:
+    kernel_id = case_id.split("-source-", 1)[0]
+    bindings = recipe.get("bindings", {})
+    if kernel_id == "triton-softmax":
+        m, n = int(bindings["M"]), int(bindings["N"])
+        return {"input_row_stride": n, "output_row_stride": n, "n_rows": m, "n_cols": n}
+    if kernel_id == "triton-layer-norm":
+        n = int(bindings["N"])
+        return {"stride": n, "N": n}
+    if kernel_id == "triton-grouped-gemm":
+        return {"group_size": len(bindings["group_sizes"])}
+    if kernel_id == "triton-fused-attention":
+        return {
+            "Z": int(bindings["batch"]),
+            "H": int(bindings["heads"]),
+            "N_CTX": int(bindings["seq_q"]),
+        }
+    return {}
+
+
+def _triton_function_arguments(ttgir: str) -> list[tuple[str, str]] | None:
+    """Ordered (loc name, type) pairs of the public TTGIR kernel arguments."""
+    match = re.search(r"tt\.func public @[\w.$-]+\((.*)\)\s*attributes\s*\{", ttgir)
+    if match is None:
+        return None
+    body = match.group(1)
+    arguments = re.findall(
+        r'%[\w.$-]+:\s*([^\s,{]+)(?:\s*\{[^{}]*\})?\s*loc\("([^"]+)"', body
+    )
+    if not arguments or len(arguments) != body.count("%"):
+        return None
+    return [(name, type_text) for type_text, name in arguments]
+
+
+def _triton_tma_descriptor_evidence(
+    raw_path: Path,
+    recipe: dict[str, Any],
+    argument_names: list[str],
+) -> tuple[dict[str, Any], dict[str, Any]] | None:
+    from triton._C.libtriton import ir, nvidia
+
+    bindings = recipe.get("bindings", {})
+    if str(bindings.get("dtype", "")) not in {"float16", "bfloat16"}:
+        return None
+    element_bytes = 2
+    try:
+        rows = int(bindings["batch"]) * int(bindings["heads"]) * int(bindings["seq_q"])
+        dim = int(bindings["dim"])
+        tile_rows = {
+            "desc_q": int(bindings["BLOCK_M"]),
+            "desc_k": int(bindings["BLOCK_N"]),
+            "desc_v": int(bindings["BLOCK_N"]),
+            "desc_o": int(bindings["BLOCK_M"]),
+        }
+    except (KeyError, TypeError, ValueError):
+        return None
+    context = ir.context()
+    ir.load_dialects(context)
+    nvidia.load_dialects(context)
+    try:
+        module = ir.parse_mlir_module(str(raw_path), context)
+        module.verify()
+    except (OSError, RuntimeError):
+        return None
+    operations: list[Any] = []
+    module.walk(operations.append)
+    entry_block = None
+    tensormap_bases: dict[int, int] = {}
+    descriptor_bases: dict[int, int] = {}
+    copies: list[tuple[int, int | None]] = []
+    unit_attributes: dict[str, list[str]] = {}
+    for index, operation in enumerate(operations):
+        name = operation.get_name()
+        if name == "ttng.tensormap_create" and operation.get_num_operands() >= 2:
+            tensormap_bases[operation.get_operand(0).id()] = operation.get_operand(1).id()
+            entry_block = operation.get_block()
+        elif (
+            name == "ttng.reinterpret_tensor_descriptor"
+            and operation.get_num_operands() == 1
+            and operation.get_num_results() == 1
+        ):
+            base = tensormap_bases.get(operation.get_operand(0).id())
+            if base is not None:
+                descriptor_bases[operation.get_result(0).id()] = base
+        elif name in ("ttng.async_tma_copy_global_to_local", "ttng.async_tma_copy_local_to_global"):
+            copies.append((index, descriptor_bases.get(operation.get_operand(0).id())))
+        elif name == "ttng.async_tma_store_wait":
+            unit_attributes[str(index)] = []
+    if entry_block is None or not copies:
+        return None
+    argument_positions = {
+        entry_block.get_argument(position).id(): position
+        for position in range(entry_block.get_num_arguments())
+    }
+    allocations = _TRITON_POINTER_ALLOCATIONS["triton-fused-attention"]
+    array_attributes: dict[str, Any] = {}
+    for index, base in copies:
+        position = argument_positions.get(base) if base is not None else None
+        if position is None or position >= len(argument_names):
+            return None
+        name = argument_names[position]
+        if name not in tile_rows:
+            return None
+        array_attributes[str(index)] = {
+            "descriptor": {
+                "allocation_id": f"global:{allocations[name]}",
+                "element_bytes": element_bytes,
+                "shape": [rows, dim],
+                "strides": [dim, 1],
+                "tile_shape": [tile_rows[name], dim],
+                "coordinate_order": [1, 0],
+            },
+        }
+    return array_attributes, unit_attributes
+
+
+def _triton_binding_evidence(
+    raw_path: Path,
+    recipe: dict[str, Any],
+    case_id: str,
+) -> dict[str, Any] | None:
+    kernel_id = case_id.split("-source-", 1)[0]
+    pointer_names = _TRITON_POINTER_ALLOCATIONS.get(kernel_id)
+    scalar_bindings = _triton_scalar_bindings(case_id, recipe)
+    if pointer_names is None or not scalar_bindings:
+        return None
+    arguments = _triton_function_arguments(raw_path.read_text(encoding="utf-8"))
+    if arguments is None:
+        return None
+    signature = recipe["compiler"].get("signature", {})
+    expected = {name for name, kind in signature.items() if kind != "constexpr"}
+    if {name for name, _ in arguments} != expected:
+        return None
+    pointer_names = {**pointer_names, **_TRITON_FAULT_POINTER_ALLOCATIONS}
+    scalar_values: dict[str, int] = {}
+    pointer_allocations: dict[str, str] = {}
+    for index, (name, type_text) in enumerate(arguments):
+        if type_text.startswith("!tt.ptr<"):
+            if name in pointer_names:
+                pointer_allocations[str(index)] = f"global:{pointer_names[name]}"
+        elif name in scalar_bindings and re.fullmatch(r"(?:i|ui)\d+|index", type_text):
+            scalar_values[str(index)] = scalar_bindings[name]
+    if len(scalar_values) != len(scalar_bindings):
+        return None
+    recipe_allocations = recipe["compiler"].get("binding_evidence", {}).get("pointer_allocations", {})
+    if recipe_allocations and set(pointer_allocations.values()) != set(recipe_allocations.values()):
+        return None
+    array_attributes: dict[str, Any] = {}
+    unit_attributes: dict[str, Any] = {}
+    if kernel_id == "triton-fused-attention":
+        descriptors = _triton_tma_descriptor_evidence(
+            raw_path, recipe, [name for name, _ in arguments]
+        )
+        if descriptors is not None:
+            array_attributes, unit_attributes = descriptors
+    return {
+        "scalar_values": scalar_values,
+        "pointer_allocations": pointer_allocations,
+        "array_attributes": array_attributes,
+        "unit_attributes": unit_attributes,
+    }
+
+
 def _diagnostic(code: str, message: str, **details: Any) -> dict[str, Any]:
     result: dict[str, Any] = {"code": code, "message": message}
     if details:
@@ -241,6 +427,17 @@ def _capture_triton(raw_path: Path, recipe: dict[str, Any], case_id: str, output
     evidence_path = None
     if evidence is not None:
         evidence = dict(evidence)
+        if not evidence.get("scalar_values"):
+            derived = _triton_binding_evidence(raw_path, recipe, case_id)
+            if derived is not None:
+                evidence["scalar_values"] = derived["scalar_values"]
+                evidence["pointer_allocations"] = derived["pointer_allocations"]
+                evidence["array_attributes"] = {
+                    **derived["array_attributes"], **evidence.get("array_attributes", {}),
+                }
+                evidence["unit_attributes"] = {
+                    **derived["unit_attributes"], **evidence.get("unit_attributes", {}),
+                }
         evidence["source_ir_sha256"] = sha256_file(raw_path)
         evidence_path = output / "binding-evidence.json"
         atomic_write(evidence_path, pretty_json(evidence))
