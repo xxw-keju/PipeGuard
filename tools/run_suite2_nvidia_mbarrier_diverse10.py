@@ -21,8 +21,8 @@ MANIFEST = ROOT / "suite/suite2/manifest.json"
 WORKER = ROOT / "tools/suite2_nvidia_worker.py"
 SANITIZER = Path("/usr/local/cuda-12.9/bin/compute-sanitizer")
 PYTHONS = {
-    "tilelang": Path("/usr/local/miniconda3/envs/tl-pg/bin/python"),
-    "triton": Path("/usr/local/miniconda3/envs/triton-pg/bin/python"),
+    "tilelang": Path(os.environ.get("PIPEGUARD_TL_PYTHON", "/home/xxw/PipeGuard-sort/envs/tl-pg/bin/python")),
+    "triton": Path(os.environ.get("PIPEGUARD_TRITON_PYTHON", "/home/xxw/PipeGuard-sort/envs/triton-pg/bin/python")),
 }
 
 

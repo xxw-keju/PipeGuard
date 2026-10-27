@@ -80,6 +80,33 @@ class GroupState:
     guaranteed_complete_frontier: dict[int, int] = field(default_factory=dict)
     fences: dict[int, set[int]] = field(default_factory=dict)
 
+    def snapshot(self) -> dict[str, Any]:
+        # JSON-safe witness form; keys are stringified and sets ordered so the
+        # diagnostic report stays serializable (see _error in this module).
+        return {
+            "protocol": self.protocol,
+            "capacity": self.capacity,
+            "completion_kinds": list(self.completion_kinds),
+            "staged": {str(k): list(v) for k, v in self.staged.items()},
+            "next_sequence": {str(k): v for k, v in self.next_sequence.items()},
+            "groups": {
+                str(owner): [{
+                    "sequence": g.sequence,
+                    "commit": g.commit,
+                    "issues": list(g.issues),
+                    "endpoints": dict(g.endpoints),
+                    "completed": sorted(g.completed),
+                } for g in items]
+                for owner, items in self.groups.items()
+            },
+            "completed_frontiers": {str(k): v for k, v in self.completed_frontiers.items()},
+            "observation_frontiers": {str(k): v for k, v in self.observation_frontiers.items()},
+            "guaranteed_complete_frontier": {
+                str(k): v for k, v in self.guaranteed_complete_frontier.items()
+            },
+            "fences": {str(k): sorted(v) for k, v in self.fences.items()},
+        }
+
 
 @dataclass(frozen=True, slots=True)
 class VisibilityCut:

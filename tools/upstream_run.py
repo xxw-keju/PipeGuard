@@ -27,8 +27,8 @@ from upstream_common import (
 )
 
 
-DEFAULT_TILELANG_PYTHON = Path("/usr/local/miniconda3/envs/tl-pg/bin/python")
-DEFAULT_TRITON_PYTHON = Path("/usr/local/miniconda3/envs/triton-pg/bin/python")
+DEFAULT_TILELANG_PYTHON = Path(os.environ.get("PIPEGUARD_TL_PYTHON", "/home/xxw/PipeGuard-sort/envs/tl-pg/bin/python"))
+DEFAULT_TRITON_PYTHON = Path(os.environ.get("PIPEGUARD_TRITON_PYTHON", "/home/xxw/PipeGuard-sort/envs/triton-pg/bin/python"))
 DEFAULT_TRITON_PTXAS = Path("/usr/local/cuda-12.9/bin/ptxas")
 
 

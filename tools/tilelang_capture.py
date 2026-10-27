@@ -26,6 +26,8 @@ from tilelang_static import (
 
 SNAPSHOT_VERSION = "tilelang-snapshot-v3"
 ADAPTER_VERSION = "tilelang-pgir-v3"
+# Whole-allocation coverage for proxy fences; matches target shared_memory_bytes.
+SHARED_WINDOW_BYTES = 65536
 WGMMA_PROOF_VERSION = "pipeguard-wgmma-stage-union-proof-v1"
 _WGMMA_SHAPE = re.compile(r"^m(\d+)n(\d+)k(\d+)$")
 _WGMMA_DTYPE_BYTES = {"fp16": 2}
@@ -879,6 +881,15 @@ class TileLangCapture:
         self.launch_grid = launch_grid
         self.selected_cta = selected_cta
         self.launch_grid_explicit = launch_grid_explicit
+        if launch_grid[0] * launch_grid[1] * launch_grid[2] > 1:
+            print(
+                "WARNING: CROSS_CTA_OUT_OF_SCOPE: launch grid "
+                f"{list(launch_grid)} has multiple CTAs but capture analyzes the "
+                f"single selected CTA {list(selected_cta)}; verdicts are per-CTA "
+                "and cross-CTA conflicts (e.g. global write/write races between "
+                "blocks) are NOT checked.",
+                file=sys.stderr,
+            )
         self.scalar_bindings: dict[Any, int] = {}
         self.pointer_table_allocations: dict[tuple[str, int], str] = {}
         functions = [func for func in module.functions.values() if isinstance(func, tirx.PrimFunc)]
@@ -1635,6 +1646,24 @@ class LaneWalker:
         pending = self.pending_proxy
         self.pending_proxy = None
         visibility_mask = pending["visibility_mask"]
+        # PTX fence.proxy.async is not region-scoped: it orders ALL prior
+        # generic-proxy accesses against subsequent async-proxy accesses.
+        # Binding the fence only to the first following async operation's
+        # exact source bytes under-approximates that guarantee and makes a
+        # second async operation after the same fence (e.g. two tma_stores
+        # from different offsets of buf_dyn_shmem) spuriously unordered.
+        # Expand each SHARED source region to its entire allocation, matching
+        # the hardware semantics for the CTA shared window.
+        expanded: list[str] = []
+        for region in regions:
+            info = self.capture.regions[region]
+            if info["address_space"] == "SHARED":
+                expanded.append(self.capture.region(
+                    info["allocation_id"], "shared", 0, SHARED_WINDOW_BYTES,
+                ))
+            else:
+                expanded.append(region)
+        regions = expanded
         for region in regions:
             address_space = self.capture.regions[region]["address_space"]
             mask_field = {
