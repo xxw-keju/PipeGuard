@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pipeguard.dev/schemas/mutation-rules-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "rules"],
+  "properties": {
+    "schema_version": {"const": "pipeguard-mutation-rules-v1"},
+    "rules": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["rule_id", "family", "name", "description", "computational_intent"],
+        "properties": {
+          "rule_id": {"type": "string", "pattern": "^MUT-[A-Z0-9-]+$"},
+          "family": {"enum": ["PIPELINE_DEPTH", "BUFFER_INIT", "ASYNC_PRODUCER", "GLOBAL_MEMORY_ORDER", "ATOMIC_MEMORY_ORDER", "COMPILER_ANALYSIS", "CONTROL_FLOW_ANALYSIS"]},
+          "name": {"type": "string", "minLength": 1},
+          "description": {"type": "string", "minLength": 1},
+          "computational_intent": {"const": "PRESERVE_OUTPUT"}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pipeguard.dev/schemas/mutation-baseline-index-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "suite_id", "suite_lock_sha256", "catalog_sha256", "counts", "results"],
+  "properties": {
+    "schema_version": {"const": "pipeguard-mutation-baseline-index-v1"},
+    "suite_id": {"type": "string", "minLength": 1},
+    "suite_lock_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "catalog_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "counts": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "lowering_status", "capture_status", "pgir_status", "pipeline_status", "numeric_status", "checker_status", "checker_verdicts", "diagnostic_codes", "result_digests"],
+        "properties": {
+          "case_id": {"type": "string", "minLength": 1},
+          "lowering_status": {"enum": ["LOWERED", "NOT_RUN", "FAILED"]},
+          "capture_status": {"enum": ["CAPTURED", "NOT_RUN", "UNSUPPORTED", "FAILED"]},
+          "pgir_status": {"enum": ["PARSED", "NOT_RUN", "UNSUPPORTED", "FAILED"]},
+          "pipeline_status": {"type": "string", "minLength": 1},
+          "numeric_status": {"type": "string", "minLength": 1},
+          "checker_status": {"type": "string", "minLength": 1},
+          "checker_verdicts": {"type": "array", "items": {"enum": ["SAFE", "DATA_HAZARD", "SYNC_HAZARD", "INCONCLUSIVE"]}},
+          "diagnostic_codes": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "result_digests": {"type": "array", "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+        }
+      }
+    }
+  }
+}

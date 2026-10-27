@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pipeguard.dev/schemas/mutation-catalog-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "suite_id", "suite_lock_sha256", "kernels", "variants", "workloads", "cases"],
+  "properties": {
+    "schema_version": {"const": "pipeguard-mutation-catalog-v1"},
+    "suite_id": {"type": "string", "minLength": 1},
+    "suite_lock_sha256": {"$ref": "#/$defs/sha256"},
+    "kernels": {"type": "array", "items": {"$ref": "#/$defs/kernel"}},
+    "variants": {"type": "array", "items": {"$ref": "#/$defs/variant"}},
+    "workloads": {"type": "array", "items": {"$ref": "#/$defs/workload"}},
+    "cases": {"type": "array", "items": {"$ref": "#/$defs/case"}}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "fileRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "delta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "before", "after"],
+      "properties": {"path": {"type": "string", "pattern": "^/"}, "before": {}, "after": {}}
+    },
+    "kernel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kernel_id", "operator_family", "family", "project", "dsl", "source_id", "candidate_id", "path", "qualname", "features", "source_sha256", "selected_source_sha256", "capsule_sha256", "variant_ids", "workload_spec_ids"],
+      "properties": {
+        "kernel_id": {"type": "string", "minLength": 1},
+        "operator_family": {"enum": ["DENSE_GEMM", "GROUPED_GEMM", "FUSED_ATTENTION", "LAYER_NORM", "SOFTMAX"]},
+        "family": {"type": "string", "minLength": 1},
+        "project": {"type": "string", "minLength": 1},
+        "dsl": {"enum": ["tilelang", "triton"]},
+        "source_id": {"type": "string", "minLength": 1},
+        "candidate_id": {"type": "string", "pattern": "^[0-9a-f]{16}$"},
+        "root_id": {"type": "string", "minLength": 1},
+        "path": {"type": "string", "minLength": 1},
+        "qualname": {"type": "string", "minLength": 1},
+        "features": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "source_sha256": {"$ref": "#/$defs/sha256"},
+        "selected_source_sha256": {"$ref": "#/$defs/sha256"},
+        "capsule_sha256": {"$ref": "#/$defs/sha256"},
+        "variant_ids": {"type": "array", "minItems": 5, "items": {"type": "string", "minLength": 1}},
+        "workload_spec_ids": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "variant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["variant_id", "kernel_id", "role", "source", "adapter_sha256", "selected_ast_sha256", "expected_computational_semantics", "adjudication"],
+      "properties": {
+        "variant_id": {"type": "string", "minLength": 1},
+        "kernel_id": {"type": "string", "minLength": 1},
+        "role": {"enum": ["ORIGINAL", "MUTANT"]},
+        "parent_variant_id": {"type": "string", "minLength": 1},
+        "mutation_rule_id": {"type": "string", "pattern": "^MUT-[A-Z0-9-]+$"},
+        "mutation_family": {"enum": ["PIPELINE_DEPTH", "BUFFER_INIT", "ASYNC_PRODUCER", "GLOBAL_MEMORY_ORDER", "ATOMIC_MEMORY_ORDER", "COMPILER_ANALYSIS", "CONTROL_FLOW_ANALYSIS"]},
+        "operation": {"enum": ["replace", "replace_all", "duplicate", "insert_before", "insert_after", "duplicate_after", "inject_canary"]},
+        "anchor_sha256": {"$ref": "#/$defs/sha256"},
+        "replacement_sha256": {"$ref": "#/$defs/sha256"},
+        "occurrence": {"type": "integer", "minimum": 1},
+        "source": {"$ref": "#/$defs/fileRef"},
+        "patch": {"$ref": "#/$defs/fileRef"},
+        "adapter_sha256": {"$ref": "#/$defs/sha256"},
+        "selected_ast_sha256": {"$ref": "#/$defs/sha256"},
+        "expected_computational_semantics": {"const": "PRESERVE_OUTPUT"},
+        "adjudication": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["class", "status", "method", "rationale"],
+          "properties": {
+            "class": {"enum": ["CORRECT", "DATA_HAZARD", "SYNC_HAZARD", "UNKNOWN"]},
+            "status": {"enum": ["CONFIRMED", "PROVISIONAL", "UNADJUDICATED", "REJECTED"]},
+            "method": {"enum": ["UPSTREAM_REFERENCE", "REFERENCE_ORACLE", "MANUAL_PROTOCOL_TRACE", "UNADJUDICATED"]},
+            "rationale": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "workload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["spec_id", "kernel_id", "role", "bindings", "delta", "boundary_dimensions", "evidence", "recipe"],
+      "properties": {
+        "spec_id": {"type": "string", "minLength": 1},
+        "kernel_id": {"type": "string", "minLength": 1},
+        "role": {"enum": ["ORIGINAL", "BOUNDARY"]},
+        "parent_spec_id": {"type": "string", "minLength": 1},
+        "bindings": {"type": "object"},
+        "delta": {"type": "array", "items": {"$ref": "#/$defs/delta"}},
+        "boundary_dimensions": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "path", "sha256", "rationale"],
+          "properties": {
+            "kind": {"enum": ["UPSTREAM_TEST", "MANIFEST_WORKLOAD", "SUITE4_DERIVED_BOUNDARY"]},
+            "path": {"type": "string", "minLength": 1},
+            "sha256": {"$ref": "#/$defs/sha256"},
+            "rationale": {"type": "string", "minLength": 1}
+          }
+        },
+        "recipe": {"$ref": "#/$defs/fileRef"}
+      }
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["case_id", "kernel_id", "variant_id", "spec_id", "selected_cta", "pipeline_status", "numeric_status", "checker_status"],
+      "properties": {
+        "case_id": {"type": "string", "minLength": 1},
+        "kernel_id": {"type": "string", "minLength": 1},
+        "variant_id": {"type": "string", "minLength": 1},
+        "spec_id": {"type": "string", "minLength": 1},
+        "selected_cta": {"const": [0, 0, 0]},
+        "pipeline_status": {"enum": ["UNASSESSED", "CAPTURED", "UNSUPPORTED", "IMPORT_ERROR", "LOWERING_ERROR", "TIMEOUT", "INFRA_ERROR"]},
+        "numeric_status": {"enum": ["NOT_RUN", "PASS", "NUMERIC_MISMATCH", "HANG", "COMPILE_ERROR", "INFRA_ERROR"]},
+        "checker_status": {"enum": ["NOT_RUN", "CHECKED", "CAPTURE_NOT_AVAILABLE", "TIMEOUT", "INFRA_ERROR"]}
+      }
+    }
+  }
+}

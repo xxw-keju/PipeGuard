@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pipeguard.dev/schemas/mutation-suite-lock-v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "suite_id", "suite_revision", "suite3", "policy", "target", "repositories", "toolchains", "mutation_rules"],
+  "properties": {
+    "schema_version": {"const": "pipeguard-mutation-suite-lock-v1"},
+    "suite_id": {"type": "string", "minLength": 1},
+    "suite_revision": {"type": "integer", "minimum": 1},
+    "suite3": {"$ref": "#/$defs/filePair"},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operator_family_count", "implementations_per_family", "kernel_count", "minimum_mutants", "minimum_mutation_families", "original_workloads", "boundary_workloads", "minimum_boundary_dimensions"],
+      "properties": {
+        "operator_family_count": {"const": 5},
+        "implementations_per_family": {"const": 2},
+        "kernel_count": {"const": 10},
+        "minimum_mutants": {"type": "integer", "minimum": 2},
+        "minimum_mutation_families": {"type": "integer", "minimum": 2},
+        "original_workloads": {"const": 1},
+        "boundary_workloads": {"const": 3},
+        "minimum_boundary_dimensions": {"type": "integer", "minimum": 2}
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["backend", "architecture", "warp_size", "selected_cta"],
+      "properties": {
+        "backend": {"const": "cuda"},
+        "architecture": {"const": "sm90"},
+        "warp_size": {"const": 32},
+        "selected_cta": {"const": [0, 0, 0]}
+      }
+    },
+    "repositories": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_id", "project", "dsl", "commit", "source_index"],
+        "properties": {
+          "source_id": {"type": "string", "minLength": 1},
+          "project": {"type": "string", "minLength": 1},
+          "dsl": {"enum": ["tilelang", "triton"]},
+          "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+          "source_index": {"$ref": "#/$defs/fileRef"}
+        }
+      }
+    },
+    "toolchains": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["toolchain_id", "dsl", "frontend_source_id", "frontend_commit", "backend_commit", "environment", "compiler_target", "adapter_version"],
+        "properties": {
+          "toolchain_id": {"type": "string", "minLength": 1},
+          "dsl": {"enum": ["tilelang", "triton"]},
+          "frontend_source_id": {"type": "string", "minLength": 1},
+          "frontend_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+          "backend_commit": {
+            "anyOf": [
+              {"type": "null"},
+              {"type": "string", "pattern": "^[0-9a-f]{40}$"}
+            ]
+          },
+          "environment": {"type": "string", "minLength": 1},
+          "compiler_target": {"enum": ["sm90", "sm_90a"]},
+          "adapter_version": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "mutation_rules": {"$ref": "#/$defs/fileRef"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "fileRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "filePair": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lock", "catalog"],
+      "properties": {
+        "lock": {"$ref": "#/$defs/fileRef"},
+        "catalog": {"$ref": "#/$defs/fileRef"}
+      }
+    }
+  }
+}
