@@ -47,11 +47,15 @@ def test_bounded_typed_completion_and_visibility_oracle():
     for wait_operands, wait_result, overwrite_operand, read_accumulator in product(
         (False, True), repeat=4
     ):
-        expected_safe = (
-            (not overwrite_operand or wait_operands)
-            and (not read_accumulator or wait_result)
-        )
-        expected = "SAFE" if expected_safe else "DATA_HAZARD"
+        # Reading the accumulator without observing RESULT_READY is a protocol
+        # violation (SYNC_HAZARD) and dominates; an operand overwrite without
+        # the operand wait is an unordered conflict (DATA_HAZARD).
+        if read_accumulator and not wait_result:
+            expected = "SYNC_HAZARD"
+        elif overwrite_operand and not wait_operands:
+            expected = "DATA_HAZARD"
+        else:
+            expected = "SAFE"
         _assert_expected(
             wgmma_module(
                 wait_operands=wait_operands,

@@ -44,8 +44,8 @@ def test_rule_catalog_is_unified_labeled_and_auditable():
 
     assert sum(case.expected_stage == "MODEL" for case in CASES) == 10
     assert sum(case.expected_verdict == "SAFE" for case in CASES) == 140
-    assert sum(case.expected_verdict == "DATA_HAZARD" for case in CASES) == 117
-    assert sum(case.expected_verdict == "SYNC_HAZARD" for case in CASES) == 23
+    assert sum(case.expected_verdict == "DATA_HAZARD" for case in CASES) == 110
+    assert sum(case.expected_verdict == "SYNC_HAZARD" for case in CASES) == 30
     assert len({case.scenario_id for case in CASES}) == 49
 
     pair_members: dict[str, list[RuleCase]] = {}

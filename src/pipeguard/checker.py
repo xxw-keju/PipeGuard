@@ -1410,6 +1410,10 @@ def _run_engine(
                     "the accumulator is read before a matching WGMMA "
                     "RESULT_READY observation"
                 ),
+                # The verdict is SYNC_HAZARD: the missing RESULT_READY
+                # observation is a protocol obligation, so carry the
+                # protocol repair rather than the data-handoff repair.
+                "repair": "restore lifecycle/generation/count/transaction invariants before this event",
             }
             return {
                 "verdict": "SYNC_HAZARD",

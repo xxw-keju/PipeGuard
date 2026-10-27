@@ -338,6 +338,9 @@ def _legacy_expectations(
                 _effect("read_accumulator", "wg", "READ", "accumulator", "read_accumulator", "read_accumulator"),
             )
             forbidden = (_edge(completion, "read_accumulator", "BOUNDARY_ORDER"),)
+            # The missing RESULT_READY observation is reported as a
+            # SYNC_HAZARD, so the witness carries the protocol repair.
+            repair = _PROTOCOL_REPAIR
         required = (
             _edge(_group_completion("WGMMA", "wg", "OPERANDS_RELEASED"), "wait_operand", "COMPLETION_TO_WAIT"),
             _edge(_group_completion("WGMMA", "wg", "RESULT_READY"), "wait_result", "COMPLETION_TO_WAIT"),
