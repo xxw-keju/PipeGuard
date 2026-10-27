@@ -1,30 +1,18 @@
-# Generated executable Suite 2 DSL kernel; do not hand edit.
+# Redesigned executable Suite 2 DSL kernel (structural-diversity rework); do not hand edit.
 from suite.frontend_pairs.sources import triton_cases as _cases
 
-CASE_SPEC = {'case_id': 's2x-triton-sync-hazard-tma-00', 'dsl': 'triton', 'result_class': 'SYNC_HAZARD', 'primitive': 'TMA', 'variant': 0, 'template_family': 'TMA-SYNC', 'scenario_id': 'TMA-SYNC:TRANSACTION-BYTES-MISMATCH', 'polarity': 'BUG', 'semantic_knobs': {'elements': 1, 'stages': 2, 'threads': 32, 'region_offset_bytes': 0, 'protocol_depth': 2, 'tilelang_tma_bytes': 16, 'triton_tma_block': 32, 'triton_tma_transfers': 1, 'wgmma_repeats': 1, 'wgmma_shape': [64, 64, 16], 'proxy_repeats': 1, 'proxy_store_shape': [64, 64]}, 'oracle': {'verdict': 'SYNC_HAZARD', 'basis': 'independent paired protocol template plus variant-specific participants/region/depth'}, 'admitted': False, 'ai_adjudication': {'status': 'PENDING_INDEPENDENT_REVIEW', 'required_evidence': ['source_and_lowered_operations', 'physical_participants', 'resource_generation_or_endpoint', 'byte_overlap_if_applicable', 'reachable_prefix', 'missing_or_present_typed_order']}}
+CASE_SPEC = {'admitted': False, 'ai_adjudication': {'required_evidence': ['source_and_lowered_operations', 'physical_participants', 'resource_generation_or_endpoint', 'byte_overlap_if_applicable', 'reachable_prefix', 'missing_or_present_typed_order'], 'status': 'PENDING_INDEPENDENT_REVIEW'}, 'case_id': 's2x-triton-sync-hazard-tma-00', 'dsl': 'triton', 'oracle': {'basis': 'structurally distinct per-variant protocol skeleton (suite2 diversity rework); hazard/safety grounded in post-pipeline TTGIR', 'verdict': 'SYNC_HAZARD'}, 'polarity': 'BUG', 'primitive': 'TMA', 'result_class': 'SYNC_HAZARD', 'scenario_id': 'TMA-SYNC:OVER-EXPECT-NEVER-COMPLETES', 'semantic_knobs': {'elements': 1, 'protocol_depth': 2, 'proxy_repeats': 1, 'proxy_store_shape': [64, 64], 'region_offset_bytes': 0, 'stages': 2, 'threads': 32, 'tilelang_tma_bytes': 16, 'triton_tma_block': 32, 'triton_tma_transfers': 1, 'wgmma_repeats': 1, 'wgmma_shape': [64, 64, 16]}, 'template_family': 'TMA-SYNC', 'variant': 0}
 
 def pipeguard_resolve():
     s = CASE_SPEC
-    family, scenario = s["template_family"], s["scenario_id"]
-    elements = s["semantic_knobs"]["elements"]
-    threads = s["semantic_knobs"]["threads"]
+    if s["primitive"] == "cp.async":
+        return _cases._s2v2_cp_async(s["variant"], s["result_class"])
+    if s["primitive"] == "TMA":
+        return _cases._s2v2_tma(s["variant"], s["result_class"])
+    if s["primitive"] == "mbarrier":
+        return _cases._s2v2_mbarrier_data_hazard(s["variant"])
     if s["primitive"] == "WGMMA":
-        return _cases._suite2_wgmma_kernel(s["variant"], s["result_class"])
+        return _cases._s2v2_wgmma(s["variant"], s["result_class"])
     if s["primitive"] == "Proxy":
-        return _cases._suite2_proxy_kernel(s["variant"], s["result_class"])
-    if s["primitive"] == "TMA" and s["result_class"] == "SYNC_HAZARD":
-        return _cases._suite2_tma_sync_kernel(s["variant"])
-    if family in {"MEM-RAW", "MEM-WAW", "CTA-HANDOFF"}:
-        return _cases._memory_kernel(family, elements, threads)
-    if family == "MB-REUSE": return _cases._mbarrier_kernel()
-    if family in {"CP-WAIT", "CP-OVERLAP"}: return _cases._cp_async_kernel(family, threads)
-    if family in {"TMA-OBSERVE", "TMA-PROXY"}: return _cases._tma_load_kernel(family, s["variant"])
-    if family == "WGMMA-ENDPOINT": return _cases._wgmma_kernel()
-    if family == "TMA-STORE-ENDPOINT": return _cases._tma_store_kernel()
-    if family == "CTA-BARRIER": return _cases._named_cta_kernel(scenario, threads)
-    if family == "MBARRIER": return _cases._named_mbarrier_kernel(scenario)
-    if family == "CP-ASYNC": return _cases._named_cp_async_kernel(scenario, threads)
-    if family == "TMA-LOAD": return _cases._named_tma_load_kernel(scenario)
-    if family == "WGMMA": return _cases._named_wgmma_kernel(scenario)
-    if family == "TMA-STORE": return _cases._named_tma_store_kernel(scenario)
-    raise KeyError(f"unsupported template family: {family}")
+        return _cases._s2v2_proxy(s["variant"], s["result_class"])
+    raise KeyError(f"unsupported primitive: {s['primitive']}")

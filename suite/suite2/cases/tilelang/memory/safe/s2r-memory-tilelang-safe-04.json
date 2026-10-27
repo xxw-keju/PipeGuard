@@ -3,46 +3,26 @@
   "dsl": "tilelang",
   "gpu": 0,
   "label_evidence": {
-    "accesses": [
-      {
-        "actor": "thread:0",
-        "byte_interval": [
-          160,
-          164
-        ],
-        "mode": "WRITE"
-      },
-      {
-        "actor": "thread:64",
-        "byte_interval": [
-          176,
-          180
-        ],
-        "mode": "WRITE"
-      }
-    ],
-    "actors": [
-      "thread:0",
-      "thread:64"
-    ],
+    "actors": "thread:0..127",
     "cta_threads": 128,
     "independent_label": "SAFE",
-    "issue": "cross-warp disjoint global writes",
+    "issue": "expected-count-1 mbarrier armed by a single elected lane publishing S[0] to all waiters",
     "numeric_is_safety_oracle": false,
-    "present_order": "none required",
-    "required_order": "none because byte intervals are disjoint",
+    "present_order": "elected arrive completes phase 0; all lanes wait before reading",
+    "required_order": "none missing",
+    "scenario": "elected-mbarrier-publication",
     "variant": 4
   },
   "pipeguard": "DEFERRED_NOT_RUN",
   "primitive": "Memory",
   "result_class": "SAFE",
   "sanitizer_tool": "racecheck",
-  "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
+  "schema_version": "pipeguard-suite2-tilelang-redesign-standalone-v2",
   "source": {
-    "bytes": 500,
-    "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/memory/safe/s2r-memory-tilelang-safe-04.py",
-    "sha256": "03a52a1d533118edee65bc4925ecf575560dcad867db4ad3c9a4c0a4eb09799f"
+    "bytes": 587,
+    "path": "suite/suite2/cases/tilelang/memory/safe/s2r-memory-tilelang-safe-04.py",
+    "sha256": "bf038fd6225af27387a793c8e4a212c5b67ada6d1ded96ff31612482befb492d"
   },
-  "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/memory/safe/s2r-memory-tilelang-safe-04.json",
+  "spec_path": "suite/suite2/cases/tilelang/memory/safe/s2r-memory-tilelang-safe-04.json",
   "variant": 4
 }

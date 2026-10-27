@@ -1,1 +1,52 @@
-{"admitted":false,"ai_adjudication":{"required_evidence":["source_and_lowered_operations","physical_participants","resource_generation_or_endpoint","byte_overlap_if_applicable","reachable_prefix","missing_or_present_typed_order"],"status":"PENDING_INDEPENDENT_REVIEW"},"case_id":"s2x-triton-safe-tma-01","dsl":"triton","oracle":{"basis":"independent paired protocol template plus variant-specific participants/region/depth","verdict":"SAFE"},"polarity":"CORRECT","primitive":"TMA","result_class":"SAFE","scenario_id":"TMA-OBSERVE","semantic_knobs":{"elements":2,"protocol_depth":3,"proxy_repeats":2,"proxy_store_shape":[64,64],"region_offset_bytes":16,"stages":3,"threads":64,"tilelang_tma_bytes":32,"triton_tma_block":32,"triton_tma_transfers":2,"wgmma_repeats":2,"wgmma_shape":[64,64,16]},"source":{"bytes":2624,"path":"corpus/suite2/executable-tma-v2/triton/safe/tma/s2x-triton-safe-tma-01.py","sha256":"d0977c19df5d272a9b6337fce8927ebe63dc812ae6378f59e5e714c1f43d1e99"},"template_family":"TMA-OBSERVE","variant":1}
+{
+ "admitted": false,
+ "ai_adjudication": {
+  "required_evidence": [
+   "source_and_lowered_operations",
+   "physical_participants",
+   "resource_generation_or_endpoint",
+   "byte_overlap_if_applicable",
+   "reachable_prefix",
+   "missing_or_present_typed_order"
+  ],
+  "status": "PENDING_INDEPENDENT_REVIEW"
+ },
+ "case_id": "s2x-triton-safe-tma-01",
+ "dsl": "triton",
+ "oracle": {
+  "basis": "structurally distinct per-variant protocol skeleton (suite2 diversity rework); hazard/safety grounded in post-pipeline TTGIR",
+  "verdict": "SAFE"
+ },
+ "polarity": "CORRECT",
+ "primitive": "TMA",
+ "result_class": "SAFE",
+ "scenario_id": "TMA-LOAD:ONE-EXPECT-TWO-TRANSFERS",
+ "semantic_knobs": {
+  "elements": 2,
+  "protocol_depth": 3,
+  "proxy_repeats": 2,
+  "proxy_store_shape": [
+   64,
+   64
+  ],
+  "region_offset_bytes": 16,
+  "stages": 3,
+  "threads": 64,
+  "tilelang_tma_bytes": 32,
+  "triton_tma_block": 32,
+  "triton_tma_transfers": 2,
+  "wgmma_repeats": 2,
+  "wgmma_shape": [
+   64,
+   64,
+   16
+  ]
+ },
+ "source": {
+  "bytes": 1740,
+  "path": "corpus/suite2/executable-tma-v2/triton/safe/tma/s2x-triton-safe-tma-01.py",
+  "sha256": "83b2f31ca645198984a392f8c941e16d41492167730d54b4ccd45c72eb35331a"
+ },
+ "template_family": "TMA-OBSERVE",
+ "variant": 1
+}

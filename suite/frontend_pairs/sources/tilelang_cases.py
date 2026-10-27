@@ -187,20 +187,161 @@ def _tma_load_case(family: str, variant: int, buggy: bool):
 
 
 def _suite2_tma_sync_case(variant: int):
-    width = 16 * (variant + 1)
+    """TMA SYNC_HAZARD cell: five structurally distinct completion-protocol bugs.
+
+    v0 expect_tx overfill: more transaction bytes armed than TMA delivers.
+    v1 two transfers, only one transfer's bytes armed on the barrier.
+    v2 missing mbarrier arrival: transfer lands but phase never completes.
+    v3 expect_tx armed but no arrive on the barrier at all.
+    v4 second-phase wait with no second-generation arrival.
+    """
 
     @T.prim_func
-    def kernel(A: T.Tensor((width,), T.uint8), Out: T.Tensor((1,), T.uint8)):
+    def kernel(A: T.Tensor((64,), T.uint8), Out: T.Tensor((1,), T.uint8)):
         with T.Kernel(1, threads=32):
             tx = T.get_thread_binding()
-            shared = T.alloc_shared((width,), T.uint8)
+            shared = T.alloc_shared((64,), T.uint8)
             barrier = T.alloc_barrier([32])
-            T.mbarrier_expect_tx(barrier, width + 16)
-            T.tma_copy(A[0:width], shared, barrier=barrier)
-            T.mbarrier_arrive(barrier)
-            T.mbarrier_wait_parity(barrier, 0)
-            if tx == 0:
-                Out[0] = shared[0]
+            if variant == 0:
+                T.mbarrier_expect_tx(barrier, 48)
+                T.tma_copy(A[0:32], shared[0:32], barrier=barrier)
+                T.mbarrier_arrive(barrier)
+                T.mbarrier_wait_parity(barrier, 0)
+                if tx == 0:
+                    Out[0] = shared[0]
+            elif variant == 1:
+                T.mbarrier_expect_tx(barrier, 32)
+                T.tma_copy(A[0:32], shared[0:32], barrier=barrier)
+                T.tma_copy(A[32:64], shared[32:64], barrier=barrier)
+                T.mbarrier_arrive(barrier)
+                T.mbarrier_wait_parity(barrier, 0)
+                if tx == 0:
+                    Out[0] = shared[63]
+            elif variant == 2:
+                T.tma_copy(A[0:32], shared[0:32], barrier=barrier)
+                T.mbarrier_wait_parity(barrier, 0)
+                if tx == 0:
+                    Out[0] = shared[0]
+            elif variant == 3:
+                T.mbarrier_expect_tx(barrier, 32)
+                T.tma_copy(A[0:32], shared[0:32], barrier=barrier)
+                T.mbarrier_wait_parity(barrier, 0)
+                if tx == 0:
+                    Out[0] = shared[0]
+            else:
+                T.tma_copy(A[0:32], shared[0:32], barrier=barrier)
+                T.mbarrier_arrive(barrier)
+                T.mbarrier_wait_parity(barrier, 0)
+                if tx == 0:
+                    Out[0] = shared[0]
+                T.mbarrier_wait_parity(barrier, 1)
+
+    return kernel
+
+
+def _suite2_tma_diverse_case(variant: int, buggy: bool):
+    """TMA DATA_HAZARD / SAFE cells: five distinct protocol skeletons each.
+
+    BUG (DATA_HAZARD):
+      v0 destination read before the mbarrier wait (classic observe bug).
+      v1 wait removed entirely after a barrier-completed load.
+      v2 tma store issued, source overwritten before tma_store_wait(read).
+      v3 tma store destination read back before tma_store_wait.
+      v4 double-buffer loads: waits only buffer0's barrier, reads buffer1.
+    CORRECT (SAFE):
+      v0 canonical load: transfer + arrive + wait + read.
+      v1 two transfers completed through one barrier, then read.
+      v2 store chain: write, cta barrier, store, wait(read), reuse source.
+      v3 two stores after one cta barrier, single store-wait.
+      v4 load -> compute -> store full pipeline.
+    """
+
+    @T.prim_func
+    def kernel(A: T.Tensor((64,), T.uint8), Out: T.Tensor((64,), T.uint8)):
+        with T.Kernel(1, threads=32):
+            tx = T.get_thread_binding()
+            S = T.alloc_shared((32,), T.uint8)
+            if buggy:
+                if variant == 0:
+                    bar = T.alloc_barrier([32])
+                    T.tma_copy(A[0:32], S, barrier=bar)
+                    T.mbarrier_arrive(bar)
+                    if tx == 0:
+                        Out[0] = S[31]
+                    T.mbarrier_wait_parity(bar, 0)
+                elif variant == 1:
+                    bar = T.alloc_barrier([32])
+                    T.tma_copy(A[0:32], S, barrier=bar)
+                    T.mbarrier_arrive(bar)
+                    if tx == 0:
+                        Out[0] = S[0]
+                elif variant == 2:
+                    S[tx] = A[tx]
+                    T.sync_threads()
+                    T.tma_copy(S, Out[0:32])
+                    if tx == 0:
+                        S[0] = T.uint8(0)
+                    T.tma_store_wait(read=True)
+                elif variant == 3:
+                    S[tx] = A[tx]
+                    T.sync_threads()
+                    T.tma_copy(S, Out[0:32])
+                    if tx == 0:
+                        Out[32] = Out[0]
+                    T.tma_store_wait(read=False)
+                else:
+                    R = T.alloc_shared((32,), T.uint8)
+                    bar = T.alloc_barrier([32])
+                    bar2 = T.alloc_barrier([32])
+                    T.tma_copy(A[0:32], S, barrier=bar)
+                    T.mbarrier_arrive(bar)
+                    T.tma_copy(A[32:64], R, barrier=bar2)
+                    T.mbarrier_arrive(bar2)
+                    T.mbarrier_wait_parity(bar, 0)
+                    if tx == 0:
+                        Out[0] = R[0]
+            else:
+                if variant == 0:
+                    bar = T.alloc_barrier([32])
+                    T.tma_copy(A[0:32], S, barrier=bar)
+                    T.mbarrier_arrive(bar)
+                    T.mbarrier_wait_parity(bar, 0)
+                    if tx == 0:
+                        Out[0] = S[0]
+                elif variant == 1:
+                    R = T.alloc_shared((32,), T.uint8)
+                    bar = T.alloc_barrier([32])
+                    T.tma_copy(A[0:32], S, barrier=bar)
+                    T.tma_copy(A[32:64], R, barrier=bar)
+                    T.mbarrier_arrive(bar)
+                    T.mbarrier_wait_parity(bar, 0)
+                    if tx == 0:
+                        Out[0] = R[31]
+                elif variant == 2:
+                    S[tx] = A[tx]
+                    T.sync_threads()
+                    T.tma_copy(S, Out[0:32])
+                    T.tma_store_wait(read=True)
+                    if tx == 0:
+                        S[0] = T.uint8(0)
+                elif variant == 3:
+                    R = T.alloc_shared((32,), T.uint8)
+                    S[tx] = A[tx]
+                    R[tx] = A[32 + tx]
+                    T.sync_threads()
+                    T.tma_copy(S, Out[0:32])
+                    T.tma_copy(R, Out[32:64])
+                    T.tma_store_wait(read=False)
+                else:
+                    R = T.alloc_shared((32,), T.uint8)
+                    bar = T.alloc_barrier([32])
+                    T.tma_copy(A[0:32], S, barrier=bar)
+                    T.mbarrier_arrive(bar)
+                    T.mbarrier_wait_parity(bar, 0)
+                    R[tx] = S[31 - tx] + T.uint8(1)
+                    T.sync_threads()
+                    T.tma_copy(R, Out[0:32])
+                    T.tma_store_wait(read=False)
 
     return kernel
 
@@ -299,7 +440,27 @@ def _wgmma_case(
 
 
 def _suite2_wgmma_case(variant: int, result_class: str):
-    repeats = variant + 1
+    """WGMMA cells: five structurally distinct completion skeletons per class.
+
+    DATA_HAZARD:
+      v0 operand A refilled before warpgroup_wait(0) (kept legacy idiom).
+      v1 two gemms, warpgroup_wait(1) retires one, operand refilled anyway.
+      v2 tma prefetch into operand A while the gemm group is still in flight.
+      v3 accumulator cleared between gemm and its warpgroup_wait.
+      v4 operand B refilled between two gemms with no intervening wait.
+    SAFE:
+      v0 gemm, warpgroup_wait(0), copy accumulator out (kept legacy idiom).
+      v1 operand refilled only after warpgroup_wait(0).
+      v2 two gemms batched behind a single warpgroup_wait(0).
+      v3 shallow wait then full wait before operand reuse.
+      v4 two gemm rounds each closed by its own warpgroup_wait(0).
+    SYNC_HAZARD:
+      v0 accumulator copied out before the warpgroup_wait (kept legacy idiom).
+      v1 no warpgroup_wait at all after the gemm.
+      v2 warpgroup_wait placed before the gemm it should cover.
+      v3 accumulator copied out between two gemms, wait only at the end.
+      v4 two gemms but only warpgroup_wait(1) before the accumulator copy.
+    """
     data_hazard = result_class == "DATA_HAZARD"
     sync_hazard = result_class == "SYNC_HAZARD"
 
@@ -322,26 +483,113 @@ def _suite2_wgmma_case(variant: int, result_class: str):
             T.mbarrier_wait_parity(barrier_a, 0)
             T.mbarrier_wait_parity(barrier_b, 0)
             T.clear(C_local)
-            for _phase in T.serial(repeats - 1):
-                T.wgmma_gemm(A_shared, B_shared, C_local)
-                T.warpgroup_wait(0)
-            T.wgmma_gemm(A_shared, B_shared, C_local)
             if data_hazard:
-                T.fill(A_shared, 1.0)
-                T.warpgroup_wait(0)
-                T.copy(C_local, Out)
+                if variant == 0:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.fill(A_shared, 1.0)
+                    T.warpgroup_wait(0)
+                    T.copy(C_local, Out)
+                elif variant == 1:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.warpgroup_wait(1)
+                    T.fill(A_shared, 1.0)
+                    T.warpgroup_wait(0)
+                    T.copy(C_local, Out)
+                elif variant == 2:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.tma_copy(A, A_shared, barrier=barrier_a)
+                    T.mbarrier_arrive(barrier_a)
+                    T.warpgroup_wait(0)
+                    T.mbarrier_wait_parity(barrier_a, 1)
+                    T.copy(C_local, Out)
+                elif variant == 3:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.clear(C_local)
+                    T.warpgroup_wait(0)
+                    T.copy(C_local, Out)
+                else:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.fill(B_shared, 2.0)
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.warpgroup_wait(0)
+                    T.copy(C_local, Out)
             elif sync_hazard:
-                T.copy(C_local, Out)
-                T.warpgroup_wait(0)
+                if variant == 0:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.copy(C_local, Out)
+                    T.warpgroup_wait(0)
+                elif variant == 1:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.copy(C_local, Out)
+                elif variant == 2:
+                    T.warpgroup_wait(0)
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.copy(C_local, Out)
+                elif variant == 3:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.copy(C_local, Out)
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.warpgroup_wait(0)
+                else:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.warpgroup_wait(1)
+                    T.copy(C_local, Out)
             else:
-                T.warpgroup_wait(0)
-                T.copy(C_local, Out)
+                if variant == 0:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.warpgroup_wait(0)
+                    T.copy(C_local, Out)
+                elif variant == 1:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.warpgroup_wait(0)
+                    T.fill(A_shared, 1.0)
+                    T.copy(C_local, Out)
+                elif variant == 2:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.warpgroup_wait(0)
+                    T.copy(C_local, Out)
+                elif variant == 3:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.warpgroup_wait(1)
+                    T.warpgroup_wait(0)
+                    T.fill(A_shared, 1.0)
+                    T.copy(C_local, Out)
+                else:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.warpgroup_wait(0)
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.warpgroup_wait(0)
+                    T.copy(C_local, Out)
 
     return kernel
 
 
 def _suite2_proxy_case(variant: int, result_class: str):
-    repeats = variant + 1
+    """Proxy cells: five structurally distinct generic<->async proxy skeletons per class.
+
+    DATA_HAZARD (InjectFenceProxy disabled by the runner for this class):
+      v0 generic fill then unfenced tma store (kept legacy idiom).
+      v1 one fence, then a second unfenced generation of fill + tma store.
+      v2 generic fill racing an in-flight tma load of the same buffer.
+      v3 generic global write then unfenced tma load reading it back.
+      v4 fragment-staged copy into shared, then unfenced tma store.
+    SAFE:
+      v0 fill, fence_proxy_async, tma store, store-wait (kept legacy idiom).
+      v1 fill, fence, tma load overwriting the same buffer, wait, read.
+      v2 one fence publishing two buffers to two tma stores.
+      v3 fence + store + store-wait(read) then generic reuse of the source.
+      v4 load -> generic compute -> fence -> store round trip.
+    SYNC_HAZARD (wgmma pipeline behind a proxy fence):
+      v0 accumulator copied out before the final warpgroup_wait (kept legacy idiom).
+      v1 no warpgroup_wait after the fenced gemm.
+      v2 warpgroup_wait before the gemm it should cover.
+      v3 copy between two gemms; wait only at the end.
+      v4 two gemms with only warpgroup_wait(1) before the copy.
+    """
     if result_class == "SYNC_HAZARD":
         @T.prim_func
         def sync_kernel(
@@ -364,26 +612,118 @@ def _suite2_proxy_case(variant: int, result_class: str):
                 T.fill(A_shared, 1.0)
                 T.fence_proxy_async()
                 T.clear(C_local)
-                for _phase in T.serial(repeats - 1):
+                if variant == 0:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.copy(C_local, Out)
+                    T.warpgroup_wait(0)
+                elif variant == 1:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.copy(C_local, Out)
+                elif variant == 2:
+                    T.warpgroup_wait(0)
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.copy(C_local, Out)
+                elif variant == 3:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.copy(C_local, Out)
                     T.wgmma_gemm(A_shared, B_shared, C_local)
                     T.warpgroup_wait(0)
-                T.wgmma_gemm(A_shared, B_shared, C_local)
-                T.copy(C_local, Out)
-                T.warpgroup_wait(0)
+                else:
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.wgmma_gemm(A_shared, B_shared, C_local)
+                    T.warpgroup_wait(1)
+                    T.copy(C_local, Out)
         return sync_kernel
 
     data_hazard = result_class == "DATA_HAZARD"
+
+    if result_class == "SAFE" and variant == 2:
+        @T.prim_func
+        def flat_store_kernel(OutFlat: T.Tensor((4096,), T.float16)):
+            with T.Kernel(1, threads=128):
+                s1 = T.alloc_shared((2048,), T.float16)
+                s2 = T.alloc_shared((2048,), T.float16)
+                T.fill(s1, T.float16(1))
+                T.fill(s2, T.float16(2))
+                T.fence_proxy_async()
+                T.tma_copy(s1, OutFlat[0:2048])
+                T.tma_copy(s2, OutFlat[2048:4096])
+                T.tma_store_wait(read=False)
+        return flat_store_kernel
 
     @T.prim_func
     def store_kernel(Out: T.Tensor((64, 64), T.float16)):
         with T.Kernel(1, threads=128):
             shared = T.alloc_shared((64, 64), T.float16)
-            for phase in T.serial(repeats):
-                T.fill(shared, T.float16(phase + 1))
-            if not data_hazard:
-                T.fence_proxy_async()
-            T.tma_copy(shared, Out)
-            T.tma_store_wait(read=False)
+            if data_hazard:
+                if variant == 0:
+                    T.fill(shared, T.float16(1))
+                    T.tma_copy(shared, Out)
+                    T.tma_store_wait(read=False)
+                elif variant == 1:
+                    T.fill(shared, T.float16(1))
+                    T.fence_proxy_async()
+                    T.tma_copy(shared, Out)
+                    T.tma_store_wait(read=False)
+                    T.fill(shared, T.float16(2))
+                    T.tma_copy(shared, Out)
+                    T.tma_store_wait(read=False)
+                elif variant == 2:
+                    staging = T.alloc_shared((64, 64), T.float16)
+                    bar = T.alloc_barrier([128])
+                    T.tma_copy(Out, shared, barrier=bar)
+                    T.mbarrier_arrive(bar)
+                    T.fill(shared, T.float16(2))
+                    T.mbarrier_wait_parity(bar, 0)
+                    T.copy(shared, staging)
+                elif variant == 3:
+                    staging = T.alloc_shared((64, 64), T.float16)
+                    bar = T.alloc_barrier([128])
+                    tx = T.get_thread_binding()
+                    if tx == 0:
+                        Out[0, 0] = T.float16(1)
+                    T.tma_copy(Out, shared, barrier=bar)
+                    T.mbarrier_arrive(bar)
+                    T.mbarrier_wait_parity(bar, 0)
+                    T.copy(shared, staging)
+                else:
+                    frag = T.alloc_fragment((64, 64), T.float16)
+                    T.clear(frag)
+                    T.copy(frag, shared)
+                    T.tma_copy(shared, Out)
+                    T.tma_store_wait(read=False)
+            else:
+                if variant == 0:
+                    T.fill(shared, T.float16(1))
+                    T.fence_proxy_async()
+                    T.tma_copy(shared, Out)
+                    T.tma_store_wait(read=False)
+                elif variant == 1:
+                    staging = T.alloc_shared((64, 64), T.float16)
+                    bar = T.alloc_barrier([128])
+                    T.fill(shared, T.float16(1))
+                    T.fence_proxy_async()
+                    T.tma_copy(Out, shared, barrier=bar)
+                    T.mbarrier_arrive(bar)
+                    T.mbarrier_wait_parity(bar, 0)
+                    T.copy(shared, staging)
+                elif variant == 3:
+                    staging = T.alloc_shared((64, 64), T.float16)
+                    T.fill(shared, T.float16(1))
+                    T.fence_proxy_async()
+                    T.tma_copy(shared, Out)
+                    T.tma_store_wait(read=True)
+                    T.copy(shared, staging)
+                else:
+                    staging = T.alloc_shared((64, 64), T.float16)
+                    bar = T.alloc_barrier([128])
+                    T.tma_copy(Out, shared, barrier=bar)
+                    T.mbarrier_arrive(bar)
+                    T.mbarrier_wait_parity(bar, 0)
+                    T.copy(shared, staging)
+                    T.fence_proxy_async()
+                    T.tma_copy(staging, Out)
+                    T.tma_store_wait(read=False)
 
     return store_kernel
 
@@ -645,7 +985,9 @@ def build_tilelang_case(family: str, scenario_id: str, variant: int, polarity: s
         return _mbarrier_case(variant, buggy)
     if family in {"CP-WAIT", "CP-OVERLAP"}:
         return _cp_async_case(family, variant, buggy)
-    if family in {"TMA-OBSERVE", "TMA-PROXY"}:
+    if family == "TMA-OBSERVE":
+        return _suite2_tma_diverse_case(variant, buggy)
+    if family == "TMA-PROXY":
         return _tma_load_case(family, variant, buggy)
     if family == "WGMMA-ENDPOINT":
         return _wgmma_case(variant, buggy)
@@ -688,40 +1030,150 @@ def write_tilelang_case(
 
 
 def _suite2_cp_async_case(variant: int, result_class: str):
-    groups = 9 + variant
-    bytes_per_group = 16
-    size = groups * bytes_per_group
+    """cp.async cells: five structurally distinct group-protocol skeletons per class.
+
+    DATA_HAZARD:
+      v0 generic store into the in-flight destination before wait_group(0).
+      v1 commit but no wait_group; cta barrier does not complete the group.
+      v2 wait_group(1) leaves the single committed group in flight; read races.
+      v3 two groups, wait_group(1) retires the older; newest destination overwritten.
+      v4 two overlapping destinations inside one commit group (async WAW).
+    SAFE:
+      v0 issue, commit, wait_group(0), then generic store + read (canonical).
+      v1 two groups, wait_group(1), touch only the retired group's destination.
+      v2 per-thread copies, wait_group(0) + cta barrier, cross-thread read.
+      v3 two disjoint destinations in one group, wait, read.
+      v4 two-stage prefetch pipeline consuming stage k under wait_group(1)/(0).
+    SYNC_HAZARD:
+      v0 wait_group issued before the commit it should cover.
+      v1 second copy issued but never committed; wait_group(0) cannot cover it.
+      v2 completion handoff via divergent mbarrier (half the arrivals missing).
+      v3 commit issued only after the wait that should have observed it.
+      v4 commit under a divergent guard: half the copies stay uncommitted.
+    """
 
     @T.prim_func
-    def kernel(A: T.Tensor((size,), T.uint8), Out: T.Tensor((1,), T.uint8)):
+    def kernel(A: T.Tensor((128,), T.uint8), Out: T.Tensor((32,), T.uint8)):
         with T.Kernel(1, threads=32):
             tx = T.get_thread_binding()
-            S = T.alloc_shared((size,), T.uint8)
-            if tx == 0:
-                for group in T.unroll(8):
-                    offset = group * bytes_per_group
-                    T.ptx_cp_async(
-                        T.access_ptr(S[offset], "w", bytes_per_group),
-                        T.access_ptr(A[offset], "r", bytes_per_group),
-                        bytes_per_group,
-                    )
+            S = T.alloc_shared((128,), T.uint8)
+            if result_class == "DATA_HAZARD":
+                if variant == 0:
+                    if tx == 0:
+                        T.ptx_cp_async(T.access_ptr(S[0], "w", 16), T.access_ptr(A[0], "r", 16), 16)
+                        T.ptx_commit_group()
+                        S[0] = T.uint8(1)
+                        T.ptx_wait_group(0)
+                        Out[0] = S[0]
+                elif variant == 1:
+                    if tx == 0:
+                        T.ptx_cp_async(T.access_ptr(S[0], "w", 16), T.access_ptr(A[0], "r", 16), 16)
+                        T.ptx_commit_group()
+                    T.sync_threads()
+                    if tx == 1:
+                        Out[0] = S[0]
+                elif variant == 2:
+                    if tx == 0:
+                        T.ptx_cp_async(T.access_ptr(S[0], "w", 16), T.access_ptr(A[0], "r", 16), 16)
+                        T.ptx_commit_group()
+                        T.ptx_wait_group(1)
+                        Out[0] = S[0]
+                elif variant == 3:
+                    if tx == 0:
+                        T.ptx_cp_async(T.access_ptr(S[0], "w", 16), T.access_ptr(A[0], "r", 16), 16)
+                        T.ptx_commit_group()
+                        T.ptx_cp_async(T.access_ptr(S[16], "w", 16), T.access_ptr(A[16], "r", 16), 16)
+                        T.ptx_commit_group()
+                        T.ptx_wait_group(1)
+                        S[16] = T.uint8(7)
+                        T.ptx_wait_group(0)
+                        Out[0] = S[16]
+                else:
+                    if tx == 0:
+                        T.ptx_cp_async(T.access_ptr(S[0], "w", 16), T.access_ptr(A[0], "r", 16), 16)
+                        T.ptx_cp_async(T.access_ptr(S[8], "w", 16), T.access_ptr(A[16], "r", 16), 16)
+                        T.ptx_commit_group()
+                        T.ptx_wait_group(0)
+                        Out[0] = S[8]
+            elif result_class == "SAFE":
+                if variant == 0:
+                    if tx == 0:
+                        T.ptx_cp_async(T.access_ptr(S[0], "w", 16), T.access_ptr(A[0], "r", 16), 16)
+                        T.ptx_commit_group()
+                        T.ptx_wait_group(0)
+                        S[0] = T.uint8(1)
+                        Out[0] = S[0]
+                elif variant == 1:
+                    if tx == 0:
+                        T.ptx_cp_async(T.access_ptr(S[0], "w", 16), T.access_ptr(A[0], "r", 16), 16)
+                        T.ptx_commit_group()
+                        T.ptx_cp_async(T.access_ptr(S[16], "w", 16), T.access_ptr(A[16], "r", 16), 16)
+                        T.ptx_commit_group()
+                        T.ptx_wait_group(1)
+                        S[0] = T.uint8(7)
+                        T.ptx_wait_group(0)
+                        Out[0] = S[16]
+                elif variant == 2:
+                    T.ptx_cp_async(T.access_ptr(S[tx * 4], "w", 4), T.access_ptr(A[tx * 4], "r", 4), 4)
                     T.ptx_commit_group()
-                if result_class != "SYNC_HAZARD":
                     T.ptx_wait_group(0)
-                for tail_group in T.unroll(groups - 8):
-                    offset = (tail_group + 8) * bytes_per_group
-                    T.ptx_cp_async(
-                        T.access_ptr(S[offset], "w", bytes_per_group),
-                        T.access_ptr(A[offset], "r", bytes_per_group),
-                        bytes_per_group,
-                    )
+                    T.sync_threads()
+                    Out[tx] = S[127 - tx * 4]
+                elif variant == 3:
+                    if tx == 0:
+                        T.ptx_cp_async(T.access_ptr(S[0], "w", 16), T.access_ptr(A[0], "r", 16), 16)
+                        T.ptx_cp_async(T.access_ptr(S[16], "w", 16), T.access_ptr(A[16], "r", 16), 16)
+                        T.ptx_commit_group()
+                        T.ptx_wait_group(0)
+                        Out[0] = S[16]
+                else:
+                    acc = T.alloc_shared((1,), T.uint8)
+                    if tx == 0:
+                        acc[0] = T.uint8(0)
+                        T.ptx_cp_async(T.access_ptr(S[0], "w", 16), T.access_ptr(A[0], "r", 16), 16)
+                        T.ptx_commit_group()
+                        T.ptx_cp_async(T.access_ptr(S[16], "w", 16), T.access_ptr(A[16], "r", 16), 16)
+                        T.ptx_commit_group()
+                        T.ptx_wait_group(1)
+                        acc[0] = S[0]
+                        T.ptx_wait_group(0)
+                        acc[0] = acc[0] + S[16]
+                        Out[0] = acc[0]
+            else:
+                if variant == 0:
+                    if tx == 0:
+                        T.ptx_cp_async(T.access_ptr(S[0], "w", 16), T.access_ptr(A[0], "r", 16), 16)
+                        T.ptx_wait_group(0)
+                        S[0] = T.uint8(1)
+                        Out[0] = S[0]
+                elif variant == 1:
+                    if tx == 0:
+                        T.ptx_cp_async(T.access_ptr(S[0], "w", 16), T.access_ptr(A[0], "r", 16), 16)
+                        T.ptx_commit_group()
+                        T.ptx_cp_async(T.access_ptr(S[16], "w", 16), T.access_ptr(A[16], "r", 16), 16)
+                        T.ptx_wait_group(0)
+                        Out[0] = S[16]
+                elif variant == 2:
+                    bar = T.alloc_barrier(32)
+                    T.ptx_cp_async(T.access_ptr(S[tx * 4], "w", 4), T.access_ptr(A[tx * 4], "r", 4), 4)
                     T.ptx_commit_group()
-                final_offset = (groups - 1) * bytes_per_group
-                if result_class == "DATA_HAZARD":
-                    S[final_offset] = T.uint8(variant + 1)
-                T.ptx_wait_group(0)
-                if result_class == "SAFE":
-                    S[final_offset] = T.uint8(variant + 1)
-                Out[0] = S[final_offset]
+                    T.ptx_wait_group(0)
+                    if tx < 16:
+                        T.barrier_arrive(bar)
+                    T.mbarrier_wait_parity(bar, 0)
+                    Out[tx] = S[127 - tx * 4]
+                elif variant == 3:
+                    if tx == 0:
+                        T.ptx_cp_async(T.access_ptr(S[0], "w", 16), T.access_ptr(A[0], "r", 16), 16)
+                        T.ptx_wait_group(0)
+                        T.ptx_commit_group()
+                        Out[0] = S[0]
+                else:
+                    T.ptx_cp_async(T.access_ptr(S[tx * 4], "w", 4), T.access_ptr(A[tx * 4], "r", 4), 4)
+                    if tx < 16:
+                        T.ptx_commit_group()
+                    T.ptx_wait_group(0)
+                    T.sync_threads()
+                    Out[tx] = S[127 - tx * 4]
 
     return kernel

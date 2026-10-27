@@ -10,7 +10,7 @@
           96,
           100
         ],
-        "mode": "WRITE"
+        "mode": "READ"
       },
       {
         "actor": "thread:64",
@@ -18,7 +18,7 @@
           96,
           100
         ],
-        "mode": "READ"
+        "mode": "WRITE"
       }
     ],
     "actors": [
@@ -33,8 +33,9 @@
       "missing_participant_count": 80
     },
     "cta_threads": 128,
+    "idiom": "WAR guarded only by a divergent CTA barrier (96 of 128 lanes arrive)",
     "independent_label": "SYNC_HAZARD",
-    "issue": "global RAW handoff guarded by a divergent CTA barrier",
+    "issue": "divergent barrier (96/128 arrivals) cannot order the WAR pair",
     "numeric_is_safety_oracle": false,
     "present_order": "only threads [0,48) execute bar.sync 0",
     "required_order": "one full-CTA barrier invocation with all 128 participants",
@@ -46,9 +47,9 @@
   "sanitizer_tool": "synccheck",
   "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
   "source": {
-    "bytes": 932,
+    "bytes": 979,
     "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/sync_hazard/s2r-memory-triton-sync-hazard-02.py",
-    "sha256": "40baea9c16b593c993f12a586b35b6f26674c7ad91035622d4d7a2e5dd4d5f2d"
+    "sha256": "d2ba221152bfc9f3a6330ace61e80edfe71a3b2fb0bdfad4c7d3cebfc9198e3c"
   },
   "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/sync_hazard/s2r-memory-triton-sync-hazard-02.json",
   "variant": 2

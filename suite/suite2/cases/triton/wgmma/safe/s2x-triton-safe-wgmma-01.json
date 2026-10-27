@@ -1,1 +1,47 @@
-{"admitted":false,"ai_adjudication":{"required_evidence":["source_and_lowered_operations","physical_participants","resource_generation_or_endpoint","byte_overlap_if_applicable","reachable_prefix","missing_or_present_typed_order"],"status":"PENDING_INDEPENDENT_REVIEW"},"case_id":"s2x-triton-safe-wgmma-01","dsl":"triton","oracle":{"basis":"independent paired protocol template plus variant-specific participants/region/depth","verdict":"SAFE"},"polarity":"CORRECT","primitive":"WGMMA","result_class":"SAFE","scenario_id":"WGMMA-ENDPOINT","semantic_knobs":{"elements":2,"protocol_depth":3,"region_offset_bytes":16,"stages":3,"threads":64,"tilelang_tma_bytes":32,"triton_tma_block":32,"triton_tma_transfers":2,"wgmma_repeats":2,"wgmma_shape":[64,64,16]},"source":{"bytes":2342,"path":"corpus/suite2/executable-wgmma-v1/triton/safe/wgmma/s2x-triton-safe-wgmma-01.py","sha256":"5e92f94a18d2a1c66c2e8002cdc6f00fab34657f0f3762d65aff5129dbcb1f4e"},"template_family":"WGMMA-ENDPOINT","variant":1}
+{
+ "admitted": false,
+ "ai_adjudication": {
+  "required_evidence": [
+   "source_and_lowered_operations",
+   "physical_participants",
+   "resource_generation_or_endpoint",
+   "byte_overlap_if_applicable",
+   "reachable_prefix",
+   "missing_or_present_typed_order"
+  ],
+  "status": "PENDING_INDEPENDENT_REVIEW"
+ },
+ "case_id": "s2x-triton-safe-wgmma-01",
+ "dsl": "triton",
+ "oracle": {
+  "basis": "structurally distinct per-variant protocol skeleton (suite2 diversity rework); hazard/safety grounded in post-pipeline TTGIR",
+  "verdict": "SAFE"
+ },
+ "polarity": "CORRECT",
+ "primitive": "WGMMA",
+ "result_class": "SAFE",
+ "scenario_id": "WGMMA:TWO-GROUPS-EACH-CONSUMED-AFTER-WAIT0",
+ "semantic_knobs": {
+  "elements": 2,
+  "protocol_depth": 3,
+  "region_offset_bytes": 16,
+  "stages": 3,
+  "threads": 64,
+  "tilelang_tma_bytes": 32,
+  "triton_tma_block": 32,
+  "triton_tma_transfers": 2,
+  "wgmma_repeats": 2,
+  "wgmma_shape": [
+   64,
+   64,
+   16
+  ]
+ },
+ "source": {
+  "bytes": 1705,
+  "path": "corpus/suite2/executable-wgmma-v1/triton/safe/wgmma/s2x-triton-safe-wgmma-01.py",
+  "sha256": "c851fdde9a3b09825d44eadb7826f919f8e42d2e779cbc0589d7c2497b1fcc1b"
+ },
+ "template_family": "WGMMA-ENDPOINT",
+ "variant": 1
+}

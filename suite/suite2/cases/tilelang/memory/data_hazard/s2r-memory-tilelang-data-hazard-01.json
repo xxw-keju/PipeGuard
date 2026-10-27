@@ -3,46 +3,26 @@
   "dsl": "tilelang",
   "gpu": 0,
   "label_evidence": {
-    "accesses": [
-      {
-        "actor": "thread:0",
-        "byte_interval": [
-          64,
-          68
-        ],
-        "mode": "WRITE"
-      },
-      {
-        "actor": "thread:64",
-        "byte_interval": [
-          64,
-          68
-        ],
-        "mode": "WRITE"
-      }
-    ],
-    "actors": [
-      "thread:0",
-      "thread:64"
-    ],
+    "actors": "thread:0..127",
     "cta_threads": 128,
     "independent_label": "DATA_HAZARD",
-    "issue": "cross-warp global WAW without ordering",
+    "issue": "shared handoff whose only barrier sits under a statically false guard (tx<0)",
     "numeric_is_safety_oracle": false,
-    "present_order": "none between distinct warps",
-    "required_order": "an ordering edge between conflicting writes",
+    "present_order": "none: the guarded __syncthreads is unreachable for every lane",
+    "required_order": "a CTA barrier between W(S[tx]) and R(S[127-tx])",
+    "scenario": "dead-code-sync",
     "variant": 1
   },
   "pipeguard": "DEFERRED_NOT_RUN",
   "primitive": "Memory",
   "result_class": "DATA_HAZARD",
   "sanitizer_tool": "racecheck",
-  "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
+  "schema_version": "pipeguard-suite2-tilelang-redesign-standalone-v2",
   "source": {
-    "bytes": 514,
-    "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/memory/data_hazard/s2r-memory-tilelang-data-hazard-01.py",
-    "sha256": "26789f1123afa9a678d45aac7a3a1716aab552420265f7e23cbb514ce437a99e"
+    "bytes": 516,
+    "path": "suite/suite2/cases/tilelang/memory/data_hazard/s2r-memory-tilelang-data-hazard-01.py",
+    "sha256": "bc79a1b70e1c249cacd2224e0fd332bed22d53afb4aefecb4819b6dd6fab6891"
   },
-  "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/memory/data_hazard/s2r-memory-tilelang-data-hazard-01.json",
+  "spec_path": "suite/suite2/cases/tilelang/memory/data_hazard/s2r-memory-tilelang-data-hazard-01.json",
   "variant": 1
 }

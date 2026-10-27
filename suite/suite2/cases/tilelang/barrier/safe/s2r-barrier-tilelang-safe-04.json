@@ -1,1 +1,28 @@
-{"case_id":"s2r-barrier-tilelang-safe-04","dsl":"tilelang","gpu":0,"label_evidence":{"accesses":[{"actor":"thread:0","byte_interval":[160,164],"mode":"WRITE"},{"actor":"thread:64","byte_interval":[160,164],"mode":"READ"}],"actors":["thread:0","thread:64"],"cta_threads":128,"independent_label":"SAFE","issue":"cross-warp global RAW handoff","numeric_is_safety_oracle":false,"present_order":"full CTA barrier executed by all 128 threads","required_order":"producer -> full CTA barrier -> consumer","variant":4},"nvidia_applicability":"OUT_OF_DOMAIN_GLOBAL_MEMORY","oracle":{"basis":"paired Barrier scenario BARRIER:GLOBAL-RAW","verdict":"SAFE"},"pipeguard":"DEFERRED_NOT_RUN","primitive":"Barrier","result_class":"SAFE","sanitizer_tool":"synccheck","scenario_id":"BARRIER:GLOBAL-RAW","schema_version":"pipeguard-suite2-barrier-memory-shard-v1","source":{"bytes":467,"path":"suite/suite2/cases/tilelang/barrier/safe/s2r-barrier-tilelang-safe-04.py","sha256":"24ed75e1d263542a679cb119e8252470926ae02334f940d3d1ed83c2e6a5f191"},"spec_path":".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/barrier/safe/s2r-barrier-tilelang-safe-04.json","variant":4}
+{
+  "case_id": "s2r-barrier-tilelang-safe-04",
+  "dsl": "tilelang",
+  "gpu": 0,
+  "label_evidence": {
+    "actors": "thread:0..127",
+    "cta_threads": 128,
+    "independent_label": "SAFE",
+    "issue": "mbarrier reused for two handoff rounds with parity 0 then 1: generation accounting must track both",
+    "numeric_is_safety_oracle": false,
+    "present_order": "arrive+wait(0), arrive+wait(1)",
+    "required_order": "none missing",
+    "scenario": "two-phase-mbarrier-parity-flip",
+    "variant": 4
+  },
+  "pipeguard": "DEFERRED_NOT_RUN",
+  "primitive": "Barrier",
+  "result_class": "SAFE",
+  "sanitizer_tool": "synccheck",
+  "schema_version": "pipeguard-suite2-tilelang-redesign-standalone-v2",
+  "source": {
+    "bytes": 716,
+    "path": "suite/suite2/cases/tilelang/barrier/safe/s2r-barrier-tilelang-safe-04.py",
+    "sha256": "196e32b33b34346dd3ba6ec0fda2d231c3f422aa244a950de6b491f632e431c4"
+  },
+  "spec_path": "suite/suite2/cases/tilelang/barrier/safe/s2r-barrier-tilelang-safe-04.json",
+  "variant": 4
+}

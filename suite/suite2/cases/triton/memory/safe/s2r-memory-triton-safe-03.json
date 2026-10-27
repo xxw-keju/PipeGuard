@@ -7,18 +7,18 @@
       {
         "actor": "thread:0",
         "byte_interval": [
-          128,
-          132
+          32,
+          36
         ],
         "mode": "WRITE"
       },
       {
         "actor": "thread:64",
         "byte_interval": [
-          144,
-          148
+          32,
+          36
         ],
-        "mode": "WRITE"
+        "mode": "READ"
       }
     ],
     "actors": [
@@ -26,8 +26,9 @@
       "thread:64"
     ],
     "cta_threads": 128,
+    "idiom": "barrier-ordered handoff: full CTA barrier provides the RAW ordering edge",
     "independent_label": "SAFE",
-    "issue": "cross-warp disjoint global writes",
+    "issue": "cta barrier orders writer before reader",
     "numeric_is_safety_oracle": false,
     "present_order": "none required",
     "required_order": "none because byte intervals are disjoint",
@@ -39,9 +40,9 @@
   "sanitizer_tool": "racecheck",
   "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
   "source": {
-    "bytes": 789,
+    "bytes": 813,
     "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/safe/s2r-memory-triton-safe-03.py",
-    "sha256": "1b296de4fc0ba5fbd032a02eef6d09c2cc65da21d546762bd200403839231612"
+    "sha256": "59f9787907626ab6f778370c33ce3940b6d75ccf2bf2ce93ca8f410cde68ef52"
   },
   "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/safe/s2r-memory-triton-safe-03.json",
   "variant": 3

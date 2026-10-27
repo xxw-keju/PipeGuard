@@ -1,1 +1,28 @@
-{"admitted":false,"ai_adjudication":{"required_evidence":["source_and_lowered_operations","physical_participants","resource_generation_or_endpoint","byte_overlap_if_applicable","reachable_prefix","missing_or_present_typed_order"],"status":"PENDING_INDEPENDENT_REVIEW"},"case_id":"s2x-tilelang-data-hazard-mbarrier-00","dsl":"tilelang","oracle":{"basis":"independent paired protocol template plus variant-specific participants/region/depth","verdict":"DATA_HAZARD"},"polarity":"BUG","primitive":"mbarrier","result_class":"DATA_HAZARD","scenario_id":"TMA-OBSERVE","semantic_knobs":{"elements":1,"protocol_depth":1,"region_offset_bytes":0,"stages":2,"threads":32},"source":{"bytes":1311,"path":"corpus/suite2/executable-v2/tilelang/data_hazard/mbarrier/s2x-tilelang-data-hazard-mbarrier-00.py","sha256":"f33491df5fb2bc8a55d1ab8e63408df54095686dcc00b7fb4ca194537da9c30e"},"template_family":"TMA-OBSERVE","variant":0}
+{
+  "case_id": "s2x-tilelang-data-hazard-mbarrier-00",
+  "dsl": "tilelang",
+  "gpu": 0,
+  "label_evidence": {
+    "actors": "thread:0..31",
+    "cta_threads": 32,
+    "independent_label": "DATA_HAZARD",
+    "issue": "arrival issued before the store it should publish; wait(parity 0) does not order W(S[tx]) before R(S[31-tx])",
+    "numeric_is_safety_oracle": false,
+    "present_order": "arrive precedes the store",
+    "required_order": "arrive after the store",
+    "scenario": "arrive-before-publish",
+    "variant": 0
+  },
+  "pipeguard": "DEFERRED_NOT_RUN",
+  "primitive": "mbarrier",
+  "result_class": "DATA_HAZARD",
+  "sanitizer_tool": "racecheck",
+  "schema_version": "pipeguard-suite2-tilelang-redesign-standalone-v2",
+  "source": {
+    "bytes": 576,
+    "path": "suite/suite2/cases/tilelang/mbarrier/data_hazard/s2x-tilelang-data-hazard-mbarrier-00.py",
+    "sha256": "1c206c7df12fc855c432779bc4f9e4171223a52985774b156f193720338dcc6c"
+  },
+  "spec_path": "suite/suite2/cases/tilelang/mbarrier/data_hazard/s2x-tilelang-data-hazard-mbarrier-00.json",
+  "variant": 0
+}

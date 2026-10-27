@@ -3,46 +3,26 @@
   "dsl": "tilelang",
   "gpu": 0,
   "label_evidence": {
-    "accesses": [
-      {
-        "actor": "thread:0",
-        "byte_interval": [
-          128,
-          132
-        ],
-        "mode": "WRITE"
-      },
-      {
-        "actor": "thread:64",
-        "byte_interval": [
-          128,
-          132
-        ],
-        "mode": "WRITE"
-      }
-    ],
-    "actors": [
-      "thread:0",
-      "thread:64"
-    ],
+    "actors": "thread:0..127",
     "cta_threads": 128,
     "independent_label": "DATA_HAZARD",
-    "issue": "cross-warp global WAW without ordering",
+    "issue": "mbarrier arrival issued before the store it should publish; the wait does not order the handoff",
     "numeric_is_safety_oracle": false,
-    "present_order": "none between distinct warps",
-    "required_order": "an ordering edge between conflicting writes",
+    "present_order": "arrive precedes W(S[tx]); wait(parity 0) completes without covering the store",
+    "required_order": "arrive after the store so the wait orders W before R",
+    "scenario": "mbarrier-arrive-before-publish",
     "variant": 3
   },
   "pipeguard": "DEFERRED_NOT_RUN",
   "primitive": "Memory",
   "result_class": "DATA_HAZARD",
   "sanitizer_tool": "racecheck",
-  "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
+  "schema_version": "pipeguard-suite2-tilelang-redesign-standalone-v2",
   "source": {
-    "bytes": 514,
-    "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/memory/data_hazard/s2r-memory-tilelang-data-hazard-03.py",
-    "sha256": "354f56f6decb04d343d1e036fbf298502e698725af22d283b6e6e660c3c208de"
+    "bytes": 588,
+    "path": "suite/suite2/cases/tilelang/memory/data_hazard/s2r-memory-tilelang-data-hazard-03.py",
+    "sha256": "05c7759f47c9604e91037e337411acdbb057cb27f2ab018dc20512cf5e1c80b9"
   },
-  "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/memory/data_hazard/s2r-memory-tilelang-data-hazard-03.json",
+  "spec_path": "suite/suite2/cases/tilelang/memory/data_hazard/s2r-memory-tilelang-data-hazard-03.json",
   "variant": 3
 }

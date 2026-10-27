@@ -1,6 +1,6 @@
-# Generated Recovery Suite 2 real Triton Gluon kernel. Do not edit.
+# Redesigned Suite 2 real Triton Gluon kernel (structural-diversity rework). Do not hand edit.
 # case_id=s2r-memory-triton-safe-04
-# independent_label=SAFE; actors=thread:0,thread:64; variant=4
+# independent_label=SAFE; idiom=same-thread double-buffer alternation: one thread ping-pongs between two slots in program order
 from triton.experimental import gluon
 from triton.experimental.gluon import language as ttgl
 
@@ -12,7 +12,8 @@ def _layout():
 def kernel(Data, Out):
     layout: ttgl.constexpr = _layout()
     lanes = ttgl.arange(0, 128, layout)
-    ttgl.store(Data + lanes * 0 + 40, 105, mask=lanes == 0)
-    ttgl.store(Data + lanes * 0 + 44, 106, mask=lanes == 64)
-    value = ttgl.load(Data + lanes * 0 + 44, mask=lanes == 64, other=0)
-    ttgl.store(Out + lanes * 0 + 4, value, mask=lanes == 64)
+    ttgl.store(Data + lanes * 0 + 40, 1, mask=lanes == 64)
+    first = ttgl.load(Data + lanes * 0 + 40, mask=lanes == 64, other=0)
+    ttgl.store(Data + lanes * 0 + 44, first + 1, mask=lanes == 64)
+    second = ttgl.load(Data + lanes * 0 + 44, mask=lanes == 64, other=0)
+    ttgl.store(Out + lanes * 0 + 3, second, mask=lanes == 64)

@@ -1,1 +1,52 @@
-{"admitted":false,"ai_adjudication":{"required_evidence":["source_and_lowered_operations","physical_participants","resource_generation_or_endpoint","byte_overlap_if_applicable","reachable_prefix","missing_or_present_typed_order"],"status":"PENDING_INDEPENDENT_REVIEW"},"case_id":"s2x-triton-safe-cp-async-00","dsl":"triton","oracle":{"basis":"independent paired protocol template plus variant-specific participants/region/depth","verdict":"SAFE"},"polarity":"CORRECT","primitive":"cp.async","result_class":"SAFE","scenario_id":"CP-WAIT","semantic_knobs":{"elements":1,"protocol_depth":2,"proxy_repeats":1,"proxy_store_shape":[64,64],"region_offset_bytes":0,"stages":2,"threads":32,"tilelang_tma_bytes":16,"triton_tma_block":32,"triton_tma_transfers":1,"wgmma_repeats":1,"wgmma_shape":[64,64,16]},"source":{"bytes":2610,"path":".artifacts/frontend-pairs/suite2-tilelang2-cpasync-corpus-v2/triton/safe/cp-async/s2x-triton-safe-cp-async-00.py","sha256":"c2dcdba6fd6820beec8c3535e396d49aaddce7c89c4d3cb61412bc7e55cb61c6"},"template_family":"CP-WAIT","variant":0}
+{
+ "admitted": false,
+ "ai_adjudication": {
+  "required_evidence": [
+   "source_and_lowered_operations",
+   "physical_participants",
+   "resource_generation_or_endpoint",
+   "byte_overlap_if_applicable",
+   "reachable_prefix",
+   "missing_or_present_typed_order"
+  ],
+  "status": "PENDING_INDEPENDENT_REVIEW"
+ },
+ "case_id": "s2x-triton-safe-cp-async-00",
+ "dsl": "triton",
+ "oracle": {
+  "basis": "structurally distinct per-variant protocol skeleton (suite2 diversity rework); hazard/safety grounded in post-pipeline TTGIR",
+  "verdict": "SAFE"
+ },
+ "polarity": "CORRECT",
+ "primitive": "cp.async",
+ "result_class": "SAFE",
+ "scenario_id": "CP-ASYNC:SINGLE-GROUP-ROUNDTRIP",
+ "semantic_knobs": {
+  "elements": 1,
+  "protocol_depth": 2,
+  "proxy_repeats": 1,
+  "proxy_store_shape": [
+   64,
+   64
+  ],
+  "region_offset_bytes": 0,
+  "stages": 2,
+  "threads": 32,
+  "tilelang_tma_bytes": 16,
+  "triton_tma_block": 32,
+  "triton_tma_transfers": 1,
+  "wgmma_repeats": 1,
+  "wgmma_shape": [
+   64,
+   64,
+   16
+  ]
+ },
+ "source": {
+  "bytes": 1743,
+  "path": ".artifacts/frontend-pairs/suite2-tilelang2-cpasync-corpus-v2/triton/safe/cp-async/s2x-triton-safe-cp-async-00.py",
+  "sha256": "c13a07c2a331bebce01584fe3ee8465ad852b7f80b9b09d07f5e983509ea994e"
+ },
+ "template_family": "CP-WAIT",
+ "variant": 0
+}

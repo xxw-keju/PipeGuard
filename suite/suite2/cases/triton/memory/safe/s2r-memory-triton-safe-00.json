@@ -26,8 +26,9 @@
       "thread:64"
     ],
     "cta_threads": 128,
+    "idiom": "disjoint WAW: concurrent writes land on disjoint 4-byte intervals",
     "independent_label": "SAFE",
-    "issue": "cross-warp disjoint global writes",
+    "issue": "no byte overlap between concurrent writes",
     "numeric_is_safety_oracle": false,
     "present_order": "none required",
     "required_order": "none because byte intervals are disjoint",
@@ -39,9 +40,9 @@
   "sanitizer_tool": "racecheck",
   "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
   "source": {
-    "bytes": 788,
+    "bytes": 717,
     "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/safe/s2r-memory-triton-safe-00.py",
-    "sha256": "51466b069471a165a561b24859816b52d1eaa5e99affe463ca001b726cc248c4"
+    "sha256": "7f42ca52180bce1112304e5ca4220b50e25eb9f76b70c185ffd715bbdd678e4e"
   },
   "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/safe/s2r-memory-triton-safe-00.json",
   "variant": 0

@@ -1,1 +1,28 @@
-{"admitted":false,"ai_adjudication":{"required_evidence":["source_and_lowered_operations","physical_participants","resource_generation_or_endpoint","byte_overlap_if_applicable","reachable_prefix","missing_or_present_typed_order"],"status":"PENDING_INDEPENDENT_REVIEW"},"case_id":"s2x-tilelang-data-hazard-mbarrier-02","dsl":"tilelang","oracle":{"basis":"independent paired protocol template plus variant-specific participants/region/depth","verdict":"DATA_HAZARD"},"polarity":"BUG","primitive":"mbarrier","result_class":"DATA_HAZARD","scenario_id":"TMA-OBSERVE","semantic_knobs":{"elements":3,"protocol_depth":4,"region_offset_bytes":32,"stages":4,"threads":96,"tilelang_tma_bytes":48,"triton_tma_block":64},"source":{"bytes":1362,"path":"corpus/suite2/executable-v3/tilelang/data_hazard/mbarrier/s2x-tilelang-data-hazard-mbarrier-02.py","sha256":"664d1446a554dbd06c5313995df43bff8c960d161f67823a3fcde115435eb3ec"},"template_family":"TMA-OBSERVE","variant":2}
+{
+  "case_id": "s2x-tilelang-data-hazard-mbarrier-02",
+  "dsl": "tilelang",
+  "gpu": 0,
+  "label_evidence": {
+    "actors": "thread:0..31",
+    "cta_threads": 32,
+    "independent_label": "DATA_HAZARD",
+    "issue": "per-round mbarrier with correct parity, but R(S[31-tx]) and W(S[tx]) share one phase",
+    "numeric_is_safety_oracle": false,
+    "present_order": "barrier separates rounds, not the intra-phase read/write pair",
+    "required_order": "two phases per exchange round",
+    "scenario": "loop-same-phase-neighbor-race",
+    "variant": 2
+  },
+  "pipeguard": "DEFERRED_NOT_RUN",
+  "primitive": "mbarrier",
+  "result_class": "DATA_HAZARD",
+  "sanitizer_tool": "racecheck",
+  "schema_version": "pipeguard-suite2-tilelang-redesign-standalone-v2",
+  "source": {
+    "bytes": 656,
+    "path": "suite/suite2/cases/tilelang/mbarrier/data_hazard/s2x-tilelang-data-hazard-mbarrier-02.py",
+    "sha256": "b043861e5a6f9c4eb4c4d245f3e40279e7bfbb718f73370fa1abd157c81fe451"
+  },
+  "spec_path": "suite/suite2/cases/tilelang/mbarrier/data_hazard/s2x-tilelang-data-hazard-mbarrier-02.json",
+  "variant": 2
+}

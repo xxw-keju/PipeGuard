@@ -16,8 +16,9 @@
       "missing_participant_count": 80
     },
     "cta_threads": 128,
+    "idiom": "shared-memory handoff whose only ordering edge is a divergent barrier",
     "independent_label": "SYNC_HAZARD",
-    "issue": "divergent CTA barrier",
+    "issue": "shared store -> divergent barrier (32/128) -> shared load: rendezvous never completes",
     "numeric_is_safety_oracle": false,
     "present_order": "only threads [0,48) execute bar.sync 0",
     "required_order": "one full-CTA barrier invocation with all 128 participants",
@@ -29,9 +30,9 @@
   "sanitizer_tool": "synccheck",
   "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
   "source": {
-    "bytes": 800,
+    "bytes": 1193,
     "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/barrier/sync_hazard/s2r-barrier-triton-sync-hazard-02.py",
-    "sha256": "4dcfe9048f455819b5e17a37f68697ff30dea4fda714ff22e615883db6d916f2"
+    "sha256": "21d87ac1cdbdf7cc45f22174a88aa839b66a232c24a3fae8faa127048f4a9b41"
   },
   "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/barrier/sync_hazard/s2r-barrier-triton-sync-hazard-02.json",
   "variant": 2

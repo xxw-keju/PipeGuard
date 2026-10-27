@@ -5,7 +5,7 @@
   "label_evidence": {
     "accesses": [
       {
-        "actor": "thread:0",
+        "actor": "thread:64",
         "byte_interval": [
           160,
           164
@@ -15,19 +15,35 @@
       {
         "actor": "thread:64",
         "byte_interval": [
+          160,
+          164
+        ],
+        "mode": "READ"
+      },
+      {
+        "actor": "thread:64",
+        "byte_interval": [
           176,
           180
         ],
         "mode": "WRITE"
+      },
+      {
+        "actor": "thread:64",
+        "byte_interval": [
+          176,
+          180
+        ],
+        "mode": "READ"
       }
     ],
     "actors": [
-      "thread:0",
       "thread:64"
     ],
     "cta_threads": 128,
+    "idiom": "same-thread double-buffer alternation: one thread ping-pongs between two slots in program order",
     "independent_label": "SAFE",
-    "issue": "cross-warp disjoint global writes",
+    "issue": "all conflicting accesses belong to one actor in program order",
     "numeric_is_safety_oracle": false,
     "present_order": "none required",
     "required_order": "none because byte intervals are disjoint",
@@ -39,9 +55,9 @@
   "sanitizer_tool": "racecheck",
   "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
   "source": {
-    "bytes": 789,
+    "bytes": 960,
     "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/safe/s2r-memory-triton-safe-04.py",
-    "sha256": "79f0f065af875c89544ae7141877da749dd401e366c73f7efd2de4884e60ce60"
+    "sha256": "99b25d0737888f35ed2fe411dca4558897f49396835aed57d65862bc78116cc9"
   },
   "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/safe/s2r-memory-triton-safe-04.json",
   "variant": 4

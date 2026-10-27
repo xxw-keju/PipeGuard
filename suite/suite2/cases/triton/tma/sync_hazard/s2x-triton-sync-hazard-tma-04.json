@@ -1,1 +1,52 @@
-{"admitted":false,"ai_adjudication":{"required_evidence":["source_and_lowered_operations","physical_participants","resource_generation_or_endpoint","byte_overlap_if_applicable","reachable_prefix","missing_or_present_typed_order"],"status":"PENDING_INDEPENDENT_REVIEW"},"case_id":"s2x-triton-sync-hazard-tma-04","dsl":"triton","oracle":{"basis":"independent paired protocol template plus variant-specific participants/region/depth","verdict":"SYNC_HAZARD"},"polarity":"BUG","primitive":"TMA","result_class":"SYNC_HAZARD","scenario_id":"TMA-SYNC:TRANSACTION-BYTES-MISMATCH","semantic_knobs":{"elements":5,"protocol_depth":6,"proxy_repeats":5,"proxy_store_shape":[64,64],"region_offset_bytes":64,"stages":3,"threads":32,"tilelang_tma_bytes":80,"triton_tma_block":32,"triton_tma_transfers":5,"wgmma_repeats":5,"wgmma_shape":[64,64,16]},"source":{"bytes":2662,"path":"corpus/suite2/executable-tma-v2/triton/sync_hazard/tma/s2x-triton-sync-hazard-tma-04.py","sha256":"6e3c6c18605a415ca8cdc4e6847a9425505cd554c2d725db4bc227d6d99466d2"},"template_family":"TMA-SYNC","variant":4}
+{
+ "admitted": false,
+ "ai_adjudication": {
+  "required_evidence": [
+   "source_and_lowered_operations",
+   "physical_participants",
+   "resource_generation_or_endpoint",
+   "byte_overlap_if_applicable",
+   "reachable_prefix",
+   "missing_or_present_typed_order"
+  ],
+  "status": "PENDING_INDEPENDENT_REVIEW"
+ },
+ "case_id": "s2x-triton-sync-hazard-tma-04",
+ "dsl": "triton",
+ "oracle": {
+  "basis": "structurally distinct per-variant protocol skeleton (suite2 diversity rework); hazard/safety grounded in post-pipeline TTGIR",
+  "verdict": "SYNC_HAZARD"
+ },
+ "polarity": "BUG",
+ "primitive": "TMA",
+ "result_class": "SYNC_HAZARD",
+ "scenario_id": "TMA-SYNC:WAIT-ON-WRONG-BARRIER",
+ "semantic_knobs": {
+  "elements": 5,
+  "protocol_depth": 6,
+  "proxy_repeats": 5,
+  "proxy_store_shape": [
+   64,
+   64
+  ],
+  "region_offset_bytes": 64,
+  "stages": 3,
+  "threads": 32,
+  "tilelang_tma_bytes": 80,
+  "triton_tma_block": 32,
+  "triton_tma_transfers": 5,
+  "wgmma_repeats": 5,
+  "wgmma_shape": [
+   64,
+   64,
+   16
+  ]
+ },
+ "source": {
+  "bytes": 1751,
+  "path": "corpus/suite2/executable-tma-v2/triton/sync_hazard/tma/s2x-triton-sync-hazard-tma-04.py",
+  "sha256": "646beef60de85a022a84bc6275417cd451c71c6fb199e6abc978117d51e248aa"
+ },
+ "template_family": "TMA-SYNC",
+ "variant": 4
+}

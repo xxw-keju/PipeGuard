@@ -33,8 +33,9 @@
       "missing_participant_count": 112
     },
     "cta_threads": 128,
+    "idiom": "RAW guarded only by a divergent CTA barrier (64 of 128 lanes arrive)",
     "independent_label": "SYNC_HAZARD",
-    "issue": "global RAW handoff guarded by a divergent CTA barrier",
+    "issue": "divergent barrier (64/128 arrivals) leaves protocol stuck; RAW edge never established",
     "numeric_is_safety_oracle": false,
     "present_order": "only threads [0,16) execute bar.sync 0",
     "required_order": "one full-CTA barrier invocation with all 128 participants",
@@ -46,9 +47,9 @@
   "sanitizer_tool": "synccheck",
   "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
   "source": {
-    "bytes": 930,
+    "bytes": 980,
     "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/sync_hazard/s2r-memory-triton-sync-hazard-00.py",
-    "sha256": "37b0bb5e96e9eb822e7f717b71218a8b751ab7564dea892300fdd5614a89800a"
+    "sha256": "c2467faa4ffee77082dfdb6e08174777a0073913d82b4130be22b120f8c7b8b8"
   },
   "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/sync_hazard/s2r-memory-triton-sync-hazard-00.json",
   "variant": 0

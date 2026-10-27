@@ -1,16 +1,16 @@
-# Generated executable Suite 2 DSL kernel; do not hand edit.
-from suite.frontend_pairs.sources import tilelang_cases as _cases
+# Generated Recovery Suite 2 real TileLang kernel. Do not edit.
+# case_id=s2x-tilelang-data-hazard-mbarrier-01
+# independent_label=DATA_HAZARD; scenario=consumer-missing-wait; variant=1
+import tilelang.language as T
 
-CASE_SPEC = {'case_id': 's2x-tilelang-data-hazard-mbarrier-01', 'dsl': 'tilelang', 'result_class': 'DATA_HAZARD', 'primitive': 'mbarrier', 'variant': 1, 'template_family': 'TMA-OBSERVE', 'scenario_id': 'TMA-OBSERVE', 'polarity': 'BUG', 'semantic_knobs': {'elements': 2, 'stages': 3, 'threads': 64, 'region_offset_bytes': 16, 'protocol_depth': 3, 'tilelang_tma_bytes': 32, 'triton_tma_block': 48}, 'oracle': {'verdict': 'DATA_HAZARD', 'basis': 'independent paired protocol template plus variant-specific participants/region/depth'}, 'admitted': False, 'ai_adjudication': {'status': 'PENDING_INDEPENDENT_REVIEW', 'required_evidence': ['source_and_lowered_operations', 'physical_participants', 'resource_generation_or_endpoint', 'byte_overlap_if_applicable', 'reachable_prefix', 'missing_or_present_typed_order']}}
-
-def pipeguard_resolve():
-    old_shape = _cases._shape
-    knobs = CASE_SPEC["semantic_knobs"]
-    _cases._shape = lambda _variant: (knobs["elements"], knobs["stages"], knobs["threads"])
-    try:
-        return _cases.build_tilelang_case(
-            CASE_SPEC["template_family"], CASE_SPEC["scenario_id"],
-            CASE_SPEC["variant"], CASE_SPEC["polarity"],
-        )
-    finally:
-        _cases._shape = old_shape
+@T.prim_func
+def kernel(Data: T.Tensor((256,), T.int32), Out: T.Tensor((32,), T.int32)):
+    with T.Kernel(1, threads=32):
+        tx = T.get_thread_binding()
+        S = T.alloc_shared((32,), T.int32)
+        bar = T.alloc_barrier(32)
+        S[tx] = Data[tx]
+        T.barrier_arrive(bar)
+        if tx == 0:
+            Out[0] = S[31]
+        T.mbarrier_wait_parity(bar, 0)

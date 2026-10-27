@@ -3,36 +3,26 @@
   "dsl": "tilelang",
   "gpu": 0,
   "label_evidence": {
-    "accesses": [],
-    "actors": [
-      "thread:0",
-      "thread:64"
-    ],
-    "barrier": {
-      "actual_participant_count": 48,
-      "actual_participant_predicate": "threadIdx.x < 48",
-      "expected_participants": 128,
-      "invocation": 0,
-      "missing_participant_count": 80
-    },
+    "actors": "thread:0..127",
     "cta_threads": 128,
     "independent_label": "SYNC_HAZARD",
-    "issue": "divergent CTA barrier",
+    "issue": "group A waits bar1 then arrives bar2; group B waits bar2 then arrives bar1: deadlock cycle",
     "numeric_is_safety_oracle": false,
-    "present_order": "only threads [0,48) execute bar.sync 0",
-    "required_order": "one full-CTA barrier invocation with all 128 participants",
+    "present_order": "wait-before-arrive on both barriers",
+    "required_order": "acyclic arrive->wait order",
+    "scenario": "circular-wait-two-mbarriers",
     "variant": 2
   },
   "pipeguard": "DEFERRED_NOT_RUN",
   "primitive": "Barrier",
   "result_class": "SYNC_HAZARD",
   "sanitizer_tool": "synccheck",
-  "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
+  "schema_version": "pipeguard-suite2-tilelang-redesign-standalone-v2",
   "source": {
-    "bytes": 475,
-    "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/barrier/sync_hazard/s2r-barrier-tilelang-sync-hazard-02.py",
-    "sha256": "cff8f295ec6ed023d0fa059ce6d2a63e1792e2e507ca0dc0085e3ae2e23aa494"
+    "bytes": 675,
+    "path": "suite/suite2/cases/tilelang/barrier/sync_hazard/s2r-barrier-tilelang-sync-hazard-02.py",
+    "sha256": "0d36717757f8da0491eb2bbd3e80108e67073d37e71ac7e58c734d00c4faac84"
   },
-  "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/barrier/sync_hazard/s2r-barrier-tilelang-sync-hazard-02.json",
+  "spec_path": "suite/suite2/cases/tilelang/barrier/sync_hazard/s2r-barrier-tilelang-sync-hazard-02.json",
   "variant": 2
 }

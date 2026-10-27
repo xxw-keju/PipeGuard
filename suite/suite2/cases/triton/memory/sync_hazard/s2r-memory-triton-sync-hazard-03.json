@@ -33,8 +33,9 @@
       "missing_participant_count": 64
     },
     "cta_threads": 128,
+    "idiom": "correct full-CTA round followed by a divergent second round (second-phase divergence)",
     "independent_label": "SYNC_HAZARD",
-    "issue": "global RAW handoff guarded by a divergent CTA barrier",
+    "issue": "first rendezvous is complete; the second round diverges (16/128) and wedges the CTA",
     "numeric_is_safety_oracle": false,
     "present_order": "only threads [0,64) execute bar.sync 0",
     "required_order": "one full-CTA barrier invocation with all 128 participants",
@@ -46,9 +47,9 @@
   "sanitizer_tool": "synccheck",
   "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
   "source": {
-    "bytes": 932,
+    "bytes": 1016,
     "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/sync_hazard/s2r-memory-triton-sync-hazard-03.py",
-    "sha256": "61e2ed0aeee7dbaa7b0d3a8fc18ae7c1789294de7139e040b88a424a0858c57b"
+    "sha256": "2739fd145e91a51054e149c8b7023f986b8bdc691355be542d36d4271ccaa240"
   },
   "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/sync_hazard/s2r-memory-triton-sync-hazard-03.json",
   "variant": 3

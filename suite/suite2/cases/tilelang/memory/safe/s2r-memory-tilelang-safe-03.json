@@ -3,46 +3,26 @@
   "dsl": "tilelang",
   "gpu": 0,
   "label_evidence": {
-    "accesses": [
-      {
-        "actor": "thread:0",
-        "byte_interval": [
-          128,
-          132
-        ],
-        "mode": "WRITE"
-      },
-      {
-        "actor": "thread:64",
-        "byte_interval": [
-          144,
-          148
-        ],
-        "mode": "WRITE"
-      }
-    ],
-    "actors": [
-      "thread:0",
-      "thread:64"
-    ],
+    "actors": "thread:0..63",
     "cta_threads": 128,
     "independent_label": "SAFE",
-    "issue": "cross-warp disjoint global writes",
+    "issue": "named partial barrier covers exactly the 64 lanes that exchange data",
     "numeric_is_safety_oracle": false,
-    "present_order": "none required",
-    "required_order": "none because byte intervals are disjoint",
+    "present_order": "named barrier over lanes 0..63",
+    "required_order": "none missing",
+    "scenario": "named-barrier-exact-scope",
     "variant": 3
   },
   "pipeguard": "DEFERRED_NOT_RUN",
   "primitive": "Memory",
   "result_class": "SAFE",
   "sanitizer_tool": "racecheck",
-  "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
+  "schema_version": "pipeguard-suite2-tilelang-redesign-standalone-v2",
   "source": {
-    "bytes": 500,
-    "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/memory/safe/s2r-memory-tilelang-safe-03.py",
-    "sha256": "15c99d70c3eb2aac970eeaf2d5ad2aae8654a7dd3f57b2b4a273c496337b7617"
+    "bytes": 525,
+    "path": "suite/suite2/cases/tilelang/memory/safe/s2r-memory-tilelang-safe-03.py",
+    "sha256": "928f1d247e9a8dccfc0284780c038514d9abd327a34425682b976106be16ca35"
   },
-  "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/memory/safe/s2r-memory-tilelang-safe-03.json",
+  "spec_path": "suite/suite2/cases/tilelang/memory/safe/s2r-memory-tilelang-safe-03.json",
   "variant": 3
 }

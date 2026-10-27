@@ -7,16 +7,16 @@
       {
         "actor": "thread:0",
         "byte_interval": [
-          160,
-          164
+          192,
+          196
         ],
         "mode": "WRITE"
       },
       {
         "actor": "thread:64",
         "byte_interval": [
-          160,
-          164
+          192,
+          196
         ],
         "mode": "READ"
       }
@@ -33,8 +33,9 @@
       "missing_participant_count": 32
     },
     "cta_threads": 128,
+    "idiom": "divergent barrier before a producer round: stuck lanes can never reach the following full CTA barrier",
     "independent_label": "SYNC_HAZARD",
-    "issue": "global RAW handoff guarded by a divergent CTA barrier",
+    "issue": "divergence precedes the handoff: non-arriving lanes wedge both rendezvous points",
     "numeric_is_safety_oracle": false,
     "present_order": "only threads [0,96) execute bar.sync 0",
     "required_order": "one full-CTA barrier invocation with all 128 participants",
@@ -46,9 +47,9 @@
   "sanitizer_tool": "synccheck",
   "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
   "source": {
-    "bytes": 932,
+    "bytes": 1032,
     "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/sync_hazard/s2r-memory-triton-sync-hazard-04.py",
-    "sha256": "efda961d5e4631c3439ec0a4cd5050d82d20e8c05f3f3965fdf18dd27cfb6cbc"
+    "sha256": "30e15a431e05455b75d28e9522138c66790e7a20e2c29817a165ee3de74b4aea"
   },
   "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/sync_hazard/s2r-memory-triton-sync-hazard-04.json",
   "variant": 4

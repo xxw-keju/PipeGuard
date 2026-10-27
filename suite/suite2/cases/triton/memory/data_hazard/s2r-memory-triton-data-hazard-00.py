@@ -1,6 +1,6 @@
-# Generated Recovery Suite 2 real Triton Gluon kernel. Do not edit.
+# Redesigned Suite 2 real Triton Gluon kernel (structural-diversity rework). Do not hand edit.
 # case_id=s2r-memory-triton-data-hazard-00
-# independent_label=DATA_HAZARD; actors=thread:0,thread:64; variant=0
+# independent_label=DATA_HAZARD; idiom=cross-warp WAW: two unordered writes of distinct values to one global address
 from triton.experimental import gluon
 from triton.experimental.gluon import language as ttgl
 
@@ -13,6 +13,4 @@ def kernel(Data, Out):
     layout: ttgl.constexpr = _layout()
     lanes = ttgl.arange(0, 128, layout)
     ttgl.store(Data + lanes * 0 + 8, 101, mask=lanes == 0)
-    ttgl.store(Data + lanes * 0 + 8, 102, mask=lanes == 64)
-    value = ttgl.load(Data + lanes * 0 + 8, mask=lanes == 64, other=0)
-    ttgl.store(Out + lanes * 0 + 0, value, mask=lanes == 64)
+    ttgl.store(Data + lanes * 0 + 8, 202, mask=lanes == 64)

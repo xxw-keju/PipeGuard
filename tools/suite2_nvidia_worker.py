@@ -21,10 +21,18 @@ def sha(path: Path) -> str:
 
 def write_once(path: Path, data: bytes) -> dict[str, Any]:
     path.parent.mkdir(parents=True, exist_ok=True)
-    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o644)
+    ref = {"path": path.name, "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data)}
+    try:
+        fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o644)
+    except FileExistsError:
+        # Resume/retry after an interrupted attempt: reuse identical bytes,
+        # rewrite a stale or partial artifact.
+        if path.read_bytes() == data:
+            return ref
+        fd = os.open(path, os.O_WRONLY | os.O_TRUNC)
     with os.fdopen(fd, "wb") as stream:
         stream.write(data)
-    return {"path": path.name, "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data)}
+    return ref
 
 
 def load_source(spec: dict[str, Any]) -> Any:
@@ -145,11 +153,19 @@ def tilelang_run(spec: dict[str, Any], module: Any, output: Path) -> dict[str, A
     elif family in {"MB-REUSE", "MBARRIER"}:
         args = []
         out_idx = []
+    elif spec["primitive"] == "cp.async":
+        # Redesigned _suite2_cp_async_case: A:(128,) uint8, Out:(32,) uint8.
+        args = [torch.zeros((128,), device="cuda", dtype=torch.uint8)]
+        out_idx = 1
     elif family in {"CP-WAIT", "CP-OVERLAP", "CP-ASYNC"}:
         byte_count = (4, 8, 16)[spec["variant"] % 3]
         args = [torch.zeros((max(32, 2 * byte_count),), device="cuda", dtype=torch.uint8)]
         out_idx = 1
-    elif family in {"TMA-OBSERVE", "TMA-PROXY"}:
+    elif family == "TMA-OBSERVE":
+        # Redesigned _suite2_tma_diverse_case: A:(64,) uint8, Out:(64,) uint8.
+        args = [torch.zeros((64,), device="cuda", dtype=torch.uint8)]
+        out_idx = 1
+    elif family == "TMA-PROXY":
         width = 16 * (spec["variant"] + 1)
         args = [torch.zeros((width,), device="cuda", dtype=torch.uint8)]
         out_idx = 1
@@ -157,8 +173,8 @@ def tilelang_run(spec: dict[str, Any], module: Any, output: Path) -> dict[str, A
         args = [torch.zeros((32,), device="cuda", dtype=torch.uint8)]
         out_idx = 1
     elif family == "TMA-SYNC":
-        width = 16 * (spec["variant"] + 1)
-        args = [torch.zeros((width,), device="cuda", dtype=torch.uint8)]
+        # Redesigned _suite2_tma_sync_case: A:(64,) uint8, Out:(1,) uint8.
+        args = [torch.zeros((64,), device="cuda", dtype=torch.uint8)]
         out_idx = 1
     elif family in {"WGMMA-ENDPOINT", "WGMMA"}:
         args = [
@@ -173,6 +189,8 @@ def tilelang_run(spec: dict[str, Any], module: Any, output: Path) -> dict[str, A
         raise KeyError(family)
 
     pass_config = tilelang_pass_config(family)
+    if spec.get("standalone_source", False):
+        pass_config = {"tl.disable_thread_storage_sync": True}
     compiler_overrides = []
     if spec["primitive"] == "Proxy" and spec["result_class"] == "DATA_HAZARD":
         class _IdentityPass:
@@ -280,7 +298,10 @@ def triton_prepare(spec: dict[str, Any], module: Any, torch: Any):
         else module.kernel
     )
     kwargs = {"num_warps": num_warps, "num_ctas": 1}
-    if not spec.get("standalone_source", False):
+    if (
+        not spec.get("standalone_source", False)
+        and spec["primitive"] != "cp.async"
+    ):
         kwargs["BUGGY"] = buggy
     if family == "MB-REUSE":
         kwargs["DEPTH"] = spec["variant"] + 2
@@ -309,6 +330,12 @@ def triton_prepare(spec: dict[str, Any], module: Any, torch: Any):
         ]
     elif family in {"MB-REUSE", "MBARRIER"}:
         args = []
+    elif spec["primitive"] == "cp.async":
+        # _suite2_cp_async_kernel(source, output) stages 16 x THREADS int32 tiles.
+        args = [
+            torch.zeros((16 * threads,), device="cuda", dtype=torch.int32),
+            torch.zeros((threads,), device="cuda", dtype=torch.int32),
+        ]
     elif family in {"CP-WAIT", "CP-OVERLAP", "CP-ASYNC"}:
         args = [torch.zeros((2 * threads,), device="cuda", dtype=torch.int32)]
     elif family in {"TMA-OBSERVE", "TMA-PROXY", "TMA-LOAD", "TMA-SYNC"}:
@@ -366,7 +393,7 @@ def triton_run(spec: dict[str, Any], module: Any, output: Path) -> dict[str, Any
         observed_value = args[0][0:1]
     elif family in {"MEM-RAW", "CTA-HANDOFF"}:
         observed_value = args[1][1:2]
-    elif spec["primitive"] in {"WGMMA", "Proxy"}:
+    elif spec["primitive"] in {"WGMMA", "Proxy", "cp.async"}:
         observed_value = args[-1]
     else:
         observed_value = None

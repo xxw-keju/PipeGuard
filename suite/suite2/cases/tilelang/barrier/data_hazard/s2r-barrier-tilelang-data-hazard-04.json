@@ -1,1 +1,28 @@
-{"case_id":"s2r-barrier-tilelang-data-hazard-04","dsl":"tilelang","gpu":0,"label_evidence":{"accesses":[{"actor":"thread:0","byte_interval":[160,164],"mode":"WRITE"},{"actor":"thread:64","byte_interval":[160,164],"mode":"READ"}],"actors":["thread:0","thread:64"],"cta_threads":128,"independent_label":"DATA_HAZARD","issue":"cross-warp global RAW handoff without ordering","numeric_is_safety_oracle":false,"present_order":"none between distinct warps","required_order":"producer -> full CTA barrier -> consumer","variant":4},"nvidia_applicability":"OUT_OF_DOMAIN_GLOBAL_MEMORY","oracle":{"basis":"paired Barrier scenario BARRIER:GLOBAL-RAW","verdict":"DATA_HAZARD"},"pipeguard":"DEFERRED_NOT_RUN","primitive":"Barrier","result_class":"DATA_HAZARD","sanitizer_tool":"racecheck","scenario_id":"BARRIER:GLOBAL-RAW","schema_version":"pipeguard-suite2-barrier-memory-shard-v1","source":{"bytes":456,"path":"suite/suite2/cases/tilelang/barrier/data_hazard/s2r-barrier-tilelang-data-hazard-04.py","sha256":"d33556bfc0f5d928872585d411da1007c71ac0c3535615a75f8fb3af9d712339"},"spec_path":".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/barrier/data_hazard/s2r-barrier-tilelang-data-hazard-04.json","variant":4}
+{
+  "case_id": "s2r-barrier-tilelang-data-hazard-04",
+  "dsl": "tilelang",
+  "gpu": 0,
+  "label_evidence": {
+    "actors": "thread:0,thread:64",
+    "cta_threads": 128,
+    "independent_label": "DATA_HAZARD",
+    "issue": "a full __syncthreads exists but only after both the write and the cross-warp read already happened",
+    "numeric_is_safety_oracle": false,
+    "present_order": "barrier follows the conflicting accesses",
+    "required_order": "the barrier between W(shared[0]) and R(shared[0])",
+    "scenario": "barrier-after-the-handoff",
+    "variant": 4
+  },
+  "pipeguard": "DEFERRED_NOT_RUN",
+  "primitive": "Barrier",
+  "result_class": "DATA_HAZARD",
+  "sanitizer_tool": "racecheck",
+  "schema_version": "pipeguard-suite2-tilelang-redesign-standalone-v2",
+  "source": {
+    "bytes": 562,
+    "path": "suite/suite2/cases/tilelang/barrier/data_hazard/s2r-barrier-tilelang-data-hazard-04.py",
+    "sha256": "53a9000ff72bbac7610b2da0dd160672f8d4335427441705d129c160ba2dd351"
+  },
+  "spec_path": "suite/suite2/cases/tilelang/barrier/data_hazard/s2r-barrier-tilelang-data-hazard-04.json",
+  "variant": 4
+}

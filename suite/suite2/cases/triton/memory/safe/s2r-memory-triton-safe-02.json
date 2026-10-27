@@ -10,13 +10,13 @@
           96,
           100
         ],
-        "mode": "WRITE"
+        "mode": "READ"
       },
       {
         "actor": "thread:64",
         "byte_interval": [
-          112,
-          116
+          100,
+          104
         ],
         "mode": "WRITE"
       }
@@ -26,8 +26,9 @@
       "thread:64"
     ],
     "cta_threads": 128,
+    "idiom": "adjacent-disjoint WAR: read and write touch adjacent but non-overlapping elements",
     "independent_label": "SAFE",
-    "issue": "cross-warp disjoint global writes",
+    "issue": "adjacent 4-byte intervals are disjoint; no conflict",
     "numeric_is_safety_oracle": false,
     "present_order": "none required",
     "required_order": "none because byte intervals are disjoint",
@@ -39,9 +40,9 @@
   "sanitizer_tool": "racecheck",
   "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
   "source": {
-    "bytes": 789,
+    "bytes": 803,
     "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/safe/s2r-memory-triton-safe-02.py",
-    "sha256": "360057456cb34c998ca369b34698cb4f7e004713e98540197caf22f126d48373"
+    "sha256": "0a32628ee50d9bf23b01ceedf6c67a261707848a6c9971822f9a3cd06033d21f"
   },
   "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/safe/s2r-memory-triton-safe-02.json",
   "variant": 2

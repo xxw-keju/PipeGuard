@@ -1,1 +1,38 @@
-{"admitted":false,"ai_adjudication":{"required_evidence":["source_and_lowered_operations","physical_participants","resource_generation_or_endpoint","byte_overlap_if_applicable","reachable_prefix","missing_or_present_typed_order"],"status":"PENDING_INDEPENDENT_REVIEW"},"case_id":"s2x-triton-data-hazard-mbarrier-00","dsl":"triton","oracle":{"basis":"independent paired protocol template plus variant-specific participants/region/depth","verdict":"DATA_HAZARD"},"polarity":"BUG","primitive":"mbarrier","result_class":"DATA_HAZARD","scenario_id":"TMA-OBSERVE","semantic_knobs":{"elements":1,"protocol_depth":1,"region_offset_bytes":0,"stages":2,"threads":32},"source":{"bytes":2108,"path":"corpus/suite2/executable-v2/triton/data_hazard/mbarrier/s2x-triton-data-hazard-mbarrier-00.py","sha256":"add98e2ace9fecf256f587c3bcb77cf478195bcd27a6006811d60827d5be23ae"},"template_family":"TMA-OBSERVE","variant":0}
+{
+ "admitted": false,
+ "ai_adjudication": {
+  "required_evidence": [
+   "source_and_lowered_operations",
+   "physical_participants",
+   "resource_generation_or_endpoint",
+   "byte_overlap_if_applicable",
+   "reachable_prefix",
+   "missing_or_present_typed_order"
+  ],
+  "status": "PENDING_INDEPENDENT_REVIEW"
+ },
+ "case_id": "s2x-triton-data-hazard-mbarrier-00",
+ "dsl": "triton",
+ "oracle": {
+  "basis": "structurally distinct per-variant protocol skeleton (suite2 diversity rework); hazard/safety grounded in post-pipeline TTGIR",
+  "verdict": "DATA_HAZARD"
+ },
+ "polarity": "BUG",
+ "primitive": "mbarrier",
+ "result_class": "DATA_HAZARD",
+ "scenario_id": "MBARRIER:ARRIVE-BEFORE-PUBLISH",
+ "semantic_knobs": {
+  "elements": 1,
+  "protocol_depth": 1,
+  "region_offset_bytes": 0,
+  "stages": 2,
+  "threads": 32
+ },
+ "source": {
+  "bytes": 1586,
+  "path": "corpus/suite2/executable-v2/triton/data_hazard/mbarrier/s2x-triton-data-hazard-mbarrier-00.py",
+  "sha256": "7c440a73a408be470d0cf23fbb6fb42c25dd5bc12ae2a400245c93141664f407"
+ },
+ "template_family": "TMA-OBSERVE",
+ "variant": 0
+}

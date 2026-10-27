@@ -1,1 +1,52 @@
-{"admitted":false,"ai_adjudication":{"required_evidence":["source_and_lowered_operations","physical_participants","resource_generation_or_endpoint","byte_overlap_if_applicable","reachable_prefix","missing_or_present_typed_order"],"status":"PENDING_INDEPENDENT_REVIEW"},"case_id":"s2x-triton-data-hazard-proxy-00","dsl":"triton","oracle":{"basis":"independent paired protocol template plus variant-specific participants/region/depth","verdict":"DATA_HAZARD"},"polarity":"BUG","primitive":"Proxy","result_class":"DATA_HAZARD","scenario_id":"TMA-PROXY","semantic_knobs":{"elements":1,"protocol_depth":2,"proxy_repeats":1,"proxy_store_shape":[64,64],"region_offset_bytes":0,"stages":2,"threads":32,"tilelang_tma_bytes":16,"triton_tma_block":32,"triton_tma_transfers":1,"wgmma_repeats":1,"wgmma_shape":[64,64,16]},"source":{"bytes":2509,"path":"corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-00.py","sha256":"40cb5c2d87fd2a56c64b8abc8ebdff1e3a5c60e1195b748f6e5b366356849fed"},"template_family":"TMA-PROXY","variant":0}
+{
+ "admitted": false,
+ "ai_adjudication": {
+  "required_evidence": [
+   "source_and_lowered_operations",
+   "physical_participants",
+   "resource_generation_or_endpoint",
+   "byte_overlap_if_applicable",
+   "reachable_prefix",
+   "missing_or_present_typed_order"
+  ],
+  "status": "PENDING_INDEPENDENT_REVIEW"
+ },
+ "case_id": "s2x-triton-data-hazard-proxy-00",
+ "dsl": "triton",
+ "oracle": {
+  "basis": "structurally distinct per-variant protocol skeleton (suite2 diversity rework); hazard/safety grounded in post-pipeline TTGIR",
+  "verdict": "DATA_HAZARD"
+ },
+ "polarity": "BUG",
+ "primitive": "Proxy",
+ "result_class": "DATA_HAZARD",
+ "scenario_id": "PROXY:WARP-SPECIALIZED-PUBLISH-NO-FENCE",
+ "semantic_knobs": {
+  "elements": 1,
+  "protocol_depth": 2,
+  "proxy_repeats": 1,
+  "proxy_store_shape": [
+   64,
+   64
+  ],
+  "region_offset_bytes": 0,
+  "stages": 2,
+  "threads": 32,
+  "tilelang_tma_bytes": 16,
+  "triton_tma_block": 32,
+  "triton_tma_transfers": 1,
+  "wgmma_repeats": 1,
+  "wgmma_shape": [
+   64,
+   64,
+   16
+  ]
+ },
+ "source": {
+  "bytes": 1764,
+  "path": "corpus/suite2/executable-proxy-v1/triton/data_hazard/proxy/s2x-triton-data-hazard-proxy-00.py",
+  "sha256": "d370023d13f4c5529b970babdeb0fad063ea4111c7d22707f5541b2740874eb9"
+ },
+ "template_family": "TMA-PROXY",
+ "variant": 0
+}

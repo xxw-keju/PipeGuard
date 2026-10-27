@@ -3,53 +3,26 @@
   "dsl": "tilelang",
   "gpu": 0,
   "label_evidence": {
-    "accesses": [
-      {
-        "actor": "thread:0",
-        "byte_interval": [
-          96,
-          100
-        ],
-        "mode": "WRITE"
-      },
-      {
-        "actor": "thread:64",
-        "byte_interval": [
-          96,
-          100
-        ],
-        "mode": "READ"
-      }
-    ],
-    "actors": [
-      "thread:0",
-      "thread:64"
-    ],
-    "barrier": {
-      "actual_participant_count": 48,
-      "actual_participant_predicate": "threadIdx.x < 48",
-      "expected_participants": 128,
-      "invocation": 0,
-      "missing_participant_count": 80
-    },
+    "actors": "thread:0..31",
     "cta_threads": 128,
     "independent_label": "SYNC_HAZARD",
-    "issue": "global RAW handoff guarded by a divergent CTA barrier",
+    "issue": "named barrier declared for 64 participants but only 32 lanes reach it: it can never complete",
     "numeric_is_safety_oracle": false,
-    "present_order": "only threads [0,48) execute bar.sync 0",
-    "required_order": "one full-CTA barrier invocation with all 128 participants",
+    "present_order": "32 of 64 named-barrier arrivals",
+    "required_order": "participant count matching the arriving lanes",
+    "scenario": "named-barrier-underfilled-scope",
     "variant": 2
   },
   "pipeguard": "DEFERRED_NOT_RUN",
   "primitive": "Memory",
   "result_class": "SYNC_HAZARD",
   "sanitizer_tool": "synccheck",
-  "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
+  "schema_version": "pipeguard-suite2-tilelang-redesign-standalone-v2",
   "source": {
-    "bytes": 527,
-    "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/memory/sync_hazard/s2r-memory-tilelang-sync-hazard-02.py",
-    "sha256": "e5aebc2e39e8aecca876922629d02d5b3e6db0adb6b0e9a822563d2648ad3be6"
+    "bytes": 545,
+    "path": "suite/suite2/cases/tilelang/memory/sync_hazard/s2r-memory-tilelang-sync-hazard-02.py",
+    "sha256": "7d4d700ea80b5bcf77dae42b6069ded8c8e6f841d620905a577037af8b8ecffa"
   },
-  "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/tilelang/memory/sync_hazard/s2r-memory-tilelang-sync-hazard-02.json",
+  "spec_path": "suite/suite2/cases/tilelang/memory/sync_hazard/s2r-memory-tilelang-sync-hazard-02.json",
   "variant": 2
 }

@@ -1,1 +1,47 @@
-{"admitted":false,"ai_adjudication":{"required_evidence":["source_and_lowered_operations","physical_participants","resource_generation_or_endpoint","byte_overlap_if_applicable","reachable_prefix","missing_or_present_typed_order"],"status":"PENDING_INDEPENDENT_REVIEW"},"case_id":"s2x-triton-sync-hazard-wgmma-02","dsl":"triton","oracle":{"basis":"independent paired protocol template plus variant-specific participants/region/depth","verdict":"SYNC_HAZARD"},"polarity":"BUG","primitive":"WGMMA","result_class":"SYNC_HAZARD","scenario_id":"WGMMA:MISSING-OPERAND-FENCE","semantic_knobs":{"elements":3,"protocol_depth":4,"region_offset_bytes":32,"stages":4,"threads":96,"tilelang_tma_bytes":48,"triton_tma_block":32,"triton_tma_transfers":3,"wgmma_repeats":3,"wgmma_shape":[64,64,16]},"source":{"bytes":2363,"path":"corpus/suite2/executable-wgmma-v1/triton/sync_hazard/wgmma/s2x-triton-sync-hazard-wgmma-02.py","sha256":"4c6d613bd818eb500b13fe2f211656dec0552a561ac9d71dfffbc35f80401dd9"},"template_family":"WGMMA","variant":2}
+{
+ "admitted": false,
+ "ai_adjudication": {
+  "required_evidence": [
+   "source_and_lowered_operations",
+   "physical_participants",
+   "resource_generation_or_endpoint",
+   "byte_overlap_if_applicable",
+   "reachable_prefix",
+   "missing_or_present_typed_order"
+  ],
+  "status": "PENDING_INDEPENDENT_REVIEW"
+ },
+ "case_id": "s2x-triton-sync-hazard-wgmma-02",
+ "dsl": "triton",
+ "oracle": {
+  "basis": "structurally distinct per-variant protocol skeleton (suite2 diversity rework); hazard/safety grounded in post-pipeline TTGIR",
+  "verdict": "SYNC_HAZARD"
+ },
+ "polarity": "BUG",
+ "primitive": "WGMMA",
+ "result_class": "SYNC_HAZARD",
+ "scenario_id": "WGMMA:TWO-GROUPS-NEWEST-CONSUMED-FIRST",
+ "semantic_knobs": {
+  "elements": 3,
+  "protocol_depth": 4,
+  "region_offset_bytes": 32,
+  "stages": 4,
+  "threads": 96,
+  "tilelang_tma_bytes": 48,
+  "triton_tma_block": 32,
+  "triton_tma_transfers": 3,
+  "wgmma_repeats": 3,
+  "wgmma_shape": [
+   64,
+   64,
+   16
+  ]
+ },
+ "source": {
+  "bytes": 1709,
+  "path": "corpus/suite2/executable-wgmma-v1/triton/sync_hazard/wgmma/s2x-triton-sync-hazard-wgmma-02.py",
+  "sha256": "79a844fab89e950bdf2b7783c01e1663dcaa4ba72f11ba3291a1e53936ed355f"
+ },
+ "template_family": "WGMMA",
+ "variant": 2
+}

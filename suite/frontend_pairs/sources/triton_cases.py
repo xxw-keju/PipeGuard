@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import torch
 from triton.experimental import gluon
 from triton.experimental.gluon import language as ttgl
 from triton.experimental.gluon.language.nvidia import ampere, hopper
@@ -686,6 +685,8 @@ def _named_tma_store_kernel(scenario: str):
     return kernel
 
 def compile_triton_case(family: str, scenario_id: str, variant: int, polarity: str) -> str:
+    import torch  # lazy: compile/warmup paths only; keeps module importable without torch
+
     buggy = polarity == "BUG"
     elements = (1, 2, 4, 8)[variant % 4]
     threads = 128 if family == "WGMMA-ENDPOINT" else (32, 64)[variant % 2]
@@ -826,5 +827,770 @@ def _suite2_cp_async_kernel(variant: int, result_class: str):
             )
         observed = shared.index(GROUPS - 1).load(layout)
         ttgl.store(output + offsets, observed)
+
+    return kernel
+
+# ---------------------------------------------------------------------------
+# Suite 2 structural-diversity redesign (2026-10): per-cell variant factories.
+#
+# Each (primitive, result_class) cell exposes five structurally DISTINCT
+# protocol-event-sequence skeletons instead of one skeleton with varying
+# repeat counts/shapes.  Factories keep the exact kernel signatures that
+# tools/suite2_selected_worker.py triton_prepare() constructs arguments for.
+# ---------------------------------------------------------------------------
+
+
+def _s2v2_cp_async(variant: int, result_class: str):
+    V = ttgl.constexpr(variant)
+    SAFE = ttgl.constexpr(result_class == "SAFE")
+    DH = ttgl.constexpr(result_class == "DATA_HAZARD")
+    SH = ttgl.constexpr(result_class == "SYNC_HAZARD")
+
+    @gluon.jit
+    def kernel(source, output):
+        layout: ttgl.constexpr = _blocked_1d(32)
+        offsets = ttgl.arange(0, 32, layout)
+        shared = ttgl.allocate_shared_memory(
+            ttgl.int32,
+            [2, 32],
+            ttgl.SwizzledSharedLayout(
+                vec=1, per_phase=1, max_phase=1, order=[0], cga_layout=_cga_layout()
+            ),
+        )
+        if SAFE:
+            if V == 0:
+                # single group round trip: issue -> commit -> wait(0) -> read
+                ampere.async_copy.async_load(shared.index(0), source + offsets)
+                ampere.async_copy.commit_group()
+                ampere.async_copy.wait_group(0)
+                value = shared.index(0).load(layout)
+                ttgl.store(output + offsets, value)
+            elif V == 1:
+                # staged waits: wait(1) releases oldest group only; newest
+                # buffer is touched only after wait(0)
+                ampere.async_copy.async_load(shared.index(0), source + offsets)
+                ampere.async_copy.commit_group()
+                ampere.async_copy.async_load(shared.index(1), source + offsets + 32)
+                ampere.async_copy.commit_group()
+                ampere.async_copy.wait_group(1)
+                first = shared.index(0).load(layout)
+                ttgl.store(output + offsets, first)
+                ampere.async_copy.wait_group(0)
+                second = shared.index(1).load(layout)
+                ttgl.store(output + offsets, second)
+            elif V == 2:
+                # one commit group carrying two copies; wait(0) completes both
+                ampere.async_copy.async_load(shared.index(0), source + offsets)
+                ampere.async_copy.async_load(shared.index(1), source + offsets + 32)
+                ampere.async_copy.commit_group()
+                ampere.async_copy.wait_group(0)
+                first = shared.index(0).load(layout)
+                second = shared.index(1).load(layout)
+                ttgl.store(output + offsets, first + second)
+            elif V == 3:
+                # destination reuse strictly after group completion
+                ampere.async_copy.async_load(shared.index(0), source + offsets)
+                ampere.async_copy.commit_group()
+                ampere.async_copy.wait_group(0)
+                shared.index(0).store(ttgl.full([32], 5, ttgl.int32, layout))
+                value = shared.index(0).load(layout)
+                ttgl.store(output + offsets, value)
+            else:
+                # lookahead-1 pipeline: interleaved reads at matching depths
+                ampere.async_copy.async_load(shared.index(0), source + offsets)
+                ampere.async_copy.commit_group()
+                ampere.async_copy.async_load(shared.index(1), source + offsets + 32)
+                ampere.async_copy.commit_group()
+                ampere.async_copy.wait_group(1)
+                first = shared.index(0).load(layout)
+                ampere.async_copy.wait_group(0)
+                second = shared.index(1).load(layout)
+                ttgl.store(output + offsets, first + second)
+        elif DH:
+            if V == 0:
+                # missing wait entirely
+                ampere.async_copy.async_load(shared.index(0), source + offsets)
+                ampere.async_copy.commit_group()
+                value = shared.index(0).load(layout)
+                ttgl.store(output + offsets, value)
+            elif V == 1:
+                # lax wait: wait(1) tolerates the only group in flight
+                ampere.async_copy.async_load(shared.index(0), source + offsets)
+                ampere.async_copy.commit_group()
+                ampere.async_copy.wait_group(1)
+                value = shared.index(0).load(layout)
+                ttgl.store(output + offsets, value)
+            elif V == 2:
+                # generic overwrite of the in-flight destination before wait
+                ampere.async_copy.async_load(shared.index(0), source + offsets)
+                ampere.async_copy.commit_group()
+                shared.index(0).store(ttgl.full([32], 7, ttgl.int32, layout))
+                ampere.async_copy.wait_group(0)
+                value = shared.index(0).load(layout)
+                ttgl.store(output + offsets, value)
+            elif V == 3:
+                # overlapping async destinations inside one group (async WAW)
+                ampere.async_copy.async_load(shared.index(0), source + offsets)
+                ampere.async_copy.async_load(shared.index(0), source + offsets + 32)
+                ampere.async_copy.commit_group()
+                ampere.async_copy.wait_group(0)
+                value = shared.index(0).load(layout)
+                ttgl.store(output + offsets, value)
+            else:
+                # wrong-buffer read under a staged wait: wait(1) completes only
+                # the oldest group but the newest destination is read
+                ampere.async_copy.async_load(shared.index(0), source + offsets)
+                ampere.async_copy.commit_group()
+                ampere.async_copy.async_load(shared.index(1), source + offsets + 32)
+                ampere.async_copy.commit_group()
+                ampere.async_copy.wait_group(1)
+                value = shared.index(1).load(layout)
+                ttgl.store(output + offsets, value)
+        else:
+            if V == 0:
+                # wait precedes commit: the issued copy belongs to no group yet
+                ampere.async_copy.async_load(shared.index(0), source + offsets)
+                ampere.async_copy.wait_group(0)
+                value = shared.index(0).load(layout)
+                ttgl.store(output + offsets, value)
+            elif V == 1:
+                # second copy never committed; wait(0) completes only group 1
+                ampere.async_copy.async_load(shared.index(0), source + offsets)
+                ampere.async_copy.commit_group()
+                ampere.async_copy.async_load(shared.index(1), source + offsets + 32)
+                ampere.async_copy.wait_group(0)
+                value = shared.index(1).load(layout)
+                ttgl.store(output + offsets, value)
+            elif V == 2:
+                # wait interposed between issue and its commit: the group is
+                # sealed only after the completion point has already passed
+                ampere.async_copy.async_load(shared.index(0), source + offsets)
+                ampere.async_copy.wait_group(0)
+                ampere.async_copy.commit_group()
+                value = shared.index(0).load(layout)
+                ttgl.store(output + offsets, value)
+            elif V == 3:
+                # correct first round, wait-before-commit on the second round
+                ampere.async_copy.async_load(shared.index(0), source + offsets)
+                ampere.async_copy.commit_group()
+                ampere.async_copy.wait_group(0)
+                first = shared.index(0).load(layout)
+                ampere.async_copy.async_load(shared.index(1), source + offsets + 32)
+                ampere.async_copy.wait_group(0)
+                second = shared.index(1).load(layout)
+                ttgl.store(output + offsets, first + second)
+            else:
+                # bare wait against an empty group stream before any issue
+                ampere.async_copy.wait_group(0)
+                ampere.async_copy.async_load(shared.index(0), source + offsets)
+                ampere.async_copy.wait_group(0)
+                value = shared.index(0).load(layout)
+                ttgl.store(output + offsets, value)
+
+    return kernel
+
+
+def _s2v2_tma(variant: int, result_class: str):
+    V = ttgl.constexpr(variant)
+    SAFE = ttgl.constexpr(result_class == "SAFE")
+    DH = ttgl.constexpr(result_class == "DATA_HAZARD")
+
+    @gluon.jit
+    def kernel(input_desc, input_ptr, output, BUGGY: ttgl.constexpr):
+        block: ttgl.constexpr = 32
+        layout: ttgl.constexpr = ttgl.BlockedLayout(
+            size_per_thread=[1, 1], threads_per_warp=[32, 1], warps_per_cta=[4, 1],
+            order=[0, 1], cga_layout=_cga_layout())
+        shared = ttgl.allocate_shared_memory(
+            ttgl.float16, [2, block, block], input_desc.layout)
+        bar = mbarrier.allocate_mbarrier()
+        mbarrier.init(bar, count=1)
+        rows = ttgl.arange(0, block, ttgl.SliceLayout(1, layout))[:, None]
+        cols = ttgl.arange(0, block, ttgl.SliceLayout(0, layout))[None, :]
+        if SAFE:
+            if V == 0:
+                # canonical single transfer: expect -> issue -> wait -> read
+                mbarrier.expect(bar, input_desc.nbytes_per_cta)
+                tma.async_load(input_desc, [0, 0], bar, shared.index(0))
+                mbarrier.wait(bar, 0, deps=[shared])
+                value = shared.index(0).load(layout)
+                ttgl.store(output + rows * block + cols, value)
+                mbarrier.invalidate(bar)
+            elif V == 1:
+                # one expect covering two transfers; single completion
+                mbarrier.expect(bar, input_desc.nbytes_per_cta * 2)
+                tma.async_load(input_desc, [0, 0], bar, shared.index(0))
+                tma.async_load(input_desc, [block, 0], bar, shared.index(1))
+                mbarrier.wait(bar, 0, deps=[shared])
+                first = shared.index(0).load(layout)
+                second = shared.index(1).load(layout)
+                ttgl.store(output + rows * block + cols, first + second)
+                mbarrier.invalidate(bar)
+            elif V == 2:
+                # two rounds on one barrier with correct parity flip 0 -> 1
+                mbarrier.expect(bar, input_desc.nbytes_per_cta)
+                tma.async_load(input_desc, [0, 0], bar, shared.index(0))
+                mbarrier.wait(bar, 0, deps=[shared])
+                first = shared.index(0).load(layout)
+                mbarrier.expect(bar, input_desc.nbytes_per_cta)
+                tma.async_load(input_desc, [block, 0], bar, shared.index(1))
+                mbarrier.wait(bar, 1, deps=[shared])
+                second = shared.index(1).load(layout)
+                ttgl.store(output + rows * block + cols, first + second)
+                mbarrier.invalidate(bar)
+            elif V == 3:
+                # generic global prologue published to the async proxy by an
+                # explicit fence before the transfer
+                prologue = ttgl.arange(0, block, ttgl.SliceLayout(1, layout))
+                ttgl.store(input_ptr + prologue, 1.0, mask=prologue == 0)
+                hopper.fence_async_shared()
+                mbarrier.expect(bar, input_desc.nbytes_per_cta)
+                tma.async_load(input_desc, [0, 0], bar, shared.index(0))
+                mbarrier.wait(bar, 0, deps=[shared])
+                value = shared.index(0).load(layout)
+                ttgl.store(output + rows * block + cols, value)
+                mbarrier.invalidate(bar)
+            else:
+                # per-slot barriers: each transfer completes on its own barrier
+                bar2 = mbarrier.allocate_mbarrier()
+                mbarrier.init(bar2, count=1)
+                mbarrier.expect(bar, input_desc.nbytes_per_cta)
+                mbarrier.expect(bar2, input_desc.nbytes_per_cta)
+                tma.async_load(input_desc, [0, 0], bar, shared.index(0))
+                tma.async_load(input_desc, [block, 0], bar2, shared.index(1))
+                mbarrier.wait(bar, 0, deps=[shared])
+                mbarrier.wait(bar2, 0, deps=[shared])
+                first = shared.index(0).load(layout)
+                second = shared.index(1).load(layout)
+                ttgl.store(output + rows * block + cols, first + second)
+                mbarrier.invalidate(bar)
+                mbarrier.invalidate(bar2)
+        elif DH:
+            if V == 0:
+                # destination observed before the completion wait
+                mbarrier.expect(bar, input_desc.nbytes_per_cta)
+                tma.async_load(input_desc, [0, 0], bar, shared.index(0))
+                value = shared.index(0).load(layout)
+                mbarrier.wait(bar, 0, deps=[shared])
+                ttgl.store(output + rows * block + cols, value)
+                mbarrier.invalidate(bar)
+            elif V == 1:
+                # completion wait missing entirely
+                mbarrier.expect(bar, input_desc.nbytes_per_cta)
+                tma.async_load(input_desc, [0, 0], bar, shared.index(0))
+                value = shared.index(0).load(layout)
+                ttgl.store(output + rows * block + cols, value)
+            elif V == 2:
+                # read interposed between two issues of one transaction window
+                mbarrier.expect(bar, input_desc.nbytes_per_cta * 2)
+                tma.async_load(input_desc, [0, 0], bar, shared.index(0))
+                value = shared.index(0).load(layout)
+                tma.async_load(input_desc, [block, 0], bar, shared.index(1))
+                mbarrier.wait(bar, 0, deps=[shared])
+                ttgl.store(output + rows * block + cols, value)
+                mbarrier.invalidate(bar)
+            elif V == 3:
+                # generic write lands in the in-flight TMA destination
+                mbarrier.expect(bar, input_desc.nbytes_per_cta)
+                tma.async_load(input_desc, [0, 0], bar, shared.index(0))
+                shared.index(0).store(ttgl.full([block, block], 0.0, ttgl.float16, layout))
+                mbarrier.wait(bar, 0, deps=[shared])
+                value = shared.index(0).load(layout)
+                ttgl.store(output + rows * block + cols, value)
+                mbarrier.invalidate(bar)
+            else:
+                # correct first round; second round forgets its wait
+                mbarrier.expect(bar, input_desc.nbytes_per_cta)
+                tma.async_load(input_desc, [0, 0], bar, shared.index(0))
+                mbarrier.wait(bar, 0, deps=[shared])
+                first = shared.index(0).load(layout)
+                mbarrier.expect(bar, input_desc.nbytes_per_cta)
+                tma.async_load(input_desc, [block, 0], bar, shared.index(1))
+                second = shared.index(1).load(layout)
+                ttgl.store(output + rows * block + cols, first + second)
+        else:
+            if V == 0:
+                # over-expect: transaction count never reaches zero
+                mbarrier.expect(bar, input_desc.nbytes_per_cta + 16)
+                tma.async_load(input_desc, [0, 0], bar, shared.index(0))
+                mbarrier.wait(bar, 0, deps=[shared])
+                value = shared.index(0).load(layout)
+                ttgl.store(output + rows * block + cols, value)
+                mbarrier.invalidate(bar)
+            elif V == 1:
+                # under-expect: two transfers deliver more bytes than declared
+                mbarrier.expect(bar, input_desc.nbytes_per_cta)
+                tma.async_load(input_desc, [0, 0], bar, shared.index(0))
+                tma.async_load(input_desc, [block, 0], bar, shared.index(1))
+                mbarrier.wait(bar, 0, deps=[shared])
+                first = shared.index(0).load(layout)
+                second = shared.index(1).load(layout)
+                ttgl.store(output + rows * block + cols, first + second)
+                mbarrier.invalidate(bar)
+            elif V == 2:
+                # stale parity: second round waits on phase 0 again
+                mbarrier.expect(bar, input_desc.nbytes_per_cta)
+                tma.async_load(input_desc, [0, 0], bar, shared.index(0))
+                mbarrier.wait(bar, 0, deps=[shared])
+                first = shared.index(0).load(layout)
+                mbarrier.expect(bar, input_desc.nbytes_per_cta)
+                tma.async_load(input_desc, [block, 0], bar, shared.index(1))
+                mbarrier.wait(bar, 0, deps=[shared])
+                second = shared.index(1).load(layout)
+                ttgl.store(output + rows * block + cols, first + second)
+                mbarrier.invalidate(bar)
+            elif V == 3:
+                # double-registered expectation: two expects accumulate twice
+                # the bytes a single transfer can ever deliver
+                mbarrier.expect(bar, input_desc.nbytes_per_cta)
+                mbarrier.expect(bar, input_desc.nbytes_per_cta)
+                tma.async_load(input_desc, [0, 0], bar, shared.index(0))
+                mbarrier.wait(bar, 0, deps=[shared])
+                value = shared.index(0).load(layout)
+                ttgl.store(output + rows * block + cols, value)
+                mbarrier.invalidate(bar)
+            else:
+                # wait targets the wrong barrier object
+                bar2 = mbarrier.allocate_mbarrier()
+                mbarrier.init(bar2, count=1)
+                mbarrier.expect(bar, input_desc.nbytes_per_cta)
+                tma.async_load(input_desc, [0, 0], bar, shared.index(0))
+                mbarrier.wait(bar2, 0, deps=[shared])
+                value = shared.index(0).load(layout)
+                ttgl.store(output + rows * block + cols, value)
+                mbarrier.invalidate(bar)
+                mbarrier.invalidate(bar2)
+
+    return kernel
+
+
+def _s2v2_mbarrier_data_hazard(variant: int):
+    V = ttgl.constexpr(variant)
+
+    @gluon.jit
+    def _producer(shared, bar, bar2, layout: ttgl.constexpr, V: ttgl.constexpr):
+        if V == 0:
+            # arrive precedes the publish write it is meant to order
+            mbarrier.arrive(bar, count=1)
+            shared.index(0).store(ttgl.full([32, 32], 1.0, ttgl.float16, layout))
+        elif V == 1:
+            # correct publish+signal; the consumer forgets to wait
+            shared.index(0).store(ttgl.full([32, 32], 2.0, ttgl.float16, layout))
+            mbarrier.arrive(bar, count=1)
+        elif V == 2:
+            # correct publish, but the signal goes to a barrier nobody waits on
+            shared.index(0).store(ttgl.full([32, 32], 3.0, ttgl.float16, layout))
+            mbarrier.arrive(bar, count=1)
+        elif V == 3:
+            # two generations, correctly re-armed through a reverse handshake
+            shared.index(0).store(ttgl.full([32, 32], 4.0, ttgl.float16, layout))
+            mbarrier.arrive(bar, count=1)
+            mbarrier.wait(bar2, 0)
+            shared.index(1).store(ttgl.full([32, 32], 5.0, ttgl.float16, layout))
+            mbarrier.arrive(bar, count=1)
+        else:
+            # slot 1 is written after the only arrive: never published
+            shared.index(0).store(ttgl.full([32, 32], 6.0, ttgl.float16, layout))
+            mbarrier.arrive(bar, count=1)
+            shared.index(1).store(ttgl.full([32, 32], 7.0, ttgl.float16, layout))
+
+    @gluon.jit
+    def _consumer(shared, bar, bar2, output, layout: ttgl.constexpr, V: ttgl.constexpr):
+        rows = ttgl.arange(0, 32, ttgl.SliceLayout(1, layout))[:, None]
+        cols = ttgl.arange(0, 32, ttgl.SliceLayout(0, layout))[None, :]
+        if V == 0:
+            mbarrier.wait(bar, 0, deps=[shared])
+            value = shared.index(0).load(layout)
+            ttgl.store(output + rows * 32 + cols, value)
+        elif V == 1:
+            value = shared.index(0).load(layout)
+            ttgl.store(output + rows * 32 + cols, value)
+        elif V == 2:
+            # self-released wrong barrier: orders nothing against the producer
+            mbarrier.arrive(bar2, count=1)
+            mbarrier.wait(bar2, 0, deps=[shared])
+            value = shared.index(0).load(layout)
+            ttgl.store(output + rows * 32 + cols, value)
+        elif V == 3:
+            # generation skew: the gen-2 read happens before its wait
+            mbarrier.wait(bar, 0, deps=[shared])
+            first = shared.index(0).load(layout)
+            mbarrier.arrive(bar2, count=1)
+            second = shared.index(1).load(layout)
+            mbarrier.wait(bar, 1, deps=[shared])
+            ttgl.store(output + rows * 32 + cols, first + second)
+        else:
+            # slot 1 was never covered by the handshake
+            mbarrier.wait(bar, 0, deps=[shared])
+            value = shared.index(1).load(layout)
+            ttgl.store(output + rows * 32 + cols, value)
+
+    @gluon.jit
+    def kernel(input_desc, input_ptr, output, BUGGY: ttgl.constexpr):
+        layout: ttgl.constexpr = ttgl.BlockedLayout(
+            size_per_thread=[1, 1], threads_per_warp=[32, 1], warps_per_cta=[4, 1],
+            order=[0, 1], cga_layout=_cga_layout())
+        shared = ttgl.allocate_shared_memory(
+            ttgl.float16,
+            [2, 32, 32],
+            ttgl.SwizzledSharedLayout(
+                vec=1, per_phase=1, max_phase=1, order=[0, 1], cga_layout=_cga_layout()
+            ),
+        )
+        bar = mbarrier.allocate_mbarrier()
+        bar2 = mbarrier.allocate_mbarrier()
+        mbarrier.init(bar, count=1)
+        mbarrier.init(bar2, count=1)
+        ttgl.warp_specialize(
+            [
+                (_consumer, (shared, bar, bar2, output, layout, V)),
+                (_producer, (shared, bar, bar2, layout, V)),
+            ],
+            [4],
+            [32],
+        )
+
+    return kernel
+
+
+def _s2v2_wgmma(variant: int, result_class: str):
+    V = ttgl.constexpr(variant)
+    SAFE = ttgl.constexpr(result_class == "SAFE")
+    DH = ttgl.constexpr(result_class == "DATA_HAZARD")
+
+    @gluon.jit
+    def kernel(output, BUGGY: ttgl.constexpr, OPERAND_CASE: ttgl.constexpr):
+        block: ttgl.constexpr = 64
+        k: ttgl.constexpr = 16
+        a_layout: ttgl.constexpr = ttgl.NVMMASharedLayout(
+            swizzle_byte_width=32, element_bitwidth=16, rank=2, cga_layout=_cga_layout())
+        b_layout: ttgl.constexpr = ttgl.NVMMASharedLayout(
+            swizzle_byte_width=128, element_bitwidth=16, rank=2, cga_layout=_cga_layout())
+        blocked_a: ttgl.constexpr = ttgl.BlockedLayout(
+            size_per_thread=[1, 1], threads_per_warp=[32, 1], warps_per_cta=[4, 1],
+            order=[1, 0], cga_layout=_cga_layout())
+        blocked_b: ttgl.constexpr = ttgl.BlockedLayout(
+            size_per_thread=[1, 1], threads_per_warp=[32, 1], warps_per_cta=[4, 1],
+            order=[0, 1], cga_layout=_cga_layout())
+        blocked_c: ttgl.constexpr = ttgl.BlockedLayout(
+            size_per_thread=[1, 1], threads_per_warp=[32, 1], warps_per_cta=[4, 1],
+            order=[0, 1], cga_layout=_cga_layout())
+        mma_layout: ttgl.constexpr = ttgl.NVMMADistributedLayout(
+            version=[3, 0], warps_per_cta=[4, 1], instr_shape=[16, 32, 16],
+            cga_layout=_cga_layout())
+        a = ttgl.allocate_shared_memory(ttgl.float16, [block, k], a_layout)
+        b = ttgl.allocate_shared_memory(ttgl.float16, [k, block], b_layout)
+        a.store(ttgl.full([block, k], 1.0, ttgl.float16, blocked_a))
+        b.store(ttgl.full([k, block], 1.0, ttgl.float16, blocked_b))
+        ttgl.barrier()
+        rows = ttgl.arange(0, block, ttgl.SliceLayout(1, blocked_c))[:, None]
+        cols = ttgl.arange(0, block, ttgl.SliceLayout(0, blocked_c))[None, :]
+        acc = hopper.warpgroup_mma_init(
+            ttgl.zeros([block, block], ttgl.float32, mma_layout))
+        if SAFE:
+            if V == 0:
+                # canonical: one async group, wait(0), consume
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+            elif V == 1:
+                # two independent groups; each result consumed after wait(0)
+                acc2 = hopper.warpgroup_mma_init(
+                    ttgl.full([block, block], 1.0, ttgl.float32, mma_layout))
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc2 = hopper.warpgroup_mma(a, b, acc2, is_async=True)
+                acc2 = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc2])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc2, blocked_c))
+                acc = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+            elif V == 2:
+                # depth-1 pipeline: wait(1) between issues, wait(0) at the end
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc = hopper.warpgroup_mma_wait(num_outstanding=1, deps=[acc])
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+            elif V == 3:
+                # operand buffer reused strictly after wait(0)
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+                a.store(ttgl.full([block, k], 2.0, ttgl.float16, blocked_a))
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+            else:
+                # dual endpoint: redundant second wait(0) on the same group
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+                acc = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+        elif DH:
+            if V == 0:
+                # shared operand overwritten while the group is in flight
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                a.store(ttgl.full([block, k], 2.0, ttgl.float16, blocked_a))
+                acc = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+            elif V == 1:
+                # operand of the *pending* newest group overwritten after wait(1)
+                acc2 = hopper.warpgroup_mma_init(
+                    ttgl.full([block, block], 1.0, ttgl.float32, mma_layout))
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc2 = hopper.warpgroup_mma(a, b, acc2, is_async=True)
+                acc2 = hopper.warpgroup_mma_wait(num_outstanding=1, deps=[acc2])
+                a.store(ttgl.full([block, k], 3.0, ttgl.float16, blocked_a))
+                acc2 = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc2])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc2, blocked_c))
+            elif V == 2:
+                # a CTA barrier is interposed before the overwrite, but a
+                # barrier does not order the asynchronous wgmma engine
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                ttgl.barrier()
+                a.store(ttgl.full([block, k], 4.0, ttgl.float16, blocked_a))
+                acc = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+            elif V == 3:
+                # both operand buffers clobbered while the group is in flight
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                a.store(ttgl.full([block, k], 5.0, ttgl.float16, blocked_a))
+                b.store(ttgl.full([k, block], 5.0, ttgl.float16, blocked_b))
+                acc = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+            else:
+                # depth-3 chained pipeline: wait(2) still leaves two groups
+                # reading the operand that gets rotated underneath them
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc = hopper.warpgroup_mma_wait(num_outstanding=2, deps=[acc])
+                a.store(ttgl.full([block, k], 6.0, ttgl.float16, blocked_a))
+                acc = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+        else:
+            if V == 0:
+                # lax wait(1): the only group may be incomplete when consumed
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc = hopper.warpgroup_mma_wait(num_outstanding=1, deps=[acc])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+                hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+            elif V == 1:
+                # chained two-group pipeline: wait(1) completes only the
+                # oldest group, yet the chained result is consumed
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc = hopper.warpgroup_mma_wait(num_outstanding=1, deps=[acc])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+            elif V == 2:
+                # two independent groups: wait(1) can complete only the oldest,
+                # yet the newest result is consumed; the oldest is then
+                # consumed correctly so both groups stay live
+                acc2 = hopper.warpgroup_mma_init(
+                    ttgl.full([block, block], 1.0, ttgl.float32, mma_layout))
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc2 = hopper.warpgroup_mma(a, b, acc2, is_async=True)
+                acc2 = hopper.warpgroup_mma_wait(num_outstanding=1, deps=[acc2])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc2, blocked_c))
+                acc = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+            elif V == 3:
+                # threshold too lax: wait(2) with a single group outstanding
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc = hopper.warpgroup_mma_wait(num_outstanding=2, deps=[acc])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+            else:
+                # correct round followed by a consume-under-lax-wait round
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+                acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+                acc = hopper.warpgroup_mma_wait(num_outstanding=1, deps=[acc])
+                ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+
+    return kernel
+
+
+def _s2v2_proxy(variant: int, result_class: str):
+    if result_class == "SYNC_HAZARD":
+        return _s2v2_proxy_sync(variant)
+
+    V = ttgl.constexpr(variant)
+    FENCED = ttgl.constexpr(result_class == "SAFE")
+
+    @gluon.jit
+    def default_partition():
+        pass
+
+    @gluon.jit
+    def producer(shared, layout: ttgl.constexpr):
+        shared.store(ttgl.full([64, 64], 1.0, ttgl.float16, layout))
+
+    @gluon.jit
+    def kernel(output_desc, output, sink, BUGGY: ttgl.constexpr):
+        layout: ttgl.constexpr = ttgl.BlockedLayout(
+            [1, 64], [32, 1], [4, 1], [0, 1], cga_layout=_cga_layout())
+        shared_layout: ttgl.constexpr = ttgl.NVMMASharedLayout(
+            128, 16, rank=2, cga_layout=_cga_layout())
+        shared = ttgl.allocate_shared_memory(ttgl.float16, [2, 64, 64], shared_layout)
+        rows = ttgl.arange(0, 64, ttgl.SliceLayout(1, layout))[:, None]
+        cols = ttgl.arange(0, 64, ttgl.SliceLayout(0, layout))[None, :]
+        if V == 0:
+            # warp-specialized producer publishes across the proxy boundary
+            ttgl.warp_specialize(
+                [(default_partition, ()), (producer, (shared.index(0), layout))],
+                [4],
+                [32],
+            )
+            if FENCED:
+                hopper.fence_async_shared()
+            tma.async_store(output_desc, [0, 0], shared.index(0))
+            tma.store_wait(0)
+            value = ttgl.load(output + rows * 64 + cols)
+            ttgl.store(sink + rows * 64 + cols, value)
+        elif V == 1:
+            # minimal publish/store endpoint: no readback consumer
+            shared.index(0).store(ttgl.full([64, 64], 2.0, ttgl.float16, layout))
+            if FENCED:
+                hopper.fence_async_shared()
+            tma.async_store(output_desc, [0, 0], shared.index(0))
+            tma.store_wait(0)
+        elif V == 2:
+            # two publish/store rounds through alternating tiles
+            shared.index(0).store(ttgl.full([64, 64], 4.0, ttgl.float16, layout))
+            if FENCED:
+                hopper.fence_async_shared()
+            tma.async_store(output_desc, [0, 0], shared.index(0))
+            tma.store_wait(0)
+            shared.index(1).store(ttgl.full([64, 64], 5.0, ttgl.float16, layout))
+            if FENCED:
+                hopper.fence_async_shared()
+            tma.async_store(output_desc, [0, 0], shared.index(1))
+            tma.store_wait(0)
+            value = ttgl.load(output + rows * 64 + cols)
+            ttgl.store(sink + rows * 64 + cols, value)
+        elif V == 3:
+            # masked producer handed over by a CTA barrier; the proxy fence is
+            # still required because a barrier does not cross proxies
+            shared.index(0).store(ttgl.full([64, 64], 6.0, ttgl.float16, layout))
+            ttgl.barrier()
+            if FENCED:
+                hopper.fence_async_shared()
+            tma.async_store(output_desc, [0, 0], shared.index(0))
+            tma.store_wait(0)
+            value = ttgl.load(output + rows * 64 + cols)
+            ttgl.store(sink + rows * 64 + cols, value)
+        else:
+            # staged completion thresholds (SAFE) vs consuming the TMA-written
+            # global tile before its completion wait (BUG)
+            shared.index(0).store(ttgl.full([64, 64], 8.0, ttgl.float16, layout))
+            if FENCED:
+                hopper.fence_async_shared()
+                tma.async_store(output_desc, [0, 0], shared.index(0))
+                tma.store_wait(1)
+                tma.store_wait(0)
+                value = ttgl.load(output + rows * 64 + cols)
+                ttgl.store(sink + rows * 64 + cols, value)
+            else:
+                tma.async_store(output_desc, [0, 0], shared.index(0))
+                value = ttgl.load(output + rows * 64 + cols)
+                tma.store_wait(0)
+                ttgl.store(sink + rows * 64 + cols, value)
+
+    return kernel
+
+
+def _s2v2_proxy_sync(variant: int):
+    V = ttgl.constexpr(variant)
+
+    @gluon.jit
+    def kernel(output, BUGGY: ttgl.constexpr, OPERAND_CASE: ttgl.constexpr):
+        block: ttgl.constexpr = 64
+        k: ttgl.constexpr = 16
+        a_layout: ttgl.constexpr = ttgl.NVMMASharedLayout(
+            swizzle_byte_width=32, element_bitwidth=16, rank=2, cga_layout=_cga_layout())
+        b_layout: ttgl.constexpr = ttgl.NVMMASharedLayout(
+            swizzle_byte_width=128, element_bitwidth=16, rank=2, cga_layout=_cga_layout())
+        blocked_a: ttgl.constexpr = ttgl.BlockedLayout(
+            size_per_thread=[1, 1], threads_per_warp=[32, 1], warps_per_cta=[4, 1],
+            order=[1, 0], cga_layout=_cga_layout())
+        blocked_b: ttgl.constexpr = ttgl.BlockedLayout(
+            size_per_thread=[1, 1], threads_per_warp=[32, 1], warps_per_cta=[4, 1],
+            order=[0, 1], cga_layout=_cga_layout())
+        blocked_c: ttgl.constexpr = ttgl.BlockedLayout(
+            size_per_thread=[1, 1], threads_per_warp=[32, 1], warps_per_cta=[4, 1],
+            order=[0, 1], cga_layout=_cga_layout())
+        mma_layout: ttgl.constexpr = ttgl.NVMMADistributedLayout(
+            version=[3, 0], warps_per_cta=[4, 1], instr_shape=[16, 32, 16],
+            cga_layout=_cga_layout())
+        a = ttgl.allocate_shared_memory(ttgl.float16, [block, k], a_layout)
+        b = ttgl.allocate_shared_memory(ttgl.float16, [k, block], b_layout)
+        a.store(ttgl.full([block, k], 1.0, ttgl.float16, blocked_a))
+        if V != 4:
+            # variant 4 publishes only operand A generically: the single-
+            # publish prelude distinguishes its skeleton from the WGMMA cell
+            b.store(ttgl.full([k, block], 1.0, ttgl.float16, blocked_b))
+        ttgl.barrier()
+        rows = ttgl.arange(0, block, ttgl.SliceLayout(1, blocked_c))[:, None]
+        cols = ttgl.arange(0, block, ttgl.SliceLayout(0, blocked_c))[None, :]
+        acc = hopper.warpgroup_mma_init(
+            ttgl.zeros([block, block], ttgl.float32, mma_layout))
+        if V == 0:
+            # generic->async operand publish; group consumed under wait(1)
+            acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+            acc = hopper.warpgroup_mma_wait(num_outstanding=1, deps=[acc])
+            ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+            hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+        elif V == 1:
+            # double consume: the early consume happens under lax wait(1);
+            # a correct wait(0)+consume follows, too late for the first read
+            acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+            acc = hopper.warpgroup_mma_wait(num_outstanding=1, deps=[acc])
+            ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+            acc = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+            ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+        elif V == 2:
+            # explicit proxy fence present, but the only wait is lax wait(2)
+            # and the group is still outstanding when the result is consumed
+            hopper.fence_async_shared()
+            acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+            acc = hopper.warpgroup_mma_wait(num_outstanding=2, deps=[acc])
+            ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+        elif V == 3:
+            # two generic->async publishes, two groups: wait(1) releases only
+            # the oldest but the newest result is consumed first (distinct
+            # accumulator seed keeps the two dots from being merged)
+            acc2 = hopper.warpgroup_mma_init(
+                ttgl.full([block, block], 1.0, ttgl.float32, mma_layout))
+            acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+            acc2 = hopper.warpgroup_mma(a, b, acc2, is_async=True)
+            acc2 = hopper.warpgroup_mma_wait(num_outstanding=1, deps=[acc2])
+            ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc2, blocked_c))
+            acc = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+            ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+        else:
+            # good round then lax round: the second consume happens while its
+            # group may still be outstanding, with no trailing completion
+            acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+            acc = hopper.warpgroup_mma_wait(num_outstanding=0, deps=[acc])
+            ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+            acc = hopper.warpgroup_mma(a, b, acc, is_async=True)
+            acc = hopper.warpgroup_mma_wait(num_outstanding=1, deps=[acc])
+            ttgl.store(output + rows * block + cols, ttgl.convert_layout(acc, blocked_c))
+
+    return kernel
+
+
+def _s2v2_mbarrier_safe_lifecycle():
+    @gluon.jit
+    def kernel(data, out, BUGGY: ttgl.constexpr):
+        # observed-invalidate-reinit lifecycle: a phase is completed and
+        # observed, the barrier is invalidated, re-initialized, and driven
+        # through a second complete generation -- every transition legal
+        bar = mbarrier.allocate_mbarrier()
+        mbarrier.init(bar, count=1)
+        mbarrier.arrive(bar, count=1)
+        mbarrier.wait(bar, phase=0)
+        mbarrier.invalidate(bar)
+        mbarrier.init(bar, count=1)
+        mbarrier.arrive(bar, count=1)
+        mbarrier.wait(bar, phase=0)
+        mbarrier.invalidate(bar)
 
     return kernel

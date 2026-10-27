@@ -1,6 +1,6 @@
-# Generated Recovery Suite 2 real Triton Gluon kernel. Do not edit.
+# Redesigned Suite 2 real Triton Gluon kernel (structural-diversity rework). Do not hand edit.
 # case_id=s2r-memory-triton-data-hazard-04
-# independent_label=DATA_HAZARD; actors=thread:0,thread:64; variant=4
+# independent_label=DATA_HAZARD; idiom=loop-carried cross-thread RAW: unrolled two-iteration producer/consumer with no per-iteration sync
 from triton.experimental import gluon
 from triton.experimental.gluon import language as ttgl
 
@@ -12,7 +12,7 @@ def _layout():
 def kernel(Data, Out):
     layout: ttgl.constexpr = _layout()
     lanes = ttgl.arange(0, 128, layout)
-    ttgl.store(Data + lanes * 0 + 40, 105, mask=lanes == 0)
-    ttgl.store(Data + lanes * 0 + 40, 106, mask=lanes == 64)
-    value = ttgl.load(Data + lanes * 0 + 40, mask=lanes == 64, other=0)
-    ttgl.store(Out + lanes * 0 + 4, value, mask=lanes == 64)
+    for step in ttgl.static_range(0, 2):
+        ttgl.store(Data + lanes * 0 + 40, step + 1, mask=lanes == 0)
+        value = ttgl.load(Data + lanes * 0 + 40, mask=lanes == 64, other=0)
+        ttgl.store(Out + lanes * 0 + 3 + step, value, mask=lanes == 64)

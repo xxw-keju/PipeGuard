@@ -1,6 +1,6 @@
-# Generated Recovery Suite 2 real Triton Gluon kernel. Do not edit.
+# Redesigned Suite 2 real Triton Gluon kernel (structural-diversity rework). Do not hand edit.
 # case_id=s2r-memory-triton-safe-02
-# independent_label=SAFE; actors=thread:0,thread:64; variant=2
+# independent_label=SAFE; idiom=adjacent-disjoint WAR: read and write touch adjacent but non-overlapping elements
 from triton.experimental import gluon
 from triton.experimental.gluon import language as ttgl
 
@@ -12,7 +12,6 @@ def _layout():
 def kernel(Data, Out):
     layout: ttgl.constexpr = _layout()
     lanes = ttgl.arange(0, 128, layout)
-    ttgl.store(Data + lanes * 0 + 24, 103, mask=lanes == 0)
-    ttgl.store(Data + lanes * 0 + 28, 104, mask=lanes == 64)
-    value = ttgl.load(Data + lanes * 0 + 28, mask=lanes == 64, other=0)
-    ttgl.store(Out + lanes * 0 + 2, value, mask=lanes == 64)
+    value = ttgl.load(Data + lanes * 0 + 24, mask=lanes == 0, other=0)
+    ttgl.store(Out + lanes * 0 + 1, value, mask=lanes == 0)
+    ttgl.store(Data + lanes * 0 + 25, 9, mask=lanes == 64)

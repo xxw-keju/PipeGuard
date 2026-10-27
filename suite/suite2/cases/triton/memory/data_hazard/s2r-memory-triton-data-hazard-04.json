@@ -18,7 +18,7 @@
           160,
           164
         ],
-        "mode": "WRITE"
+        "mode": "READ"
       }
     ],
     "actors": [
@@ -26,8 +26,9 @@
       "thread:64"
     ],
     "cta_threads": 128,
+    "idiom": "loop-carried cross-thread RAW: unrolled two-iteration producer/consumer with no per-iteration sync",
     "independent_label": "DATA_HAZARD",
-    "issue": "cross-warp global WAW without ordering",
+    "issue": "loop-carried cross-thread RAW repeated without any intra-loop ordering edge",
     "numeric_is_safety_oracle": false,
     "present_order": "none between distinct warps",
     "required_order": "an ordering edge between conflicting writes",
@@ -39,9 +40,9 @@
   "sanitizer_tool": "racecheck",
   "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
   "source": {
-    "bytes": 803,
+    "bytes": 902,
     "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/data_hazard/s2r-memory-triton-data-hazard-04.py",
-    "sha256": "d382e33dbac9e26910b5f30c9fa301b39986a328e4432391a43eac561d4cfe8f"
+    "sha256": "1cbc14ad002daa848b6b9483b50fb1b12b2ac6504066d81ecc6e94e6cfa5ba9b"
   },
   "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/data_hazard/s2r-memory-triton-data-hazard-04.json",
   "variant": 4

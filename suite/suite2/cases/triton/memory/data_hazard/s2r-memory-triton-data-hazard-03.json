@@ -7,27 +7,37 @@
       {
         "actor": "thread:0",
         "byte_interval": [
-          128,
-          132
+          32,
+          36
         ],
         "mode": "WRITE"
       },
       {
         "actor": "thread:64",
         "byte_interval": [
-          128,
-          132
+          32,
+          36
         ],
         "mode": "WRITE"
+      },
+      {
+        "actor": "thread:32",
+        "byte_interval": [
+          32,
+          36
+        ],
+        "mode": "READ"
       }
     ],
     "actors": [
       "thread:0",
+      "thread:32",
       "thread:64"
     ],
     "cta_threads": 128,
+    "idiom": "same-value WAW plus third-party reader: CUDA memory model treats unordered same-address writes as a race even when values agree",
     "independent_label": "DATA_HAZARD",
-    "issue": "cross-warp global WAW without ordering",
+    "issue": "same-value unordered WAW is still a data race under the CUDA memory model",
     "numeric_is_safety_oracle": false,
     "present_order": "none between distinct warps",
     "required_order": "an ordering edge between conflicting writes",
@@ -39,9 +49,9 @@
   "sanitizer_tool": "racecheck",
   "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
   "source": {
-    "bytes": 803,
+    "bytes": 922,
     "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/data_hazard/s2r-memory-triton-data-hazard-03.py",
-    "sha256": "5045548f42e22851ec037b1015619b263fd9feffa80bdf18dcef08d0ca9e8ed5"
+    "sha256": "fba14ddd7d75abd5a4181edde76c560f867258307baf8a3760feeec525c7be8c"
   },
   "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/data_hazard/s2r-memory-triton-data-hazard-03.json",
   "variant": 3

@@ -10,7 +10,7 @@
           96,
           100
         ],
-        "mode": "WRITE"
+        "mode": "READ"
       },
       {
         "actor": "thread:64",
@@ -26,8 +26,9 @@
       "thread:64"
     ],
     "cta_threads": 128,
+    "idiom": "cross-warp WAR: write races ahead of an unordered concurrent read",
     "independent_label": "DATA_HAZARD",
-    "issue": "cross-warp global WAW without ordering",
+    "issue": "cross-warp global WAR without any ordering edge",
     "numeric_is_safety_oracle": false,
     "present_order": "none between distinct warps",
     "required_order": "an ordering edge between conflicting writes",
@@ -39,9 +40,9 @@
   "sanitizer_tool": "racecheck",
   "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
   "source": {
-    "bytes": 803,
+    "bytes": 801,
     "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/data_hazard/s2r-memory-triton-data-hazard-02.py",
-    "sha256": "4a74b3e37d8816def990761ebb676a3853bdd2cf6bdff6b3bbf96d105b8b14b6"
+    "sha256": "cd8a68954bd4226df7c56427defde59fb3a11d0972fb8882e96e8f9dd51f044f"
   },
   "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/memory/data_hazard/s2r-memory-triton-data-hazard-02.json",
   "variant": 2

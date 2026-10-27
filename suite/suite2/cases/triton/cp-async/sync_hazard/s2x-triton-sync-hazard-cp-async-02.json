@@ -1,1 +1,52 @@
-{"admitted":false,"ai_adjudication":{"required_evidence":["source_and_lowered_operations","physical_participants","resource_generation_or_endpoint","byte_overlap_if_applicable","reachable_prefix","missing_or_present_typed_order"],"status":"PENDING_INDEPENDENT_REVIEW"},"case_id":"s2x-triton-sync-hazard-cp-async-02","dsl":"triton","oracle":{"basis":"independent paired protocol template plus variant-specific participants/region/depth","verdict":"SYNC_HAZARD"},"polarity":"BUG","primitive":"cp.async","result_class":"SYNC_HAZARD","scenario_id":"CP-ASYNC:WAIT-BEFORE-COMMIT","semantic_knobs":{"elements":3,"protocol_depth":4,"proxy_repeats":3,"proxy_store_shape":[64,64],"region_offset_bytes":32,"stages":4,"threads":32,"tilelang_tma_bytes":48,"triton_tma_block":32,"triton_tma_transfers":3,"wgmma_repeats":3,"wgmma_shape":[64,64,16]},"source":{"bytes":2649,"path":".artifacts/frontend-pairs/suite2-tilelang2-cpasync-corpus-v2/triton/sync_hazard/cp-async/s2x-triton-sync-hazard-cp-async-02.py","sha256":"d9a92fe234b47f4d059ce4688c394e7bd3ed154bf0a548a0c3a0a2b7e02047d6"},"template_family":"CP-ASYNC","variant":2}
+{
+ "admitted": false,
+ "ai_adjudication": {
+  "required_evidence": [
+   "source_and_lowered_operations",
+   "physical_participants",
+   "resource_generation_or_endpoint",
+   "byte_overlap_if_applicable",
+   "reachable_prefix",
+   "missing_or_present_typed_order"
+  ],
+  "status": "PENDING_INDEPENDENT_REVIEW"
+ },
+ "case_id": "s2x-triton-sync-hazard-cp-async-02",
+ "dsl": "triton",
+ "oracle": {
+  "basis": "structurally distinct per-variant protocol skeleton (suite2 diversity rework); hazard/safety grounded in post-pipeline TTGIR",
+  "verdict": "SYNC_HAZARD"
+ },
+ "polarity": "BUG",
+ "primitive": "cp.async",
+ "result_class": "SYNC_HAZARD",
+ "scenario_id": "CP-ASYNC:WAIT-SPLITS-ISSUE-FROM-COMMIT",
+ "semantic_knobs": {
+  "elements": 3,
+  "protocol_depth": 4,
+  "proxy_repeats": 3,
+  "proxy_store_shape": [
+   64,
+   64
+  ],
+  "region_offset_bytes": 32,
+  "stages": 4,
+  "threads": 32,
+  "tilelang_tma_bytes": 48,
+  "triton_tma_block": 32,
+  "triton_tma_transfers": 3,
+  "wgmma_repeats": 3,
+  "wgmma_shape": [
+   64,
+   64,
+   16
+  ]
+ },
+ "source": {
+  "bytes": 1769,
+  "path": ".artifacts/frontend-pairs/suite2-tilelang2-cpasync-corpus-v2/triton/sync_hazard/cp-async/s2x-triton-sync-hazard-cp-async-02.py",
+  "sha256": "92b6f52668e7bf30645f85010bf6fc60172ad0feef8427b5005a32dc24af3d90"
+ },
+ "template_family": "CP-ASYNC",
+ "variant": 2
+}

@@ -1,1 +1,40 @@
-{"admitted":false,"ai_adjudication":{"required_evidence":["source_and_lowered_operations","physical_participants","resource_generation_or_endpoint","byte_overlap_if_applicable","reachable_prefix","missing_or_present_typed_order"],"status":"PENDING_INDEPENDENT_REVIEW"},"case_id":"s2x-triton-data-hazard-mbarrier-02","dsl":"triton","oracle":{"basis":"independent paired protocol template plus variant-specific participants/region/depth","verdict":"DATA_HAZARD"},"polarity":"BUG","primitive":"mbarrier","result_class":"DATA_HAZARD","scenario_id":"TMA-OBSERVE","semantic_knobs":{"elements":3,"protocol_depth":4,"region_offset_bytes":32,"stages":4,"threads":96,"tilelang_tma_bytes":48,"triton_tma_block":64},"source":{"bytes":2173,"path":"corpus/suite2/executable-v3/triton/data_hazard/mbarrier/s2x-triton-data-hazard-mbarrier-02.py","sha256":"4e7b8606851c07d6a99660efad2f69b3c4c4364209382ad66ce6098720f83719"},"template_family":"TMA-OBSERVE","variant":2}
+{
+ "admitted": false,
+ "ai_adjudication": {
+  "required_evidence": [
+   "source_and_lowered_operations",
+   "physical_participants",
+   "resource_generation_or_endpoint",
+   "byte_overlap_if_applicable",
+   "reachable_prefix",
+   "missing_or_present_typed_order"
+  ],
+  "status": "PENDING_INDEPENDENT_REVIEW"
+ },
+ "case_id": "s2x-triton-data-hazard-mbarrier-02",
+ "dsl": "triton",
+ "oracle": {
+  "basis": "structurally distinct per-variant protocol skeleton (suite2 diversity rework); hazard/safety grounded in post-pipeline TTGIR",
+  "verdict": "DATA_HAZARD"
+ },
+ "polarity": "BUG",
+ "primitive": "mbarrier",
+ "result_class": "DATA_HAZARD",
+ "scenario_id": "MBARRIER:WRONG-BARRIER-SELF-RELEASED",
+ "semantic_knobs": {
+  "elements": 3,
+  "protocol_depth": 4,
+  "region_offset_bytes": 32,
+  "stages": 4,
+  "threads": 96,
+  "tilelang_tma_bytes": 48,
+  "triton_tma_block": 64
+ },
+ "source": {
+  "bytes": 1643,
+  "path": "corpus/suite2/executable-v3/triton/data_hazard/mbarrier/s2x-triton-data-hazard-mbarrier-02.py",
+  "sha256": "9b135ec555a6d7cd08f73e7c3a4633862e1d799c7546dd1008648c26639eba75"
+ },
+ "template_family": "TMA-OBSERVE",
+ "variant": 2
+}

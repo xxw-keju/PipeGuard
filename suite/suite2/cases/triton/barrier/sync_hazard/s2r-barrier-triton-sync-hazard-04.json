@@ -16,8 +16,9 @@
       "missing_participant_count": 32
     },
     "cta_threads": 128,
+    "idiom": "three-round handshake ring whose middle rendezvous is divergent (full -> divergent -> full)",
     "independent_label": "SYNC_HAZARD",
-    "issue": "divergent CTA barrier",
+    "issue": "middle rendezvous of a three-round ring observes only 64/128 arrivals; trailing full barrier is unreachable for stuck lanes",
     "numeric_is_safety_oracle": false,
     "present_order": "only threads [0,96) execute bar.sync 0",
     "required_order": "one full-CTA barrier invocation with all 128 participants",
@@ -29,9 +30,9 @@
   "sanitizer_tool": "synccheck",
   "schema_version": "pipeguard-suite2-barrier-memory-shard-v1",
   "source": {
-    "bytes": 800,
+    "bytes": 1232,
     "path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/barrier/sync_hazard/s2r-barrier-triton-sync-hazard-04.py",
-    "sha256": "10d8cdbaeaf3a4e52e45fc7184a5c242563b4656d1c09a9086de057cc244b70d"
+    "sha256": "c6544c98d8e0424f4ead573a0c8fea3cc0ac2ca5a79d2b36bbc9ba5d35249142"
   },
   "spec_path": ".artifacts/frontend-pairs/suite2-barrier-memory-selected60-v1/corpus/triton/barrier/sync_hazard/s2r-barrier-triton-sync-hazard-04.json",
   "variant": 4

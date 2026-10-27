@@ -1,1 +1,52 @@
-{"admitted":false,"ai_adjudication":{"required_evidence":["source_and_lowered_operations","physical_participants","resource_generation_or_endpoint","byte_overlap_if_applicable","reachable_prefix","missing_or_present_typed_order"],"status":"PENDING_INDEPENDENT_REVIEW"},"case_id":"s2x-triton-data-hazard-tma-01","dsl":"triton","oracle":{"basis":"independent paired protocol template plus variant-specific participants/region/depth","verdict":"DATA_HAZARD"},"polarity":"BUG","primitive":"TMA","result_class":"DATA_HAZARD","scenario_id":"TMA-OBSERVE","semantic_knobs":{"elements":2,"protocol_depth":3,"proxy_repeats":2,"proxy_store_shape":[64,64],"region_offset_bytes":16,"stages":3,"threads":64,"tilelang_tma_bytes":32,"triton_tma_block":32,"triton_tma_transfers":2,"wgmma_repeats":2,"wgmma_shape":[64,64,16]},"source":{"bytes":2641,"path":"corpus/suite2/executable-tma-v2/triton/data_hazard/tma/s2x-triton-data-hazard-tma-01.py","sha256":"2ed9bc2ca4066c780d336b6b11863f76688e2f66ee13de6fd154133eee72cb30"},"template_family":"TMA-OBSERVE","variant":1}
+{
+ "admitted": false,
+ "ai_adjudication": {
+  "required_evidence": [
+   "source_and_lowered_operations",
+   "physical_participants",
+   "resource_generation_or_endpoint",
+   "byte_overlap_if_applicable",
+   "reachable_prefix",
+   "missing_or_present_typed_order"
+  ],
+  "status": "PENDING_INDEPENDENT_REVIEW"
+ },
+ "case_id": "s2x-triton-data-hazard-tma-01",
+ "dsl": "triton",
+ "oracle": {
+  "basis": "structurally distinct per-variant protocol skeleton (suite2 diversity rework); hazard/safety grounded in post-pipeline TTGIR",
+  "verdict": "DATA_HAZARD"
+ },
+ "polarity": "BUG",
+ "primitive": "TMA",
+ "result_class": "DATA_HAZARD",
+ "scenario_id": "TMA-LOAD:MISSING-WAIT",
+ "semantic_knobs": {
+  "elements": 2,
+  "protocol_depth": 3,
+  "proxy_repeats": 2,
+  "proxy_store_shape": [
+   64,
+   64
+  ],
+  "region_offset_bytes": 16,
+  "stages": 3,
+  "threads": 64,
+  "tilelang_tma_bytes": 32,
+  "triton_tma_block": 32,
+  "triton_tma_transfers": 2,
+  "wgmma_repeats": 2,
+  "wgmma_shape": [
+   64,
+   64,
+   16
+  ]
+ },
+ "source": {
+  "bytes": 1745,
+  "path": "corpus/suite2/executable-tma-v2/triton/data_hazard/tma/s2x-triton-data-hazard-tma-01.py",
+  "sha256": "393fd9185ceddf6a07372b85cddc77ed4bf12ae898d39ec0ed4cadaa986e2cf8"
+ },
+ "template_family": "TMA-OBSERVE",
+ "variant": 1
+}

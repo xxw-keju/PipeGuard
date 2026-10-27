@@ -1,1 +1,41 @@
-{"admitted":false,"ai_adjudication":{"required_evidence":["source_and_lowered_operations","physical_participants","resource_generation_or_endpoint","byte_overlap_if_applicable","reachable_prefix","missing_or_present_typed_order"],"status":"PENDING_INDEPENDENT_REVIEW"},"case_id":"s2x-triton-safe-mbarrier-04","dsl":"triton","oracle":{"basis":"paired mbarrier state-machine scenario MBARRIER:LATE-MISSING-ARRIVAL","verdict":"SAFE"},"polarity":"CONTROL","primitive":"mbarrier","result_class":"SAFE","scenario_id":"MBARRIER:LATE-MISSING-ARRIVAL","semantic_knobs":{"delay_iterations":0,"elements":5,"protocol_depth":2,"region_offset_bytes":64,"stages":3,"threads":32,"tilelang_tma_bytes":80,"triton_tma_block":96},"source":{"bytes":2279,"path":"suite/suite2/cases/triton/mbarrier/safe/s2x-triton-safe-mbarrier-04.py","sha256":"a0b2799196b727dcb38014af5eb6b3645ab65c1e7499ecdcb7c042f95cf23d40"},"template_family":"MBARRIER-DIVERSE","variant":4}
+{
+ "admitted": false,
+ "ai_adjudication": {
+  "required_evidence": [
+   "source_and_lowered_operations",
+   "physical_participants",
+   "resource_generation_or_endpoint",
+   "byte_overlap_if_applicable",
+   "reachable_prefix",
+   "missing_or_present_typed_order"
+  ],
+  "status": "PENDING_INDEPENDENT_REVIEW"
+ },
+ "case_id": "s2x-triton-safe-mbarrier-04",
+ "dsl": "triton",
+ "oracle": {
+  "basis": "structurally distinct per-variant protocol skeleton (suite2 diversity rework); hazard/safety grounded in post-pipeline TTGIR",
+  "verdict": "SAFE"
+ },
+ "polarity": "CONTROL",
+ "primitive": "mbarrier",
+ "result_class": "SAFE",
+ "scenario_id": "MBARRIER:OBSERVED-INVALIDATE-REINIT-LIFECYCLE",
+ "semantic_knobs": {
+  "delay_iterations": 0,
+  "elements": 5,
+  "protocol_depth": 2,
+  "region_offset_bytes": 64,
+  "stages": 3,
+  "threads": 32,
+  "tilelang_tma_bytes": 80,
+  "triton_tma_block": 96
+ },
+ "source": {
+  "bytes": 1126,
+  "path": "suite/suite2/cases/triton/mbarrier/safe/s2x-triton-safe-mbarrier-04.py",
+  "sha256": "2bdb475acf235ee483965a30c16c24b03657e1305d28d014327b46fa9872f323"
+ },
+ "template_family": "MBARRIER-DIVERSE",
+ "variant": 4
+}

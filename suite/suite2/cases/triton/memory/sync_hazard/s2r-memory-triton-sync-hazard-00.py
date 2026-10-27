@@ -1,6 +1,6 @@
-# Generated Recovery Suite 2 real Triton Gluon kernel. Do not edit.
+# Redesigned Suite 2 real Triton Gluon kernel (structural-diversity rework). Do not hand edit.
 # case_id=s2r-memory-triton-sync-hazard-00
-# independent_label=SYNC_HAZARD; actors=thread:0,thread:64; variant=0
+# independent_label=SYNC_HAZARD; idiom=RAW guarded only by a divergent CTA barrier (64 of 128 lanes arrive)
 from triton.experimental import gluon
 from triton.experimental.gluon import language as ttgl
 
@@ -13,9 +13,6 @@ def kernel(Data, Out):
     layout: ttgl.constexpr = _layout()
     lanes = ttgl.arange(0, 128, layout)
     ttgl.store(Data + lanes * 0 + 8, 101, mask=lanes == 0)
-    token = ttgl.inline_asm_elementwise(
-        """.reg .pred p; setp.lt.u32 p, $1, 16; @p bar.sync 0; mov.u32 $0, $1;""",
-        "=r,r", [lanes], ttgl.int32, is_pure=False, pack=1,
-    )
+    token = ttgl.inline_asm_elementwise('.reg .pred p; setp.lt.u32 p, $1, 64; @p bar.sync 0; mov.u32 $0, $1;', '=r,r', [lanes], ttgl.int32, is_pure=False, pack=1)
     value = ttgl.load(Data + lanes * 0 + 8, mask=lanes == 64, other=0)
-    ttgl.store(Out + lanes * 0 + 0, value, mask=lanes == 64)
+    ttgl.store(Out + lanes * 0 + 0, value + token * 0, mask=lanes == 64)
