@@ -5,6 +5,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import re
 import sys
 import time
 import traceback
@@ -25,6 +26,109 @@ def write_once(path: Path, data: bytes) -> dict[str, Any]:
     with os.fdopen(fd, "wb") as stream:
         stream.write(data)
     return {"path": path.name, "sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data)}
+
+
+_TMA_STORE_WAIT_OP = "ttng.async_tma_store_wait"
+# MLIR custom-assembly attribute dictionary printed after the op name, e.g.
+# `ttng.async_tma_store_wait {pendings = 0 : i32, read_only} loc(#loc8)`.
+_TMA_STORE_WAIT_TEXT = re.compile(r"ttng\.async_tma_store_wait\s*(?:\{([^{}]*)\})?")
+_TMA_STORE_WAIT_PENDINGS = re.compile(r"^pendings\s*=\s*(-?\d+)\s*:")
+
+
+def tma_store_wait_unit_attributes(raw_path: Path) -> dict[int, list[str]]:
+    """Faithfully extract unit attributes of every ttng.async_tma_store_wait.
+
+    The Triton python bindings cannot read unit attributes, so triton_capture
+    demands binding evidence for them. Fabricating empty evidence would
+    silently upgrade a `{read_only}` wait to the stronger GLOBAL wait mode
+    (destination writes modelled as complete). This helper recovers the real
+    attributes from the textual TTGIR and raises CaptureError (fail-closed ->
+    capture_status UNSUPPORTED) whenever the attributes cannot be established
+    unambiguously; it never defaults to GLOBAL.
+    """
+    import triton_capture
+    from triton._C.libtriton import ir, nvidia
+
+    def unresolved(reason: str, **details: Any) -> Exception:
+        return triton_capture.CaptureError(
+            "TRITON_TMA_STORE_WAIT_EVIDENCE_UNRESOLVED",
+            f"TMA store wait unit attributes could not be established: {reason}",
+            {"path": str(raw_path), **details},
+        )
+
+    context = ir.context()
+    ir.load_dialects(context)
+    nvidia.load_dialects(context)
+    try:
+        module = ir.parse_mlir_module(str(raw_path), context)
+        module.verify()
+    except (OSError, RuntimeError) as error:
+        raise unresolved("TTGIR module could not be parsed", error=str(error))
+    operations: list[Any] = []
+    module.walk(operations.append)
+    wait_indices = [
+        index
+        for index, operation in enumerate(operations)
+        if operation.get_name() == _TMA_STORE_WAIT_OP
+    ]
+
+    raw_text = raw_path.read_text()
+    textual: list[tuple[int, list[str]]] = []
+    for match in _TMA_STORE_WAIT_TEXT.finditer(raw_text):
+        body = match.group(1)
+        if body is None:
+            raise unresolved(
+                "textual occurrence has no attribute dictionary",
+                offset=match.start(),
+            )
+        pendings = None
+        units: list[str] = []
+        for entry in body.split(","):
+            entry = entry.strip()
+            if not entry:
+                raise unresolved(
+                    "empty attribute entry in attribute dictionary",
+                    offset=match.start(),
+                )
+            pending_match = _TMA_STORE_WAIT_PENDINGS.match(entry)
+            if pending_match:
+                pendings = int(pending_match.group(1))
+            elif "=" in entry:
+                raise unresolved(
+                    "unrecognised non-unit attribute on TMA store wait",
+                    attribute=entry,
+                    offset=match.start(),
+                )
+            else:
+                units.append(entry)
+        if pendings is None:
+            raise unresolved(
+                "textual occurrence lacks a static pendings attribute",
+                offset=match.start(),
+            )
+        textual.append((pendings, sorted(units)))
+
+    if len(textual) != len(wait_indices):
+        raise unresolved(
+            "textual and walk-order occurrence counts disagree",
+            textual_occurrences=len(textual),
+            walk_occurrences=len(wait_indices),
+        )
+    # async_tma_store_wait has no regions, so walk order and textual order
+    # coincide; the per-occurrence pendings cross-check below rejects any
+    # pairing in which that invariant does not hold.
+    evidence: dict[int, list[str]] = {}
+    for index, (pendings, units) in zip(wait_indices, textual):
+        walk_pendings = operations[index].get_int_attr("pendings")
+        if walk_pendings is None or int(walk_pendings) != pendings:
+            raise unresolved(
+                "pendings cross-check between walk order and text failed",
+                operation_index=index,
+                walk_pendings=walk_pendings,
+                textual_pendings=pendings,
+            )
+        evidence[index] = units
+    return evidence
 
 
 def triton_capture_with_evidence(
@@ -60,6 +164,7 @@ def triton_capture_with_evidence(
         "pointer_allocations": pointer_allocations,
         "scalar_values": {},
     }
+    tma_store_wait_evidence: dict[int, list[str]] | None = None
     for _attempt in range(64):
         evidence_path.write_text(json.dumps(evidence, indent=2, sort_keys=True))
         try:
@@ -81,8 +186,27 @@ def triton_capture_with_evidence(
                         "partition_num_warps": [4],
                         "warp_group_start_ids": [4],
                     }
+                elif "TMA store wait" in str(error):
+                    # Supply the faithfully extracted unit attributes; a
+                    # read_only wait must never degrade into the stronger
+                    # GLOBAL default. Extraction failures raise CaptureError
+                    # (fail-closed -> UNSUPPORTED) instead of guessing.
+                    if tma_store_wait_evidence is None:
+                        tma_store_wait_evidence = tma_store_wait_unit_attributes(raw_path)
+                    if operation_index not in tma_store_wait_evidence:
+                        raise triton_capture.CaptureError(
+                            "TRITON_TMA_STORE_WAIT_EVIDENCE_UNRESOLVED",
+                            "capture demanded TMA store wait evidence for an "
+                            "operation the extractor did not identify",
+                            {"operation_index": operation_index},
+                        ) from error
+                    evidence["unit_attributes"][str(operation_index)] = (
+                        tma_store_wait_evidence[operation_index]
+                    )
                 else:
-                    evidence["unit_attributes"][str(operation_index)] = []
+                    # Fail closed: never fabricate binding evidence for an
+                    # unrecognised demand.
+                    raise
                 continue
             if error.code != "TRITON_TMA_DESCRIPTOR_UNRESOLVED":
                 raise

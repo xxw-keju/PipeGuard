@@ -245,6 +245,7 @@ def _triton_tma_descriptor_evidence(
     descriptor_bases: dict[int, int] = {}
     copies: list[tuple[int, int | None]] = []
     unit_attributes: dict[str, list[str]] = {}
+    has_store_waits = False
     for index, operation in enumerate(operations):
         name = operation.get_name()
         if name == "ttng.tensormap_create" and operation.get_num_operands() >= 2:
@@ -261,9 +262,21 @@ def _triton_tma_descriptor_evidence(
         elif name in ("ttng.async_tma_copy_global_to_local", "ttng.async_tma_copy_local_to_global"):
             copies.append((index, descriptor_bases.get(operation.get_operand(0).id())))
         elif name == "ttng.async_tma_store_wait":
-            unit_attributes[str(index)] = []
+            has_store_waits = True
     if entry_block is None or not copies:
         return None
+    if has_store_waits:
+        # Faithfully extract the wait unit attributes from the textual TTGIR
+        # instead of fabricating empty evidence: an empty attribute list would
+        # silently upgrade a `{read_only}` wait to the stronger GLOBAL wait
+        # mode. The extractor raises CaptureError (fail-closed) when the
+        # attributes cannot be established.
+        from suite2_selected_worker import tma_store_wait_unit_attributes
+
+        unit_attributes = {
+            str(index): attributes
+            for index, attributes in tma_store_wait_unit_attributes(raw_path).items()
+        }
     argument_positions = {
         entry_block.get_argument(position).id(): position
         for position in range(entry_block.get_num_arguments())

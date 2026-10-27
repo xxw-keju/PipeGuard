@@ -1039,13 +1039,16 @@ def _s2v2_tma(variant: int, result_class: str):
                 ttgl.store(output + rows * block + cols, first + second)
                 mbarrier.invalidate(bar)
             elif V == 3:
-                # generic global prologue published to the async proxy by an
-                # explicit fence before the transfer
+                # generic global prologue disjoint from the transfer source:
+                # fence.proxy.async.shared::cta orders only the shared state
+                # space, so a generic global write cannot be published to an
+                # overlapping async-proxy global read -- the transfer instead
+                # reads tile [block, 0], which the prologue never touches
                 prologue = ttgl.arange(0, block, ttgl.SliceLayout(1, layout))
                 ttgl.store(input_ptr + prologue, 1.0, mask=prologue == 0)
                 hopper.fence_async_shared()
                 mbarrier.expect(bar, input_desc.nbytes_per_cta)
-                tma.async_load(input_desc, [0, 0], bar, shared.index(0))
+                tma.async_load(input_desc, [block, 0], bar, shared.index(0))
                 mbarrier.wait(bar, 0, deps=[shared])
                 value = shared.index(0).load(layout)
                 ttgl.store(output + rows * block + cols, value)
@@ -1441,7 +1444,9 @@ def _s2v2_proxy(variant: int, result_class: str):
             if FENCED:
                 hopper.fence_async_shared()
             tma.async_store(output_desc, [0, 0], shared.index(0))
-            tma.store_wait(0)
+            # full (non-read_only) wait: the readback below needs the TMA
+            # destination writes to be complete, not just the source reads
+            tma.store_wait(0, read_only=False)
             value = ttgl.load(output + rows * 64 + cols)
             ttgl.store(sink + rows * 64 + cols, value)
         elif V == 1:
@@ -1457,12 +1462,17 @@ def _s2v2_proxy(variant: int, result_class: str):
             if FENCED:
                 hopper.fence_async_shared()
             tma.async_store(output_desc, [0, 0], shared.index(0))
-            tma.store_wait(0)
+            # both rounds target the same global tile, so the round-1 wait
+            # must be a full wait: a read_only wait would leave round 1's
+            # destination writes unordered against round 2's
+            tma.store_wait(0, read_only=False)
             shared.index(1).store(ttgl.full([64, 64], 5.0, ttgl.float16, layout))
             if FENCED:
                 hopper.fence_async_shared()
             tma.async_store(output_desc, [0, 0], shared.index(1))
-            tma.store_wait(0)
+            # the trailing wait must be a full wait so both rounds' global
+            # writes are complete before the readback
+            tma.store_wait(0, read_only=False)
             value = ttgl.load(output + rows * 64 + cols)
             ttgl.store(sink + rows * 64 + cols, value)
         elif V == 3:
@@ -1473,7 +1483,9 @@ def _s2v2_proxy(variant: int, result_class: str):
             if FENCED:
                 hopper.fence_async_shared()
             tma.async_store(output_desc, [0, 0], shared.index(0))
-            tma.store_wait(0)
+            # full wait before the readback: a read_only wait would leave the
+            # destination write window open
+            tma.store_wait(0, read_only=False)
             value = ttgl.load(output + rows * 64 + cols)
             ttgl.store(sink + rows * 64 + cols, value)
         else:
@@ -1484,7 +1496,9 @@ def _s2v2_proxy(variant: int, result_class: str):
                 hopper.fence_async_shared()
                 tma.async_store(output_desc, [0, 0], shared.index(0))
                 tma.store_wait(1)
-                tma.store_wait(0)
+                # staged thresholds end in a full wait so the readback
+                # observes completed destination writes
+                tma.store_wait(0, read_only=False)
                 value = ttgl.load(output + rows * 64 + cols)
                 ttgl.store(sink + rows * 64 + cols, value)
             else:
