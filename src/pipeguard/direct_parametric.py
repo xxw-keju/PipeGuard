@@ -31,6 +31,8 @@ class MBarrierState:
     observed_generation: int | None = None
     contributors: list[int] = field(default_factory=list)
     phase_sources: dict[int, dict[int, int]] = field(default_factory=dict)
+    last_phase_contributors: tuple[int, ...] = ()
+    last_phase_transactional: bool = True
 
     def snapshot(self) -> dict[str, Any]:
         return {
@@ -171,6 +173,7 @@ class NumericPDG:
         self._synthetic_indices: dict[int, int] | None = None
         self._synthetic_ancestors: tuple[int, ...] | None = None
         self._topological_positions: tuple[int, ...] | None = None
+        self._predecessors: dict[int, list[int]] | None = None
 
     def synthetic(self, label: str) -> int:
         node = self.next_node
@@ -185,6 +188,7 @@ class NumericPDG:
             self._synthetic_indices = None
             self._synthetic_ancestors = None
             self._topological_positions = None
+            self._predecessors = None
 
     def lane_successor(self, node: int, *, cross_rendezvous: bool = False) -> int | None:
         if node >= self.logical_nodes:
@@ -287,6 +291,87 @@ class NumericPDG:
                 if successor not in seen:
                     seen.add(successor)
                     queue.append(successor)
+        return False
+
+    def _dependency_sources(self, node: int) -> tuple[int, ...]:
+        template_id = self.occurrence_template[node]
+        template = self.module.templates[template_id]
+        if not template.dependencies:
+            return ()
+        lane = self.occurrence_lane[node]
+        sources: list[int] = []
+        for dependency in template.dependencies:
+            source_id = self.module.template_indices[dependency.template]
+            source = self.module.templates[source_id]
+            if source_id in self.transition_nodes:
+                sources.append(self.transition_nodes[source_id])
+            elif dependency.relation == "SAME_INSTANCE":
+                sources.append(self.occurrence_by_lane_template[(lane, source_id)])
+            elif dependency.relation == "ALL_INSTANCES":
+                sources.extend(
+                    self.occurrence_by_lane_template[(item, source_id)]
+                    for item in source.program_instances
+                )
+            else:
+                sources.append(
+                    self.occurrence_by_lane_template[(min(source.executors), source_id)]
+                )
+        return tuple(sources)
+
+    def executes_before_all(self, sources: tuple[int, ...], target: int) -> bool:
+        """Whether every source node executes before ``target`` (one backward walk).
+
+        This is execution order, not memory visibility: unlike the PDG it also
+        follows explicit ``depends_on`` references. Ancestry within a lane is
+        prefix-closed, so each lane is tracked by the deepest position reached.
+        """
+        logical: dict[int, int] = {}
+        synthetic: set[int] = set()
+        for source in sources:
+            if source == target:
+                continue
+            if source < self.logical_nodes:
+                lane = self.occurrence_lane[source]
+                logical[lane] = max(logical.get(lane, -1), self.occurrence_position[source])
+            else:
+                synthetic.add(source)
+        if not logical and not synthetic:
+            return True
+        self.reachability_queries += 1
+        if self._predecessors is None:
+            predecessors: dict[int, list[int]] = defaultdict(list)
+            for source, targets in self.adjacency.items():
+                for successor in targets:
+                    predecessors[successor].append(source)
+            self._predecessors = predecessors
+        predecessors = self._predecessors
+        depth: dict[int, int] = {}
+        seen: set[int] = set()
+        stack = [target]
+        while stack:
+            node = stack.pop()
+            if node < self.logical_nodes:
+                lane = self.occurrence_lane[node]
+                position = self.occurrence_position[node]
+                previous = depth.get(lane, -1)
+                if position <= previous:
+                    continue
+                depth[lane] = position
+                if logical.get(lane, position + 1) <= position:
+                    del logical[lane]
+                begin = self.module.lane_trace_offsets[self.lane_slot[lane]]
+                for ancestor in range(begin + previous + 1, begin + position + 1):
+                    self.reachability_edge_visits += 1
+                    stack.extend(predecessors.get(ancestor, ()))
+                    stack.extend(self._dependency_sources(ancestor))
+            else:
+                if node in seen:
+                    continue
+                seen.add(node)
+                synthetic.discard(node)
+                stack.extend(predecessors.get(node, ()))
+            if not logical and not synthetic:
+                return True
         return False
 
     def label(self, node: int) -> str:
@@ -623,6 +708,15 @@ class DirectParametricChecker:
             raise self._error(code, "event lifecycle does not match the live mbarrier", template, state)
         return resource, state
 
+    def _retired_without_wait(self, state: MBarrierState, node: int) -> bool:
+        # PTX forbids invalidating an in-progress phase, not an unobserved
+        # completed one. Without a wait, the completion is ordered before the
+        # invalidation only if it was arrival-driven (no transaction bytes) and
+        # every contributing arrival executes before the invalidation.
+        if state.last_phase_transactional:
+            return False
+        return self.graph.executes_before_all(state.last_phase_contributors, node)
+
     def _require_generation(self, template: EventTemplate, lane: int, state: MBarrierState) -> None:
         generation = self._field(template, "generation", lane)
         if generation < state.generation:
@@ -750,6 +844,12 @@ class DirectParametricChecker:
                 for endpoint_kind in state.completion_kinds
             }
             group = Group(sequence, node, tuple(staged), endpoints)
+            if state.protocol == "TMA_STORE":
+                self.graph.add_edge(
+                    endpoints["SOURCE_RELEASED"],
+                    endpoints["GLOBAL_COMPLETE"],
+                    "ENDPOINT_ORDER",
+                )
             groups.append(group)
             state.staged[owner] = []
             state.next_sequence[owner] = expected + 1
@@ -848,12 +948,22 @@ class DirectParametricChecker:
             state.observed_generation = None
             state.contributors.clear()
             state.phase_sources.clear()
+            state.last_phase_contributors = ()
+            state.last_phase_transactional = True
         elif kind == "MBarrierInvalidate":
             _resource, state = self._barrier(template, lane)
             if state.started:
+                # With every arrival in and every expected byte issued, the
+                # phase completes asynchronously; the missing step is the wait.
+                if state.pending == 0 and state.issued_tx == state.expected_tx:
+                    raise self._error("INVALID_MBARRIER_UNOBSERVED_PHASE", "invalidation requires a successful wait", template, state)
                 raise self._error("INVALIDATE_INCOMPLETE", "cannot invalidate an incomplete phase", template, state)
             completed = state.generation - 1
-            if completed >= 0 and state.observed_generation != completed:
+            if (
+                completed >= 0
+                and state.observed_generation != completed
+                and not self._retired_without_wait(state, node)
+            ):
                 raise self._error("INVALID_MBARRIER_UNOBSERVED_PHASE", "invalidation requires a successful wait", template, state)
             state.lifecycle = "INVALIDATED"
         elif kind in {"MBarrierArrive", "MBarrierArriveExpectTx", "MBarrierExpectTx", "TmaLoadIssue"}:
@@ -1072,6 +1182,8 @@ class DirectParametricChecker:
         self.completed.add(endpoint)
         state.publications.add(generation)
         state.phase_sources[generation] = source_positions
+        state.last_phase_contributors = tuple(state.contributors)
+        state.last_phase_transactional = state.expected_tx > 0 or state.issued_tx > 0
         state.generation += 1
         state.pending = state.base_count
         state.expected_tx = state.issued_tx = state.completed_tx = 0

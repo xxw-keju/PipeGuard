@@ -1556,33 +1556,46 @@ def _add_named_cases() -> None:
         bad_execution=("a arrives at invocation 0", "b never arrives", "collective cannot release"),
     )
 
-    # Invalidation is legal only after the completed phase was successfully observed.
+    # A transaction-completed phase must be observed before invalidation; only
+    # arrival-driven phases whose arrivals precede the invalidation are retired.
     actors = [_lane("owner", 0)]
     resource = [{"id": "bar", "kind": "mbarrier", "participants": ["owner"]}]
+    regions = [
+        _region("source", "global", address_space="GLOBAL", extent=16),
+        _region("tile", "shared", extent=16),
+    ]
     init = {"id": "init", "type": "MBarrierInit", "actor": "owner", "seq": 0,
             "resource": "bar", "lifecycle_epoch": 0, "count": 1}
-    arrive = {"id": "arrive", "type": "MBarrierArrive", "actor": "owner", "seq": 1,
-              "resource": "bar", "lifecycle_epoch": 0, "generation": 0, "count": 1}
-    wait = {"id": "wait", "type": "MBarrierWaitParity", "actor": "owner", "seq": 2,
-            "resource": "bar", "lifecycle_epoch": 0, "generation": 0, "raw_parity": 0,
-            "parity_evidence": _parity("owner:bar", 0)}
-    invalidate = {"id": "invalidate", "type": "MBarrierInvalidate", "actor": "owner", "seq": 2,
+    expect = {"id": "expect", "type": "MBarrierExpectTx", "actor": "owner", "seq": 1,
+              "resource": "bar", "lifecycle_epoch": 0, "generation": 0, "bytes": 16}
+    tx_arrive = {"id": "arrive", "type": "MBarrierArrive", "actor": "owner", "seq": 2,
+                 "resource": "bar", "lifecycle_epoch": 0, "generation": 0, "count": 1}
+    issue = {"id": "issue", "type": "TmaLoadIssue", "actor": "owner", "seq": 3,
+             "resource": "bar", "lifecycle_epoch": 0, "generation": 0,
+             "source_region": "source", "destination_region": "tile", "bytes": 16}
+    tx_wait = {"id": "wait", "type": "MBarrierWaitParity", "actor": "owner", "seq": 4,
+               "resource": "bar", "lifecycle_epoch": 0, "generation": 0, "raw_parity": 0,
+               "parity_evidence": _parity("owner:bar", 0)}
+    invalidate = {"id": "invalidate", "type": "MBarrierInvalidate", "actor": "owner", "seq": 4,
                   "resource": "bar", "lifecycle_epoch": 0}
-    buggy_events = [deepcopy(init), deepcopy(arrive), deepcopy(invalidate)]
-    correct_events = [deepcopy(init), deepcopy(arrive), deepcopy(wait), deepcopy(invalidate)]
-    correct_events[-1]["seq"] = 3
+    prefix = [deepcopy(init), deepcopy(expect), deepcopy(tx_arrive), deepcopy(issue)]
+    buggy_events = deepcopy(prefix) + [deepcopy(invalidate)]
+    correct_events = deepcopy(prefix) + [deepcopy(tx_wait), deepcopy(invalidate)]
+    correct_events[-1]["seq"] = 5
     _append_pair(
         named, family="MBARRIER", scenario_id="INVALIDATE-REQUIRES-OBSERVATION", rule_ids=("MB-03", "MB-08"),
         dimensions=("mbarrier", "lifecycle", "terminal-observation", "invalidate"),
-        buggy_raw=_raw("temporary", actors=deepcopy(actors), resources=deepcopy(resource), events=buggy_events),
-        correct_raw=_raw("temporary", actors=deepcopy(actors), resources=deepcopy(resource), events=correct_events),
+        buggy_raw=_raw("temporary", actors=deepcopy(actors), resources=deepcopy(resource), regions=deepcopy(regions), events=buggy_events),
+        correct_raw=_raw("temporary", actors=deepcopy(actors), resources=deepcopy(resource), regions=deepcopy(regions), events=correct_events),
         buggy_verdict="SYNC_HAZARD", buggy_diagnostic="INVALID_MBARRIER_UNOBSERVED_PHASE",
         diagnostic_events=("invalidate",), protocol_state={"required_observed_generation": 0},
         required_correct_edges=(_edge(_phase("bar", 0), "wait", "COMPLETION_TO_WAIT"),),
-        bad_execution=("generation 0 completes", "owner invalidates bar without a successful wait"),
+        bad_execution=("generation 0 completes through TMA transaction bytes", "owner invalidates bar without a successful wait"),
     )
 
     # Live reinitialization is invalid; wait+invalidate starts a fresh lifecycle epoch.
+    arrive = {**tx_arrive, "seq": 1}
+    wait = {**tx_wait, "seq": 2}
     buggy_events = [deepcopy(init), {**deepcopy(init), "id": "init_again", "seq": 1}]
     correct_events = [deepcopy(init), deepcopy(arrive), deepcopy(wait),
                       {**deepcopy(invalidate), "seq": 3},

@@ -167,6 +167,8 @@ class Executor:
         self._frontier_cache: dict[str, tuple[int, Event]] = {}
         self.incremental_counters: Any | None = None
         self.required_logical_waits = module.required_logical_waits
+        self._phase_events: dict[tuple[str, int, int], list[Event]] | None = None
+        self._execution_graph: Any | None = None
         self.tma_issues_by_phase: dict[tuple[str, int, int], tuple[Event, ...]] = {}
         issue_buckets: dict[tuple[str, int, int], list[Event]] = {}
         for event in module.events:
@@ -611,6 +613,39 @@ class Executor:
             snapshot = barrier.snapshot()
             snapshot["arrival_count"] = event.count
             raise ProtocolError("ARRIVAL_UNDERFLOW", "arrival count underflow", event.id, snapshot)
+
+    def _retired_without_wait(
+        self,
+        event: Event,
+        lifecycle_epoch: int,
+        generation: int,
+    ) -> bool:
+        # PTX forbids invalidating an in-progress phase, not an unobserved
+        # completed one. Without a wait, the completion is ordered before the
+        # invalidation only if it was arrival-driven (no transaction bytes) and
+        # every contributing arrival executes before the invalidation.
+        if self._phase_events is None:
+            buckets: dict[tuple[str, int, int], list[Event]] = {}
+            for item in self.module.events:
+                if item.resource is None or item.generation is None or item.lifecycle_epoch is None:
+                    continue
+                buckets.setdefault(
+                    (item.resource, item.lifecycle_epoch, item.generation), []
+                ).append(item)
+            self._phase_events = buckets
+        contributors: list[str] = []
+        for item in self._phase_events.get((event.resource, lifecycle_epoch, generation), ()):
+            if item.type == "TmaLoadIssue" or (item.bytes or 0) > 0:
+                return False
+            if item.type in {"MBarrierArrive", "MBarrierArriveExpectTx"} and item.predicate:
+                contributors.append(item.id)
+        if self._execution_graph is None:
+            from .checker import _base_pdg
+
+            self._execution_graph = _base_pdg(self.module)
+        return all(
+            self._execution_graph.reachable(item, event.id) for item in contributors
+        )
 
     def _arrive(self, state: ExecutionState, barrier: BarrierState, event: Event) -> None:
         assert event.count is not None
@@ -1431,6 +1466,9 @@ class Executor:
             if (
                 completed_target >= 0
                 and barrier.last_successfully_observed_generation != completed_target
+                and not self._retired_without_wait(
+                    event, barrier.lifecycle_epoch, completed_target
+                )
             ):
                 snapshot = barrier.snapshot()
                 snapshot["required_observed_generation"] = completed_target

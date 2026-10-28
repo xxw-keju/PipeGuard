@@ -2365,6 +2365,38 @@ def test_triton_cp_async_rejects_subword_per_thread_transfer(tmp_path: Path):
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+@pytest.mark.parametrize(("size_per_thread", "lane_bytes"), [(8, [16, 16]), (2, [4] * 8)])
+def test_triton_cp_async_vectorizes_contiguous_subword_elements(
+    tmp_path: Path,
+    size_per_thread: int,
+    lane_bytes: list[int],
+):
+    text = (FIXTURES / "triton_cp_async.ttgir.mlir").read_text()
+    text = text.replace("sizePerThread = [1]", f"sizePerThread = [{size_per_thread}]")
+    text = text.replace("!tt.ptr<i32>", "!tt.ptr<f16>")
+    text = text.replace("!ttg.memdesc<16xi32", "!ttg.memdesc<16xf16")
+    text = text.replace("-> <16xi32, #shared", "-> <16xf16, #shared")
+    text = text.replace(
+        "mutable> -> tensor<16xi32, #blocked>",
+        "mutable> -> tensor<16xf16, #blocked>",
+    )
+    fixture = tmp_path / f"vector-cp-async-{size_per_thread}.ttgir.mlir"
+    fixture.write_text(text)
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        f"vector-cp-async-{size_per_thread}",
+    )
+    issue = next(
+        operation for operation in snapshot["operations"]
+        if operation["op"] == "triton.cp_async.issue"
+    )
+    assert issue["lane_effects"]["bytes"] == lane_bytes
+    assert issue["lane_effects"]["lanes"] == list(range(len(lane_bytes)))
+    assert check_module(triton_snapshot_to_module(snapshot), engine="maximal")["verdict"] == "SAFE"
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
 def test_triton_cp_async_current_profile_rejects_incomplete_or_aggregate_evidence():
     _output, captured = _capture(
         TRITON_PYTHON,

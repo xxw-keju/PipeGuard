@@ -1146,10 +1146,10 @@ class TritonCapture:
                 "cp.async source pointer values are unresolved",
             )
         allocation, width, offsets = pointer
-        if width not in {4, 8, 16}:
+        if width <= 0:
             raise CaptureError(
                 "TRITON_CP_ASYNC_TRANSFER_WIDTH_UNSUPPORTED",
-                "SM90 cp.async requires an exact per-thread width of 4, 8, or 16 bytes",
+                "cp.async element width is not a positive byte count",
                 {"width": width},
             )
         shape = self._value_shape(operation.get_operand(0))
@@ -1186,24 +1186,64 @@ class TritonCapture:
             if not selected:
                 continue
             lanes.append(lane)
-            for element in selected:
-                source_offset = offsets[element] * width
+            # Triton vectorizes a thread's contiguous elements into one
+            # cp.async; each instruction moves an aligned 4, 8, or 16 bytes.
+            runs: list[list[int]] = []
+            for element in sorted(selected):
+                if (
+                    runs
+                    and element == runs[-1][-1] + 1
+                    and offsets[element] == offsets[runs[-1][-1]] + 1
+                ):
+                    runs[-1].append(element)
+                else:
+                    runs.append([element])
+            for run in runs:
+                source_offset = offsets[run[0]] * width
                 if source_offset < 0:
                     raise CaptureError(
                         "TRITON_POINTER_PROVENANCE_UNRESOLVED",
                         "cp.async source offset is negative relative to its allocation",
-                        {"element": element, "offset": source_offset},
+                        {"element": run[0], "offset": source_offset},
                     )
-                source_regions.append(
-                    self._region(allocation, "GLOBAL", source_offset, width)
-                )
-                destination_regions.append(self._region(
-                    destination_region["allocation_id"],
-                    destination_region["address_space"],
-                    destination_region["offset"] + element * width,
-                    width,
-                ))
-                byte_counts.append(width)
+                destination_offset = destination_region["offset"] + run[0] * width
+                remaining = len(run) * width
+                while remaining:
+                    size = next(
+                        (
+                            candidate
+                            for candidate in (16, 8, 4)
+                            if candidate <= remaining
+                            and source_offset % candidate == 0
+                            and destination_offset % candidate == 0
+                        ),
+                        None,
+                    )
+                    if size is None:
+                        raise CaptureError(
+                            "TRITON_CP_ASYNC_TRANSFER_WIDTH_UNSUPPORTED",
+                            "SM90 cp.async requires aligned per-thread transfers of 4, 8, or 16 bytes",
+                            {
+                                "width": width,
+                                "run_bytes": len(run) * width,
+                                "remaining_bytes": remaining,
+                                "source_offset": source_offset,
+                                "destination_offset": destination_offset,
+                            },
+                        )
+                    source_regions.append(
+                        self._region(allocation, "GLOBAL", source_offset, size)
+                    )
+                    destination_regions.append(self._region(
+                        destination_region["allocation_id"],
+                        destination_region["address_space"],
+                        destination_offset,
+                        size,
+                    ))
+                    byte_counts.append(size)
+                    source_offset += size
+                    destination_offset += size
+                    remaining -= size
             transfer_offsets.append(len(source_regions))
         return {
             "lanes": lanes,

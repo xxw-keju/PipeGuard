@@ -615,11 +615,60 @@ def test_invalidate_after_completed_phase_is_legal():
 
 
 @pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
-def test_invalidate_after_completed_phase_requires_successful_wait(engine):
+def test_invalidate_after_ordered_arrival_phase_needs_no_wait(engine):
+    # PTX forbids invalidating an in-progress phase; an arrival-driven phase
+    # whose arrivals all precede the invalidation is already complete.
     result = check_module(
         lifecycle_module("MBarrierInit", "MBarrierArrive", "MBarrierInvalidate"),
         engine=engine,
     )
+    assert result["verdict"] == "SAFE"
+
+
+def cross_actor_invalidate_module(ordered: bool):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["resources"][0]["participants"] = ["a_producer", "b_consumer"]
+    invalidate = {
+        "id": "invalidate",
+        "type": "MBarrierInvalidate",
+        "actor": "b_consumer",
+        "seq": 0,
+        "resource": "bar",
+        "lifecycle_epoch": 0,
+        "depends_on": ["arrive"] if ordered else ["init"],
+    }
+    raw["events"] = [
+        event for event in raw["events"] if event["actor"] == "a_producer"
+    ] + [invalidate]
+    return module_from_dict(raw)
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_invalidate_after_cross_actor_arrival_requires_ordering(engine):
+    ordered = check_module(cross_actor_invalidate_module(True), engine=engine)
+    assert ordered["verdict"] == "SAFE"
+    unordered = check_module(cross_actor_invalidate_module(False), engine=engine)
+    assert unordered["verdict"] == "SYNC_HAZARD"
+    assert unordered["diagnostics"][0]["code"] in {
+        "INVALID_MBARRIER_UNOBSERVED_PHASE",
+        "INVALIDATE_INCOMPLETE",
+    }
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_invalidate_after_transaction_phase_requires_successful_wait(engine):
+    raw = json.loads((FIXTURES / "tma_completion_after_arrival.json").read_text())
+    wait = next(event for event in raw["events"] if event["id"] == "wait")
+    wait.clear()
+    wait.update({
+        "id": "invalidate",
+        "type": "MBarrierInvalidate",
+        "actor": "a",
+        "seq": 4,
+        "resource": "bar",
+        "lifecycle_epoch": 0,
+    })
+    result = check_module(module_from_dict(raw), engine=engine)
     assert result["verdict"] == "SYNC_HAZARD"
     assert result["diagnostics"][0]["code"] == "INVALID_MBARRIER_UNOBSERVED_PHASE"
 
