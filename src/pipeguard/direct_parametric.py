@@ -172,6 +172,8 @@ class NumericPDG:
         self.reachability_cache_hits = 0
         self._synthetic_indices: dict[int, int] | None = None
         self._synthetic_ancestors: tuple[int, ...] | None = None
+        self._synthetic_descendants: tuple[int, ...] | None = None
+        self._logical_cross_lane_edges = True
         self._topological_positions: tuple[int, ...] | None = None
         self._predecessors: dict[int, list[int]] | None = None
 
@@ -187,6 +189,7 @@ class NumericPDG:
             self.edge_kinds[(source, target)] = kind
             self._synthetic_indices = None
             self._synthetic_ancestors = None
+            self._synthetic_descendants = None
             self._topological_positions = None
             self._predecessors = None
 
@@ -228,10 +231,12 @@ class NumericPDG:
         for node, index in synthetic_indices.items():
             ancestors[node] = 1 << index
         topological_positions = [0] * node_count
+        topological_order = []
         visited = 0
         while queue:
             node = queue.popleft()
             topological_positions[node] = visited
+            topological_order.append(node)
             visited += 1
             source_bits = ancestors[node]
             targets = successors[node]
@@ -243,8 +248,22 @@ class NumericPDG:
                     queue.append(target)
         if visited != node_count:
             raise RuntimeError("numeric PDG contains a cycle")
+        descendants = [0] * node_count
+        for node in reversed(topological_order):
+            bits = 1 << synthetic_indices[node] if node in synthetic_indices else 0
+            for target in successors[node]:
+                bits |= descendants[target]
+            descendants[node] = bits
         self._synthetic_indices = synthetic_indices
         self._synthetic_ancestors = tuple(ancestors)
+        self._synthetic_descendants = tuple(descendants)
+        self._logical_cross_lane_edges = any(
+            target < self.logical_nodes
+            and self.occurrence_lane[source] != self.occurrence_lane[target]
+            for source, targets in self.adjacency.items()
+            if source < self.logical_nodes
+            for target in targets
+        )
         self._topological_positions = tuple(topological_positions)
 
     def reachable(self, source: int, target: int) -> bool:
@@ -279,6 +298,13 @@ class NumericPDG:
         if source >= self.logical_nodes:
             index = self._synthetic_indices[source]
             return bool(self._synthetic_ancestors[target] & (1 << index))
+        if target >= self.logical_nodes or not self._logical_cross_lane_edges:
+            # Lane order is handled above, so without logical edges between
+            # lanes every remaining path passes through a synthetic node.
+            assert self._synthetic_descendants is not None
+            return bool(
+                self._synthetic_descendants[source] & self._synthetic_ancestors[target]
+            )
         queue = deque([source])
         seen = {source}
         while queue:
