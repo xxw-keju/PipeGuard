@@ -786,6 +786,8 @@ def test_triton_expands_static_void_private_function_call(tmp_path: Path):
         "triton.mem.read",
         "triton.cp_async.commit_group",
         "triton.cp_async.wait_group",
+        "triton.barrier.arrive",
+        "triton.barrier.observe",
     ]
     assert snapshot["extraction"]["static_expansions"] == 1
     module = triton_snapshot_to_module(snapshot)
@@ -803,6 +805,8 @@ def test_triton_empty_commit_and_zero_token_wait_use_existing_group_fsm():
     assert [operation["op"] for operation in snapshot["operations"]] == [
         "triton.cp_async.commit_group",
         "triton.cp_async.wait_group",
+        "triton.barrier.arrive",
+        "triton.barrier.observe",
     ]
     assert check_module(triton_snapshot_to_module(snapshot), engine="maximal")["verdict"] == "SAFE"
 
@@ -1679,6 +1683,35 @@ def test_triton_used_subbyte_scalar_pointer_fails_closed(tmp_path: Path):
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_boolean_pointer_accessed_through_byte_bitcast(tmp_path: Path):
+    fixture = tmp_path / "boolean-pointer.ttgir.mlir"
+    fixture.write_text("""\
+#blocked = #ttg.blocked<{sizePerThread = [1], threadsPerWarp = [32], warpsPerCTA = [4], order = [0]}>
+module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:90", "ttg.threads-per-warp" = 32 : i32} {
+  tt.func public @boolean_store(%base: !tt.ptr<i1>) {
+    %range = tt.make_range {end = 128 : i32, start = 0 : i32} : tensor<128xi32, #blocked>
+    %splat = tt.splat %base : !tt.ptr<i1> -> tensor<128x!tt.ptr<i1>, #blocked>
+    %flags = tt.addptr %splat, %range : tensor<128x!tt.ptr<i1>, #blocked>, tensor<128xi32, #blocked>
+    %bytes = tt.bitcast %flags : tensor<128x!tt.ptr<i1>, #blocked> -> tensor<128x!tt.ptr<i8>, #blocked>
+    %one = arith.constant dense<1> : tensor<128xi8, #blocked>
+    tt.store %bytes, %one : tensor<128x!tt.ptr<i8>, #blocked>
+    tt.return
+  }
+}
+""")
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "boolean-pointer",
+    )
+    assert [(operation["op"], operation["region"]) for operation in snapshot["operations"]] == [
+        ("triton.mem.write", "region:global:global-arg:0:0:128"),
+    ]
+    assert check_module(triton_snapshot_to_module(snapshot), engine="maximal")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
 def test_triton_ordinary_memory_ignores_dynamic_payload_but_keeps_effects():
     _output, snapshot = _capture(
         TRITON_PYTHON,
@@ -2395,6 +2428,214 @@ def test_triton_cp_async_vectorizes_contiguous_subword_elements(
     assert issue["lane_effects"]["bytes"] == lane_bytes
     assert issue["lane_effects"]["lanes"] == list(range(len(lane_bytes)))
     assert check_module(triton_snapshot_to_module(snapshot), engine="maximal")["verdict"] == "SAFE"
+
+
+_TRANSPOSED_CP_ASYNC_TTGIR = """\
+#blocked = #ttg.blocked<{sizePerThread = [8, 1], threadsPerWarp = [8, 4], warpsPerCTA = [1, 4], order = [0, 1]}>
+#shared = #ttg.nvmma_shared<{swizzlingByteWidth = 128, transposed = TRANSPOSED, elementBitWidth = 16}>
+#smem = #ttg.shared_memory
+module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:90", "ttg.threads-per-warp" = 32 : i32} {
+  tt.func public @transposed_operand(%base: !tt.ptr<f16>) {
+    %rows = tt.make_range {end = 64 : i32, start = 0 : i32} : tensor<64xi32, #ttg.slice<{dim = 1, parent = #blocked}>>
+    %rows_2d = tt.expand_dims %rows {axis = 1 : i32} : tensor<64xi32, #ttg.slice<{dim = 1, parent = #blocked}>> -> tensor<64x1xi32, #blocked>
+    %cols = tt.make_range {end = 16 : i32, start = 0 : i32} : tensor<16xi32, #ttg.slice<{dim = 0, parent = #blocked}>>
+    %cols_2d = tt.expand_dims %cols {axis = 0 : i32} : tensor<16xi32, #ttg.slice<{dim = 0, parent = #blocked}>> -> tensor<1x16xi32, #blocked>
+    %stride = arith.constant dense<128> : tensor<1x16xi32, #blocked>
+    %col_offsets = arith.muli %cols_2d, %stride : tensor<1x16xi32, #blocked>
+    %row_tile = tt.broadcast %rows_2d : tensor<64x1xi32, #blocked> -> tensor<64x16xi32, #blocked>
+    %col_tile = tt.broadcast %col_offsets : tensor<1x16xi32, #blocked> -> tensor<64x16xi32, #blocked>
+    %offsets = arith.addi %row_tile, %col_tile : tensor<64x16xi32, #blocked>
+    %base_tile = tt.splat %base : !tt.ptr<f16> -> tensor<64x16x!tt.ptr<f16>, #blocked>
+    %src = tt.addptr %base_tile, %offsets : tensor<64x16x!tt.ptr<f16>, #blocked>, tensor<64x16xi32, #blocked>
+    %dst = ttg.local_alloc : () -> !ttg.memdesc<64x16xf16, #shared, #smem, mutable>
+    %copy = ttg.async_copy_global_to_local %src, %dst : tensor<64x16x!tt.ptr<f16>, #blocked> -> <64x16xf16, #shared, #smem, mutable>
+    %group = ttg.async_commit_group tokens %copy
+    %wait = ttg.async_wait %group {num = 0 : i32}
+    %loaded = ttg.local_load %dst token %wait : !ttg.memdesc<64x16xf16, #shared, #smem, mutable> -> tensor<64x16xf16, #blocked>
+    tt.return
+  }
+}
+"""
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_cp_async_follows_transposed_shared_order(tmp_path: Path):
+    fixture = tmp_path / "transposed-cp-async.ttgir.mlir"
+    fixture.write_text(_TRANSPOSED_CP_ASYNC_TTGIR.replace("TRANSPOSED", "true"))
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "transposed-cp-async",
+    )
+    regions = {region["id"]: region for region in snapshot["regions"]}
+    issue = next(
+        operation for operation in snapshot["operations"]
+        if operation["op"] == "triton.cp_async.issue"
+    )
+    effects = issue["lane_effects"]
+    # Lane (warp, thread) owns rows 8*(thread%8).. of column 4*warp +
+    # thread//8: contiguous in the strided column-major source and in the
+    # transposed (dim-0-fastest) tile.
+    expected = [
+        2 * (64 * (4 * (lane // 32) + lane % 32 // 8) + 8 * (lane % 8))
+        for lane in range(128)
+    ]
+    assert effects["bytes"] == [16] * 128
+    assert effects["lanes"] == list(range(128))
+    assert [regions[region]["offset"] for region in effects["destination_regions"]] == expected
+    read = next(
+        operation for operation in snapshot["operations"]
+        if operation["op"] == "triton.mem.read"
+    )
+    assert [
+        (regions[region]["offset"], regions[region]["extent"])
+        for region in read["lane_effects"]["regions"]
+    ] == [(offset, 16) for offset in expected]
+    assert check_module(triton_snapshot_to_module(snapshot), engine="maximal")["verdict"] == "SAFE"
+
+    row_major = tmp_path / "row-major-cp-async.ttgir.mlir"
+    row_major.write_text(
+        _TRANSPOSED_CP_ASYNC_TTGIR.replace("TRANSPOSED", "false")
+        .replace("swizzlingByteWidth = 128", "swizzlingByteWidth = 32")
+    )
+    process = _run_capture(TRITON_PYTHON, "triton_capture.py", row_major, "row-major-cp-async")
+    assert process.returncode == 2
+    assert json.loads(process.stdout)["diagnostics"][0]["code"] == (
+        "TRITON_CP_ASYNC_TRANSFER_WIDTH_UNSUPPORTED"
+    )
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+@pytest.mark.parametrize(("waited", "verdict"), [(True, "SAFE"), (False, "DATA_HAZARD")])
+def test_triton_dot_operand_load_reads_whole_tile(tmp_path: Path, waited: bool, verdict: str):
+    text = _TRANSPOSED_CP_ASYNC_TTGIR.replace("TRANSPOSED", "true").replace(
+        "#smem = #ttg.shared_memory",
+        "#smem = #ttg.shared_memory\n"
+        "#mma = #ttg.nvidia_mma<{versionMajor = 2, versionMinor = 0, warpsPerCTA = [2, 2], instrShape = [16, 8]}>",
+    ).replace(
+        "-> tensor<64x16xf16, #blocked>",
+        "-> tensor<64x16xf16, #ttg.dot_op<{opIdx = 1, parent = #mma, kWidth = 2}>>",
+    )
+    if not waited:
+        text = text.replace(
+            "    %wait = ttg.async_wait %group {num = 0 : i32}\n", ""
+        ).replace("%loaded = ttg.local_load %dst token %wait", "%loaded = ttg.local_load %dst")
+    fixture = tmp_path / "dot-operand-load.ttgir.mlir"
+    fixture.write_text(text)
+    _output, snapshot = _capture(TRITON_PYTHON, "triton_capture.py", fixture, "dot-operand-load")
+    issue = next(
+        operation for operation in snapshot["operations"]
+        if operation["op"] == "triton.cp_async.issue"
+    )
+    read = next(
+        operation for operation in snapshot["operations"]
+        if operation["op"] == "triton.mem.read"
+    )
+    assert read["execution_evidence"]["method"] == "ttg-dot-operand-whole-tile-v1"
+    assert read["lane_effects"]["lanes"] == issue["lane_effects"]["lanes"]
+    assert read["lane_effects"]["regions"] == [read["region"]] * 128
+    assert check_module(triton_snapshot_to_module(snapshot), engine="maximal")["verdict"] == verdict
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_shared_write_after_read_gets_membar(tmp_path: Path):
+    reuse = """    %loaded = ttg.local_load %dst token %wait : !ttg.memdesc<64x16xf16, #shared, #smem, mutable> -> tensor<64x16xf16, #blocked>
+    %again = ttg.async_copy_global_to_local %src, %dst : tensor<64x16x!tt.ptr<f16>, #blocked> -> <64x16xf16, #shared, #smem, mutable>
+    %again_group = ttg.async_commit_group tokens %again
+    %again_wait = ttg.async_wait %again_group {num = 0 : i32}
+    %reloaded = ttg.local_load %dst token %again_wait : !ttg.memdesc<64x16xf16, #shared, #smem, mutable> -> tensor<64x16xf16, #blocked>
+"""
+    text = _TRANSPOSED_CP_ASYNC_TTGIR.replace("TRANSPOSED", "true")
+    text = text.replace(reuse.splitlines(keepends=True)[0], reuse).replace(
+        "#smem = #ttg.shared_memory",
+        "#smem = #ttg.shared_memory\n"
+        "#mma = #ttg.nvidia_mma<{versionMajor = 2, versionMinor = 0, warpsPerCTA = [2, 2], instrShape = [16, 8]}>",
+    ).replace(
+        "-> tensor<64x16xf16, #blocked>",
+        "-> tensor<64x16xf16, #ttg.dot_op<{opIdx = 1, parent = #mma, kWidth = 2}>>",
+    )
+    fixture = tmp_path / "cp-async-reuse.ttgir.mlir"
+    fixture.write_text(text)
+    _output, snapshot = _capture(TRITON_PYTHON, "triton_capture.py", fixture, "cp-async-reuse")
+    ops = [operation["op"] for operation in snapshot["operations"]]
+    first_read = ops.index("triton.mem.read")
+    second_issue = ops.index("triton.cp_async.issue", first_read)
+    # Every thread reads the whole tile, so the reuse is ordered only by the
+    # barrier Membar inserts before the second copy (WAR on the shared tile).
+    assert "triton.barrier.arrive" in ops[first_read:second_issue]
+    assert check_module(triton_snapshot_to_module(snapshot), engine="maximal")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_async_wait_gets_membar_after_unrelated_war_barrier(tmp_path: Path):
+    # The WAR barrier before the reissue into %dst runs while the copy into
+    # %next is still in flight, so only the barrier Membar places after the
+    # final wait publishes %next to the other threads.
+    pipelined = """    %loaded = ttg.local_load %dst token %wait : !ttg.memdesc<64x16xf16, #shared, #smem, mutable> -> tensor<64x16xf16, #blocked>
+    %next = ttg.local_alloc : () -> !ttg.memdesc<64x16xf16, #shared, #smem, mutable>
+    %prefetch = ttg.async_copy_global_to_local %src, %next : tensor<64x16x!tt.ptr<f16>, #blocked> -> <64x16xf16, #shared, #smem, mutable>
+    %prefetch_group = ttg.async_commit_group tokens %prefetch
+    %again = ttg.async_copy_global_to_local %src, %dst : tensor<64x16x!tt.ptr<f16>, #blocked> -> <64x16xf16, #shared, #smem, mutable>
+    %again_group = ttg.async_commit_group tokens %again
+    %again_wait = ttg.async_wait %again_group {num = 0 : i32}
+    %prefetched = ttg.local_load %next token %again_wait : !ttg.memdesc<64x16xf16, #shared, #smem, mutable> -> tensor<64x16xf16, #blocked>
+"""
+    text = _TRANSPOSED_CP_ASYNC_TTGIR.replace("TRANSPOSED", "true")
+    text = text.replace(pipelined.splitlines(keepends=True)[0], pipelined).replace(
+        "#smem = #ttg.shared_memory",
+        "#smem = #ttg.shared_memory\n"
+        "#mma = #ttg.nvidia_mma<{versionMajor = 2, versionMinor = 0, warpsPerCTA = [2, 2], instrShape = [16, 8]}>",
+    ).replace(
+        "-> tensor<64x16xf16, #blocked>",
+        "-> tensor<64x16xf16, #ttg.dot_op<{opIdx = 1, parent = #mma, kWidth = 2}>>",
+    )
+    fixture = tmp_path / "cp-async-pipelined.ttgir.mlir"
+    fixture.write_text(text)
+    _output, snapshot = _capture(TRITON_PYTHON, "triton_capture.py", fixture, "cp-async-pipelined")
+    ops = [operation["op"] for operation in snapshot["operations"]]
+    waits = [position for position, op in enumerate(ops) if op == "triton.cp_async.wait_group"]
+    assert len(waits) == 2
+    assert all(ops[position + 1] == "triton.barrier.arrive" for position in waits)
+    assert check_module(triton_snapshot_to_module(snapshot), engine="maximal")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_initialized_local_alloc_in_loop_gets_war_membar(tmp_path: Path):
+    staged = """    %tile = tt.load %src : tensor<64x16x!tt.ptr<f16>, #blocked>
+    %c0 = arith.constant 0 : i32
+    %c1 = arith.constant 1 : i32
+    %c2 = arith.constant 2 : i32
+    scf.for %i = %c0 to %c2 step %c1 : i32 {
+      %staged = ttg.local_alloc %tile : (tensor<64x16xf16, #blocked>) -> !ttg.memdesc<64x16xf16, #shared, #smem>
+      %loaded = ttg.local_load %staged : !ttg.memdesc<64x16xf16, #shared, #smem> -> tensor<64x16xf16, #ttg.dot_op<{opIdx = 1, parent = #mma, kWidth = 2}>>
+    }
+"""
+    lines = _TRANSPOSED_CP_ASYNC_TTGIR.replace("TRANSPOSED", "true").splitlines(keepends=True)
+    start = next(position for position, line in enumerate(lines) if "%dst = ttg.local_alloc" in line)
+    end = next(position for position, line in enumerate(lines) if "%loaded = ttg.local_load" in line)
+    text = "".join(lines[:start] + [staged] + lines[end + 1:]).replace(
+        "#smem = #ttg.shared_memory",
+        "#smem = #ttg.shared_memory\n"
+        "#mma = #ttg.nvidia_mma<{versionMajor = 2, versionMinor = 0, warpsPerCTA = [2, 2], instrShape = [16, 8]}>",
+    )
+    fixture = tmp_path / "staged-local-alloc.ttgir.mlir"
+    fixture.write_text(text)
+    _output, snapshot = _capture(TRITON_PYTHON, "triton_capture.py", fixture, "staged-local-alloc")
+    ops = [operation["op"] for operation in snapshot["operations"]]
+    shared_writes = [
+        position for position, operation in enumerate(snapshot["operations"])
+        if operation["op"] == "triton.mem.write" and ":shared:" in operation["region"]
+    ]
+    assert len(shared_writes) == 2
+    # The second iteration overwrites the tile every thread read in the
+    # first, which Membar orders with a barrier (WAR across the back edge).
+    assert ops[shared_writes[1] - 2:shared_writes[1]] == [
+        "triton.barrier.arrive",
+        "triton.barrier.observe",
+    ]
+    assert check_module(triton_snapshot_to_module(snapshot), engine="maximal")["verdict"] == "SAFE"
+
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
 def test_triton_cp_async_current_profile_rejects_incomplete_or_aggregate_evidence():

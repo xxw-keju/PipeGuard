@@ -191,6 +191,7 @@ def _memory_templates(
     expected_policy = {
         ("ttg-blocked-linear-layout-v1", "triton.mem.read"): "LOAD_ALL",
         ("ttg-blocked-linear-layout-v1", "triton.mem.write"): "STORE_REPRESENTATIVE",
+        ("ttg-dot-operand-whole-tile-v1", "triton.mem.read"): "LOAD_ALL",
     }.get((method, operation["op"]))
     if (
         execution_evidence["scope"] != "INSTANCE"

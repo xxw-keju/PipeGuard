@@ -449,6 +449,7 @@ class TritonCapture:
         self.register_regions: dict[int, str] = {}
         self.pending_proxy_fence: int | None = None
         self.pending_shared_write_allocations: set[str] = set()
+        self.pending_shared_read_allocations: set[tuple[str, str]] = set()
         self.executable_nodes_seen = 0
         self.classified_nodes = 0
         self.emitting_nodes = 0
@@ -575,6 +576,57 @@ class TritonCapture:
                 if item != dimension
             ]
         return size_per_thread, threads_per_warp, warps_per_cta, order
+
+    @staticmethod
+    def _shared_order(type_text: str, rank: int) -> list[int]:
+        """Return a shared encoding's dimension order, fastest-varying first."""
+        row_major = list(range(rank - 1, -1, -1))
+        nvmma = re.search(r"#ttg\.nvmma_shared<\{([^}]*)\}>", type_text)
+        if nvmma is not None:
+            if rank >= 2 and re.search(r"\btransposed\s*=\s*true\b", nvmma.group(1)):
+                return [rank - 2, rank - 1, *range(rank - 3, -1, -1)]
+            return row_major
+        swizzled = re.search(r"#ttg\.swizzled_shared<\{([^}]*)\}>", type_text)
+        if swizzled is not None:
+            field = re.search(r"\border\s*=\s*\[([^]]*)\]", swizzled.group(1))
+            try:
+                order = [int(item.strip()) for item in field.group(1).split(",")] if field else None
+            except ValueError:
+                order = None
+            if order is None or sorted(order) != list(range(rank)):
+                raise CaptureError(
+                    "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                    "swizzled shared order is not a permutation of the memdesc dimensions",
+                    {"type": type_text},
+                )
+            return order
+        return row_major
+
+    @classmethod
+    def _memdesc_positions(cls, memdesc: Any) -> list[int] | None:
+        """Map row-major memdesc elements to their element slot in the region.
+
+        Shared memory is modelled as the encoding's logical linearization
+        (fastest dimension innermost, swizzling ignored); None means the
+        order is row-major, so element indices are the slots.
+        """
+        shape = cls._value_shape(memdesc)
+        order = cls._shared_order(str(memdesc.get_type()), len(shape))
+        if order == list(range(len(shape) - 1, -1, -1)):
+            return None
+        strides = [0] * len(shape)
+        stride = 1
+        for dimension in order:
+            strides[dimension] = stride
+            stride *= shape[dimension]
+        positions = [0]
+        for extent, dimension_stride in zip(shape, strides):
+            positions = [
+                position + coordinate * dimension_stride
+                for position in positions
+                for coordinate in range(extent)
+            ]
+        return positions
 
     @staticmethod
     def _is_power_of_two(value: int) -> bool:
@@ -766,6 +818,9 @@ class TritonCapture:
                 {"type": str(value.get_type())},
             )
         bits = int(match.group(1))
+        if bits == 1 and re.search(r"!tt\.ptr<i1\b", type_text):
+            # Booleans occupy one byte in memory.
+            bits = 8
         if bits <= 0 or bits % 8:
             raise CaptureError(
                 "TRITON_REGION_UNRESOLVED",
@@ -889,6 +944,10 @@ class TritonCapture:
                 )
             if type_text.startswith("!tt.ptr<"):
                 width = self._scalar_pointer_width(type_text)
+                if width is None and re.fullmatch(r"!tt\.ptr<i1(?:,\s*\d+)?>", type_text):
+                    # Booleans occupy one byte in memory; accesses must go
+                    # through an i8 bitcast (see _capture_memory).
+                    width = 1
                 if width is not None:
                     allocation = self.pointer_argument_allocations.get(
                         index,
@@ -1091,6 +1150,7 @@ class TritonCapture:
     def _lane_memdesc_regions(
         self,
         value: Any,
+        memdesc: Any,
         region_id: str,
         *,
         representative_only: bool,
@@ -1098,10 +1158,13 @@ class TritonCapture:
         region = self.regions[region_id]
         shape = self._value_shape(value)
         elements, width = self._value_extent(value)
-        if elements * width != region["extent"]:
+        positions = self._memdesc_positions(memdesc)
+        if elements * width != region["extent"] or (
+            positions is not None and shape != self._value_shape(memdesc)
+        ):
             raise CaptureError(
                 "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
-                "distributed tensor and memdesc byte extents differ",
+                "distributed tensor and memdesc shapes or byte extents differ",
                 {"type": str(value.get_type()), "region": region_id},
             )
         participants = self.actor_specs[self.current_actor]["participants"]
@@ -1113,9 +1176,10 @@ class TritonCapture:
         )
         result: dict[int, tuple[str, ...]] = {}
         for lane, indices in lane_elements.items():
+            slots = indices if positions is None else [positions[element] for element in indices]
             intervals: list[list[int]] = []
-            for element in sorted(indices):
-                offset = region["offset"] + element * width
+            for slot in sorted(slots):
+                offset = region["offset"] + slot * width
                 if intervals and offset == intervals[-1][0] + intervals[-1][1]:
                     intervals[-1][1] += width
                 else:
@@ -1174,6 +1238,14 @@ class TritonCapture:
             representative_only=True,
         )
         destination_region = self.regions[destination]
+        positions = self._memdesc_positions(operation.get_operand(1))
+        if positions is not None and shape != self._value_shape(operation.get_operand(1)):
+            raise CaptureError(
+                "TRITON_CP_ASYNC_LANE_TRANSFER_UNRESOLVED",
+                "cp.async source and destination memdesc shapes differ",
+                {"shape": shape, "destination": str(operation.get_operand(1).get_type())},
+            )
+        slots = range(len(offsets)) if positions is None else positions
         lanes: list[int] = []
         transfer_offsets = [0]
         source_regions: list[str] = []
@@ -1186,13 +1258,14 @@ class TritonCapture:
             if not selected:
                 continue
             lanes.append(lane)
-            # Triton vectorizes a thread's contiguous elements into one
-            # cp.async; each instruction moves an aligned 4, 8, or 16 bytes.
+            # Triton vectorizes a thread's elements that are contiguous in
+            # both global and shared memory into one cp.async; each
+            # instruction moves an aligned 4, 8, or 16 bytes.
             runs: list[list[int]] = []
-            for element in sorted(selected):
+            for element in sorted(selected, key=lambda item: slots[item]):
                 if (
                     runs
-                    and element == runs[-1][-1] + 1
+                    and slots[element] == slots[runs[-1][-1]] + 1
                     and offsets[element] == offsets[runs[-1][-1]] + 1
                 ):
                     runs[-1].append(element)
@@ -1206,7 +1279,7 @@ class TritonCapture:
                         "cp.async source offset is negative relative to its allocation",
                         {"element": run[0], "offset": source_offset},
                     )
-                destination_offset = destination_region["offset"] + run[0] * width
+                destination_offset = destination_region["offset"] + slots[run[0]] * width
                 remaining = len(run) * width
                 while remaining:
                     size = next(
@@ -1245,12 +1318,18 @@ class TritonCapture:
                     destination_offset += size
                     remaining -= size
             transfer_offsets.append(len(source_regions))
+        selected_slots = [
+            slots[element] for element, predicate in enumerate(predicates) if predicate
+        ]
         return {
             "lanes": lanes,
             "transfer_offsets": transfer_offsets,
             "source_regions": source_regions,
             "destination_regions": destination_regions,
             "bytes": byte_counts,
+            "destination_slot_span": (
+                (min(selected_slots), max(selected_slots)) if selected_slots else None
+            ),
         }
 
     def _resolve_addptr(self, operation: Any, index: int) -> bool:
@@ -1327,6 +1406,13 @@ class TritonCapture:
             invocation_id=invocation,
         )
         self.pending_shared_write_allocations.clear()
+        self.pending_shared_read_allocations.clear()
+
+    def _membar_before_shared_write(self, allocation: str, index: int) -> None:
+        # Triton's Membar pass also orders a shared write after an
+        # overlapping earlier read by the same threads (WAR).
+        if (self.current_actor, allocation) in self.pending_shared_read_allocations:
+            self._emit_shared_membar(index)
 
     def _capture_predicated_bar_sync_inline_asm(
         self,
@@ -1417,6 +1503,7 @@ class TritonCapture:
         )
         self.static_values[operation.get_result(0).id()] = tuple(lanes)
         self.pending_shared_write_allocations.clear()
+        self.pending_shared_read_allocations.clear()
 
 
     def _capture_collective_barrier(self, operation: Any, index: int) -> None:
@@ -1465,6 +1552,7 @@ class TritonCapture:
             invocation_id=invocation,
         )
         self.pending_shared_write_allocations.clear()
+        self.pending_shared_read_allocations.clear()
 
     def _async_resource(self) -> str:
         identifier = f"cp_async:{self.current_actor}"
@@ -2417,6 +2505,12 @@ class TritonCapture:
                 {"operation": name, "operation_index": index, "operands": operand_count},
             )
         pointer_id = operation.get_operand(0).id()
+        if re.search(r"!tt\.ptr<i1\b", str(operation.get_operand(0).get_type())):
+            raise CaptureError(
+                "TRITON_MEMORY_ACCESS_UNRESOLVED",
+                "ordinary memory access through a sub-byte pointer is unsupported",
+                {"operation": name, "operation_index": index},
+            )
         self._mark_external_pointer(pointer_id)
         regions = self.pointer_region_sets.get(pointer_id)
         if not regions:
@@ -2561,48 +2655,36 @@ class TritonCapture:
                 destination,
                 predicates,
             )
+            first_slot, last_slot = lane_effects.pop("destination_slot_span") or (0, 0)
             if lane_effects["lanes"]:
                 selected = [
                     element for element, predicate in enumerate(predicates) if predicate
                 ]
                 selected_offsets = [offsets[element] for element in selected]
-                if (
-                    selected != list(range(selected[0], selected[-1] + 1))
-                    or any(
-                        second != first + 1
-                        for first, second in zip(
-                            selected_offsets, selected_offsets[1:]
-                        )
-                    )
-                ):
-                    raise CaptureError(
-                        "TRITON_CP_ASYNC_LANE_TRANSFER_UNRESOLVED",
-                        "noncontiguous cp.async masks or addresses require multiple exact coarse regions",
-                        {
-                            "operation_index": index,
-                            "selected_elements": selected,
-                            "selected_offsets": selected_offsets,
-                        },
-                    )
+                # The exact effects are the per-thread transfers in lane_effects;
+                # the operation-level regions only summarize their byte spans
+                # (strided tiles and partial masks span gaps).
+                source_start = min(selected_offsets) * width
                 source_region = self._region(
                     allocation,
                     "GLOBAL",
-                    offsets[selected[0]] * width,
-                    len(selected) * width,
+                    source_start,
+                    (max(selected_offsets) + 1) * width - source_start,
                 )
                 destination_region_id = self._region(
                     destination_region["allocation_id"],
                     destination_region["address_space"],
-                    destination_region["offset"] + selected[0] * width,
-                    len(selected) * width,
+                    destination_region["offset"] + first_slot * width,
+                    (last_slot - first_slot + 1) * width,
                 )
+                self._membar_before_shared_write(destination_region["allocation_id"], index)
                 self._emit(
                     "triton.cp_async.issue",
                     index,
                     resource=resource,
                     source_region=source_region,
                     destination_region=destination_region_id,
-                    bytes=len(selected) * width,
+                    bytes=sum(lane_effects["bytes"]),
                     group_owner=self.current_actor,
                     predicate=True,
                     lane_effects=lane_effects,
@@ -2674,6 +2756,9 @@ class TritonCapture:
                 group_owner=self.current_actor,
                 wait_group_count=int(wait_count),
             )
+            # Triton's Membar pass places a CTA barrier after every async
+            # wait, making the completed copies visible to all threads.
+            self._emit_shared_membar(index)
             result_id = operation.get_result(0).id()
             self.wait_tokens.add(result_id)
             self.group_tokens[result_id] = max(
@@ -2706,11 +2791,29 @@ class TritonCapture:
                 "local load completion token is unresolved",
                 {"operation_index": index},
             )
-        lane_regions = self._lane_memdesc_regions(
-            operation.get_result(0),
-            region,
-            representative_only=False,
-        )
+        result_type = str(operation.get_result(0).get_type())
+        if "#ttg.dot_op<" in result_type:
+            # MMA operand layouts are not inverted per lane; every thread is
+            # modelled as reading the whole tile, which over-approximates
+            # its ldmatrix footprint.
+            elements, width = self._value_extent(operation.get_result(0))
+            if elements * width != self.regions[region]["extent"]:
+                raise CaptureError(
+                    "TRITON_LAYOUT_OWNERSHIP_UNRESOLVED",
+                    "dot operand and memdesc byte extents differ",
+                    {"type": result_type, "region": region},
+                )
+            participants = self.actor_specs[self.current_actor]["participants"]
+            lane_regions = {lane: (region,) for lane in participants}
+            method = "ttg-dot-operand-whole-tile-v1"
+        else:
+            lane_regions = self._lane_memdesc_regions(
+                operation.get_result(0),
+                operation.get_operand(0),
+                region,
+                representative_only=False,
+            )
+            method = "ttg-blocked-linear-layout-v1"
         lanes = sorted(lane_regions)
         flattened = [item for lane in lanes for item in lane_regions[lane]]
         offsets = [0]
@@ -2727,11 +2830,12 @@ class TritonCapture:
             },
             execution_evidence={
                 "scope": "INSTANCE",
-                "method": "ttg-blocked-linear-layout-v1",
-                "source": str(operation.get_result(0).get_type()),
+                "method": method,
+                "source": result_type,
                 "redundant_policy": "LOAD_ALL",
             },
         )
+        self.pending_shared_read_allocations.add((self.current_actor, allocation))
 
     def _capture_local_store(self, operation: Any, index: int) -> None:
         if operation.get_num_operands() != 2 or operation.get_num_results() != 0:
@@ -2761,6 +2865,7 @@ class TritonCapture:
             )
         lane_regions = self._lane_memdesc_regions(
             value,
+            operation.get_operand(1),
             region,
             representative_only=True,
         )
@@ -2769,6 +2874,7 @@ class TritonCapture:
         offsets = [0]
         for lane in lanes:
             offsets.append(offsets[-1] + len(lane_regions[lane]))
+        self._membar_before_shared_write(self.regions[region]["allocation_id"], index)
         self._emit(
             "triton.mem.write",
             index,
@@ -3853,6 +3959,7 @@ class TritonCapture:
                         "initialized ttg.local_alloc result region is unresolved",
                         {"operation_index": index},
                     )
+                self._membar_before_shared_write(self.regions[region]["allocation_id"], index)
                 self._emit("triton.mem.write", index, region=region)
                 self.pending_shared_write_allocations.add(
                     self.regions[region]["allocation_id"]
