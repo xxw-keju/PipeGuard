@@ -1,0 +1,220 @@
+{
+ "all_findings": [
+  {
+   "class": "SYNC_HAZARD",
+   "code": "WGMMA_RESULT_NOT_READY",
+   "endpoint": "RESULT_READY",
+   "witness": {
+    "allocation": "register:ssa:12:0",
+    "category": "WGMMA_RESULT_NOT_READY",
+    "effects": [
+     {
+      "actor": "stream:00000020:program:triton:lanes:i00000000",
+      "event": "source:event:00000035:triton:cta:e00262:op00072:aggregate:i00000000",
+      "id": "effect:source:event:00000035:triton:cta:e00262:op00072:aggregate:i00000000:read:region:register:register:ssa:12:0:0:32768",
+      "lane": 0,
+      "mode": "READ",
+      "region": "region:register:register:ssa:12:0:0:32768",
+      "window": [
+       "source:event:00000035:triton:cta:e00262:op00072:aggregate:i00000000",
+       "triton:cta:e00262:op00072:aggregate:lane:0"
+      ]
+     },
+     {
+      "actor": "stream:00000020:program:triton:lanes:i00000000",
+      "event": "source:collective:00000025:triton:cta:e00260:op00058",
+      "id": "effect:source:collective:00000025:triton:cta:e00260:op00058:write:region:register:register:ssa:12:0:0:32768",
+      "lane": 0,
+      "mode": "WRITE",
+      "region": "region:register:register:ssa:12:0:0:32768",
+      "window": [
+       "source:collective:00000025:triton:cta:e00260:op00058",
+       "group:0:0:0:RESULT_READY"
+      ]
+     }
+    ],
+    "endpoint": "RESULT_READY",
+    "events": [
+     "source:collective:00000025:triton:cta:e00260:op00058",
+     "source:event:00000035:triton:cta:e00262:op00072:aggregate:i00000000"
+    ],
+    "missing_path": "the accumulator is read before a matching WGMMA RESULT_READY observation",
+    "overlap": {
+     "extent": 32768,
+     "offset": 0
+    }
+   }
+  },
+  {
+   "class": "DATA_HAZARD",
+   "code": "UNORDERED_CONFLICT",
+   "witness": {
+    "allocation": "register:ssa:12:0",
+    "category": "UNORDERED_CONFLICT",
+    "effects": [
+     {
+      "actor": "stream:00000020:program:triton:lanes:i00000000",
+      "event": "source:event:00000035:triton:cta:e00262:op00072:aggregate:i00000000",
+      "id": "effect:source:event:00000035:triton:cta:e00262:op00072:aggregate:i00000000:read:region:register:register:ssa:12:0:0:32768",
+      "lane": 0,
+      "mode": "READ",
+      "region": "region:register:register:ssa:12:0:0:32768",
+      "window": [
+       "source:event:00000035:triton:cta:e00262:op00072:aggregate:i00000000",
+       "triton:cta:e00262:op00072:aggregate:lane:0"
+      ]
+     },
+     {
+      "actor": "stream:00000020:program:triton:lanes:i00000000",
+      "event": "source:collective:00000025:triton:cta:e00260:op00058",
+      "id": "effect:source:collective:00000025:triton:cta:e00260:op00058:write:region:register:register:ssa:12:0:0:32768",
+      "lane": 0,
+      "mode": "WRITE",
+      "region": "region:register:register:ssa:12:0:0:32768",
+      "window": [
+       "source:collective:00000025:triton:cta:e00260:op00058",
+       "group:0:0:0:RESULT_READY"
+      ]
+     }
+    ],
+    "events": [
+     "source:collective:00000025:triton:cta:e00260:op00058",
+     "source:event:00000035:triton:cta:e00262:op00072:aggregate:i00000000"
+    ],
+    "missing_path": "neither program order nor a typed visibility boundary orders the conflict",
+    "overlap": {
+     "extent": 32768,
+     "offset": 0
+    }
+   }
+  }
+ ],
+ "artifacts": {
+  "boundaries": [],
+  "parametric_program": {
+   "event_templates": 327,
+   "logical_boundaries": 6,
+   "logical_events": 4611,
+   "logical_streams": 128,
+   "materialized_boundaries": 0
+  },
+  "pdg": {
+   "edges_by_kind": {
+    "ENGINE_ORDER": 1,
+    "GROUP_TO_COMPLETION": 2,
+    "ISSUE_TO_COMPLETION": 2,
+    "ISSUE_TO_GROUP": 1,
+    "RENDEZVOUS_ARRIVE": 512,
+    "RENDEZVOUS_RELEASE": 512
+   },
+   "explicit_boundary_edges": 1030,
+   "implementation": "numeric-csr",
+   "implicit_program_edges": 4483,
+   "logical_program_nodes": 4611,
+   "representation": "parametric",
+   "synthetic_nodes": 6
+  }
+ },
+ "checker_version": "0.3.0",
+ "diagnostics": [
+  {
+   "code": "WGMMA_RESULT_NOT_READY",
+   "message": "WGMMA accumulator is read before RESULT_READY"
+  }
+ ],
+ "statistics": {
+  "actors": 128,
+  "boundary_finalize_s": 0.0077945219818502665,
+  "checker_total_s": 0.0520446429727599,
+  "collective_arrivals": 512,
+  "completion_queue_pops": 2,
+  "completion_queue_pushes": 2,
+  "completion_transitions": 2,
+  "deferred_waits": 0,
+  "engine": "maximal",
+  "event_templates": 327,
+  "events": 4611,
+  "exact_conflicting_access_pairs": 3,
+  "exact_r_complete": true,
+  "explicit_boundary_edges": 1030,
+  "frontier_visits": 4611,
+  "full_enabled_scans": 0,
+  "group_completion_frontier_advances": 2,
+  "group_wait_observation_advances": 0,
+  "group_wait_readiness_checks": 0,
+  "implicit_pdg_build_s": 0.029237912967801094,
+  "implicit_pdg_nodes": 4611,
+  "initial_pdg_setup_s": 0.010050209995824844,
+  "logical_events": 4611,
+  "logical_program_streams": 128,
+  "materialized_artifact_events": 0,
+  "materialized_event_objects": 0,
+  "pairs_examined_before_termination": 3,
+  "pdg_implicit_boundary_edges": 1024,
+  "pdg_implicit_program_edges": 4483,
+  "pdg_resident_program_nodes": 0,
+  "protocol_schedule_s": 0.011393180990125984,
+  "protocol_transitions": 4,
+  "proxy_fence_index_build_visits": 15371,
+  "proxy_fence_index_queries": 2,
+  "race_candidate_pairs": 3,
+  "race_ordering_effect_visits": 92700,
+  "race_ordering_performed": true,
+  "race_scan_s": 0.022561978024896234,
+  "race_scan_scope": "DYNAMIC_EFFECT_ORDERING",
+  "race_sweep_candidate_visits": 3,
+  "race_sweep_expirations": 1023,
+  "race_sweep_insertions": 1030,
+  "reachability_cache_entries": 6,
+  "reachability_cache_hits": 1,
+  "reachability_edge_visits": 5001,
+  "reachability_queries": 2,
+  "regions": 4422,
+  "replayed_prefix_steps": 0,
+  "representation": "parametric-protocol",
+  "resources": 1,
+  "state_clones": 0
+ },
+ "summary": "WGMMA accumulator is read before RESULT_READY",
+ "verdict": "SYNC_HAZARD",
+ "witness": {
+  "allocation": "register:ssa:12:0",
+  "category": "WGMMA_RESULT_NOT_READY",
+  "effects": [
+   {
+    "actor": "stream:00000020:program:triton:lanes:i00000000",
+    "event": "source:event:00000035:triton:cta:e00262:op00072:aggregate:i00000000",
+    "id": "effect:source:event:00000035:triton:cta:e00262:op00072:aggregate:i00000000:read:region:register:register:ssa:12:0:0:32768",
+    "lane": 0,
+    "mode": "READ",
+    "region": "region:register:register:ssa:12:0:0:32768",
+    "window": [
+     "source:event:00000035:triton:cta:e00262:op00072:aggregate:i00000000",
+     "triton:cta:e00262:op00072:aggregate:lane:0"
+    ]
+   },
+   {
+    "actor": "stream:00000020:program:triton:lanes:i00000000",
+    "event": "source:collective:00000025:triton:cta:e00260:op00058",
+    "id": "effect:source:collective:00000025:triton:cta:e00260:op00058:write:region:register:register:ssa:12:0:0:32768",
+    "lane": 0,
+    "mode": "WRITE",
+    "region": "region:register:register:ssa:12:0:0:32768",
+    "window": [
+     "source:collective:00000025:triton:cta:e00260:op00058",
+     "group:0:0:0:RESULT_READY"
+    ]
+   }
+  ],
+  "endpoint": "RESULT_READY",
+  "events": [
+   "source:collective:00000025:triton:cta:e00260:op00058",
+   "source:event:00000035:triton:cta:e00262:op00072:aggregate:i00000000"
+  ],
+  "missing_path": "the accumulator is read before a matching WGMMA RESULT_READY observation",
+  "overlap": {
+   "extent": 32768,
+   "offset": 0
+  }
+ }
+}

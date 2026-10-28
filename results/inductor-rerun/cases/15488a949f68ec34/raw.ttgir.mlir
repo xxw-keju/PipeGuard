@@ -1,0 +1,32 @@
+#blocked = #ttg.blocked<{sizePerThread = [1, 1], threadsPerWarp = [4, 8], warpsPerCTA = [4, 1], order = [1, 0]}>
+#loc = loc("/mnt/project_dft/xuwen/corpus-expansion/inductor/pipeguard-run-rerun2-wip/full/15488a949f68ec34/wrapped_kernel.py":63:1)
+#loc5 = loc(unknown)
+#loc8 = loc("in_out_ptr0"(#loc))
+#loc9 = loc("rnumel"(#loc))
+module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:90", "ttg.threads-per-warp" = 32 : i32, "ttng.two-ctas" = false} {
+  tt.func public @triton_per_fused_cumsum_1(%in_out_ptr0: !tt.ptr<i32> {tt.divisibility = 16 : i32} loc("in_out_ptr0"(#loc)), %rnumel: i32 loc("rnumel"(#loc))) attributes {noinline = false} {
+    %rindex = tt.make_range {end = 8 : i32, start = 0 : i32} : tensor<8xi32, #ttg.slice<{dim = 0, parent = #blocked}>> loc(#loc10)
+    %rindex_0 = tt.expand_dims %rindex {axis = 0 : i32} : tensor<8xi32, #ttg.slice<{dim = 0, parent = #blocked}>> -> tensor<1x8xi32, #blocked> loc(#loc10)
+    %tmp0 = tt.splat %in_out_ptr0 : !tt.ptr<i32> -> tensor<1x8x!tt.ptr<i32>, #blocked> loc(#loc11)
+    %tmp0_1 = tt.addptr %tmp0, %rindex_0 : tensor<1x8x!tt.ptr<i32>, #blocked>, tensor<1x8xi32, #blocked> loc(#loc11)
+    %tmp0_2 = tt.load %tmp0_1 : tensor<1x8x!tt.ptr<i32>, #blocked> loc(#loc12)
+    %0 = "tt.scan"(%tmp0_2) <{axis = 1 : i32, reverse = false}> ({
+    ^bb0(%arg2: i32 loc(unknown), %arg3: i32 loc(unknown)):
+      %tmp0_3 = arith.addi %arg2, %arg3 : i32 loc(#loc14)
+      tt.scan.return %tmp0_3 : i32 loc(#loc4)
+    }) : (tensor<1x8xi32, #blocked>) -> tensor<1x8xi32, #blocked> loc(#loc4)
+    tt.store %tmp0_1, %0 : tensor<1x8x!tt.ptr<i32>, #blocked> loc(#loc7)
+    tt.return loc(#loc)
+  } loc(#loc)
+} loc(#loc)
+#loc1 = loc("/mnt/project_dft/xuwen/corpus-expansion/inductor/pipeguard-run-rerun2-wip/full/15488a949f68ec34/wrapped_kernel.py":70:14)
+#loc2 = loc("/mnt/project_dft/xuwen/corpus-expansion/inductor/pipeguard-run-rerun2-wip/full/15488a949f68ec34/wrapped_kernel.py":74:20)
+#loc3 = loc("/mnt/project_dft/xuwen/corpus-expansion/inductor/pipeguard-run-rerun2-wip/full/15488a949f68ec34/wrapped_kernel.py":74:12)
+#loc4 = loc("/mnt/project_dft/xuwen/corpus-expansion/inductor/pipeguard-run-rerun2-wip/full/15488a949f68ec34/wrapped_kernel.py":77:13)
+#loc6 = loc("/mnt/project_dft/xuwen/corpus-expansion/inductor/pipeguard-run-rerun2-wip/full/15488a949f68ec34/wrapped_kernel.py":52:12)
+#loc7 = loc("/mnt/project_dft/xuwen/corpus-expansion/inductor/pipeguard-run-rerun2-wip/full/15488a949f68ec34/wrapped_kernel.py":78:5)
+#loc10 = loc("rindex"(#loc1))
+#loc11 = loc("tmp0"(#loc2))
+#loc12 = loc("tmp0"(#loc3))
+#loc13 = loc("tmp0"(#loc6))
+#loc14 = loc(callsite(#loc13 at #loc4))

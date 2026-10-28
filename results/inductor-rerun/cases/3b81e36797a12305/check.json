@@ -1,0 +1,122 @@
+{
+ "artifacts": {
+  "boundaries": [],
+  "parametric_program": {
+   "event_templates": 7,
+   "logical_boundaries": 0,
+   "logical_events": 736,
+   "logical_streams": 128,
+   "materialized_boundaries": 0
+  },
+  "pdg": {
+   "edges_by_kind": {},
+   "explicit_boundary_edges": 0,
+   "implementation": "numeric-csr",
+   "implicit_program_edges": 608,
+   "logical_program_nodes": 736,
+   "representation": "parametric",
+   "synthetic_nodes": 0
+  }
+ },
+ "checker_version": "0.3.0",
+ "diagnostics": [
+  {
+   "code": "UNORDERED_CONFLICT",
+   "message": "a conflicting memory access pair lacks supported ordering"
+  }
+ ],
+ "statistics": {
+  "actors": 128,
+  "boundary_finalize_s": 0.0,
+  "checker_total_s": 0.0071840109885670245,
+  "collective_arrivals": 0,
+  "completion_queue_pops": 0,
+  "completion_queue_pushes": 0,
+  "completion_transitions": 0,
+  "deferred_waits": 0,
+  "engine": "maximal",
+  "event_templates": 7,
+  "events": 736,
+  "exact_conflicting_access_pairs": 191,
+  "exact_r_complete": true,
+  "explicit_boundary_edges": 0,
+  "frontier_visits": 736,
+  "full_enabled_scans": 0,
+  "group_completion_frontier_advances": 0,
+  "group_wait_observation_advances": 0,
+  "group_wait_readiness_checks": 0,
+  "implicit_pdg_build_s": 0.0016807799111120403,
+  "implicit_pdg_nodes": 736,
+  "initial_pdg_setup_s": 0.0016780119622126222,
+  "logical_events": 736,
+  "logical_program_streams": 128,
+  "materialized_artifact_events": 0,
+  "materialized_event_objects": 0,
+  "pairs_examined_before_termination": 1,
+  "pdg_implicit_boundary_edges": 0,
+  "pdg_implicit_program_edges": 608,
+  "pdg_resident_program_nodes": 0,
+  "protocol_schedule_s": 2.7679488994181156e-06,
+  "protocol_transitions": 0,
+  "proxy_fence_index_build_visits": 0,
+  "proxy_fence_index_queries": 0,
+  "race_candidate_pairs": 191,
+  "race_ordering_effect_visits": 25920,
+  "race_ordering_performed": true,
+  "race_scan_s": 0.005449721997138113,
+  "race_scan_scope": "DYNAMIC_EFFECT_ORDERING",
+  "race_sweep_candidate_visits": 191,
+  "race_sweep_expirations": 286,
+  "race_sweep_insertions": 288,
+  "reachability_cache_entries": 0,
+  "reachability_cache_hits": 1,
+  "reachability_edge_visits": 608,
+  "reachability_queries": 2,
+  "regions": 423,
+  "replayed_prefix_steps": 0,
+  "representation": "parametric-protocol",
+  "resources": 0,
+  "state_clones": 0
+ },
+ "summary": "a conflicting memory access pair lacks supported ordering",
+ "verdict": "DATA_HAZARD",
+ "witness": {
+  "allocation": "global:in_out_ptr0",
+  "category": "UNORDERED_CONFLICT",
+  "effects": [
+   {
+    "actor": "stream:00000020:program:triton:lanes:i00000000",
+    "event": "source:event:00000034:triton:cta:e00001:op00054:access:0:i00000000",
+    "id": "effect:source:event:00000034:triton:cta:e00001:op00054:access:0:i00000000:read:region:global:global:in_out_ptr0:0:32",
+    "lane": 0,
+    "mode": "READ",
+    "region": "region:global:global:in_out_ptr0:0:32",
+    "window": [
+     "source:event:00000034:triton:cta:e00001:op00054:access:0:i00000000",
+     "triton:cta:e00001:op00054:access:0:lane:0"
+    ]
+   },
+   {
+    "actor": "stream:00000020:program:triton:lanes:i00000001",
+    "event": "source:event:00000034:triton:cta:e00005:op00091:access:0:i00000001",
+    "id": "effect:source:event:00000034:triton:cta:e00005:op00091:access:0:i00000001:write:region:global:global:in_out_ptr0:16:16",
+    "lane": 1,
+    "mode": "WRITE",
+    "region": "region:global:global:in_out_ptr0:16:16",
+    "window": [
+     "source:event:00000034:triton:cta:e00005:op00091:access:0:i00000001",
+     "triton:cta:e00005:op00091:access:0:lane:1"
+    ]
+   }
+  ],
+  "events": [
+   "source:event:00000034:triton:cta:e00001:op00054:access:0:i00000000",
+   "source:event:00000034:triton:cta:e00005:op00091:access:0:i00000001"
+  ],
+  "missing_path": "neither program order nor a typed visibility boundary orders the conflict",
+  "overlap": {
+   "extent": 16,
+   "offset": 16
+  }
+ }
+}
