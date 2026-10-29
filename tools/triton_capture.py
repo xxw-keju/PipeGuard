@@ -1381,10 +1381,12 @@ class TritonCapture:
             "participants": [self.current_actor],
             "capacity": len(participants),
             "scope": "CTA",
+            # The barrier lowers to bar.sync, which also orders the
+            # participants' generic global accesses.
             "visibility_mask": {
                 "shared": True,
-                "global_read": False,
-                "global_write": False,
+                "global_read": True,
+                "global_write": True,
                 "tensor_read": False,
                 "tensor_write": False,
                 "control_only": False,
@@ -1407,6 +1409,33 @@ class TritonCapture:
         )
         self.pending_shared_write_allocations.clear()
         self.pending_shared_read_allocations.clear()
+
+    def _convert_layout_crosses_warps(self, operation: Any) -> bool:
+        """Whether a blocked/slice convert_layout needs data from another warp.
+
+        Such a conversion cannot use registers or warp shuffles, so Triton
+        lowers it through shared memory with a CTA barrier between the store
+        and the load. Unclassified layouts report False (no barrier).
+        """
+        source = operation.get_operand(0)
+        participants = self.actor_specs[self.current_actor]["participants"]
+        try:
+            shape = self._value_shape(source)
+            before = self._blocked_lane_elements(
+                str(source.get_type()), shape, participants, representative_only=False
+            )
+            after = self._blocked_lane_elements(
+                str(operation.get_result(0).get_type()), shape, participants, representative_only=False
+            )
+        except CaptureError:
+            return False
+        warp_elements: dict[int, set[int]] = {}
+        for position, lane in enumerate(participants):
+            warp_elements.setdefault(position // 32, set()).update(before[lane])
+        return any(
+            not set(after[lane]) <= warp_elements[position // 32]
+            for position, lane in enumerate(participants)
+        )
 
     def _membar_before_shared_write(self, allocation: str, index: int) -> None:
         # Triton's Membar pass also orders a shared write after an
@@ -2432,7 +2461,21 @@ class TritonCapture:
             self.register_regions[result.id()] = destination
             self.wgmma_results[result.id()] = sequence
             self.wgmma_group_sequences[owner] = sequence + 1
-            self.pending_wgmma_owners.add(owner)
+            if operation.get_bool_attr("isAsync") is True:
+                self.pending_wgmma_owners.add(owner)
+                return
+            # A synchronous warp_group_dot lowers to commit_group followed by
+            # wgmma.wait_group 0, so every group of this owner completes here.
+            for completion_kind in ("OPERANDS_RELEASED", "RESULT_READY"):
+                self._emit(
+                    "triton.wgmma.wait_group",
+                    index,
+                    resource=resource,
+                    group_owner=owner,
+                    wait_group_count=0,
+                    completion_kind=completion_kind,
+                )
+            self.pending_wgmma_owners.discard(owner)
             return
         wait_count = operation.get_int_attr("pendings")
         has_known_result = any(
@@ -3974,6 +4017,8 @@ class TritonCapture:
             return
         if name.startswith(("arith.", "math.")) or name in self._PURE_OPERATIONS:
             self._capture_wgmma_result_reads(operation, index)
+            if name == "ttg.convert_layout" and self._convert_layout_crosses_warps(operation):
+                self._emit_shared_membar(index)
             self._evaluate_pure(operation, index)
             if len(self.output_operations) > before:
                 self.emitting_nodes += 1

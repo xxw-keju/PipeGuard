@@ -687,6 +687,39 @@ def test_triton_wgmma_result_use_requires_result_ready_wait(tmp_path: Path):
 
 
 @pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_synchronous_wgmma_waits_for_its_result(tmp_path: Path):
+    module = (FIXTURES / "triton_wgmma_fenced.ttgir.mlir").read_text()
+    module = module.replace(
+        "%cst_1 {isAsync = true} :",
+        "%cst_1 :",
+    ).replace(
+        "    %3 = ttng.warp_group_dot_wait %2 {pendings = 0 : i32} : tensor<128x64xf32, #mma>\n",
+        "",
+    ).replace(
+        "    tt.return",
+        "    %used = arith.addf %2, %2 : tensor<128x64xf32, #mma>\n    tt.return",
+    )
+    assert "isAsync" not in module
+    fixture = tmp_path / "wgmma-synchronous.ttgir.mlir"
+    fixture.write_text(module)
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "wgmma-synchronous",
+    )
+    ops = [operation["op"] for operation in snapshot["operations"]]
+    commit = ops.index("triton.wgmma.commit_group")
+    assert ops[commit + 1 : commit + 3] == ["triton.wgmma.wait_group", "triton.wgmma.wait_group"]
+    assert [
+        operation["completion_kind"]
+        for operation in snapshot["operations"][commit + 1 : commit + 3]
+    ] == ["OPERANDS_RELEASED", "RESULT_READY"]
+    assert snapshot["operations"][-1]["op"] == "triton.mem.read"
+    assert check_module(triton_snapshot_to_module(snapshot), engine="maximal")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
 def test_triton_sha_bound_final_lowering_wait_orders_wgmma_before_arrive(tmp_path: Path):
     module = (FIXTURES / "triton_wgmma_fenced.ttgir.mlir").read_text()
     module = module.replace(
@@ -1406,6 +1439,47 @@ def test_triton_scalar_pointer_argument_tracks_direct_and_static_addptr_access(t
         ("triton.mem.write", "region:global:global-arg:0:0:4"),
         ("triton.mem.read", "region:global:global-arg:0:8:4"),
     ]
+    assert check_module(triton_snapshot_to_module(snapshot), engine="maximal")["verdict"] == "SAFE"
+
+
+@pytest.mark.skipif(not TRITON_PYTHON.exists(), reason="pinned Triton capture environment unavailable")
+def test_triton_cross_warp_convert_layout_orders_global_war(tmp_path: Path):
+    fixture = tmp_path / "convert-layout-inplace.ttgir.mlir"
+    fixture.write_text("""\
+#blocked = #ttg.blocked<{sizePerThread = [1], threadsPerWarp = [32], warpsPerCTA = [4], order = [0]}>
+#blocked1 = #ttg.blocked<{sizePerThread = [4], threadsPerWarp = [32], warpsPerCTA = [4], order = [0]}>
+module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:90", "ttg.threads-per-warp" = 32 : i32} {
+  tt.func public @convert_inplace(%base: !tt.ptr<f32>) {
+    %range = tt.make_range {end = 512 : i32, start = 0 : i32} : tensor<512xi32, #blocked>
+    %bases = tt.splat %base : !tt.ptr<f32> -> tensor<512x!tt.ptr<f32>, #blocked>
+    %pointers = tt.addptr %bases, %range : tensor<512x!tt.ptr<f32>, #blocked>, tensor<512xi32, #blocked>
+    %loaded = tt.load %pointers : tensor<512x!tt.ptr<f32>, #blocked>
+    %converted = ttg.convert_layout %loaded : tensor<512xf32, #blocked> -> tensor<512xf32, #blocked1>
+    %range1 = tt.make_range {end = 512 : i32, start = 0 : i32} : tensor<512xi32, #blocked1>
+    %bases1 = tt.splat %base : !tt.ptr<f32> -> tensor<512x!tt.ptr<f32>, #blocked1>
+    %pointers1 = tt.addptr %bases1, %range1 : tensor<512x!tt.ptr<f32>, #blocked1>, tensor<512xi32, #blocked1>
+    tt.store %pointers1, %converted : tensor<512x!tt.ptr<f32>, #blocked1>
+    tt.return
+  }
+}
+""")
+    _output, snapshot = _capture(
+        TRITON_PYTHON,
+        "triton_capture.py",
+        fixture,
+        "convert-layout-inplace",
+    )
+    ops = [operation["op"] for operation in snapshot["operations"]]
+    assert ops == [
+        "triton.mem.read",
+        "triton.barrier.arrive",
+        "triton.barrier.observe",
+        "triton.mem.write",
+    ]
+    barrier = snapshot["resources"][0]
+    assert barrier["kind"] == "cta_barrier"
+    assert barrier["visibility_mask"]["global_read"] is True
+    assert barrier["visibility_mask"]["global_write"] is True
     assert check_module(triton_snapshot_to_module(snapshot), engine="maximal")["verdict"] == "SAFE"
 
 
