@@ -1,0 +1,10 @@
+# H100, CUDA_VISIBLE_DEVICES=2, 2026-10-29
+# Triton 3.8.0 (corpus capture environment, launch options num_warps=4 num_stages=1)
+$ python repro_ca3423385c768908.py wrapped_kernel.py race 300
+variant=race runs=300 bad_runs=300 bad_elements=37605792
+$ python repro_ca3423385c768908.py wrapped_kernel.py barrier 300
+variant=barrier runs=300 bad_runs=0 bad_elements=0
+# Triton 3.2.0 (NGC torch 2.7.0a0): same layouts, but convert_layout/reduce
+# barriers happen to sit between the out_ptr0 store and its reload
+$ python repro_ca3423385c768908.py wrapped_kernel.py race 300
+variant=race runs=300 bad_runs=0 bad_elements=0
