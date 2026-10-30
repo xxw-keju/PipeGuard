@@ -12,7 +12,7 @@ python -m pip install .
 
 ## Quick start
 
-Check a PGIR file (maximal is the only engine):
+Check a PGIR file:
 
 ```bash
 python -m pipeguard check tests/fixtures/safe_handoff.json --pretty
