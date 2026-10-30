@@ -71,7 +71,7 @@ def deferred_case(*, commit=False, early=None, generic=False, count=1, parity=0,
     ({'parity': 1}, 'SYNC_HAZARD'),
     ({'double': True}, 'SYNC_HAZARD'),
 ])
-def test_deferred_arrival_direct_and_independent_oracle(options, expected):
+def test_deferred_arrival_compact_and_expanded_maximal(options, expected):
     module = deferred_case(**options)
     direct = check_module(module, engine='maximal')
     assert direct['verdict'] == expected, direct.get('diagnostics')
@@ -79,7 +79,7 @@ def test_deferred_arrival_direct_and_independent_oracle(options, expected):
         with pytest.raises(PGIRError, match='raw wait parity'):
             module.expand_reference()
         return
-    reference = check_module(module.expand_reference(), engine='exhaustive')
+    reference = check_module(module.expand_reference(), engine='maximal')
     assert reference['verdict'] == expected, reference.get('diagnostics')
 
 
@@ -121,7 +121,7 @@ def test_mbarrier_observation_orders_copies_across_groups(observe, expected):
     base['event_templates'] = templates
     module = parametric_module_from_dict(base)
     assert check_module(module, engine='maximal')['verdict'] == expected
-    assert check_module(module.expand_reference(), engine='exhaustive')['verdict'] == expected
+    assert check_module(module.expand_reference(), engine='maximal')['verdict'] == expected
 
 
 @pytest.mark.parametrize('observe,expected', [(True, 'SAFE'), (False, 'DATA_HAZARD')])
@@ -139,4 +139,4 @@ def test_noinc_does_not_implicitly_commit_group(observe, expected):
     for order, event in enumerate(raw['event_templates']): event['order'] = order
     module = parametric_module_from_dict(raw)
     assert check_module(module, engine='maximal')['verdict'] == expected
-    assert check_module(module.expand_reference(), engine='exhaustive')['verdict'] == expected
+    assert check_module(module.expand_reference(), engine='maximal')['verdict'] == expected

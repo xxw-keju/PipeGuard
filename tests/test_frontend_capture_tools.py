@@ -201,7 +201,7 @@ def test_triton_parameterized_profile_requires_lowered_execution_evidence():
         ]),
     ],
 )
-def test_live_tilelang_capture_has_complete_v3_certificate_and_crosschecks(
+def test_live_tilelang_capture_has_complete_v3_certificate_with_maximal(
     fixture: str,
     source: str,
     expected_prefix: list[str],
@@ -1115,7 +1115,7 @@ def test_triton_fully_masked_cp_async_still_zero_fills_shared(
         ]),
     ],
 )
-def test_live_triton_capture_has_complete_v2_certificate_and_crosschecks(
+def test_live_triton_capture_has_complete_v2_certificate_with_maximal(
     fixture: str,
     source: str,
     expected: list[str],
@@ -3353,7 +3353,7 @@ def test_triton_cp_async_wait_is_thread_local_and_barrier_publishes():
 
     safe_module = triton_snapshot_to_module(snapshot)
     safe_direct = check_module(safe_module, engine="maximal")
-    safe_reference = check_module(safe_module.expand_reference(), engine="crosscheck")
+    safe_reference = check_module(safe_module.expand_reference(), engine="maximal")
     assert safe_direct["verdict"] == safe_reference["verdict"] == "SAFE"
 
     snapshot["operations"] = [
@@ -3367,7 +3367,7 @@ def test_triton_cp_async_wait_is_thread_local_and_barrier_publishes():
     snapshot["extraction"]["events_emitted"] = len(snapshot["operations"])
     unsafe_module = triton_snapshot_to_module(snapshot)
     unsafe_direct = check_module(unsafe_module, engine="maximal")
-    unsafe_reference = check_module(unsafe_module.expand_reference(), engine="crosscheck")
+    unsafe_reference = check_module(unsafe_module.expand_reference(), engine="maximal")
     assert unsafe_direct["verdict"] == unsafe_reference["verdict"] == "DATA_HAZARD"
     assert unsafe_direct["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
 

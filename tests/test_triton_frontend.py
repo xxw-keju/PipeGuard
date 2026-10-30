@@ -46,11 +46,10 @@ def test_triton_snapshot_normalizes_to_dsl_neutral_pgir():
     assert wait["parity_evidence"]["stream_rank"] == 0
 
 
-def test_triton_snapshot_runs_through_crosschecked_checker():
-    result = check_module(load_triton_snapshot(SNAPSHOT), engine="crosscheck")
+def test_triton_snapshot_runs_through_maximal_checker():
+    result = check_module(load_triton_snapshot(SNAPSHOT), engine="maximal")
     assert result["verdict"] == "SAFE"
     assert result["manifest"]["producer"]["dsl"] == "TRITON"
-    assert result["artifacts"]["crosscheck"]["maximal"] == result["artifacts"]["crosscheck"]["exhaustive"]
 
 
 def test_live_triton_ttgir_capture_fixture_is_safe():
@@ -63,7 +62,7 @@ def test_live_triton_ttgir_capture_fixture_is_safe():
         "triton.mbarrier.arrive",
         "triton.mbarrier.wait_parity",
     ]
-    result = check_module(triton_snapshot_to_module(snapshot), engine="crosscheck")
+    result = check_module(triton_snapshot_to_module(snapshot), engine="maximal")
     assert result["verdict"] == "SAFE"
     assert result["artifacts"]["normalized_sha256"] == (
         "6f4b4caac27cc9a9219d52671bdfa283364b40d290c651cf16737773b30c5848"

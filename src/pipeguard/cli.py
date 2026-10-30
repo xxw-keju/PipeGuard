@@ -101,7 +101,7 @@ def build_parser() -> argparse.ArgumentParser:
                 help="enable final PTX WGMMA register-order checking (default: disabled)",
             )
             child.add_argument(
-                "--engine", choices=("maximal", "exhaustive", "crosscheck"), default="maximal",
+                "--engine", choices=("maximal",), default="maximal",
                 help="execution engine (default: maximal)",
             )
     compare = subparsers.add_parser("compare")
@@ -110,8 +110,8 @@ def build_parser() -> argparse.ArgumentParser:
     compare.add_argument("--left-frontend", choices=("pgir", "tilelang", "triton"), required=True)
     compare.add_argument("--right-frontend", choices=("pgir", "tilelang", "triton"), required=True)
     compare.add_argument(
-        "--engine", choices=("maximal", "exhaustive", "crosscheck"), default="crosscheck",
-        help="checker engine (default: crosscheck)",
+        "--engine", choices=("maximal",), default="maximal",
+        help="checker engine (default: maximal)",
     )
     compare.add_argument("--pretty", action="store_true", help="indent JSON output")
     return parser

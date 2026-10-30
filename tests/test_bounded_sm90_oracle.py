@@ -18,7 +18,7 @@ from test_checker import (
 
 
 def _assert_expected(module, expected: str, scenario: tuple) -> None:
-    result = check_module(module, engine="crosscheck")
+    result = check_module(module, engine="maximal")
     assert result["verdict"] == expected, (scenario, result)
     if expected != "SAFE":
         assert result["diagnostics"]

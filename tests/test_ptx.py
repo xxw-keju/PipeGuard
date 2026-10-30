@@ -25,7 +25,7 @@ def safe_module_with_ptx(text):
     return module_from_dict(raw)
 
 
-@pytest.mark.parametrize('engine', ['maximal', 'exhaustive', 'crosscheck'])
+@pytest.mark.parametrize('engine', ['maximal'])
 @pytest.mark.parametrize('body, enabled_verdict', [
     (FENCE + '\nmov.f32 %f0, 0f3f800000;\n' + MMA, 'SYNC_HAZARD'),
     (FENCE + '\nL_loop:\n' + MMA + '\n@%p bra L_loop;', 'UNSUPPORTED'),

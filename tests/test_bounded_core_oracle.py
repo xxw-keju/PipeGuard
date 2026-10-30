@@ -358,7 +358,7 @@ def test_bounded_raw_oracle_matches_checker_lts_and_safe_pdg():
             raw = _core_oracle(traces, capacity, "raw")
             exact = _core_oracle(traces, capacity, "exact")
             module = _pgir_for_core(traces, capacity)
-            report = check_module(module, engine="crosscheck")
+            report = check_module(module, engine="maximal")
             checked += 1
             if raw.risk:
                 risk += 1
@@ -404,7 +404,7 @@ def test_bounded_raw_oracle_matches_checker_lts_and_safe_pdg():
                 )
                 raw = _core_oracle(traces, capacity, "raw")
                 exact = _core_oracle(traces, capacity, "exact")
-                report = check_module(_pgir_for_core(traces, capacity), engine="crosscheck")
+                report = check_module(_pgir_for_core(traces, capacity), engine="maximal")
                 checked += 1
                 risk += raw.risk
                 stuck += raw.stuck_risk

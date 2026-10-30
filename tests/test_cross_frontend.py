@@ -208,7 +208,7 @@ def test_certified_empty_protocol_graphs_are_equivalent_and_safe_across_frontend
         })
         module = convert(snapshot)
         assert check_module(module, engine="maximal")["verdict"] == "SAFE"
-        assert check_module(module, engine="crosscheck")["verdict"] == "SAFE"
+        assert check_module(module, engine="maximal")["verdict"] == "SAFE"
         modules.append(module)
     assert semantic_signature(modules[0]) == semantic_signature(modules[1])
 
@@ -340,8 +340,8 @@ def test_equivalent_tilelang_and_triton_normalize_to_one_semantic_signature():
 
 def test_equivalent_safe_frontends_have_same_verdict_and_work_certificate():
     reports = [
-        check_module(tilelang_snapshot_to_module(_load(TILELANG)), engine="crosscheck"),
-        check_module(triton_snapshot_to_module(_load(TRITON)), engine="crosscheck"),
+        check_module(tilelang_snapshot_to_module(_load(TILELANG)), engine="maximal"),
+        check_module(triton_snapshot_to_module(_load(TRITON)), engine="maximal"),
     ]
     assert [report["verdict"] for report in reports] == ["SAFE", "SAFE"]
     comparable = (
@@ -368,8 +368,8 @@ def test_equivalent_async_frontends_cover_proxy_group_engine_and_window_semantic
     triton = triton_snapshot_to_module(_load(TRITON_ASYNC))
     assert semantic_signature(tilelang) == semantic_signature(triton)
     reports = [
-        check_module(tilelang, engine="crosscheck"),
-        check_module(triton, engine="crosscheck"),
+        check_module(tilelang, engine="maximal"),
+        check_module(triton, engine="maximal"),
     ]
     assert [report["verdict"] for report in reports] == ["SAFE", "SAFE"]
     assert reports[0]["artifacts"]["engine_completion_streams"] == reports[1]["artifacts"]["engine_completion_streams"]
@@ -392,11 +392,10 @@ def test_equivalent_typed_protocols_share_one_pgir_signature_and_checker(protoco
     assert semantic_signature(tilelang) == semantic_signature(triton)
     assert semantic_digest(tilelang) == semantic_digest(triton)
     reports = [
-        check_module(tilelang, engine="crosscheck"),
-        check_module(triton, engine="crosscheck"),
+        check_module(tilelang, engine="maximal"),
+        check_module(triton, engine="maximal"),
     ]
     assert [report["verdict"] for report in reports] == ["SAFE", "SAFE"]
-    assert reports[0]["artifacts"]["crosscheck"] == reports[1]["artifacts"]["crosscheck"]
 
 
 def test_equivalent_frontends_order_generic_cp_async_source_without_fence():
@@ -416,8 +415,8 @@ def test_equivalent_missing_wait_frontends_have_same_hazard_witness_shape():
     triton = triton_snapshot_to_module(_without_wait(_load(TRITON)))
     assert semantic_signature(tilelang) == semantic_signature(triton)
     reports = [
-        check_module(tilelang, engine="crosscheck"),
-        check_module(triton, engine="crosscheck"),
+        check_module(tilelang, engine="maximal"),
+        check_module(triton, engine="maximal"),
     ]
     assert [report["verdict"] for report in reports] == ["DATA_HAZARD", "DATA_HAZARD"]
     assert [report["diagnostics"][0]["code"] for report in reports] == [

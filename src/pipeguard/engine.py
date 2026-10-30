@@ -40,10 +40,6 @@ class ProtocolError(Exception):
         return result
 
 
-class ExplorationLimit(Exception):
-    pass
-
-
 @dataclass(slots=True)
 class BarrierState:
     lifecycle: Literal["UNINITIALIZED", "LIVE", "INVALIDATED"] = "UNINITIALIZED"
@@ -144,24 +140,15 @@ class ExplorationResult:
     held: str | None
 
 
-@dataclass(slots=True)
-class ExhaustiveResult:
-    terminals: list[ExecutionState]
-    errors: list[tuple[ProtocolError, ExecutionState]]
-    stuck: list[ExecutionState]
-    visited_states: int
-
-
 class Executor:
-    """Reference scheduler and finite exhaustive oracle.
+    """Protocol state machine for maximal scheduling.
 
     Deterministic maximal execution always selects the minimum stable
-    transition. ``explore_all`` remains a finite small-model oracle.
+    transition.
     TMA loads contribute transfer bytes to one synthetic completion per
     mbarrier lifecycle/generation; no per-transfer completion is exposed.
     """
 
-    MAX_STATES = 100_000
 
     def __init__(self, module: Module):
         self.module = module
@@ -1722,46 +1709,6 @@ class Executor:
                 break
         return ExplorationResult(state, self.boundary(state), error, error is None and hold is None and self.unfinished(state), hold)
 
-    def explore_all(self, hold: str | None = None) -> ExhaustiveResult:
-        stack = [self.initial_state()]
-        seen: set[tuple[Any, ...]] = set()
-        terminals: list[ExecutionState] = []
-        errors: list[tuple[ProtocolError, ExecutionState]] = []
-        stuck: list[ExecutionState] = []
-        while stack:
-            state = stack.pop()
-            marker = self.fingerprint(state)
-            if marker in seen:
-                continue
-            seen.add(marker)
-            if len(seen) > self.MAX_STATES:
-                raise ExplorationLimit(f"state exploration exceeded {self.MAX_STATES} states")
-            choices = self.enabled(state, hold)
-            if not choices:
-                terminals.append(state)
-                if hold is None and self.unfinished(state):
-                    stuck.append(state)
-                continue
-            for transition in reversed(choices):
-                successor = state.clone()
-                try:
-                    self.apply(successor, transition)
-                except ProtocolError as error:
-                    errors.append((error, successor))
-                else:
-                    stack.append(successor)
-        return ExhaustiveResult(terminals, errors, stuck, len(seen))
-
-    def probe(self, state: ExecutionState, anchor: str) -> tuple[ProtocolError | None, ExecutionState | None]:
-        transition = next((item for item in self.enabled(state) if item.id == anchor), None)
-        if transition is None:
-            return None, None
-        successor = state.clone()
-        try:
-            self.apply(successor, transition)
-        except ProtocolError as error:
-            return error, successor
-        return None, successor
 
     def stuck_diagnostic(self, state: ExecutionState) -> dict[str, Any]:
         for resource_id in sorted(state.barriers):

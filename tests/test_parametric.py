@@ -128,7 +128,7 @@ def parametric_memory_module() -> dict:
 
 def test_partition_owner_does_not_serialize_logical_lane_streams():
     compact = module_from_dict(parametric_memory_module())
-    result = check_module(compact, engine="crosscheck")
+    result = check_module(compact, engine="maximal")
     module = compact.expand_reference()
 
     assert result["verdict"] == "DATA_HAZARD"
@@ -193,16 +193,17 @@ def test_same_logical_lane_keeps_program_order():
     raw["event_templates"][1]["instances"] = [0]
     compact = module_from_dict(raw)
 
-    result = check_module(compact, engine="crosscheck")
+    result = check_module(compact, engine="maximal")
 
     assert result["verdict"] == "SAFE"
+    expanded = check_module(compact.expand_reference())
     first = stable_event_instance_id("write", 0)
     second = stable_event_instance_id("read", 0)
     assert {
         "from": first,
         "to": second,
         "kind": "PROGRAM_ORDER",
-    } in result["artifacts"]["pdg"]["edges"]
+    } in expanded["artifacts"]["pdg"]["edges"]
 
 
 def test_collective_reference_expansion_rendezvous_once_and_orders_lanes():
@@ -243,7 +244,7 @@ def test_collective_reference_expansion_rendezvous_once_and_orders_lanes():
         },
     ]
     compact = module_from_dict(raw)
-    result = check_module(compact, engine="crosscheck")
+    result = check_module(compact, engine="maximal")
     module = compact.expand_reference()
 
     assert result["verdict"] == "SAFE"
@@ -726,7 +727,7 @@ def test_false_predicated_arrive_expect_tx_has_no_protocol_effect():
         },
     ]
 
-    report = check_module(module_from_dict(raw), engine="crosscheck")
+    report = check_module(module_from_dict(raw), engine="maximal")
 
     assert report["verdict"] == "SAFE"
 
@@ -1576,7 +1577,7 @@ def test_parametric_proxy_region_union_exactly_covers_async_source(
 
     compact = module_from_dict(_single_stream_parametric(raw))
     direct = check_module(compact, engine="maximal")
-    reference = check_module(compact.expand_reference(), engine="crosscheck")
+    reference = check_module(compact.expand_reference(), engine="maximal")
 
     assert direct["verdict"] == reference["verdict"] == expected
     assert direct["statistics"]["exact_conflicting_access_pairs"] == 1
@@ -1632,7 +1633,7 @@ def test_proxy_fence_candidate_index_is_linear(size: int):
     compact = module_from_dict(_many_proxy_fences(size))
 
     direct = check_module(compact, engine="maximal")
-    reference = check_module(compact.expand_reference(), engine="crosscheck")
+    reference = check_module(compact.expand_reference(), engine="maximal")
 
     assert direct["verdict"] == reference["verdict"] == "SAFE"
     statistics = direct["statistics"]

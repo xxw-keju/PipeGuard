@@ -160,11 +160,10 @@ def test_tilelang_v3_rejects_misaligned_instance_fields():
     assert caught.value.code == "FRONTEND_INSTANCE_FIELDS_INVALID"
 
 
-def test_tilelang_snapshot_runs_through_crosschecked_checker():
-    result = check_module(load_tilelang_snapshot(SNAPSHOT), engine="crosscheck")
+def test_tilelang_snapshot_runs_through_maximal_checker():
+    result = check_module(load_tilelang_snapshot(SNAPSHOT), engine="maximal")
     assert result["verdict"] == "SAFE"
     assert result["manifest"]["producer"]["dsl"] == "TILELANG"
-    assert result["artifacts"]["crosscheck"]["maximal"] == result["artifacts"]["crosscheck"]["exhaustive"]
 
 
 def test_live_tilelang_tirx_capture_fixture_is_safe():
@@ -184,7 +183,7 @@ def test_live_tilelang_tirx_capture_fixture_is_safe():
         "tilelang.mem.read",
         "tilelang.mem.write",
     ]
-    result = check_module(tilelang_snapshot_to_module(snapshot), engine="crosscheck")
+    result = check_module(tilelang_snapshot_to_module(snapshot), engine="maximal")
     assert result["verdict"] == "SAFE"
     assert result["artifacts"]["normalized_sha256"] == (
         "806a9c417eaeba4d30316cf7b7b1e3e45d5f06a155280d16a8b688ea2974f825"
@@ -204,7 +203,7 @@ def test_live_tilelang_cp_async_capture_fixture_is_safe():
         "tilelang.cp_async.commit_group",
         "tilelang.cp_async.wait_group",
     ]
-    result = check_module(tilelang_snapshot_to_module(snapshot), engine="crosscheck")
+    result = check_module(tilelang_snapshot_to_module(snapshot), engine="maximal")
     assert result["verdict"] == "SAFE"
     # Normalization drops the ignored legacy async-group capacity field.
     assert result["artifacts"]["normalized_sha256"] == (

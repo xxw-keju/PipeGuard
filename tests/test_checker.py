@@ -55,7 +55,7 @@ def test_empty_finite_event_graph_is_safe_for_both_pgir_versions(fixture: str):
     raw["events"] = []
     module = module_from_dict(raw)
     assert check_module(module, engine="maximal")["verdict"] == "SAFE"
-    assert check_module(module, engine="crosscheck")["verdict"] == "SAFE"
+    assert check_module(module, engine="maximal")["verdict"] == "SAFE"
 
 
 @pytest.mark.parametrize("fixture", ["safe_handoff.json", "missing_sync_data_hazard.json"])
@@ -292,16 +292,11 @@ def test_sync_hazards(fixture: str, code: str):
     assert result["witness"]["reachable_execution_prefix"] is not None
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_partial_next_phase_before_old_wait_is_invalid(engine):
     result = check_module(load("partial_next_phase.json"), engine=engine)
     assert result["verdict"] == "SYNC_HAZARD"
     assert result["diagnostics"][0]["code"] == "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE"
-    if engine == "crosscheck":
-        comparison = result["artifacts"]["crosscheck"]
-        assert comparison["maximal"]["verdict"] == comparison["exhaustive"]["verdict"] == "SYNC_HAZARD"
-        assert comparison["maximal"]["primary_diagnostic"] == comparison["exhaustive"]["primary_diagnostic"] == "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE"
-        assert comparison["maximal"]["boundaries"] == comparison["exhaustive"]["boundaries"]
 
 
 def test_initial_remaining_tracks_future_obligations_and_first_next_arrival_is_rejected():
@@ -365,7 +360,7 @@ def test_missing_synchronization_is_data_hazard_not_canonical_order():
     assert result["witness"]["events"] == ["read", "write"]
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_concurrent_atomics_on_the_same_bytes_do_not_race(engine: str):
     raw = json.loads((FIXTURES / "missing_sync_data_hazard.json").read_text())
     for event in raw["events"]:
@@ -373,7 +368,7 @@ def test_concurrent_atomics_on_the_same_bytes_do_not_race(engine: str):
     assert check_module(module_from_dict(raw), engine=engine)["verdict"] == "SAFE"
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_atomic_conflicts_with_an_unordered_plain_read(engine: str):
     raw = json.loads((FIXTURES / "missing_sync_data_hazard.json").read_text())
     raw["events"][0]["type"] = "AtomicReadModifyWrite"
@@ -460,7 +455,7 @@ def test_grouped_tma_load_preserves_transfer_effects_with_one_phase_completion()
     effects = [effect for effect in _effects(module) if effect.begin == issue.id]
     assert {effect.region for effect in effects} == {"source0", "source1", "tile0", "tile1"}
     assert {effect.end for effect in effects} == {stable_phase_id("bar", 0, 0)}
-    result = check_module(module, engine="crosscheck")
+    result = check_module(module, engine="maximal")
     assert result["verdict"] == "SAFE"
     assert result["statistics"]["phase_streams"] == 1
 
@@ -506,7 +501,7 @@ def test_grouped_tma_load_reports_conflict_for_individual_transfer_region():
         "region": "tile1",
         "depends_on": ["init"],
     })
-    result = check_module(module_from_dict(raw), engine="crosscheck")
+    result = check_module(module_from_dict(raw), engine="maximal")
     assert result["verdict"] == "DATA_HAZARD"
     assert any(
         effect["id"] == "effect:issue:transfer:1:destination"
@@ -549,11 +544,11 @@ def tma_wait_observer_module(*, outsider_write: bool):
 
 
 def test_tma_wait_closes_window_for_observing_actor():
-    assert check_module(tma_wait_observer_module(outsider_write=False), engine="crosscheck")["verdict"] == "SAFE"
+    assert check_module(tma_wait_observer_module(outsider_write=False), engine="maximal")["verdict"] == "SAFE"
 
 
 def test_tma_wait_does_not_globally_close_window_for_other_actor():
-    result = check_module(tma_wait_observer_module(outsider_write=True), engine="crosscheck")
+    result = check_module(tma_wait_observer_module(outsider_write=True), engine="maximal")
     assert result["verdict"] == "DATA_HAZARD"
     assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
 
@@ -631,7 +626,7 @@ def test_invalidate_after_completed_phase_is_legal():
     assert result["verdict"] == "SAFE"
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_invalidate_after_ordered_arrival_phase_needs_no_wait(engine):
     # PTX forbids invalidating an in-progress phase; an arrival-driven phase
     # whose arrivals all precede the invalidation is already complete.
@@ -660,7 +655,7 @@ def cross_actor_invalidate_module(ordered: bool):
     return module_from_dict(raw)
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_invalidate_after_cross_actor_arrival_requires_ordering(engine):
     ordered = check_module(cross_actor_invalidate_module(True), engine=engine)
     assert ordered["verdict"] == "SAFE"
@@ -672,7 +667,7 @@ def test_invalidate_after_cross_actor_arrival_requires_ordering(engine):
     }
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_invalidate_after_transaction_phase_requires_successful_wait(engine):
     raw = json.loads((FIXTURES / "tma_completion_after_arrival.json").read_text())
     wait = next(event for event in raw["events"] if event["id"] == "wait")
@@ -717,18 +712,18 @@ def scheduler_race(main_actor: str, arrival_actor: str):
     return module_from_dict(raw)
 
 
-def test_all_schedule_exploration_is_actor_rename_independent():
-    first = check_module(scheduler_race("a_main", "z_arrival"), engine="exhaustive")
-    second = check_module(scheduler_race("z_main", "a_arrival"), engine="exhaustive")
+def test_held_anchor_is_actor_rename_independent():
+    first = check_module(scheduler_race("a_main", "z_arrival"), engine="maximal")
+    second = check_module(scheduler_race("z_main", "a_arrival"), engine="maximal")
     assert first["verdict"] == second["verdict"] == "SYNC_HAZARD"
     assert first["diagnostics"][0]["code"] == second["diagnostics"][0]["code"] == "STALE_GENERATION"
 
 
 def test_hold_anchor_terminal_is_actually_probed():
-    executor = Executor(scheduler_race("a_main", "z_arrival"))
-    outcomes = executor.explore_all(hold="expect")
-    probes = [executor.probe(state, "expect")[0] for state in outcomes.terminals]
-    assert any(error is not None and error.code == "STALE_GENERATION" for error in probes)
+    module = scheduler_race("a_main", "z_arrival")
+    outcomes = IncrementalEngine(Executor(module), _anchor_ids(module)).analyze_streams()
+    assert outcomes.error is not None
+    assert outcomes.error.code == "STALE_GENERATION"
 
 
 def test_predicated_false_arrival_does_not_publish_visibility():
@@ -788,7 +783,7 @@ def test_extraction_evidence_and_lane_bounds_are_required():
     assert lane.value.code == "PARTICIPANT_OUT_OF_RANGE"
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_unused_initialized_barrier_can_be_invalidated_without_a_completed_phase(engine):
     result = check_module(
         lifecycle_module("MBarrierInit", "MBarrierInvalidate"),
@@ -849,7 +844,6 @@ def test_event_type_specific_fields_and_false_arrive_expect_tx():
     )
 
 
-
 def structured_evidence(stream: str, rank: int, lifecycle: int = 0) -> dict:
     return {
         "derivation_kind": "BARRIER_HISTORY",
@@ -893,11 +887,11 @@ def test_required_and_multiple_observers():
         ("bar", 0, 0): frozenset({"wait_b", "wait_c"}),
         ("bar", 0, 1): frozenset({"wait_b1"}),
     }
-    for engine in ("maximal", "exhaustive", "crosscheck"):
+    for engine in ("maximal",):
         assert check_module(module, engine=engine)["verdict"] == "SAFE"
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_one_successful_wait_allows_next_phase_arrive(engine):
     raw = json.loads(json.dumps(strict_multi_observer_module(False).raw))
     raw["events"] = [event for event in raw["events"] if event["id"] != "wait_c"]
@@ -910,15 +904,15 @@ def test_one_successful_wait_allows_next_phase_arrive(engine):
     assert result["verdict"] == "SAFE"
 
 
-def test_missing_observer_blocks_only_phase_completion_all_engines():
+def test_missing_observer_blocks_only_phase_completion_with_maximal():
     module = strict_multi_observer_module(False)
-    for engine in ("maximal", "exhaustive", "crosscheck"):
+    for engine in ("maximal",):
         result = check_module(module, engine=engine)
         assert result["verdict"] == "SYNC_HAZARD"
         assert result["diagnostics"][0]["code"] == "PROTOCOL_INVALID_PHASE_ADVANCE"
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_invalidate_cannot_retire_unobserved_required_waits(engine):
     raw = json.loads(json.dumps(strict_multi_observer_module(True).raw))
     invalidate = next(event for event in raw["events"] if event["id"] == "arrive1")
@@ -1054,7 +1048,7 @@ def test_stale_phase_completion_transition_is_rejected_atomically():
     assert executor.fingerprint(state) == before
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_missing_successful_wait_is_a_sync_hazard_at_first_next_arrive(engine):
     raw = json.loads((FIXTURES / "stale_generation.json").read_text())
     raw["events"] = [event for event in raw["events"] if event["type"] != "MBarrierWaitParity"]
@@ -1095,7 +1089,7 @@ def test_next_phase_first_arrive_requires_prior_successful_wait():
     assert executor.fingerprint(state) == before
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_tx_delay_schedule_with_arrive_before_old_wait_is_invalid(engine):
     result = check_module(tx_delayed_phase_module(), engine=engine)
     assert result["verdict"] == "SYNC_HAZARD"
@@ -1122,15 +1116,11 @@ def tx_pending_early_next_arrival_module():
     return module_from_dict(raw)
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_held_tx_completion_does_not_hide_zero_pending_early_arrival(engine):
     result = check_module(tx_pending_early_next_arrival_module(), engine=engine)
     assert result["verdict"] == "SYNC_HAZARD"
-    expected = (
-        "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE"
-        if engine == "exhaustive"
-        else "ARRIVE_WITH_ZERO_PENDING_COUNT"
-    )
+    expected = "ARRIVE_WITH_ZERO_PENDING_COUNT"
     assert result["diagnostics"][0]["code"] == expected
 
 
@@ -1180,7 +1170,7 @@ def test_reinit_phase_ids_and_visibility_are_lifecycle_scoped():
         {"id": "wait1", "type": "MBarrierWaitParity", "actor": "b_reader", "seq": 0, "resource": "bar", "lifecycle_epoch": 1, "generation": 0, "raw_parity": 0, "parity_evidence": structured_evidence("reader", 0, 1), "depends_on": ["init1"]},
         {"id": "read", "type": "MemRead", "actor": "b_reader", "seq": 1, "region": "tile"},
     ]
-    result = check_module(module_from_dict(raw), engine="crosscheck")
+    result = check_module(module_from_dict(raw), engine="maximal")
     assert result["verdict"] == "DATA_HAZARD"
     phases = [
         step["transition"]
@@ -1194,33 +1184,16 @@ def test_reinit_phase_ids_and_visibility_are_lifecycle_scoped():
 
 
 def test_default_checker_engine_is_maximal(monkeypatch):
-    def exhaustive_must_not_run(*_args, **_kwargs):
-        raise AssertionError("default maximal engine called explore_all")
+    def scan_must_not_run(*_args, **_kwargs):
+        raise AssertionError("default maximal engine called full-scan explore")
 
-    monkeypatch.setattr(Executor, "explore_all", exhaustive_must_not_run)
+    monkeypatch.setattr(Executor, "explore", scan_must_not_run)
     result = check_module(load("safe_handoff.json"))
     assert result["verdict"] == "SAFE"
     assert result["statistics"]["engine"] == "maximal"
     assert result["statistics"]["explored_steps"] > 0
     assert result["statistics"]["explored_states"] == 0
 
-
-@pytest.mark.parametrize("engine", ["exhaustive", "crosscheck"])
-def test_oracle_engines_are_available(engine: str):
-    result = check_module(load("safe_handoff.json"), engine=engine)
-    assert result["verdict"] == "SAFE"
-    assert result["statistics"]["engine"] == engine
-    assert result["statistics"]["explored_states"] > 0
-
-
-def test_crosscheck_accepts_different_boundary_prefixes_for_same_sync_risk():
-    result = check_module(scheduler_race("a_main", "z_arrival"), engine="crosscheck")
-    assert result["verdict"] == "SYNC_HAZARD"
-    assert result["diagnostics"][0]["code"] == "STALE_GENERATION"
-    comparison = result["artifacts"]["crosscheck"]
-    assert comparison["maximal"]["verdict"] == "SYNC_HAZARD"
-    assert comparison["exhaustive"]["verdict"] == "SYNC_HAZARD"
-    assert comparison["maximal"]["boundaries"] != comparison["exhaustive"]["boundaries"]
 
 def test_cli_output_is_byte_deterministic():
     path = FIXTURES / "safe_handoff.json"
@@ -1243,7 +1216,6 @@ def test_all_cli_commands_emit_json(command: str):
     assert isinstance(json.loads(process.stdout), dict)
 
 
-
 def test_cli_pretty_and_statistics_are_real_interface_options():
     path = FIXTURES / "safe_handoff.json"
     base = [sys.executable, "-m", "pipeguard", "check", str(path)]
@@ -1263,7 +1235,7 @@ def test_cli_pretty_and_statistics_are_real_interface_options():
     assert statistics["explored_steps"] > 0
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_cli_check_engine_modes(engine: str):
     process = subprocess.run(
         [sys.executable, "-m", "pipeguard", "check", str(FIXTURES / "safe_handoff.json"), "--engine", engine],
@@ -1365,16 +1337,6 @@ def generated_barrier_module(capacity: int, observer_count: int):
     return module_from_dict(raw)
 
 
-@pytest.mark.parametrize("capacity", [1, 2, 3])
-@pytest.mark.parametrize("observer_count", [1, 2])
-def test_generated_barrier_models_match_exhaustive_boundaries(capacity, observer_count):
-    module = generated_barrier_module(capacity, observer_count)
-    maximal = check_module(module, engine="maximal")
-    exhaustive = check_module(module, engine="exhaustive")
-    assert maximal["verdict"] == exhaustive["verdict"] == "SAFE"
-    assert maximal["artifacts"]["boundaries"] == exhaustive["artifacts"]["boundaries"]
-
-
 def test_transition_delta_and_compact_trace_are_notification_ready():
     module = independent_read_module(1)
     executor = Executor(module)
@@ -1416,6 +1378,8 @@ def test_incremental_program_stream_first_middle_final_and_end_flush():
         "BARRIER_RELEASE": 0,
         "GROUP_COMPLETION": 0,
         "CHANNEL_HANDOFF": 0,
+        "CP_COPY_COMPLETION": 0,
+        "CP_DEFERRED_ARRIVAL": 0,
     }
     assert engine.counters.state_initializations == 2
 
@@ -1472,15 +1436,6 @@ def test_held_tma_phase_exposes_early_next_generation_hazard():
     assert phase not in prefix
 
 
-@pytest.mark.parametrize(("actors", "events_per_actor"), [(1, 3), (2, 2), (3, 1)])
-def test_generated_small_models_have_exact_maximal_exhaustive_boundaries(actors, events_per_actor):
-    module = independent_read_module(actors, events_per_actor)
-    maximal = check_module(module, engine="maximal")
-    exhaustive = check_module(module, engine="exhaustive")
-    assert maximal["verdict"] == exhaustive["verdict"] == "SAFE"
-    assert maximal["artifacts"]["boundaries"] == exhaustive["artifacts"]["boundaries"]
-
-
 def test_incremental_operation_counts_scale_by_work_not_timing():
     reports = {
         size: check_module(independent_read_module(1, events_per_actor=size), engine="maximal")
@@ -1527,7 +1482,7 @@ def test_incremental_statistics_certificate_is_deterministic():
     assert first["analytical_program_only_boundaries"] == 6
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_predicated_false_arrival_creates_no_synthetic_phase_anchor(engine):
     module = lifecycle_module("MBarrierInit", "MBarrierArrive")
     raw = json.loads(json.dumps(module.raw))
@@ -1536,18 +1491,6 @@ def test_predicated_false_arrival_creates_no_synthetic_phase_anchor(engine):
     assert not any("mbarrier-phase" in anchor for anchor in _anchor_ids(module))
     result = check_module(module, engine=engine)
     assert result["verdict"] == "SAFE"
-    if engine == "crosscheck":
-        assert result["artifacts"]["crosscheck"]["maximal"]["verdict"] == "SAFE"
-        assert result["artifacts"]["crosscheck"]["exhaustive"]["verdict"] == "SAFE"
-
-
-def test_crosscheck_retains_maximal_incremental_certificate():
-    result = check_module(load("safe_handoff.json"), engine="crosscheck")
-    statistics = result["statistics"]
-    assert statistics["certificate"] == statistics["maximal_certificate"]
-    assert statistics["full_enabled_scans"] == 0
-    assert statistics["state_clones"] == 0
-    assert statistics["replayed_prefix_steps"] == 0
 
 
 # Shared SM90 protocol substrate. New protocol events remain fail-closed until
@@ -1684,9 +1627,9 @@ def collective_handoff_module(kind: str = "cta_barrier", mask: dict | None = Non
 
 
 @pytest.mark.parametrize("kind", ["cta_barrier", "named_barrier"])
-def test_collective_barrier_handoff_is_safe_and_crosschecked(kind):
+def test_collective_barrier_handoff_is_safe(kind):
     module = collective_handoff_module(kind)
-    result = check_module(module, engine="crosscheck")
+    result = check_module(module, engine="maximal")
     assert result["verdict"] == "SAFE"
     release = stable_collective_release_id("sync", 0)
     anchors = {item["anchor"] for item in result["artifacts"]["boundaries"]}
@@ -1700,7 +1643,7 @@ def test_collective_barrier_handoff_is_safe_and_crosschecked(kind):
 def test_control_only_collective_does_not_publish_shared_data():
     mask = {name: False for name in full_visibility_mask()}
     mask["control_only"] = True
-    result = check_module(collective_handoff_module(mask=mask), engine="crosscheck")
+    result = check_module(collective_handoff_module(mask=mask), engine="maximal")
     assert result["verdict"] == "DATA_HAZARD"
     assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
 
@@ -1731,7 +1674,7 @@ def test_collective_protocol_hazards_have_structured_witness(mutation, code):
         )
         for seq, event in enumerate(actor_events):
             event["seq"] = seq
-    result = check_module(module_from_dict(raw), engine="crosscheck")
+    result = check_module(module_from_dict(raw), engine="maximal")
     assert result["verdict"] == "SYNC_HAZARD"
     assert result["diagnostics"][0]["code"] == code
     assert result["witness"]["protocol_state"]
@@ -1747,7 +1690,7 @@ def test_collective_two_invocations_have_ordered_release_stream():
             {"id": f"observe2_{actor}", "type": "BarrierObserve", "actor": actor, "seq": tail + 1, "resource": "sync", "invocation_id": 1},
         ])
     module = module_from_dict(raw)
-    result = check_module(module, engine="crosscheck")
+    result = check_module(module, engine="maximal")
     assert result["verdict"] == "SAFE"
     releases = [
         item["anchor"] for item in result["artifacts"]["boundaries"]
@@ -1789,7 +1732,7 @@ def test_collective_release_replay_is_failure_atomic():
 def test_collective_future_invocation_is_rejected():
     raw = json.loads(json.dumps(collective_handoff_module().raw))
     next(event for event in raw["events"] if event["id"] == "arrive_writer")["invocation_id"] = 1
-    for engine in ("maximal", "exhaustive", "crosscheck"):
+    for engine in ("maximal",):
         result = check_module(module_from_dict(raw), engine=engine)
         assert result["verdict"] == "SYNC_HAZARD"
         assert result["diagnostics"][0]["code"] == "FUTURE_BARRIER_INVOCATION"
@@ -1963,7 +1906,7 @@ def test_commit_group_frontier_work_scales_linearly():
         assert large["scheduler_work_units"] <= 2 * small["scheduler_work_units"]
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_cp_async_wait_zero_closes_copy_window(engine):
     module = cp_async_module()
     result = check_module(module, engine=engine)
@@ -1979,7 +1922,7 @@ def test_cp_async_wait_zero_closes_copy_window(engine):
 
 def test_cp_async_empty_commit_is_trivially_complete_without_async_anchor():
     module = cp_async_module(empty_groups=True, overwrite_group=None)
-    result = check_module(module, engine="crosscheck")
+    result = check_module(module, engine="maximal")
     completion = stable_group_completion_id("CP_ASYNC", "owner", 0, "GROUP_COMPLETE")
     group = stable_group_id("CP_ASYNC", "owner", 0)
     assert result["verdict"] == "SAFE"
@@ -1989,10 +1932,10 @@ def test_cp_async_empty_commit_is_trivially_complete_without_async_anchor():
 
 
 def test_cp_async_wait_group_one_observes_only_older_groups():
-    safe = check_module(cp_async_module(2, wait_group_count=1, overwrite_group=0), engine="crosscheck")
+    safe = check_module(cp_async_module(2, wait_group_count=1, overwrite_group=0), engine="maximal")
     assert safe["verdict"] == "SAFE"
 
-    hazard = check_module(cp_async_module(2, wait_group_count=1, overwrite_group=1), engine="crosscheck")
+    hazard = check_module(cp_async_module(2, wait_group_count=1, overwrite_group=1), engine="maximal")
     assert hazard["verdict"] == "DATA_HAZARD"
     latest = stable_group_completion_id("CP_ASYNC", "owner", 1, "GROUP_COMPLETE")
     assert not any(
@@ -2011,7 +1954,7 @@ def test_cp_async_missing_commit_and_wait_before_commit_fail_closed():
     raw = json.loads(json.dumps(cp_async_module().raw))
     raw["events"] = [raw["events"][0], raw["events"][2]]
     raw["events"][1]["seq"] = 1
-    early = check_module(module_from_dict(raw), engine="crosscheck")
+    early = check_module(module_from_dict(raw), engine="maximal")
     assert early["verdict"] == "SYNC_HAZARD"
     assert early["diagnostics"][0]["code"] == "WAIT_BEFORE_COMMIT"
 
@@ -2080,7 +2023,7 @@ def test_held_cp_async_completion_ignores_legacy_capacity():
     raw = json.loads(json.dumps(cp_async_module(2, wait_group_count=0, overwrite_group=None).raw))
     raw["resources"][0]["capacity"] = 1
     module = module_from_dict(raw)
-    for engine in ("maximal", "exhaustive", "crosscheck"):
+    for engine in ("maximal",):
         result = check_module(module, engine=engine)
         assert result["verdict"] == "SAFE"
 
@@ -2098,7 +2041,7 @@ def test_cp_async_wait_does_not_publish_to_another_actor_via_dependency():
         "depends_on": ["wait"],
         "region": "tile0",
     })
-    result = check_module(module_from_dict(raw), engine="crosscheck")
+    result = check_module(module_from_dict(raw), engine="maximal")
     assert result["verdict"] == "DATA_HAZARD"
 
 
@@ -2260,7 +2203,7 @@ def wgmma_module(
     return module_from_dict(raw)
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_wgmma_typed_endpoints_close_their_own_windows(engine):
     result = check_module(wgmma_module(), engine=engine)
     assert result["verdict"] == "SAFE"
@@ -2273,7 +2216,7 @@ def test_wgmma_typed_endpoints_close_their_own_windows(engine):
     assert {operands, result_ready}.issubset(anchors)
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_wgmma_result_wait_publishes_to_member_lane_actor(engine):
     raw = json.loads(json.dumps(wgmma_module(overwrite_operand=False).raw))
     raw["actors"].append({"id": "lane0", "kind": "LANE", "participants": [0]})
@@ -2288,7 +2231,7 @@ def test_wgmma_result_wait_does_not_publish_outside_owner_warpgroup():
     raw["actors"].append({"id": "outsider", "kind": "LANE", "participants": [128]})
     read = next(event for event in raw["events"] if event["id"] == "accumulator_read")
     read.update({"actor": "outsider", "seq": 0, "depends_on": ["wait_result"]})
-    result = check_module(module_from_dict(raw), engine="crosscheck")
+    result = check_module(module_from_dict(raw), engine="maximal")
     assert result["verdict"] == "SYNC_HAZARD"
     assert result["diagnostics"][0]["code"] == "WGMMA_RESULT_NOT_READY"
     assert [finding["class"] for finding in result["all_findings"]] == [
@@ -2300,7 +2243,7 @@ def test_wgmma_result_wait_does_not_publish_outside_owner_warpgroup():
 def test_wgmma_result_ready_does_not_release_shared_operands():
     result = check_module(
         wgmma_module(wait_operands=False, wait_result=True, read_accumulator=False),
-        engine="crosscheck",
+        engine="maximal",
     )
     assert result["verdict"] == "DATA_HAZARD"
     operand_effect = next(
@@ -2313,7 +2256,7 @@ def test_wgmma_result_ready_does_not_release_shared_operands():
 def test_wgmma_operands_released_does_not_make_result_ready():
     result = check_module(
         wgmma_module(wait_result=False, overwrite_operand=False, read_accumulator=True),
-        engine="crosscheck",
+        engine="maximal",
     )
     assert result["verdict"] == "SYNC_HAZARD"
     assert result["diagnostics"][0]["code"] == "WGMMA_RESULT_NOT_READY"
@@ -2333,7 +2276,7 @@ def test_wgmma_missing_operand_fence_has_protocol_witness():
     raw["events"] = [event for event in raw["events"] if event["id"] != "fence"]
     for seq, event in enumerate(raw["events"]):
         event["seq"] = seq
-    result = check_module(module_from_dict(raw), engine="crosscheck")
+    result = check_module(module_from_dict(raw), engine="maximal")
     assert result["verdict"] == "SYNC_HAZARD"
     assert result["diagnostics"][0]["code"] == "WGMMA_OPERAND_FENCE_MISSING"
     assert result["witness"]["protocol_state"]["missing_operand_fence_regions"] == ["operand"]
@@ -2363,7 +2306,7 @@ def test_wgmma_issue_accepts_register_operand_without_proxy_fencing_it():
         "extent": 64,
     })
     next(event for event in raw["events"] if event["id"] == "mma_issue")["regions"].append("register_operand")
-    assert check_module(module_from_dict(raw), engine="crosscheck")["verdict"] == "SAFE"
+    assert check_module(module_from_dict(raw), engine="maximal")["verdict"] == "SAFE"
 
 
 def test_wgmma_accepts_aligned_multi_warpgroup_partition_owner():
@@ -2373,7 +2316,7 @@ def test_wgmma_accepts_aligned_multi_warpgroup_partition_owner():
         "kind": "PARTITION",
         "participants": list(range(256)),
     })
-    assert check_module(module_from_dict(raw), engine="crosscheck")["verdict"] == "SAFE"
+    assert check_module(module_from_dict(raw), engine="maximal")["verdict"] == "SAFE"
 
 
 def test_wgmma_empty_group_is_fail_closed_without_ptx_contract():
@@ -2462,7 +2405,7 @@ def test_wgmma_legacy_capacity_does_not_reject_later_groups():
         },
     ])
     module = module_from_dict(raw)
-    for engine in ("maximal", "exhaustive", "crosscheck"):
+    for engine in ("maximal",):
         result = check_module(module, engine=engine)
         assert result["verdict"] == "SAFE"
 
@@ -2518,7 +2461,7 @@ def tma_store_module(
     return module_from_dict(raw)
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_tma_store_typed_waits_close_source_and_global_windows(engine):
     result = check_module(tma_store_module(), engine=engine)
     assert result["verdict"] == "SAFE"
@@ -2531,14 +2474,14 @@ def test_tma_store_typed_waits_close_source_and_global_windows(engine):
 
 
 def test_tma_store_read_only_wait_does_not_imply_global_completion():
-    result = check_module(tma_store_module(global_wait=False), engine="crosscheck")
+    result = check_module(tma_store_module(global_wait=False), engine="maximal")
     assert result["verdict"] == "DATA_HAZARD"
     destination = next(effect for effect in result["witness"]["effects"] if effect["id"] == "effect:store_issue:destination")
     assert destination["window"][1].endswith("global_complete")
 
 
 def test_tma_store_global_wait_also_follows_source_release():
-    result = check_module(tma_store_module(read_only_wait=False), engine="crosscheck")
+    result = check_module(tma_store_module(read_only_wait=False), engine="maximal")
     assert result["verdict"] == "SAFE"
 
 
@@ -2665,7 +2608,7 @@ def test_gsan_cross_sm_semantic_and_scope_mismatch_reduced_cases_report_race(
 ):
     result = check_module(
         gsan_cross_sm_reduced_module(producer_sem, consumer_sem, scope),
-        engine="crosscheck",
+        engine="maximal",
     )
     assert result["verdict"] == "DATA_HAZARD"
     assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
@@ -2676,7 +2619,7 @@ def test_gsan_cross_sm_semantic_and_scope_mismatch_reduced_cases_report_race(
     [("MemWrite", "MemRead"), ("MemRead", "MemWrite"), ("MemWrite", "MemWrite")],
     ids=["raw", "war", "waw"],
 )
-def test_gsan_basic_cross_sm_race_reduced_cases_crosscheck(left, right):
+def test_gsan_basic_cross_sm_race_reduced_cases(left, right):
     raw = cluster_dsmem_module(cluster_ctas=2)
     raw["actors"] = [
         {"id": "cta0", "kind": "PARTITION", "participants": [0], "cta_rank": 0},
@@ -2691,7 +2634,7 @@ def test_gsan_basic_cross_sm_race_reduced_cases_crosscheck(left, right):
         {"id": "left", "type": left, "actor": "cta0", "seq": 0, "region": "target"},
         {"id": "right", "type": right, "actor": "cta1", "seq": 0, "region": "target"},
     ]
-    result = check_module(module_from_dict(raw), engine="crosscheck")
+    result = check_module(module_from_dict(raw), engine="maximal")
     assert result["verdict"] == "DATA_HAZARD"
     assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
 
@@ -2719,7 +2662,7 @@ def tma_load_proxy_module(to_domain: str = "TMA", fence_after_issue: bool = Fals
     return raw
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_directional_proxy_fence_publishes_generic_write_to_tma(engine):
     module = module_from_dict(tma_load_proxy_module())
     result = check_module(module, engine=engine)
@@ -2807,13 +2750,13 @@ def elected_proxy_tma_store_module(control_only: bool = False):
     return module_from_dict(raw)
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_elected_proxy_fence_publishes_collective_shared_writes(engine):
     assert check_module(elected_proxy_tma_store_module(), engine=engine)["verdict"] == "SAFE"
 
 
 def test_elected_proxy_fence_requires_typed_collective_visibility():
-    result = check_module(elected_proxy_tma_store_module(control_only=True), engine="crosscheck")
+    result = check_module(elected_proxy_tma_store_module(control_only=True), engine="maximal")
     assert result["verdict"] == "DATA_HAZARD"
     assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
 
@@ -2821,12 +2764,12 @@ def test_elected_proxy_fence_requires_typed_collective_visibility():
 def test_proxy_wrong_domain_does_not_publish():
     raw = tma_load_proxy_module()
     next(event for event in raw["events"] if event["id"] == "proxy")["to_domain"] = "ASYNC_COPY"
-    assert check_module(module_from_dict(raw), engine="crosscheck")["verdict"] == "DATA_HAZARD"
+    assert check_module(module_from_dict(raw), engine="maximal")["verdict"] == "DATA_HAZARD"
 
 
 def test_proxy_after_issue_does_not_publish_retroactively():
     raw = tma_load_proxy_module(fence_after_issue=True)
-    assert check_module(module_from_dict(raw), engine="crosscheck")["verdict"] == "DATA_HAZARD"
+    assert check_module(module_from_dict(raw), engine="maximal")["verdict"] == "DATA_HAZARD"
 
 
 def test_proxy_region_must_cover_async_source():
@@ -2837,7 +2780,7 @@ def test_proxy_region_must_cover_async_source():
         "id": "source_slice",
         "extent": max(1, source["extent"] // 2),
     })
-    result = check_module(module_from_dict(raw), engine="crosscheck")
+    result = check_module(module_from_dict(raw), engine="maximal")
     assert result["verdict"] == "DATA_HAZARD"
 
 
@@ -2875,7 +2818,7 @@ def test_proxy_region_union_exactly_covers_async_source(fragments, expected):
         fragment_ids.append(identifier)
     next(event for event in raw["events"] if event["id"] == "proxy")["regions"] = fragment_ids
 
-    assert check_module(module_from_dict(raw), engine="crosscheck")["verdict"] == expected
+    assert check_module(module_from_dict(raw), engine="maximal")["verdict"] == expected
 
 
 def test_proxy_reverse_direction_and_mask_mismatch_fail_closed():
@@ -2980,7 +2923,7 @@ def tma_engine_order_module(order: tuple[int, int] | None):
     return raw
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_explicit_engine_order_makes_later_observation_cover_prior_phase(engine):
     result = check_module(module_from_dict(tma_engine_order_module((0, 1))), engine=engine)
     first = stable_phase_id("bar0", 0, 0)
@@ -3029,8 +2972,8 @@ def test_group_protocols_lift_engine_order_evidence_to_terminal_endpoint(module,
 
 
 def test_missing_or_reverse_engine_order_preserves_completion_race():
-    assert check_module(module_from_dict(tma_engine_order_module(None)), engine="crosscheck")["verdict"] == "DATA_HAZARD"
-    assert check_module(module_from_dict(tma_engine_order_module((1, 0))), engine="crosscheck")["verdict"] == "DATA_HAZARD"
+    assert check_module(module_from_dict(tma_engine_order_module(None)), engine="maximal")["verdict"] == "DATA_HAZARD"
+    assert check_module(module_from_dict(tma_engine_order_module((1, 0))), engine="maximal")["verdict"] == "DATA_HAZARD"
 
 
 def test_engine_order_blocks_forced_out_of_order_phase_atomically():
@@ -3156,7 +3099,7 @@ def cluster_dsmem_module(control_only: bool = False, cluster_ctas: int = 2):
 
 
 @pytest.mark.parametrize("cluster_ctas", [2, 3, 4])
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+@pytest.mark.parametrize("engine", ["maximal"])
 def test_pgir_v2_cluster_barrier_publishes_dsmem(engine, cluster_ctas):
     result = check_module(
         module_from_dict(cluster_dsmem_module(cluster_ctas=cluster_ctas)),
@@ -3177,7 +3120,7 @@ def test_pgir_v2_cluster_barrier_publishes_dsmem(engine, cluster_ctas):
 
 
 def test_cluster_control_only_does_not_publish_dsmem():
-    result = check_module(module_from_dict(cluster_dsmem_module(control_only=True)), engine="crosscheck")
+    result = check_module(module_from_dict(cluster_dsmem_module(control_only=True)), engine="maximal")
     assert result["verdict"] == "DATA_HAZARD"
 
 
@@ -3186,7 +3129,7 @@ def test_dsmem_alias_identity_includes_owner_cta_rank():
     alternate = {**raw["regions"][0], "id": "other_tile", "owner_cta_rank": 1}
     raw["regions"].append(alternate)
     next(event for event in raw["events"] if event["id"] == "read_a1")["region"] = "other_tile"
-    assert check_module(module_from_dict(raw), engine="crosscheck")["verdict"] == "SAFE"
+    assert check_module(module_from_dict(raw), engine="maximal")["verdict"] == "SAFE"
 
 
 def test_pgir_v2_cluster_topology_and_lifetime_fail_closed():
@@ -3243,7 +3186,7 @@ def test_pgir_v2_cluster_fixture_runs_through_cli():
             "check",
             str(FIXTURES / "cluster_dsmem_handoff.json"),
             "--engine",
-            "crosscheck",
+            "maximal",
         ],
         check=True,
         capture_output=True,

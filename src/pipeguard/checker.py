@@ -8,7 +8,7 @@ from heapq import heappop, heappush, merge
 from itertools import islice
 from typing import Any, Literal
 
-from .engine import Executor, ExplorationLimit, ProtocolError
+from .engine import Executor, ProtocolError
 from .incremental import IncrementalCounters, IncrementalEngine
 from .model import (
     MEMORY_EVENTS,
@@ -1250,10 +1250,6 @@ def _inconclusive(
     }
 
 
-def _first_error(errors: list[tuple[ProtocolError, Any]]) -> tuple[ProtocolError, Any]:
-    return sorted(errors, key=lambda item: (item[0].code, item[0].event or "", tuple(step["transition"] for step in item[1].trace)))[0]
-
-
 def _add_dynamic_edges(graph: PDG, state: Any) -> None:
     graph.add_edges(state.dynamic_edges)
 
@@ -1280,138 +1276,75 @@ def _independent_program_memory_only(module: Module) -> bool:
 
 def _run_engine(
     module: Module,
-    engine: Literal["maximal", "exhaustive"],
+    engine: Literal["maximal"],
     *,
     normalized_override: dict[str, Any] | None = None,
     materialize_artifacts: bool = True,
 ) -> dict[str, Any]:
     deferred_cp = any(e.type == "CpAsyncMBarrierArrive" for e in module.events)
-    # The compact engine is the production path. Expanded deferred-arrival
-    # modules use the independent finite oracle until incremental scheduling
-    # supports these two completion kinds.
-    if deferred_cp:
-        engine = "exhaustive"
     normalized = normalized_override if normalized_override is not None else normalize_module(module)
     digest = stable_digest(normalized)
     executor = Executor(module)
     graph = _base_pdg(module)
     anchors = _anchor_ids(module)
-    incremental = IncrementalEngine(executor, anchors) if engine == "maximal" else None
-    canonical = incremental.canonical() if incremental is not None else executor.explore()
+    incremental = IncrementalEngine(executor, anchors)
+    canonical = incremental.canonical()
     boundaries: list[dict[str, Any]] = []
     statistics = _statistics(module, engine)
-    if incremental is None:
-        statistics["explored_steps"] += len(canonical.state.trace)
-    else:
+    _finish_incremental_statistics(statistics, incremental.counters)
+
+    if canonical.error is not None:
+        return _protocol_report(canonical.error, canonical.state.trace, graph, boundaries, digest, statistics)
+    if canonical.stuck:
+        return _stuck_report(executor, canonical.state, graph, boundaries, digest, statistics)
+
+    if _independent_program_memory_only(module):
+        boundaries = [
+            {"anchor": anchor, "boundary": [anchor]}
+            for anchor in anchors
+        ]
+        incremental.counters.anchor_boundaries = len(boundaries)
         _finish_incremental_statistics(statistics, incremental.counters)
-
-    if engine == "maximal":
-        assert incremental is not None
-        if canonical.error is not None:
-            return _protocol_report(canonical.error, canonical.state.trace, graph, boundaries, digest, statistics)
-        if canonical.stuck:
-            return _stuck_report(executor, canonical.state, graph, boundaries, digest, statistics)
-
-        if _independent_program_memory_only(module):
-            boundaries = [
-                {"anchor": anchor, "boundary": [anchor]}
-                for anchor in anchors
-            ]
-            incremental.counters.anchor_boundaries = len(boundaries)
-            _finish_incremental_statistics(statistics, incremental.counters)
-            statistics["analytical_program_only_boundaries"] = len(boundaries)
-        else:
-            stream_boundaries = not (
-                isinstance(graph, ParametricPDG) and not materialize_artifacts
-            )
-
-            def add_boundary_edges(anchor: str, boundary: tuple[str, ...]) -> None:
-                for event_id in boundary:
-                    if event_id != anchor and not deferred_cp:
-                        graph.add_edge(anchor, event_id, "BOUNDARY_ORDER")
-
-            outcomes = incremental.analyze_streams(
-                materialize_boundaries=stream_boundaries,
-                boundary_callback=(None if stream_boundaries else add_boundary_edges),
-            )
-            boundaries = sorted(outcomes.boundaries, key=lambda item: item["anchor"])
-            graph.add_edges(outcomes.dynamic_edges)
-            _finish_incremental_statistics(statistics, incremental.counters)
-            if outcomes.error is not None:
-                assert outcomes.error_state is not None
-                return _protocol_report(outcomes.error, outcomes.error_state.trace, graph, boundaries, digest, statistics)
-            if outcomes.stuck_state is not None:
-                return _stuck_report(executor, outcomes.stuck_state, graph, boundaries, digest, statistics)
-            if outcomes.unreachable_anchor is not None:
-                assert outcomes.unreachable_state is not None
-                return _inconclusive(
-                    "ANCHOR_NOT_REACHED",
-                    "held anchor was not enabled at its terminal boundary",
-                    digest,
-                    graph,
-                    boundaries,
-                    statistics,
-                    {
-                        "anchor": outcomes.unreachable_anchor,
-                        "boundary": list(executor.boundary(outcomes.unreachable_state)),
-                    },
-                )
-            for item in boundaries:
-                anchor = item["anchor"]
-                for event_id in item["boundary"]:
-                    if event_id != anchor and not deferred_cp:
-                        graph.add_edge(anchor, event_id, "BOUNDARY_ORDER")
+        statistics["analytical_program_only_boundaries"] = len(boundaries)
     else:
-        try:
-            global_outcomes = executor.explore_all()
-        except ExplorationLimit as error:
-            return _inconclusive("EXPLORATION_LIMIT", str(error), digest, graph, boundaries, statistics)
-        statistics["explored_states"] += global_outcomes.visited_states
-        if global_outcomes.errors:
-            error, state = _first_error(global_outcomes.errors)
-            return _protocol_report(error, state.trace, graph, boundaries, digest, statistics)
-        if global_outcomes.stuck:
-            state = sorted(global_outcomes.stuck, key=executor.fingerprint)[0]
-            return _stuck_report(executor, state, graph, boundaries, digest, statistics)
+        stream_boundaries = not (
+            isinstance(graph, ParametricPDG) and not materialize_artifacts
+        )
 
-        for anchor in anchors:
-            try:
-                outcomes = executor.explore_all(hold=anchor)
-            except ExplorationLimit as error:
-                return _inconclusive("EXPLORATION_LIMIT", str(error), digest, graph, boundaries, statistics)
-            statistics["explored_states"] += outcomes.visited_states
-            if outcomes.errors:
-                error, state = _first_error(outcomes.errors)
-                return _protocol_report(error, state.trace, graph, boundaries, digest, statistics)
-            boundary_set = {executor.boundary(state) for state in outcomes.terminals}
-            if len(boundary_set) != 1:
-                return _inconclusive(
-                    "NONCONFLUENT_BOUNDARY",
-                    "hold-anchor maximal outcomes have different full boundaries",
-                    digest,
-                    graph,
-                    boundaries,
-                    statistics,
-                )
-            states = outcomes.terminals
-            boundary = next(iter(boundary_set), ())
-            boundaries.append({"anchor": anchor, "boundary": list(boundary)})
-            for state in states:
-                probe_error, probed = executor.probe(state, anchor)
-                if probe_error is not None:
-                    return _protocol_report(probe_error, state.trace, graph, boundaries, digest, statistics)
-                if probed is None:
-                    return _inconclusive(
-                        "ANCHOR_NOT_REACHED",
-                        "held anchor was not enabled at its terminal boundary",
-                        digest,
-                        graph,
-                        boundaries,
-                        statistics,
-                        {"anchor": anchor, "boundary": list(executor.boundary(state))},
-                    )
-                _add_dynamic_edges(graph, state)
+        def add_boundary_edges(anchor: str, boundary: tuple[str, ...]) -> None:
             for event_id in boundary:
+                if event_id != anchor and not deferred_cp:
+                    graph.add_edge(anchor, event_id, "BOUNDARY_ORDER")
+
+        outcomes = incremental.analyze_streams(
+            materialize_boundaries=stream_boundaries,
+            boundary_callback=(None if stream_boundaries else add_boundary_edges),
+        )
+        boundaries = sorted(outcomes.boundaries, key=lambda item: item["anchor"])
+        graph.add_edges(outcomes.dynamic_edges)
+        _finish_incremental_statistics(statistics, incremental.counters)
+        if outcomes.error is not None:
+            assert outcomes.error_state is not None
+            return _protocol_report(outcomes.error, outcomes.error_state.trace, graph, boundaries, digest, statistics)
+        if outcomes.stuck_state is not None:
+            return _stuck_report(executor, outcomes.stuck_state, graph, boundaries, digest, statistics)
+        if outcomes.unreachable_anchor is not None:
+            assert outcomes.unreachable_state is not None
+            return _inconclusive(
+                "ANCHOR_NOT_REACHED",
+                "held anchor was not enabled at its terminal boundary",
+                digest,
+                graph,
+                boundaries,
+                statistics,
+                {
+                    "anchor": outcomes.unreachable_anchor,
+                    "boundary": list(executor.boundary(outcomes.unreachable_state)),
+                },
+            )
+        for item in boundaries:
+            anchor = item["anchor"]
+            for event_id in item["boundary"]:
                 if event_id != anchor and not deferred_cp:
                     graph.add_edge(anchor, event_id, "BOUNDARY_ORDER")
 
@@ -1519,303 +1452,9 @@ def _run_engine(
         "artifacts": artifacts,
     }
 
-def _core_result(report: dict[str, Any]) -> dict[str, Any]:
-    return {
-        "verdict": report["verdict"],
-        "primary_diagnostic": report.get("diagnostics", [{}])[0].get("code") if report.get("diagnostics") else None,
-        "boundaries": report.get("artifacts", {}).get("boundaries", []),
-    }
-
-
-def _parametric_memory_report(
-    module: Any,
-    *,
-    materialize_artifacts: bool = False,
-) -> dict[str, Any]:
-    region_map = {region["id"]: region for region in module.raw["regions"]}
-    stream_map = {stream.id: stream for stream in module.stream_classes}
-    logical_events = sum(len(template.instances) for template in module.templates)
-    all_reads = all(template.type == "MemRead" for template in module.templates)
-    records: list[tuple[str, str, str, str, int, int, tuple[Any, ...], int]] = []
-    if materialize_artifacts or not all_reads:
-        for template in module.templates:
-            if template.type not in {"MemRead", "MemWrite"}:
-                raise ValueError("compact memory checker received a protocol template")
-            stream = stream_map[template.stream]
-            mode = "READ" if template.type == "MemRead" else "WRITE"
-            for instance in template.program_instances:
-                actor = stream.actor_id(instance)
-                logical_id = template.logical_id(instance)
-                for segment, region_id in enumerate(template.memory_regions(instance)):
-                    region = region_map[region_id]
-                    identifier = (
-                        logical_id
-                        if segment == 0
-                        else f"{logical_id}:segment:{segment}"
-                    )
-                    allocation = (
-                        region["address_space"],
-                        region.get("owner_cta_rank"),
-                        region["allocation_id"],
-                    )
-                    records.append((
-                        identifier,
-                        actor,
-                        mode,
-                        region_id,
-                        region["offset"],
-                        region["offset"] + region["extent"],
-                        allocation,
-                        template.order,
-                    ))
-
-    first_hazard: tuple[Any, ...] | None = None
-    by_allocation: dict[tuple[Any, ...], list[tuple[Any, ...]]] = defaultdict(list)
-    for record in records:
-        by_allocation[record[6]].append(record)
-    for allocation in sorted(by_allocation):
-        ordered = sorted(by_allocation[allocation], key=lambda item: (item[4], item[5], item[0]))
-        active: dict[int, tuple[Any, ...]] = {}
-        active_by_actor: dict[str, dict[int, tuple[Any, ...]]] = defaultdict(dict)
-        active_writes_by_actor: dict[str, dict[int, tuple[Any, ...]]] = defaultdict(dict)
-        endings: list[tuple[int, int]] = []
-        for record_index, right in enumerate(ordered):
-            while endings and endings[0][0] <= right[4]:
-                _end, expired_index = heappop(endings)
-                expired = active.pop(expired_index, None)
-                if expired is None:
-                    continue
-                active_by_actor[expired[1]].pop(expired_index, None)
-                if expired[2] == "WRITE":
-                    active_writes_by_actor[expired[1]].pop(expired_index, None)
-            candidates_by_actor = (
-                active_writes_by_actor if right[2] == "READ" else active_by_actor
-            )
-            candidates = [
-                min(bucket.values(), key=lambda item: item[0])
-                for actor, bucket in sorted(candidates_by_actor.items())
-                if actor != right[1] and bucket
-            ]
-            if candidates:
-                left = min(candidates, key=lambda item: item[0])
-                first_hazard = tuple(sorted((left, right), key=lambda item: item[0]))
-                break
-            active[record_index] = right
-            active_by_actor[right[1]][record_index] = right
-            if right[2] == "WRITE":
-                active_writes_by_actor[right[1]][record_index] = right
-            heappush(endings, (right[5], record_index))
-        if first_hazard is not None:
-            break
-
-    boundaries: list[dict[str, Any]] = []
-    edges: list[dict[str, str]] = []
-    canonical_trace: list[dict[str, Any]] = []
-    if materialize_artifacts:
-        traces: dict[str, list[tuple[int, str]]] = defaultdict(list)
-        for record in records:
-            traces[record[1]].append((record[7], record[0]))
-        boundaries = [
-            {"anchor": identifier, "boundary": [identifier]}
-            for identifier in sorted(record[0] for record in records)
-        ]
-        for actor in sorted(traces):
-            ordered = [identifier for _order, identifier in sorted(traces[actor])]
-            trace_start = len(canonical_trace)
-            canonical_trace.extend(
-                {"step": trace_start + index, "transition": identifier, "kind": "PROGRAM"}
-                for index, identifier in enumerate(ordered)
-            )
-            edges.extend(
-                {"from": first, "to": second, "kind": "PROGRAM_ORDER"}
-                for first, second in zip(ordered, ordered[1:])
-            )
-    digest = stable_digest(module.raw)
-    statistics = {
-        "actors": module.logical_stream_count,
-        "execution_owners": len(module.raw["owners"]),
-        "events": logical_events,
-        "event_templates": module.template_count,
-        "resources": len(module.raw["resources"]),
-        "regions": len(module.raw["regions"]),
-        "logical_program_streams": module.logical_stream_count,
-        "materialized_event_objects": 0,
-        "materialized_artifact_events": logical_events if materialize_artifacts else 0,
-        "explored_steps": logical_events,
-        "explored_states": 0,
-        "engine": "maximal",
-        "representation": "parametric",
-        "n_ext": logical_events,
-        "t_eff": module.logical_stream_count,
-    }
-    artifacts: dict[str, Any] = {
-        "normalized_sha256": digest,
-        "parametric_program": {
-            "logical_streams": module.logical_stream_count,
-            "event_templates": module.template_count,
-            "logical_events": logical_events,
-        },
-    }
-    if materialize_artifacts:
-        artifacts.update({
-            "canonical_trace": canonical_trace,
-            "boundaries": boundaries,
-            "engine_completion_streams": {},
-            "pdg": {
-                "nodes": sorted(record[0] for record in records),
-                "edges": sorted(edges, key=lambda edge: (edge["from"], edge["to"], edge["kind"])),
-            },
-        })
-    if first_hazard is not None:
-        left, right = first_hazard
-        effects = [
-            {
-                "id": record[0],
-                "actor": record[1],
-                "mode": record[2],
-                "region": record[3],
-                "window": [record[0], record[0]],
-            }
-            for record in (left, right)
-        ]
-        events = sorted((left[0], right[0]))
-        return {
-            "verdict": "DATA_HAZARD",
-            "checker_version": "0.2.0",
-            "summary": "a conflicting memory access pair lacks supported execution and visibility ordering",
-            "diagnostics": [{
-                "code": "UNORDERED_CONFLICT",
-                "message": "point conflict requires same-logical-thread order or a typed visibility transfer",
-                "events": events,
-            }],
-            "witness": {
-                "category": "UNORDERED_CONFLICT",
-                "events": events,
-                "effects": effects,
-                "missing_path": "point conflict requires same-logical-thread order or a typed visibility transfer",
-                "repair": "add supported synchronization or prove the lane-indexed accesses disjoint",
-                "reachable_execution_prefix": canonical_trace,
-                "protocol_state": {},
-            },
-            "statistics": statistics,
-            "artifacts": artifacts,
-        }
-    return {
-        "verdict": "SAFE",
-        "checker_version": "0.2.0",
-        "summary": "all supported parameterized memory checks passed",
-        "diagnostics": [],
-        "statistics": statistics,
-        "manifest": {
-            "scope": "finite statically-resolved sm90 single_cta parameterized logical-thread memory core",
-            "assumptions": dict(sorted(module.raw["assumptions"].items())),
-            "producer": module.raw["producer"],
-            "frontend_provenance": module.raw["frontend_provenance"],
-            "counts": {
-                "actors": module.logical_stream_count,
-                "events": logical_events,
-                "resources": len(module.raw["resources"]),
-                "regions": len(module.raw["regions"]),
-            },
-        },
-        "artifacts": artifacts,
-    }
-
-
-def _check_parametric_module(
-    module: Any,
-    engine: Literal["maximal", "exhaustive", "crosscheck"],
-) -> dict[str, Any]:
-    from .direct_parametric import check_parametric_module as check_direct
-
-    compact = check_direct(module)
-    if engine == "maximal":
-        return compact
-    expanded = _run_engine(
-        module.expand_reference(),
-        "maximal" if engine == "crosscheck" else "exhaustive",
-    )
-    if engine == "exhaustive":
-        return expanded
-
-    memory_only = all(
-        template.type in {"MemRead", "MemWrite"} and not template.dependencies
-        for template in module.templates
-    )
-    if memory_only:
-        compact = _parametric_memory_report(module, materialize_artifacts=True)
-    else:
-        from .parametric import normalize_parametric_module
-
-        compact = _run_engine(
-            module.execution_view(),
-            "maximal",
-            normalized_override=normalize_parametric_module(module),
-            materialize_artifacts=True,
-        )
-        compact["statistics"] = dict(compact["statistics"])
-        compact["statistics"].update({
-            "representation": "parametric-protocol",
-            "logical_program_streams": module.logical_stream_count,
-            "event_templates": module.template_count,
-            "materialized_event_objects": 0,
-        })
-    compact_core = _core_result(compact)
-    expanded_core = _core_result(expanded)
-
-    def witness_core(report: dict[str, Any]) -> dict[str, Any] | None:
-        witness = report.get("witness")
-        if witness is None:
-            return None
-        return {
-            "category": witness.get("category"),
-            "events": witness.get("events"),
-            "effects": [
-                {
-                    key: effect.get(key)
-                    for key in ("id", "actor", "mode", "region", "window")
-                }
-                for effect in witness.get("effects", [])
-            ],
-        }
-
-    mismatch = (
-        compact_core != expanded_core
-        or witness_core(compact) != witness_core(expanded)
-    )
-    if mismatch:
-        return {
-            "verdict": "INCONCLUSIVE",
-            "checker_version": "0.2.0",
-            "summary": "parameterized and expanded representations disagree",
-            "diagnostics": [{
-                "code": "REPRESENTATION_CROSSCHECK_MISMATCH",
-                "message": "compact and expanded reference paths produced different verdicts",
-                "details": {"parametric": compact_core, "expanded": expanded_core},
-            }],
-            "statistics": compact["statistics"],
-            "artifacts": {
-                **compact["artifacts"],
-                "representation_crosscheck": {
-                    "parametric": compact_core,
-                    "expanded": expanded_core,
-                },
-            },
-        }
-    result = dict(compact)
-    result["statistics"] = dict(compact["statistics"])
-    result["statistics"]["engine"] = "crosscheck"
-    result["artifacts"] = dict(compact["artifacts"])
-    result["artifacts"]["representation_crosscheck"] = {
-        "parametric": compact_core,
-        "expanded": expanded_core,
-    }
-    return result
-
-
 def check_module(
     module: Module,
-    engine: Literal["maximal", "exhaustive", "crosscheck"] = "maximal",
+    engine: Literal["maximal"] = "maximal",
     *,
     final_ptx: str | None = None,
     check_ptx_registers: bool = False,
@@ -1832,64 +1471,13 @@ def check_module(
 
 def _check_module_ir(
     module: Module,
-    engine: Literal["maximal", "exhaustive", "crosscheck"] = "maximal",
+    engine: Literal["maximal"] = "maximal",
 ) -> dict[str, Any]:
     from .parametric import ParametricModule
 
+    if engine != "maximal":
+        raise ValueError(f"unsupported checker engine: {engine}; only maximal is available")
     if isinstance(module, ParametricModule):
-        return _check_parametric_module(module, engine)
-    if engine == "maximal" or engine == "exhaustive":
-        return _run_engine(module, engine)
-    if engine != "crosscheck":
-        raise ValueError(f"unknown checker engine: {engine}")
-
-    maximal = _run_engine(module, "maximal")
-    exhaustive = _run_engine(module, "exhaustive")
-    maximal_core = _core_result(maximal)
-    exhaustive_core = _core_result(exhaustive)
-    statistics = _statistics(module, "crosscheck")
-    base_fields = {"actors", "events", "resources", "regions", "explored_steps", "explored_states", "engine"}
-    for key, value in maximal["statistics"].items():
-        if key not in base_fields:
-            statistics[key] = value
-    statistics["explored_steps"] = maximal["statistics"]["explored_steps"] + exhaustive["statistics"]["explored_steps"]
-    statistics["explored_states"] = exhaustive["statistics"]["explored_states"]
-    statistics["maximal_steps"] = maximal["statistics"]["explored_steps"]
-    statistics["exhaustive_states"] = exhaustive["statistics"]["explored_states"]
-    statistics["maximal_certificate"] = maximal["statistics"].get("certificate", {})
-
-    # A protocol-risk run returns at its first reachable witness, so the two
-    # engines may legitimately have collected different boundary *prefixes*.
-    # Boundary equality is meaningful only after both engines complete all
-    # anchor passes (SAFE or DATA_HAZARD). For early protocol verdicts, compare
-    # the verdict itself; witness selection is not part of the Boolean theorem.
-    comparison = {"maximal": maximal_core, "exhaustive": exhaustive_core}
-    complete_verdicts = {"SAFE", "DATA_HAZARD"}
-    mismatch = maximal_core["verdict"] != exhaustive_core["verdict"]
-    if not mismatch and maximal_core["verdict"] in complete_verdicts:
-        mismatch = maximal_core["boundaries"] != exhaustive_core["boundaries"]
-    if mismatch:
-        digest = stable_digest(normalize_module(module))
-        return {
-            "verdict": "INCONCLUSIVE", "checker_version": "0.2.0",
-            "summary": "maximal and exhaustive engines disagree on the core verdict or held-anchor boundaries",
-            "diagnostics": [{
-                "code": "ENGINE_CROSSCHECK_MISMATCH",
-                "message": "maximal and exhaustive engines produced different core results",
-                "details": comparison,
-            }],
-            "statistics": statistics,
-            "artifacts": {
-                "normalized_sha256": digest,
-                "pdg": maximal.get("artifacts", {}).get("pdg", {"nodes": [], "edges": []}),
-                "boundaries": maximal_core["boundaries"],
-                "crosscheck": comparison,
-            },
-        }
-
-    result = dict(maximal)
-    result["statistics"] = statistics
-    artifacts = dict(result.get("artifacts", {}))
-    artifacts["crosscheck"] = comparison
-    result["artifacts"] = artifacts
-    return result
+        from .direct_parametric import check_parametric_module
+        return check_parametric_module(module)
+    return _run_engine(module, "maximal")

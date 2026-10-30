@@ -20,6 +20,9 @@ from .model import (
     stable_collective_release_id,
     stable_group_completion_id,
     stable_phase_id,
+    stable_cp_copy_id,
+    stable_cp_arrival_id,
+    deferred_cp_relations,
 )
 
 
@@ -163,6 +166,8 @@ class IncrementalCounters:
         "BARRIER_RELEASE": 0,
         "GROUP_COMPLETION": 0,
         "CHANNEL_HANDOFF": 0,
+        "CP_COPY_COMPLETION": 0,
+        "CP_DEFERRED_ARRIVAL": 0,
     })
     transition_attempts: int = 0
     worklist_pushes: int = 0
@@ -391,6 +396,18 @@ def build_anchor_streams(
         if anchors:
             streams.append(AnchorStream("ENGINE_COMPLETION", f"engine:{engine}", anchors))
 
+    # Each copy is independently completable: sharing an owner must not
+    # impose completion order between copies. Deferred arrivals are separate
+    # anchors whose readiness depends on the copies they actually track.
+    if any(event.type == "CpAsyncMBarrierArrive" for event in module.events):
+        for event in module.events:
+            if event.type == "CpAsyncIssue" and event.predicate:
+                endpoint = stable_cp_copy_id(event.id)
+                streams.append(AnchorStream("CP_COPY_COMPLETION", endpoint, (endpoint,)))
+        for identifier in deferred_cp_relations(module):
+            endpoint = stable_cp_arrival_id(identifier)
+            streams.append(AnchorStream("CP_DEFERRED_ARRIVAL", endpoint, (endpoint,)))
+
     if implicit_program:
         covered_count = sum(len(stream.anchors) for stream in streams)
         if covered_count != len(anchor_ids):
@@ -472,10 +489,17 @@ def _build_ready_metadata(
         Transition(event.id, "PROGRAM", event=event)
         for event in executor.module.events
     ]
+    cp_completions = {stable_cp_copy_id(event.id): event for event in executor.cp_copies}
+    cp_arrivals = {stable_cp_arrival_id(identifier): executor.events[identifier]
+                   for identifier in executor.cp_arrivals}
     for identifier in anchor_ids:
         if identifier in executor.events:
             continue
-        if identifier in phase_resources:
+        if identifier in cp_completions:
+            transitions.append(Transition(identifier, "CP_COPY_COMPLETION", event=cp_completions[identifier]))
+        elif identifier in cp_arrivals:
+            transitions.append(Transition(identifier, "CP_DEFERRED_ARRIVAL", event=cp_arrivals[identifier]))
+        elif identifier in phase_resources:
             transitions.append(Transition(
                 identifier,
                 "PHASE_COMPLETION",
@@ -529,6 +553,11 @@ class ReadyIndex:
         counters: IncrementalCounters,
         hold: AnchorToken | None = None,
     ) -> None:
+        self.cp_completion_events = {stable_cp_copy_id(event.id): event for event in executor.cp_copies}
+        self.cp_arrival_followers: dict[str, set[str]] = {}
+        for identifier, copies in executor.cp_arrivals.items():
+            for copy in copies:
+                self.cp_arrival_followers.setdefault(stable_cp_copy_id(copy), set()).add(identifier)
         self.executor = executor
         self.state = state
         self.counters = counters
@@ -858,7 +887,25 @@ class ReadyIndex:
             raise AssertionError(f"released anchor is not candidate-ready: {anchor}")
         self._queue(transition)
 
+    def _refresh_cp_arrival(self, identifier: str) -> None:
+        copies = self.state.deferred_cp.get(identifier)
+        if copies is not None and all(stable_cp_copy_id(copy) in self.state.completed_transitions for copy in copies):
+            self._queue(Transition(stable_cp_arrival_id(identifier), "CP_DEFERRED_ARRIVAL",
+                                   event=self.executor.events[identifier]))
+
     def notify(self, delta: TransitionDelta) -> None:
+        if self.executor.has_deferred_cp and delta.executed_event is not None:
+            event = self.executor.events[delta.executed_event]
+            if event.type == "CpAsyncIssue" and event.predicate:
+                self._queue(Transition(stable_cp_copy_id(event.id), "CP_COPY_COMPLETION", event=event))
+            elif event.type == "CpAsyncMBarrierArrive":
+                self._refresh_cp_arrival(event.id)
+        if delta.kind == "CP_COPY_COMPLETION":
+            for identifier in self.cp_arrival_followers.get(delta.transition_id, ()):
+                self._refresh_cp_arrival(identifier)
+            # A committed CP group may now have all its copy endpoints ready.
+            copy = self.cp_completion_events[delta.transition_id]
+            self._refresh_group(copy.resource, copy.group_owner)
         self.counters.remaining_removals += len(delta.consumed_waits)
         if delta.advanced_actor is not None:
             self._assess_actor(delta.advanced_actor)

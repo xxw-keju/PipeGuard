@@ -5,7 +5,6 @@ import pytest
 
 from pipeguard.checker import check_module
 from pipeguard.model import module_from_dict, normalize_module
-from pipeguard.engine import Executor
 from pipeguard.parametric import normalize_parametric_module
 from test_checker import cp_async_module, tma_store_module, wgmma_module
 from test_parametric import _single_stream_parametric
@@ -95,10 +94,3 @@ def test_normalization_discards_legacy_group_capacity(protocol, representation):
     normalized = (normalize_parametric_module if representation == 'parametric' else normalize_module)(module)
     assert 'capacity' not in normalized['resources'][0]
     assert check_module(module_from_dict(normalized))['verdict'] == 'SAFE'
-
-
-def test_exploration_budget_exhaustion_is_inconclusive(monkeypatch):
-    monkeypatch.setattr(Executor, 'MAX_STATES', 1)
-    report = check_module(cp_async_module(2, overwrite_group=None), engine='exhaustive')
-    assert report['verdict'] == 'INCONCLUSIVE'
-    assert report['diagnostics'][0]['code'] == 'EXPLORATION_LIMIT'
