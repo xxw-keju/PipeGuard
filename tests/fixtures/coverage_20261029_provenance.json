@@ -1,0 +1,42 @@
+{
+  "tilelang_sliced_gemm_128k_device.tvm.json": {
+    "source": "source/kernels/_matmul_sliced/017059d80f08b5e66537e8f8c1fd2554c21a922e6f5801d7aef95cd48ab6bea9/kernel.device.tvm.json",
+    "transformation": "none",
+    "sha256": "36024608d7dd1c689e516cf2c8060896fc080d26a8bce0e2d162470f0295fd0a"
+  },
+  "triton_tma_4d_derived.ttgir.mlir": {
+    "source": "triton-61c02bcd recipe f9f2c78e0785fd72-sm90-L3721-87056a3a, native raw_ir:kernel",
+    "transformation": "none; binding sidecar supplies only audited independent input/output allocations",
+    "sha256": "da2f0fc17d73212df1951409485ca17b00bfcb401af9cf497c4a2e5cd6d17a4c"
+  },
+  "tilelang_tma_multi_panel_device.tvm.json": {
+    "source": "source/kernels/matmul/9fa656d920c5d9b8a209a6e68daaa56e2fb6eff2e3f6a99d0ac7b36dd8b83166/kernel.device.tvm.json",
+    "transformation": "reduce 24-iteration TIR For to 4; preserve A plus four B panel transfers per arrival; descriptor sidecar re-bound to fixture SHA",
+    "sha256": "d3c93e004b41c041fcfb882b6ceb71894fe3db367e67a7c66939f61b0538ef4d"
+  },
+  "tilelang_cp_async_mixed_arrivals_device.tvm.json": {
+    "source": "tests/fixtures/tilelang_cp_async_noinc_device.tvm.json",
+    "transformation": "insert plain ptx_arrive_barrier after each cp_async_barrier_noinc for the same resource; capture must reject ambiguous generation numbering",
+    "sha256": "ca2096461fb397cfde031af1fb981d37f8ee5038f530d2530f0119ee4e75e132"
+  },
+  "tilelang_stmatrix_x1_device.tvm.json": {
+    "source": "tests/fixtures/tilelang_ldmatrix_wide_device.tvm.json",
+    "transformation": "replace ldmatrix with stmatrix m8n8 x1, 1 zero registers; access_ptr extent=1 float32 registers, write mask=2; hardware row remains 16 bytes",
+    "sha256": "4bcba0e0b0442b325d28117997383ef8b61e60904e9da3af25e0ac5ecebd47ed"
+  },
+  "tilelang_stmatrix_x2_device.tvm.json": {
+    "source": "tests/fixtures/tilelang_ldmatrix_wide_device.tvm.json",
+    "transformation": "replace ldmatrix with stmatrix m8n8 x2, 2 zero registers; access_ptr extent=2 float32 registers, write mask=2; hardware row remains 16 bytes",
+    "sha256": "19a1d045a24ed32426e83bf18ded34ccfe0461c49c5480cd4e0191552f5998be"
+  },
+  "tilelang_stmatrix_x4_device.tvm.json": {
+    "source": "tests/fixtures/tilelang_ldmatrix_wide_device.tvm.json",
+    "transformation": "replace ldmatrix with stmatrix m8n8 x4, 4 zero registers; access_ptr extent=4 float32 registers, write mask=2; hardware row remains 16 bytes",
+    "sha256": "aac5e2b04db92903b47c8a6e23dc9e141e38346bb1963d7ed5c47a7f55f3db41"
+  },
+  "tilelang_warp_allreduce_unused_barrier_device.tvm.json": {
+    "source": "tests/fixtures/tilelang_warp_allreduce_device.tvm.json",
+    "transformation": "replace warp shuffle expression with AllReduce<SumOp,32,1,0,NamedBarrier<128>>::run; reduce.h uses only warp shuffle and never invokes the barrier policy for this reduction width",
+    "sha256": "43c2da57924dfbe005d784c6c11bf49088197a5b036bf135b1d229c93ed24c54"
+  }
+}

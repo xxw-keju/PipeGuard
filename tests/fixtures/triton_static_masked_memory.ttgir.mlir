@@ -1,0 +1,14 @@
+#blocked = #ttg.blocked<{sizePerThread = [1], threadsPerWarp = [32], warpsPerCTA = [4], order = [0]}>
+module attributes {"ttg.num-ctas" = 1 : i32, "ttg.num-warps" = 4 : i32, ttg.target = "cuda:90", "ttg.threads-per-warp" = 32 : i32} {
+  tt.func public @static_masked_memory(%base: !tt.ptr<i8>) {
+    %range = tt.make_range {end = 16 : i32, start = 0 : i32} : tensor<16xi32, #blocked>
+    %eight = arith.constant 8 : i32
+    %eights = tt.splat %eight : i32 -> tensor<16xi32, #blocked>
+    %mask = arith.cmpi slt, %range, %eights : tensor<16xi32, #blocked>
+    %base_vector = tt.splat %base : !tt.ptr<i8> -> tensor<16x!tt.ptr<i8>, #blocked>
+    %pointer = tt.addptr %base_vector, %range : tensor<16x!tt.ptr<i8>, #blocked>, tensor<16xi32, #blocked>
+    %loaded = tt.load %pointer, %mask : tensor<16x!tt.ptr<i8>, #blocked>
+    tt.store %pointer, %loaded, %mask : tensor<16x!tt.ptr<i8>, #blocked>
+    tt.return
+  }
+}

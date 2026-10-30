@@ -2,35 +2,42 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Mapping
 from dataclasses import dataclass, field
+from functools import lru_cache
 from importlib.resources import files
 from pathlib import Path
 from typing import Any
 
+import fastjsonschema
 import jsonschema
 
 from .protocols import RESOURCE_KINDS, VisibilityMask
 
-IMPLEMENTED_RESOURCE_KINDS = frozenset({"mbarrier", "cta_barrier", "named_barrier", "cluster_barrier", "async_group", "channel"})
+IMPLEMENTED_RESOURCE_KINDS = frozenset({"mbarrier", "cta_barrier", "named_barrier", "cluster_barrier", "async_group"})
 IMPLEMENTED_ASYNC_PROTOCOLS = frozenset({"CP_ASYNC", "WGMMA", "TMA_STORE"})
 
+IMPLEMENTED_INTERNAL_EVENTS = frozenset({"ProgramPoint"})
 IMPLEMENTED_EVENTS = frozenset({
-    "MemRead", "MemWrite", "BarrierArrive", "BarrierObserve",
+    "MemRead", "MemWrite", "AtomicReadModifyWrite", "BarrierArrive", "BarrierObserve",
     "MBarrierInit", "MBarrierInvalidate", "MBarrierArrive", "MBarrierExpectTx",
     "MBarrierArriveExpectTx", "MBarrierWaitParity", "TmaLoadIssue",
-    "CpAsyncIssue", "CpAsyncCommitGroup", "CpAsyncWaitGroup",
+    "CpAsyncIssue", "CpAsyncCommitGroup", "CpAsyncWaitGroup", "CpAsyncMBarrierArrive",
     "WgmmaFenceOperand", "WgmmaIssue", "WgmmaCommitGroup", "WgmmaWaitGroup",
     "TmaStoreIssue", "TmaStoreCommitGroup", "TmaStoreWaitGroup",
-    "ChannelCreate", "ProducerAcquire", "ProducerCommit", "ConsumerWait", "ConsumerRelease",
     "ProxyFence",
 })
 KNOWN_UNSUPPORTED_EVENTS = frozenset({
-    "AtomicReadModifyWrite", "Fork", "Join", "BarrierRelease",
-    "MBarrierTxComplete", "MBarrierPhaseComplete",
+    "Fork", "Join", "BarrierRelease",
+    "MBarrierArriveDrop", "MBarrierTxComplete", "MBarrierPhaseComplete",
     "CpAsyncGroupComplete",
     "TmaLoadComplete", "TmaStoreSourceReleased", "TmaStoreGlobalComplete",
     "WgmmaResultReady", "WgmmaOperandsReleased",
+    "ChannelCreate", "ProducerAcquire", "ProducerCommit", "ConsumerWait", "ConsumerRelease",
 })
+# A device-scope read-modify-write: it conflicts with plain accesses like a
+# write, but two RMWs on the same bytes are atomic with respect to each other.
+MEMORY_EVENTS = frozenset({"MemRead", "MemWrite", "AtomicReadModifyWrite"})
 
 
 class PGIRError(Exception):
@@ -50,6 +57,15 @@ class Actor:
     kind: str
     participants: tuple[int, ...]
     cta_rank: int | None = None
+    role: str = "BOTH"
+
+    @property
+    def is_program_stream(self) -> bool:
+        return self.role in {"PROGRAM_STREAM", "BOTH"}
+
+    @property
+    def is_execution_owner(self) -> bool:
+        return self.role in {"EXECUTION_OWNER", "BOTH", "ASYNC_ENGINE"}
 
 
 @dataclass(frozen=True, slots=True)
@@ -71,6 +87,13 @@ class Region:
     offset: int
     extent: int
     owner_cta_rank: int | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class Transfer:
+    source_region: str
+    destination_region: str
+    bytes: int
 
 
 @dataclass(frozen=True, slots=True)
@@ -97,15 +120,18 @@ class Event:
     bytes: int | None = None
     lifecycle_epoch: int | None = None
     generation: int | None = None
+    layout: str | None = None
     raw_parity: int | None = None
     parity_evidence: ParityEvidence | None = None
     predicate: bool = True
     invocation_id: int | None = None
+    async_resource: str | None = None
     group_owner: str | None = None
     group_seq: int | None = None
     wait_group_count: int | None = None
     completion_kind: str | None = None
     wait_mode: str | None = None
+    reduction: bool = False
     engine_id: str | None = None
     engine_seq: int | None = None
     slot: int | None = None
@@ -114,7 +140,27 @@ class Event:
     to_domain: str | None = None
     scope: str | None = None
     regions: tuple[str, ...] = ()
+    transfers: tuple[Transfer, ...] = ()
     visibility_mask: VisibilityMask | None = None
+    owner: str | None = None
+
+    @property
+    def execution_owner(self) -> str:
+        """Actor that owns a collective or protocol transition.
+
+        ``actor`` is always the scheduler program stream. Legacy PGIR omitted
+        ``owner`` and intentionally keeps the old actor-as-owner behavior.
+        """
+
+        return self.owner or self.actor
+
+    @property
+    def tma_transfers(self) -> tuple[Transfer, ...]:
+        if self.transfers:
+            return self.transfers
+        if self.source_region is not None and self.destination_region is not None and self.bytes is not None:
+            return (Transfer(self.source_region, self.destination_region, self.bytes),)
+        return ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -125,22 +171,31 @@ class Module:
     regions: tuple[Region, ...]
     events: tuple[Event, ...]
     events_by_actor: dict[str, tuple[Event, ...]] = field(compare=False, hash=False)
+    _event_map: dict[str, Event] = field(compare=False, hash=False, repr=False)
+    _resource_map: dict[str, Resource] = field(compare=False, hash=False, repr=False)
+    _region_map: dict[str, Region] = field(compare=False, hash=False, repr=False)
+    _actor_map: dict[str, Actor] = field(compare=False, hash=False, repr=False)
+    _parametric: Any | None = field(default=None, compare=False, hash=False, repr=False)
 
     @property
     def event_map(self) -> dict[str, Event]:
-        return {event.id: event for event in self.events}
+        return self._event_map
 
     @property
     def resource_map(self) -> dict[str, Resource]:
-        return {resource.id: resource for resource in self.resources}
+        return self._resource_map
 
     @property
     def region_map(self) -> dict[str, Region]:
-        return {region.id: region for region in self.regions}
+        return self._region_map
 
     @property
     def actor_map(self) -> dict[str, Actor]:
-        return {actor.id: actor for actor in self.actors}
+        return self._actor_map
+
+    @property
+    def parametric(self) -> Any | None:
+        return self._parametric
 
     @property
     def required_logical_waits(self) -> dict[tuple[str, int, int], frozenset[str]]:
@@ -153,6 +208,29 @@ class Module:
         return {key: frozenset(event_ids) for key, event_ids in required.items()}
 
 
+def _bucket_events_by_actor(
+    actors: tuple[Actor, ...],
+    events: tuple[Event, ...],
+) -> dict[str, tuple[Event, ...]]:
+    buckets: dict[str, list[Event]] = {actor.id: [] for actor in actors}
+    for event in events:
+        bucket = buckets.get(event.actor)
+        if bucket is not None:
+            bucket.append(event)
+    return {
+        actor_id: tuple(sorted(bucket, key=lambda event: (event.seq, event.id)))
+        for actor_id, bucket in buckets.items()
+    }
+
+
+def _dangling_dependencies(
+    dependencies: tuple[str, ...],
+    events: Mapping[str, Event],
+) -> list[str]:
+    return sorted({dependency for dependency in dependencies if dependency not in events})
+
+
+@lru_cache(maxsize=None)
 def _schema(version: str) -> dict[str, Any]:
     if not isinstance(version, str) or version not in {"pgir-v1", "pgir-v2"}:
         raise PGIRError(
@@ -161,10 +239,6 @@ def _schema(version: str) -> dict[str, Any]:
             {"schema_version": version},
         )
     return json.loads(files("pipeguard.specs").joinpath(f"{version}.schema.json").read_text())
-
-
-def stable_completion_id(issue_id: str, generation: int) -> str:
-    return f"completion:tma-load:{issue_id}:g{generation:08d}"
 
 
 def stable_phase_id(resource_id: str, lifecycle_epoch: int, generation: int) -> str:
@@ -203,8 +277,14 @@ def engine_completion_streams(module: Module) -> dict[str, tuple[str, ...]]:
     terminal_by_issue: dict[str, str] = {}
     for event in module.events:
         if event.type == "TmaLoadIssue":
+            assert event.resource is not None
+            assert event.lifecycle_epoch is not None
             assert event.generation is not None
-            terminal_by_issue[event.id] = stable_completion_id(event.id, event.generation)
+            terminal_by_issue[event.id] = stable_phase_id(
+                event.resource,
+                event.lifecycle_epoch,
+                event.generation,
+            )
 
     terminal_kinds = {
         "CpAsyncCommitGroup": ("CP_ASYNC", "GROUP_COMPLETE"),
@@ -324,11 +404,28 @@ def _strict_integers(data: Any) -> None:
                     _strict_integer(evidence[name], f"/events/{index}/parity_evidence/{name}")
 
 
+@lru_cache(maxsize=None)
+def _fast_schema_validator(version: str) -> Any:
+    return fastjsonschema.compile(_schema(version))
+
+
+@lru_cache(maxsize=None)
+def _diagnostic_schema_validator(version: str) -> jsonschema.Draft202012Validator:
+    return jsonschema.Draft202012Validator(_schema(version))
+
+
 def _schema_validate(data: Any) -> None:
     _strict_integers(data)
     version = data.get("schema_version") if isinstance(data, dict) else None
-    validator = jsonschema.Draft202012Validator(_schema(version))
-    errors = sorted(validator.iter_errors(data), key=lambda error: (list(error.absolute_path), error.message))
+    try:
+        _fast_schema_validator(version)(data)
+        return
+    except fastjsonschema.JsonSchemaException:
+        pass
+    errors = sorted(
+        _diagnostic_schema_validator(version).iter_errors(data),
+        key=lambda error: (list(error.absolute_path), error.message),
+    )
     if errors:
         error = errors[0]
         path = "/" + "/".join(str(part) for part in error.absolute_path)
@@ -443,16 +540,23 @@ def _semantic_validate(module: Module) -> None:
             raise PGIRError("KNOWN_RESOURCE_UNSUPPORTED", "resource kind is not implemented yet", {"resource": resource.id, "kind": resource.kind})
         if schema_version == "pgir-v2" and resource.kind != "cluster_barrier":
             participant_ranks = {actors[actor].cta_rank for actor in resource.participants}
-            if len(participant_ranks) != 1:
+            gpu_channel = resource.kind == "channel" and resource.scope == "GPU"
+            if len(participant_ranks) != 1 and not gpu_channel:
                 raise PGIRError(
                     "CROSS_CTA_LOCAL_RESOURCE",
-                    "non-cluster resources cannot span multiple CTAs",
+                    "only GPU-scope channels may span multiple CTAs",
                     {"resource": resource.id, "cta_ranks": sorted(participant_ranks)},
                 )
             if resource.scope == "CLUSTER":
                 raise PGIRError(
                     "RESOURCE_SCOPE_MISMATCH",
                     "only cluster barriers may use CLUSTER scope in the supported PGIR v2 subset",
+                    {"resource": resource.id, "kind": resource.kind},
+                )
+            if resource.scope == "GPU" and resource.kind != "channel":
+                raise PGIRError(
+                    "RESOURCE_SCOPE_MISMATCH",
+                    "GPU scope is supported only for channels",
                     {"resource": resource.id, "kind": resource.kind},
                 )
             if resource.visibility_mask is not None and resource.visibility_mask.dsmem:
@@ -593,9 +697,15 @@ def _semantic_validate(module: Module) -> None:
                     "channel must select either control-only or at least one data visibility domain",
                     {"resource": resource.id, "visibility_mask": mask.artifact()},
                 )
+            if resource.scope == "GPU" and (mask.shared or mask.dsmem or mask.tensor_read or mask.tensor_write):
+                raise PGIRError(
+                    "UNSUPPORTED_GPU_VISIBILITY",
+                    "GPU-scope channels are limited to global-memory visibility",
+                    {"resource": resource.id, "visibility_mask": mask.artifact()},
+                )
         else:
             missing = [
-                name for name in ("capacity", "protocol", "scope")
+                name for name in ("protocol", "scope")
                 if getattr(resource, name) is None
             ]
             if missing:
@@ -616,17 +726,6 @@ def _semantic_validate(module: Module) -> None:
                     "async-group protocol is not implemented yet",
                     {"resource": resource.id, "protocol": resource.protocol},
                 )
-            if resource.protocol in {"CP_ASYNC", "WGMMA", "TMA_STORE"} and resource.capacity > 8:
-                code = {
-                    "CP_ASYNC": "CP_ASYNC_CAPACITY_UNSUPPORTED",
-                    "WGMMA": "WGMMA_CAPACITY_UNSUPPORTED",
-                    "TMA_STORE": "TMA_STORE_CAPACITY_UNSUPPORTED",
-                }[resource.protocol]
-                raise PGIRError(
-                    code,
-                    f"{resource.protocol.lower()} supports at most eight uncompleted committed groups",
-                    {"resource": resource.id, "capacity": resource.capacity},
-                )
             if resource.protocol == "WGMMA":
                 participant_lanes = [
                     lane
@@ -642,15 +741,21 @@ def _semantic_validate(module: Module) -> None:
                 for owner in resource.participants:
                     actor = actors[owner]
                     lanes = tuple(sorted(actor.participants))
-                    if (
-                        actor.kind != "WARPGROUP"
-                        or len(lanes) != 128
-                        or lanes != tuple(range(lanes[0], lanes[0] + 128))
-                        or lanes[0] % 128 != 0
-                    ):
+                    aligned = (
+                        lanes
+                        and lanes == tuple(range(lanes[0], lanes[0] + len(lanes)))
+                        and lanes[0] % 128 == 0
+                    )
+                    complete_warpgroups = len(lanes) % 128 == 0
+                    supported_owner = (
+                        actor.kind == "WARPGROUP" and len(lanes) == 128
+                    ) or (
+                        actor.kind == "PARTITION" and len(lanes) >= 128
+                    )
+                    if not aligned or not complete_warpgroups or not supported_owner:
                         raise PGIRError(
                             "INVALID_WGMMA_PARTICIPANTS",
-                            "WGMMA owners must be complete aligned 128-lane warpgroups",
+                            "WGMMA owners must contain complete aligned 128-lane warpgroups",
                             {"resource": resource.id, "owner": owner, "lanes": list(lanes)},
                         )
 
@@ -672,7 +777,8 @@ def _semantic_validate(module: Module) -> None:
         )
 
     required_fields = {
-        "MemRead": ("region",), "MemWrite": ("region",),
+        "ProgramPoint": (),
+        "MemRead": ("region",), "MemWrite": ("region",), "AtomicReadModifyWrite": ("region",),
         "BarrierArrive": ("resource", "count", "invocation_id"),
         "BarrierObserve": ("resource", "invocation_id"),
         "CpAsyncIssue": ("resource", "source_region", "destination_region", "bytes", "group_owner"),
@@ -692,15 +798,17 @@ def _semantic_validate(module: Module) -> None:
         "ConsumerRelease": ("resource", "slot", "logical_phase"),
         "ProxyFence": ("from_domain", "to_domain", "scope", "regions", "visibility_mask"),
         "MBarrierInit": ("resource", "count", "lifecycle_epoch"), "MBarrierInvalidate": ("resource", "lifecycle_epoch"),
+        "CpAsyncMBarrierArrive": ("resource", "async_resource", "group_owner", "count", "lifecycle_epoch", "generation"),
         "MBarrierArrive": ("resource", "count", "lifecycle_epoch", "generation"),
         "MBarrierExpectTx": ("resource", "bytes", "lifecycle_epoch", "generation"),
         "MBarrierArriveExpectTx": ("resource", "count", "bytes", "lifecycle_epoch", "generation"),
         "MBarrierWaitParity": ("resource", "lifecycle_epoch", "generation", "raw_parity", "parity_evidence"),
-        "TmaLoadIssue": ("resource", "source_region", "destination_region", "bytes", "lifecycle_epoch", "generation"),
+        "TmaLoadIssue": ("resource", "bytes", "lifecycle_epoch", "generation"),
     }
-    common = {"id", "type", "actor", "seq", "depends_on"}
+    common = {"id", "type", "actor", "seq", "depends_on", "owner"}
     specific = {
-        "MemRead": {"region"}, "MemWrite": {"region"},
+        "ProgramPoint": set(),
+        "MemRead": {"region"}, "MemWrite": {"region"}, "AtomicReadModifyWrite": {"region"},
         "BarrierArrive": {"resource", "count", "invocation_id", "predicate"},
         "BarrierObserve": {"resource", "invocation_id"},
         "CpAsyncIssue": {
@@ -719,7 +827,7 @@ def _semantic_validate(module: Module) -> None:
             "resource", "group_owner", "wait_group_count", "completion_kind",
         },
         "TmaStoreIssue": {
-            "resource", "group_owner", "source_region", "destination_region", "bytes",
+            "resource", "group_owner", "source_region", "destination_region", "bytes", "reduction",
             "engine_id", "engine_seq",
         },
         "TmaStoreCommitGroup": {"resource", "group_owner", "group_seq"},
@@ -732,13 +840,14 @@ def _semantic_validate(module: Module) -> None:
         "ConsumerWait": {"resource", "slot", "logical_phase"},
         "ConsumerRelease": {"resource", "slot", "logical_phase"},
         "ProxyFence": {"from_domain", "to_domain", "scope", "regions", "visibility_mask"},
-        "MBarrierInit": {"resource", "count", "lifecycle_epoch"}, "MBarrierInvalidate": {"resource", "lifecycle_epoch"},
+        "MBarrierInit": {"resource", "count", "lifecycle_epoch", "layout"}, "MBarrierInvalidate": {"resource", "lifecycle_epoch"},
+        "CpAsyncMBarrierArrive": {"resource", "async_resource", "group_owner", "count", "lifecycle_epoch", "generation", "predicate"},
         "MBarrierArrive": {"lifecycle_epoch", "resource", "count", "generation", "predicate"},
         "MBarrierExpectTx": {"lifecycle_epoch", "resource", "bytes", "generation"},
         "MBarrierArriveExpectTx": {"lifecycle_epoch", "resource", "count", "bytes", "generation", "predicate"},
         "MBarrierWaitParity": {"lifecycle_epoch", "resource", "generation", "raw_parity", "parity_evidence"},
         "TmaLoadIssue": {
-            "lifecycle_epoch", "resource", "source_region", "destination_region", "bytes",
+            "lifecycle_epoch", "resource", "source_region", "destination_region", "transfers", "bytes",
             "generation", "engine_id", "engine_seq",
         },
     }
@@ -748,9 +857,34 @@ def _semantic_validate(module: Module) -> None:
             raise PGIRError("RESERVED_ID_NAMESPACE", "real event ID uses a synthetic identity namespace", {"event": event.id})
         if event.actor not in actors:
             raise PGIRError("DANGLING_REFERENCE", "event references unknown actor", {"event": event.id, "actor": event.actor})
-        if event.type not in IMPLEMENTED_EVENTS:
+        if not actors[event.actor].is_program_stream:
+            raise PGIRError(
+                "EVENT_ACTOR_NOT_PROGRAM_STREAM",
+                "event actor must identify a scheduler program stream",
+                {"event": event.id, "actor": event.actor, "role": actors[event.actor].role},
+            )
+        owner = event.execution_owner
+        if owner not in actors:
+            raise PGIRError(
+                "DANGLING_REFERENCE",
+                "event references unknown execution owner",
+                {"event": event.id, "owner": owner},
+            )
+        if event.owner is not None and not actors[owner].is_execution_owner:
+            raise PGIRError(
+                "EVENT_OWNER_NOT_EXECUTION_OWNER",
+                "explicit event owner must identify a collective or protocol owner",
+                {"event": event.id, "owner": owner, "role": actors[owner].role},
+            )
+        if event.type not in IMPLEMENTED_EVENTS | IMPLEMENTED_INTERNAL_EVENTS:
             code = "KNOWN_EVENT_UNSUPPORTED" if event.type in KNOWN_UNSUPPORTED_EVENTS else "UNKNOWN_EVENT"
             raise PGIRError(code, f"event type is unsupported: {event.type}", {"event": event.id, "type": event.type})
+        if event.type == "MBarrierInit" and event.layout != "V0":
+            raise PGIRError(
+                "UNSUPPORTED_MBARRIER_LAYOUT_V1",
+                "mbarrier layout V1 conditional-phase/report semantics are not supported",
+                {"event": event.id, "layout": event.layout},
+            )
         if event.type == "MBarrierWaitParity" and event.parity_evidence is None:
             raise PGIRError("INCONCLUSIVE_PARITY", "wait lacks per-event logical-generation resolution evidence", {"event": event.id})
         _require(event, *required_fields[event.type])
@@ -762,17 +896,64 @@ def _semantic_validate(module: Module) -> None:
         referenced_regions = [
             value for value in (event.region, event.source_region, event.destination_region)
             if value is not None
-        ] + list(event.regions)
+        ] + list(event.regions) + [
+            region
+            for transfer in event.transfers
+            for region in (transfer.source_region, transfer.destination_region)
+        ]
         dangling_regions = sorted(value for value in referenced_regions if value not in regions)
         if dangling_regions:
             raise PGIRError("DANGLING_REFERENCE", "event references unknown region", {"event": event.id, "regions": dangling_regions})
-        dangling_dependencies = sorted(set(event.depends_on) - events.keys())
+        if event.type == "TmaLoadIssue":
+            raw_event = raw_events[event.id]
+            has_legacy_transfer = "source_region" in raw_event or "destination_region" in raw_event
+            has_grouped_transfers = "transfers" in raw_event
+            if has_legacy_transfer == has_grouped_transfers:
+                raise PGIRError(
+                    "TMA_TRANSFER_REPRESENTATION_INVALID",
+                    "TMA load must use exactly one legacy region pair or one nonempty transfers list",
+                    {"event": event.id},
+                )
+            if has_legacy_transfer and (
+                event.source_region is None or event.destination_region is None
+            ):
+                raise PGIRError(
+                    "TMA_TRANSFER_REPRESENTATION_INVALID",
+                    "legacy TMA load representation requires both source and destination regions",
+                    {"event": event.id},
+                )
+            transfers = event.tma_transfers
+            if not transfers or sum(transfer.bytes for transfer in transfers) != event.bytes:
+                raise PGIRError(
+                    "TMA_TRANSFER_BYTES_MISMATCH",
+                    "TMA load bytes must equal the sum of its transfer records",
+                    {
+                        "event": event.id,
+                        "bytes": event.bytes,
+                        "transfer_bytes": sum(transfer.bytes for transfer in transfers),
+                    },
+                )
+            if event.transfers and any(
+                transfer.bytes != regions[transfer.source_region].extent
+                or transfer.bytes != regions[transfer.destination_region].extent
+                for transfer in transfers
+            ):
+                raise PGIRError(
+                    "TMA_TRANSFER_REGION_SIZE_MISMATCH",
+                    "each grouped TMA transfer must name exact byte-sized source and destination regions",
+                    {"event": event.id},
+                )
+        dangling_dependencies = _dangling_dependencies(event.depends_on, events)
         if dangling_dependencies:
             raise PGIRError("DANGLING_REFERENCE", "event has dangling dependencies", {"event": event.id, "depends_on": dangling_dependencies})
         if event.id in event.depends_on:
             raise PGIRError("SELF_DEPENDENCY", "event cannot depend on itself", {"event": event.id})
-        if event.resource is not None and event.actor not in resources[event.resource].participants:
-            raise PGIRError("UNRESOLVED_PARTICIPANTS", "event actor is outside resource participant set", {"event": event.id, "resource": event.resource})
+        if event.resource is not None and owner not in resources[event.resource].participants:
+            raise PGIRError(
+                "UNRESOLVED_PARTICIPANTS",
+                "event execution owner is outside the resource participant set",
+                {"event": event.id, "resource": event.resource, "owner": owner},
+            )
         if event.type in {"BarrierArrive", "BarrierObserve"}:
             resource = resources[event.resource]
             if resource.kind not in {"cta_barrier", "named_barrier", "cluster_barrier"}:
@@ -781,12 +962,24 @@ def _semantic_validate(module: Module) -> None:
                     "collective barrier event must reference a CTA or named barrier resource",
                     {"event": event.id, "resource": event.resource, "kind": resource.kind},
                 )
-            if event.type == "BarrierArrive" and event.count != len(actors[event.actor].participants):
+            if event.type == "BarrierArrive" and event.count != len(actors[owner].participants):
                 raise PGIRError(
                     "COLLECTIVE_ARRIVAL_COUNT_MISMATCH",
-                    "collective arrival count must cover the actor's complete lane set",
-                    {"event": event.id, "count": event.count, "actor_lanes": list(actors[event.actor].participants)},
+                    "collective arrival count must cover the execution owner's complete lane set",
+                    {
+                        "event": event.id,
+                        "count": event.count,
+                        "owner": owner,
+                        "owner_lanes": list(actors[owner].participants),
+                    },
                 )
+        elif event.type == "CpAsyncMBarrierArrive":
+            group = resources.get(event.async_resource)
+            if (resources[event.resource].kind != "mbarrier" or group is None
+                or group.kind != "async_group" or group.protocol != "CP_ASYNC"):
+                raise PGIRError("RESOURCE_KIND_MISMATCH", "deferred arrival requires an mbarrier and CP_ASYNC resource", {"event": event.id})
+            if event.group_owner != owner or owner not in group.participants or event.count != 1:
+                raise PGIRError("GROUP_OWNER_MISMATCH", "noinc contributes one deferred arrival per issuing lane", {"event": event.id})
         elif event.type in {"CpAsyncIssue", "CpAsyncCommitGroup", "CpAsyncWaitGroup"}:
             resource = resources[event.resource]
             if resource.kind != "async_group" or resource.protocol != "CP_ASYNC":
@@ -795,7 +988,7 @@ def _semantic_validate(module: Module) -> None:
                     "cp.async event must reference a CP_ASYNC group resource",
                     {"event": event.id, "resource": event.resource, "kind": resource.kind, "protocol": resource.protocol},
                 )
-            if event.group_owner != event.actor:
+            if event.group_owner != owner:
                 raise PGIRError(
                     "GROUP_OWNER_MISMATCH",
                     "cp.async groups are owned by the issuing program actor",
@@ -806,19 +999,6 @@ def _semantic_validate(module: Module) -> None:
                     "INVALID_GROUP_OWNER",
                     "an ASYNC_ENGINE actor cannot own a program-visible cp.async group",
                     {"event": event.id, "actor": event.actor},
-                )
-            if (
-                event.type == "CpAsyncWaitGroup"
-                and event.wait_group_count >= resource.capacity
-            ):
-                raise PGIRError(
-                    "WAIT_GROUP_COUNT_OUT_OF_RANGE",
-                    "cp.async wait_group count must be smaller than the group capacity",
-                    {
-                        "event": event.id,
-                        "wait_group_count": event.wait_group_count,
-                        "capacity": resource.capacity,
-                    },
                 )
             if event.type == "CpAsyncIssue" and (
                 regions[event.source_region].address_space != "GLOBAL"
@@ -842,18 +1022,27 @@ def _semantic_validate(module: Module) -> None:
                     "WGMMA event must reference a WGMMA group resource",
                     {"event": event.id, "resource": event.resource, "kind": resource.kind, "protocol": resource.protocol},
                 )
-            if event.group_owner != event.actor:
+            if event.group_owner != owner:
                 raise PGIRError(
                     "GROUP_OWNER_MISMATCH",
                     "WGMMA groups are owned by the issuing warpgroup actor",
                     {"event": event.id, "actor": event.actor, "group_owner": event.group_owner},
                 )
-            if event.type in {"WgmmaFenceOperand", "WgmmaIssue"} and any(
+            if event.type == "WgmmaFenceOperand" and any(
                 regions[region].address_space != "SHARED" for region in event.regions
             ):
                 raise PGIRError(
                     "UNSUPPORTED_WGMMA_OPERAND_REGION",
-                    "WGMMA operands must be explicit shared-memory regions",
+                    "WGMMA operand fences apply only to explicit shared-memory regions",
+                    {"event": event.id, "regions": list(event.regions)},
+                )
+            if event.type == "WgmmaIssue" and any(
+                regions[region].address_space not in {"SHARED", "REGISTER"}
+                for region in event.regions
+            ):
+                raise PGIRError(
+                    "UNSUPPORTED_WGMMA_OPERAND_REGION",
+                    "WGMMA operands must be explicit shared-memory or register regions",
                     {"event": event.id, "regions": list(event.regions)},
                 )
             if event.type == "WgmmaIssue" and regions[event.destination_region].address_space != "REGISTER":
@@ -863,12 +1052,6 @@ def _semantic_validate(module: Module) -> None:
                     {"event": event.id, "region": event.destination_region},
                 )
             if event.type == "WgmmaWaitGroup":
-                if event.wait_group_count >= resource.capacity:
-                    raise PGIRError(
-                        "WAIT_GROUP_COUNT_OUT_OF_RANGE",
-                        "WGMMA wait_group count must be smaller than the group capacity",
-                        {"event": event.id, "wait_group_count": event.wait_group_count, "capacity": resource.capacity},
-                    )
                 if event.completion_kind not in {"OPERANDS_RELEASED", "RESULT_READY"}:
                     raise PGIRError(
                         "INVALID_WGMMA_WAIT_ENDPOINT",
@@ -883,7 +1066,7 @@ def _semantic_validate(module: Module) -> None:
                     "TMA store event must reference a TMA_STORE group resource",
                     {"event": event.id, "resource": event.resource, "kind": resource.kind, "protocol": resource.protocol},
                 )
-            if event.group_owner != event.actor:
+            if event.group_owner != owner:
                 raise PGIRError(
                     "GROUP_OWNER_MISMATCH",
                     "TMA store groups are owned by the issuing program actor",
@@ -903,15 +1086,6 @@ def _semantic_validate(module: Module) -> None:
                     "UNSUPPORTED_TMA_STORE_REGION",
                     "TMA store requires an explicit shared source and global destination",
                     {"event": event.id},
-                )
-            if (
-                event.type == "TmaStoreWaitGroup"
-                and event.wait_group_count >= resource.capacity
-            ):
-                raise PGIRError(
-                    "WAIT_GROUP_COUNT_OUT_OF_RANGE",
-                    "TMA store wait_group count must be smaller than the group capacity",
-                    {"event": event.id, "wait_group_count": event.wait_group_count, "capacity": resource.capacity},
                 )
         elif event.type in {"ChannelCreate", "ProducerAcquire", "ProducerCommit", "ConsumerWait", "ConsumerRelease"}:
             resource = resources[event.resource]
@@ -992,11 +1166,16 @@ def _semantic_validate(module: Module) -> None:
                     "explicit engine ordering must reference an ASYNC_ENGINE actor",
                     {"event": event.id, "engine": event.engine_id},
                 )
-        if event.type == "TmaLoadIssue" and (
-            regions[event.source_region].address_space != "GLOBAL"
-            or regions[event.destination_region].address_space != "SHARED"
+        if event.type == "TmaLoadIssue" and any(
+            regions[transfer.source_region].address_space != "GLOBAL"
+            or regions[transfer.destination_region].address_space != "SHARED"
+            for transfer in event.tma_transfers
         ):
-            raise PGIRError("UNSUPPORTED_TMA_REGION", "TMA load requires an explicit global source and shared destination", {"event": event.id})
+            raise PGIRError(
+                "UNSUPPORTED_TMA_REGION",
+                "TMA load requires explicit global-source/shared-destination transfers",
+                {"event": event.id},
+            )
 
     engine_streams: dict[str, list[Event]] = {}
     for event in module.events:
@@ -1087,33 +1266,6 @@ def _semantic_validate(module: Module) -> None:
         if [event.id for event in ranked] != [event.id for event in program_order]:
             raise PGIRError("LOGICAL_WAIT_ORDER_MISMATCH", "logical stream rank disagrees with actor program order", {"stream": stream})
 
-    # The current static lift is complete only for fresh, gap-free lifecycles.
-    # A represented generation k can retire target k-1 only when every earlier
-    # generation has a statically complete arrival count. Such a covered
-    # boundary needs a nonempty LogicalWait group; absence is a support-domain
-    # failure, not a hardware synchronization hazard.
-    required = module.required_logical_waits
-    init_counts: dict[tuple[str, int], int] = {}
-    arrival_counts: dict[tuple[str, int, int], int] = {}
-    for event in module.events:
-        if event.type == "MBarrierInit":
-            assert event.resource is not None and event.lifecycle_epoch is not None and event.count is not None
-            init_counts.setdefault((event.resource, event.lifecycle_epoch), event.count)
-        elif event.type in {"MBarrierArrive", "MBarrierArriveExpectTx"} and event.predicate:
-            assert event.resource is not None and event.lifecycle_epoch is not None and event.generation is not None and event.count is not None
-            key = (event.resource, event.lifecycle_epoch, event.generation)
-            arrival_counts[key] = arrival_counts.get(key, 0) + event.count
-    for (resource, lifecycle_epoch), capacity in sorted(init_counts.items()):
-        generation = 0
-        while arrival_counts.get((resource, lifecycle_epoch, generation), 0) == capacity:
-            if generation > 0 and not required.get((resource, lifecycle_epoch, generation - 1)):
-                raise PGIRError(
-                    "UNSUPPORTED_MISSING_OBSERVE_GROUP",
-                    "covered phase completion lacks a required LogicalWait observe group",
-                    {"resource": resource, "lifecycle_epoch": lifecycle_epoch, "target_generation": generation - 1},
-                )
-            generation += 1
-
     if schema_version == "pgir-v2":
         cluster_resources = {
             resource.id
@@ -1137,14 +1289,14 @@ def _semantic_validate(module: Module) -> None:
                 )
             for invocation in invocations:
                 arrivals = sorted(
-                    event.actor
+                    event.execution_owner
                     for event in collective_events
                     if event.invocation_id == invocation
                     and event.type == "BarrierArrive"
                     and event.predicate
                 )
                 observes = sorted(
-                    event.actor
+                    event.execution_owner
                     for event in collective_events
                     if event.invocation_id == invocation
                     and event.type == "BarrierObserve"
@@ -1169,7 +1321,7 @@ def _semantic_validate(module: Module) -> None:
                 if event.type == "BarrierObserve" and event.resource in cluster_resources
             ]
             for index, event in enumerate(trace):
-                if event.type not in {"MemRead", "MemWrite"}:
+                if event.type not in MEMORY_EVENTS:
                     continue
                 assert event.region is not None
                 if regions[event.region].address_space != "DSMEM":
@@ -1185,9 +1337,6 @@ def _semantic_validate(module: Module) -> None:
                     )
 
     synthetic_ids = {
-        stable_completion_id(event.id, event.generation)
-        for event in module.events if event.type == "TmaLoadIssue"
-    } | {
         stable_phase_id(event.resource, event.lifecycle_epoch, event.generation)
         for event in module.events if event.resource is not None and event.generation is not None
     } | {
@@ -1227,19 +1376,53 @@ def _semantic_validate(module: Module) -> None:
             raise PGIRError("NONCONTIGUOUS_SEQUENCE", "actor sequence numbers must start at zero and be contiguous", {"actor": actor_id, "sequence": seqs})
 
 
+def event_from_dict(item: Mapping[str, Any]) -> Event:
+    return Event(
+        id=item["id"], type=item["type"], actor=item["actor"], seq=item["seq"],
+        depends_on=tuple(sorted(item.get("depends_on", []))), resource=item.get("resource"),
+        region=item.get("region"), source_region=item.get("source_region"), destination_region=item.get("destination_region"),
+        count=item.get("count"), bytes=item.get("bytes"), lifecycle_epoch=item.get("lifecycle_epoch"), generation=item.get("generation"),
+        layout=item.get("layout", "V0") if item["type"] == "MBarrierInit" else item.get("layout"), raw_parity=item.get("raw_parity"),
+        parity_evidence=ParityEvidence(**item["parity_evidence"]) if "parity_evidence" in item else None,
+        predicate=item.get("predicate", True), invocation_id=item.get("invocation_id"),
+        async_resource=item.get("async_resource"),
+        group_owner=item.get("group_owner"), group_seq=item.get("group_seq"),
+        wait_group_count=item.get("wait_group_count"), completion_kind=item.get("completion_kind"),
+        wait_mode=item.get("wait_mode"), reduction=item.get("reduction", False), engine_id=item.get("engine_id"), engine_seq=item.get("engine_seq"),
+        slot=item.get("slot"), logical_phase=item.get("logical_phase"),
+        from_domain=item.get("from_domain"), to_domain=item.get("to_domain"), scope=item.get("scope"),
+        regions=tuple(sorted(item.get("regions", []))),
+        transfers=tuple(
+            Transfer(
+                transfer["source_region"],
+                transfer["destination_region"],
+                transfer["bytes"],
+            )
+            for transfer in item.get("transfers", [])
+        ),
+        visibility_mask=VisibilityMask.from_mapping(item["visibility_mask"]) if "visibility_mask" in item else None,
+        owner=item.get("owner"),
+    )
+
+
 def module_from_dict(data: dict[str, Any]) -> Module:
+    if isinstance(data, dict) and data.get("schema_version") == "pgir-parametric-v1":
+        from .parametric import parametric_module_from_dict
+
+        return parametric_module_from_dict(data)
     _schema_validate(data)
     actors = tuple(Actor(
         item["id"],
         item["kind"],
         tuple(sorted(item["participants"])),
         cta_rank=item.get("cta_rank"),
+        role=item.get("role", "ASYNC_ENGINE" if item["kind"] == "ASYNC_ENGINE" else "BOTH"),
     ) for item in data["actors"])
     resources = tuple(Resource(
         item["id"],
         item["kind"],
         tuple(sorted(item["participants"])),
-        capacity=item.get("capacity"),
+        capacity=None if item["kind"] == "async_group" else item.get("capacity"),
         protocol=item.get("protocol"),
         scope=item.get("scope"),
         visibility_mask=VisibilityMask.from_mapping(item["visibility_mask"]) if "visibility_mask" in item else None,
@@ -1252,23 +1435,20 @@ def module_from_dict(data: dict[str, Any]) -> Module:
         item["extent"],
         owner_cta_rank=item.get("owner_cta_rank"),
     ) for item in data["regions"])
-    events = tuple(Event(
-        id=item["id"], type=item["type"], actor=item["actor"], seq=item["seq"],
-        depends_on=tuple(sorted(item.get("depends_on", []))), resource=item.get("resource"),
-        region=item.get("region"), source_region=item.get("source_region"), destination_region=item.get("destination_region"),
-        count=item.get("count"), bytes=item.get("bytes"), lifecycle_epoch=item.get("lifecycle_epoch"), generation=item.get("generation"), raw_parity=item.get("raw_parity"),
-        parity_evidence=ParityEvidence(**item["parity_evidence"]) if "parity_evidence" in item else None,
-        predicate=item.get("predicate", True), invocation_id=item.get("invocation_id"),
-        group_owner=item.get("group_owner"), group_seq=item.get("group_seq"),
-        wait_group_count=item.get("wait_group_count"), completion_kind=item.get("completion_kind"),
-        wait_mode=item.get("wait_mode"), engine_id=item.get("engine_id"), engine_seq=item.get("engine_seq"),
-        slot=item.get("slot"), logical_phase=item.get("logical_phase"),
-        from_domain=item.get("from_domain"), to_domain=item.get("to_domain"), scope=item.get("scope"),
-        regions=tuple(sorted(item.get("regions", []))),
-        visibility_mask=VisibilityMask.from_mapping(item["visibility_mask"]) if "visibility_mask" in item else None,
-    ) for item in data["events"])
-    grouped = {actor.id: tuple(sorted((event for event in events if event.actor == actor.id), key=lambda event: (event.seq, event.id))) for actor in actors}
-    module = Module(data, actors, resources, regions, events, grouped)
+    events = tuple(event_from_dict(item) for item in data["events"])
+    grouped = _bucket_events_by_actor(actors, events)
+    module = Module(
+        raw=data,
+        actors=actors,
+        resources=resources,
+        regions=regions,
+        events=events,
+        events_by_actor=grouped,
+        _event_map={event.id: event for event in events},
+        _resource_map={resource.id: resource for resource in resources},
+        _region_map={region.id: region for region in regions},
+        _actor_map={actor.id: actor for actor in actors},
+    )
     _semantic_validate(module)
     return module
 
@@ -1284,6 +1464,10 @@ def load_module(path: str | Path) -> Module:
 
 
 def normalize_module(module: Module) -> dict[str, Any]:
+    if module.raw.get("schema_version") == "pgir-parametric-v1":
+        from .parametric import normalize_parametric_module
+
+        return normalize_parametric_module(module)
     normalized = json.loads(json.dumps(module.raw))
     normalized["actors"] = sorted(normalized["actors"], key=lambda item: item["id"])
     normalized["resources"] = sorted(normalized["resources"], key=lambda item: item["id"])
@@ -1293,10 +1477,48 @@ def normalize_module(module: Module) -> dict[str, Any]:
         actor["participants"] = sorted(actor["participants"])
     for resource in normalized["resources"]:
         resource["participants"] = sorted(resource["participants"])
+        if resource["kind"] == "async_group":
+            resource.pop("capacity", None)
     for event in normalized["events"]:
         if "depends_on" in event:
             event["depends_on"] = sorted(event["depends_on"])
+        if event["type"] == "TmaLoadIssue" and "transfers" not in event:
+            event["transfers"] = [{
+                "source_region": event.pop("source_region"),
+                "destination_region": event.pop("destination_region"),
+                "bytes": event["bytes"],
+            }]
+        if "transfers" in event:
+            event["transfers"] = sorted(
+                event["transfers"],
+                key=lambda transfer: (
+                    transfer["source_region"],
+                    transfer["destination_region"],
+                    transfer["bytes"],
+                ),
+            )
         if "regions" in event:
             event["regions"] = sorted(event["regions"])
     normalized["unsupported_constructs"] = sorted(normalized["unsupported_constructs"])
     return normalized
+
+
+def deferred_cp_relations(module):
+    """Exact issuing-stream cp.async prefixes covered by each noinc."""
+    result = {}
+    for trace in module.events_by_actor.values():
+        prior = {}
+        for event in trace:
+            if event.type == "CpAsyncIssue" and event.predicate:
+                prior.setdefault((event.resource, event.group_owner), []).append(event.id)
+            elif event.type == "CpAsyncMBarrierArrive" and event.predicate:
+                result[event.id] = tuple(prior.get((event.async_resource, event.group_owner), ()))
+    return result
+
+
+def stable_cp_copy_id(issue):
+    return f"completion:cp-copy:{issue}"
+
+
+def stable_cp_arrival_id(issue):
+    return f"completion:cp-arrive:{issue}"

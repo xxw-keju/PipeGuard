@@ -1,0 +1,1751 @@
+{
+  "root_index": 234,
+  "nodes": [
+    {
+      "type": "None"
+    },
+    {
+      "type": "ffi.String",
+      "data": "register_mma_kernel_kernel"
+    },
+    {
+      "type": "ir.GlobalVar",
+      "data": {
+        "span": 0,
+        "struct_info_": 0,
+        "name_hint": 1
+      }
+    },
+    {
+      "type": "ir.SourceName",
+      "data": "\/mnt\/project_dft\/xuwen\/tmp\/fx\/gen.py"
+    },
+    {
+      "type": "ir.Span",
+      "data": {
+        "source_name": 3,
+        "line": 137,
+        "column": 1,
+        "end_line": 137,
+        "end_column": 1048576
+      }
+    },
+    {
+      "type": "relax.PrimStructInfo",
+      "data": {
+        "span": 0,
+        "value": 0,
+        "dtype": "handle"
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        5
+      ]
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+      ]
+    },
+    {
+      "type": "relax.TupleStructInfo",
+      "data": {
+        "span": 0,
+        "fields": 7
+      }
+    },
+    {
+      "type": "relax.FuncStructInfo",
+      "data": {
+        "span": 0,
+        "params": 6,
+        "ret": 8,
+        "derive_func": 0,
+        "purity": false
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "target"
+    },
+    {
+      "type": "target.TargetKind",
+      "data": "cuda"
+    },
+    {
+      "type": "ffi.String",
+      "data": ""
+    },
+    {
+      "type": "ffi.String",
+      "data": "cuda"
+    },
+    {
+      "type": "ffi.String",
+      "data": "gpu"
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        13,
+        14
+      ]
+    },
+    {
+      "type": "ffi.String",
+      "data": "max_num_threads"
+    },
+    {
+      "type": "int",
+      "data": 1024
+    },
+    {
+      "type": "ffi.String",
+      "data": "thread_warp_size"
+    },
+    {
+      "type": "int",
+      "data": 32
+    },
+    {
+      "type": "ffi.String",
+      "data": "arch"
+    },
+    {
+      "type": "ffi.String",
+      "data": "sm_90a"
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ]
+    },
+    {
+      "type": "target.Target",
+      "data": {
+        "kind": 11,
+        "tag": 12,
+        "keys": 15,
+        "attrs": 22,
+        "host": 0
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "tirx.noalias"
+    },
+    {
+      "type": "bool",
+      "data": true
+    },
+    {
+      "type": "ffi.String",
+      "data": "tl.non_restrict_params"
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+      ]
+    },
+    {
+      "type": "ffi.String",
+      "data": "has_cuda_pdl_sync"
+    },
+    {
+      "type": "int",
+      "data": 1
+    },
+    {
+      "type": "ffi.String",
+      "data": "tirx.is_global_func"
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "bool",
+        "value": 1
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "calling_conv"
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 2
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "tirx.kernel_launch_params"
+    },
+    {
+      "type": "ffi.String",
+      "data": "blockIdx.x"
+    },
+    {
+      "type": "ffi.String",
+      "data": "threadIdx.x"
+    },
+    {
+      "type": "ffi.String",
+      "data": "threadIdx.y"
+    },
+    {
+      "type": "ffi.String",
+      "data": "threadIdx.z"
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        35,
+        36,
+        37,
+        38
+      ]
+    },
+    {
+      "type": "ffi.String",
+      "data": "global_symbol"
+    },
+    {
+      "type": "ffi.String",
+      "data": "thread_extent"
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 1
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 32
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 1
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 1
+      }
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+        35,
+        42,
+        36,
+        43,
+        37,
+        44,
+        38,
+        45
+      ]
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+        10,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        39,
+        40,
+        1,
+        41,
+        46
+      ]
+    },
+    {
+      "type": "ir.DictAttrs",
+      "data": {
+        "__dict__": 47
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "C"
+    },
+    {
+      "type": "ir.PrimType",
+      "data": {
+        "span": 0,
+        "dtype": "float32"
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "global"
+    },
+    {
+      "type": "ir.PointerType",
+      "data": {
+        "span": 0,
+        "element_type": 50,
+        "storage_scope": 51
+      }
+    },
+    {
+      "type": "tirx.Var",
+      "data": {
+        "span": 0,
+        "dtype": "handle",
+        "name": 49,
+        "type_annotation": 52
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        53
+      ]
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+      ]
+    },
+    {
+      "type": "ir.TupleType",
+      "data": {
+        "span": 0,
+        "fields": 55
+      }
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+      ]
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 128
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        58
+      ]
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+      ]
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+      ]
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "ir.Span",
+      "data": {
+        "source_name": 3,
+        "line": 137,
+        "column": 1,
+        "end_line": 137,
+        "end_column": 1048576
+      }
+    },
+    {
+      "type": "tirx.Buffer",
+      "data": {
+        "data": 53,
+        "dtype": "float32",
+        "shape": 59,
+        "strides": 60,
+        "axis_separators": 61,
+        "elem_offset": 62,
+        "name": 49,
+        "data_alignment": 64,
+        "offset_factor": 1,
+        "buffer_type": 1,
+        "span": 63
+      }
+    },
+    {
+      "type": "tirx.DeclBuffer",
+      "data": {
+        "span": 0,
+        "buffer": 64
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "ir.Range",
+      "data": {
+        "min": 66,
+        "extent": 42,
+        "span": 0
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "bx"
+    },
+    {
+      "type": "ir.PrimType",
+      "data": {
+        "span": 0,
+        "dtype": "int32"
+      }
+    },
+    {
+      "type": "tirx.Var",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "name": 68,
+        "type_annotation": 69
+      }
+    },
+    {
+      "type": "tirx.IterVar",
+      "data": {
+        "dom": 67,
+        "var": 70,
+        "iter_type": 1,
+        "thread_tag": 35
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "A_local"
+    },
+    {
+      "type": "ir.PrimType",
+      "data": {
+        "span": 0,
+        "dtype": "float32"
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "local"
+    },
+    {
+      "type": "ir.PointerType",
+      "data": {
+        "span": 0,
+        "element_type": 73,
+        "storage_scope": 74
+      }
+    },
+    {
+      "type": "tirx.Var",
+      "data": {
+        "span": 0,
+        "dtype": "handle",
+        "name": 72,
+        "type_annotation": 75
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 4
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        77
+      ]
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+      ]
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+      ]
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "tirx.Buffer",
+      "data": {
+        "data": 76,
+        "dtype": "float32",
+        "shape": 78,
+        "strides": 79,
+        "axis_separators": 80,
+        "elem_offset": 81,
+        "name": 72,
+        "data_alignment": 64,
+        "offset_factor": 1,
+        "buffer_type": 1,
+        "span": 0
+      }
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+      ]
+    },
+    {
+      "type": "tirx.AllocBuffer",
+      "data": {
+        "span": 0,
+        "buffer": 82,
+        "annotations": 83
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "C_local"
+    },
+    {
+      "type": "ir.PrimType",
+      "data": {
+        "span": 0,
+        "dtype": "float32"
+      }
+    },
+    {
+      "type": "ir.PointerType",
+      "data": {
+        "span": 0,
+        "element_type": 86,
+        "storage_scope": 74
+      }
+    },
+    {
+      "type": "tirx.Var",
+      "data": {
+        "span": 0,
+        "dtype": "handle",
+        "name": 85,
+        "type_annotation": 87
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 4
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        89
+      ]
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+      ]
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+      ]
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "tirx.Buffer",
+      "data": {
+        "data": 88,
+        "dtype": "float32",
+        "shape": 90,
+        "strides": 91,
+        "axis_separators": 92,
+        "elem_offset": 93,
+        "name": 85,
+        "data_alignment": 64,
+        "offset_factor": 1,
+        "buffer_type": 1,
+        "span": 0
+      }
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+      ]
+    },
+    {
+      "type": "tirx.AllocBuffer",
+      "data": {
+        "span": 0,
+        "buffer": 94,
+        "annotations": 95
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "B_local"
+    },
+    {
+      "type": "ir.PrimType",
+      "data": {
+        "span": 0,
+        "dtype": "float32"
+      }
+    },
+    {
+      "type": "ir.PointerType",
+      "data": {
+        "span": 0,
+        "element_type": 98,
+        "storage_scope": 74
+      }
+    },
+    {
+      "type": "tirx.Var",
+      "data": {
+        "span": 0,
+        "dtype": "handle",
+        "name": 97,
+        "type_annotation": 99
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 2
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        101
+      ]
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+      ]
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+      ]
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "tirx.Buffer",
+      "data": {
+        "data": 100,
+        "dtype": "float32",
+        "shape": 102,
+        "strides": 103,
+        "axis_separators": 104,
+        "elem_offset": 105,
+        "name": 97,
+        "data_alignment": 64,
+        "offset_factor": 1,
+        "buffer_type": 1,
+        "span": 0
+      }
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+      ]
+    },
+    {
+      "type": "tirx.AllocBuffer",
+      "data": {
+        "span": 0,
+        "buffer": 106,
+        "annotations": 107
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "ir.Range",
+      "data": {
+        "min": 109,
+        "extent": 43,
+        "span": 0
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "tx"
+    },
+    {
+      "type": "ir.PrimType",
+      "data": {
+        "span": 0,
+        "dtype": "int32"
+      }
+    },
+    {
+      "type": "tirx.Var",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "name": 111,
+        "type_annotation": 112
+      }
+    },
+    {
+      "type": "tirx.IterVar",
+      "data": {
+        "dom": 110,
+        "var": 113,
+        "iter_type": 1,
+        "thread_tag": 36
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "ir.Range",
+      "data": {
+        "min": 115,
+        "extent": 44,
+        "span": 0
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "ty"
+    },
+    {
+      "type": "ir.PrimType",
+      "data": {
+        "span": 0,
+        "dtype": "int32"
+      }
+    },
+    {
+      "type": "tirx.Var",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "name": 117,
+        "type_annotation": 118
+      }
+    },
+    {
+      "type": "tirx.IterVar",
+      "data": {
+        "dom": 116,
+        "var": 119,
+        "iter_type": 1,
+        "thread_tag": 37
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "ir.Range",
+      "data": {
+        "min": 121,
+        "extent": 45,
+        "span": 0
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "tz"
+    },
+    {
+      "type": "ir.PrimType",
+      "data": {
+        "span": 0,
+        "dtype": "int32"
+      }
+    },
+    {
+      "type": "tirx.Var",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "name": 123,
+        "type_annotation": 124
+      }
+    },
+    {
+      "type": "tirx.IterVar",
+      "data": {
+        "dom": 122,
+        "var": 125,
+        "iter_type": 1,
+        "thread_tag": 38
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        77
+      ]
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+      ]
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "ir.Span",
+      "data": {
+        "source_name": 3,
+        "line": 140,
+        "column": 1,
+        "end_line": 140,
+        "end_column": 1048576
+      }
+    },
+    {
+      "type": "tirx.Buffer",
+      "data": {
+        "data": 76,
+        "dtype": "float32",
+        "shape": 127,
+        "strides": 79,
+        "axis_separators": 128,
+        "elem_offset": 129,
+        "name": 72,
+        "data_alignment": 64,
+        "offset_factor": 1,
+        "buffer_type": 1,
+        "span": 130
+      }
+    },
+    {
+      "type": "tirx.DeclBuffer",
+      "data": {
+        "span": 0,
+        "buffer": 131
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        101
+      ]
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+      ]
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "ir.Span",
+      "data": {
+        "source_name": 3,
+        "line": 141,
+        "column": 1,
+        "end_line": 141,
+        "end_column": 1048576
+      }
+    },
+    {
+      "type": "tirx.Buffer",
+      "data": {
+        "data": 100,
+        "dtype": "float32",
+        "shape": 133,
+        "strides": 103,
+        "axis_separators": 134,
+        "elem_offset": 135,
+        "name": 97,
+        "data_alignment": 64,
+        "offset_factor": 1,
+        "buffer_type": 1,
+        "span": 136
+      }
+    },
+    {
+      "type": "tirx.DeclBuffer",
+      "data": {
+        "span": 0,
+        "buffer": 137
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        89
+      ]
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+      ]
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "ir.Span",
+      "data": {
+        "source_name": 3,
+        "line": 142,
+        "column": 1,
+        "end_line": 142,
+        "end_column": 1048576
+      }
+    },
+    {
+      "type": "tirx.Buffer",
+      "data": {
+        "data": 88,
+        "dtype": "float32",
+        "shape": 139,
+        "strides": 91,
+        "axis_separators": 140,
+        "elem_offset": 141,
+        "name": 85,
+        "data_alignment": 64,
+        "offset_factor": 1,
+        "buffer_type": 1,
+        "span": 142
+      }
+    },
+    {
+      "type": "tirx.DeclBuffer",
+      "data": {
+        "span": 0,
+        "buffer": 143
+      }
+    },
+    {
+      "type": "ir.Span",
+      "data": {
+        "source_name": 3,
+        "line": 143,
+        "column": 1,
+        "end_line": 143,
+        "end_column": 1048576
+      }
+    },
+    {
+      "type": "ir.Op",
+      "data": "tl.pdl_sync"
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+      ]
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+      ]
+    },
+    {
+      "type": "tirx.Call",
+      "data": {
+        "span": 0,
+        "dtype": "handle",
+        "op": 146,
+        "args": 147,
+        "annotations": 148
+      }
+    },
+    {
+      "type": "tirx.Evaluate",
+      "data": {
+        "span": 145,
+        "value": 149
+      }
+    },
+    {
+      "type": "ir.Span",
+      "data": {
+        "source_name": 3,
+        "line": 144,
+        "column": 1,
+        "end_line": 144,
+        "end_column": 1048576
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "i"
+    },
+    {
+      "type": "ir.PrimType",
+      "data": {
+        "span": 0,
+        "dtype": "int32"
+      }
+    },
+    {
+      "type": "tirx.Var",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "name": 152,
+        "type_annotation": 153
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 4
+      }
+    },
+    {
+      "type": "ir.Span",
+      "data": {
+        "source_name": 3,
+        "line": 145,
+        "column": 1,
+        "end_line": 145,
+        "end_column": 1048576
+      }
+    },
+    {
+      "type": "ir.FloatImm",
+      "data": {
+        "span": 0,
+        "dtype": "float32",
+        "value": 1.0
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        154
+      ]
+    },
+    {
+      "type": "tirx.BufferStore",
+      "data": {
+        "span": 157,
+        "buffer": 131,
+        "value": 158,
+        "indices": 159,
+        "predicate": 0
+      }
+    },
+    {
+      "type": "ir.Span",
+      "data": {
+        "source_name": 3,
+        "line": 146,
+        "column": 1,
+        "end_line": 146,
+        "end_column": 1048576
+      }
+    },
+    {
+      "type": "ir.FloatImm",
+      "data": {
+        "span": 0,
+        "dtype": "float32",
+        "value": 0.0
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        154
+      ]
+    },
+    {
+      "type": "tirx.BufferStore",
+      "data": {
+        "span": 161,
+        "buffer": 143,
+        "value": 162,
+        "indices": 163,
+        "predicate": 0
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        160,
+        164
+      ]
+    },
+    {
+      "type": "tirx.SeqStmt",
+      "data": {
+        "span": 0,
+        "seq": 165
+      }
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+      ]
+    },
+    {
+      "type": "tirx.For",
+      "data": {
+        "span": 151,
+        "loop_var": 154,
+        "min": 155,
+        "extent": 156,
+        "kind": 0,
+        "body": 166,
+        "thread_binding": 0,
+        "annotations": 167,
+        "step": 0
+      }
+    },
+    {
+      "type": "ir.Span",
+      "data": {
+        "source_name": 3,
+        "line": 147,
+        "column": 1,
+        "end_line": 147,
+        "end_column": 1048576
+      }
+    },
+    {
+      "type": "ir.PrimType",
+      "data": {
+        "span": 0,
+        "dtype": "int32"
+      }
+    },
+    {
+      "type": "tirx.Var",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "name": 152,
+        "type_annotation": 170
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 2
+      }
+    },
+    {
+      "type": "ir.Span",
+      "data": {
+        "source_name": 3,
+        "line": 148,
+        "column": 1,
+        "end_line": 148,
+        "end_column": 1048576
+      }
+    },
+    {
+      "type": "ir.FloatImm",
+      "data": {
+        "span": 0,
+        "dtype": "float32",
+        "value": 1.0
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        171
+      ]
+    },
+    {
+      "type": "tirx.BufferStore",
+      "data": {
+        "span": 174,
+        "buffer": 137,
+        "value": 175,
+        "indices": 176,
+        "predicate": 0
+      }
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+      ]
+    },
+    {
+      "type": "tirx.For",
+      "data": {
+        "span": 169,
+        "loop_var": 171,
+        "min": 172,
+        "extent": 173,
+        "kind": 0,
+        "body": 177,
+        "thread_binding": 0,
+        "annotations": 178,
+        "step": 0
+      }
+    },
+    {
+      "type": "ir.Span",
+      "data": {
+        "source_name": 3,
+        "line": 149,
+        "column": 1,
+        "end_line": 149,
+        "end_column": 1048576
+      }
+    },
+    {
+      "type": "ir.Op",
+      "data": "tirx.ptx_mma"
+    },
+    {
+      "type": "ffi.String",
+      "data": "m16n8k8"
+    },
+    {
+      "type": "tirx.StringImm",
+      "data": {
+        "span": 0,
+        "dtype": "handle",
+        "value": 182
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "row"
+    },
+    {
+      "type": "tirx.StringImm",
+      "data": {
+        "span": 0,
+        "dtype": "handle",
+        "value": 184
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "col"
+    },
+    {
+      "type": "tirx.StringImm",
+      "data": {
+        "span": 0,
+        "dtype": "handle",
+        "value": 186
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "tf32"
+    },
+    {
+      "type": "tirx.StringImm",
+      "data": {
+        "span": 0,
+        "dtype": "handle",
+        "value": 188
+      }
+    },
+    {
+      "type": "tirx.StringImm",
+      "data": {
+        "span": 0,
+        "dtype": "handle",
+        "value": 188
+      }
+    },
+    {
+      "type": "ffi.String",
+      "data": "fp32"
+    },
+    {
+      "type": "tirx.StringImm",
+      "data": {
+        "span": 0,
+        "dtype": "handle",
+        "value": 191
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "bool",
+        "value": 0
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        183,
+        185,
+        187,
+        189,
+        190,
+        192,
+        76,
+        193,
+        100,
+        194,
+        88,
+        195,
+        196
+      ]
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+      ]
+    },
+    {
+      "type": "tirx.Call",
+      "data": {
+        "span": 0,
+        "dtype": "float32",
+        "op": 181,
+        "args": 197,
+        "annotations": 198
+      }
+    },
+    {
+      "type": "tirx.Evaluate",
+      "data": {
+        "span": 180,
+        "value": 199
+      }
+    },
+    {
+      "type": "ir.Span",
+      "data": {
+        "source_name": 3,
+        "line": 153,
+        "column": 1,
+        "end_line": 153,
+        "end_column": 1048576
+      }
+    },
+    {
+      "type": "ir.PrimType",
+      "data": {
+        "span": 0,
+        "dtype": "int32"
+      }
+    },
+    {
+      "type": "tirx.Var",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "name": 152,
+        "type_annotation": 202
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 0
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 4
+      }
+    },
+    {
+      "type": "ir.Span",
+      "data": {
+        "source_name": 3,
+        "line": 154,
+        "column": 1,
+        "end_line": 154,
+        "end_column": 1048576
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        203
+      ]
+    },
+    {
+      "type": "tirx.BufferLoad",
+      "data": {
+        "span": 0,
+        "dtype": "float32",
+        "buffer": 143,
+        "indices": 207,
+        "predicate": 0
+      }
+    },
+    {
+      "type": "ir.IntImm",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "value": 4
+      }
+    },
+    {
+      "type": "tirx.Mul",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "a": 113,
+        "b": 209
+      }
+    },
+    {
+      "type": "tirx.Add",
+      "data": {
+        "span": 0,
+        "dtype": "int32",
+        "a": 210,
+        "b": 203
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        211
+      ]
+    },
+    {
+      "type": "tirx.BufferStore",
+      "data": {
+        "span": 206,
+        "buffer": 64,
+        "value": 208,
+        "indices": 212,
+        "predicate": 0
+      }
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+      ]
+    },
+    {
+      "type": "tirx.For",
+      "data": {
+        "span": 201,
+        "loop_var": 203,
+        "min": 204,
+        "extent": 205,
+        "kind": 0,
+        "body": 213,
+        "thread_binding": 0,
+        "annotations": 214,
+        "step": 0
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        132,
+        138,
+        144,
+        150,
+        168,
+        179,
+        200,
+        215
+      ]
+    },
+    {
+      "type": "tirx.SeqStmt",
+      "data": {
+        "span": 0,
+        "seq": 216
+      }
+    },
+    {
+      "type": "tirx.AttrStmt",
+      "data": {
+        "span": 0,
+        "node": 126,
+        "attr_key": 41,
+        "value": 45,
+        "body": 217
+      }
+    },
+    {
+      "type": "tirx.AttrStmt",
+      "data": {
+        "span": 0,
+        "node": 120,
+        "attr_key": 41,
+        "value": 44,
+        "body": 218
+      }
+    },
+    {
+      "type": "tirx.AttrStmt",
+      "data": {
+        "span": 0,
+        "node": 114,
+        "attr_key": 41,
+        "value": 43,
+        "body": 219
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        84,
+        96,
+        108,
+        220
+      ]
+    },
+    {
+      "type": "tirx.SeqStmt",
+      "data": {
+        "span": 0,
+        "seq": 221
+      }
+    },
+    {
+      "type": "tirx.AttrStmt",
+      "data": {
+        "span": 0,
+        "node": 71,
+        "attr_key": 41,
+        "value": 42,
+        "body": 222
+      }
+    },
+    {
+      "type": "ffi.Array",
+      "data": [
+        65,
+        223
+      ]
+    },
+    {
+      "type": "tirx.SeqStmt",
+      "data": {
+        "span": 0,
+        "seq": 224
+      }
+    },
+    {
+      "type": "tirx.PrimFunc",
+      "data": {
+        "span": 4,
+        "struct_info_": 9,
+        "attrs": 48,
+        "params": 54,
+        "ret_type": 56,
+        "buffer_map": 57,
+        "body": 225
+      }
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+        2,
+        226
+      ]
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+        1,
+        2
+      ]
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+      ]
+    },
+    {
+      "type": "ir.SourceMap",
+      "data": {
+        "source_map": 229
+      }
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+      ]
+    },
+    {
+      "type": "ir.DictAttrs",
+      "data": {
+        "__dict__": 231
+      }
+    },
+    {
+      "type": "ffi.Map",
+      "data": [
+      ]
+    },
+    {
+      "type": "ir.IRModule",
+      "data": {
+        "functions": 227,
+        "global_var_map_": 228,
+        "source_map": 230,
+        "attrs": 232,
+        "global_infos": 233
+      }
+    }
+  ],
+  "metadata": {
+    "tvm_version": "0.25.dev0"
+  }
+}

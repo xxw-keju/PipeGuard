@@ -1,0 +1,62 @@
+[
+  {
+    "fixture": "tests/fixtures/tilelang_partial_ballot_reduce_device.tvm.json",
+    "sha256": "718570c470f88e5cd3c4bf13eca9046f62010d45101a34c9cc3bb8dfdf568e24",
+    "source": "source/kernels/make_kernel.kernel/fb80e5c5e84dc839e85e2837240b35254fc044513876ab8462b14482bbc716de/kernel.device.tvm.json",
+    "kind": "preserved_real_IR"
+  },
+  {
+    "fixture": "tests/fixtures/tilelang_rng_distributions_device.tvm.json",
+    "sha256": "a0c0b25d444016aca1bdfd63649cd299c36eb91bf5a880f312f1c1a893db61f7",
+    "source": "source/kernels/tilelang_rand_1d.rand_kernel/2d3d559ce4b28c6b50369f8adab13f555a70a63f8ef6a5720650a611a01af410/kernel.device.tvm.json",
+    "kind": "preserved_real_IR"
+  },
+  {
+    "fixture": "tests/fixtures/tilelang_multidim_safe.tvm.json",
+    "sha256": "bc96457de00504345a3bbb4b9fc70b99a05b01b00b4289211977c17690855b94",
+    "kind": "generated_semantic_regression",
+    "generator": "tests/fixtures/generate_coverage_20261030.py"
+  },
+  {
+    "fixture": "tests/fixtures/tilelang_multidim_race.tvm.json",
+    "sha256": "b77d4870a5e8b0a8642ee62a57d0083d5b9dd9af22cc82b241563fca8a303f60",
+    "kind": "generated_semantic_regression",
+    "generator": "tests/fixtures/generate_coverage_20261030.py"
+  },
+  {
+    "fixture": "tests/fixtures/tilelang_batch_reduce_safe.tvm.json",
+    "sha256": "8a4167392cb204829fd2a39e483a160a7c672cb404e9ae5755cdb3cec3d7cee0",
+    "kind": "generated_semantic_regression",
+    "generator": "tests/fixtures/generate_coverage_20261030.py"
+  },
+  {
+    "fixture": "tests/fixtures/tilelang_batch_reduce_reuse_race.tvm.json",
+    "sha256": "64e95c63c674de22ff3f4ad2243af8058a749eb9f67ff6481f00139fa694f6b4",
+    "kind": "generated_semantic_regression",
+    "generator": "tests/fixtures/generate_coverage_20261030.py"
+  },
+  {
+    "fixture": "tests/fixtures/tilelang_explicit128_safe.tvm.json",
+    "sha256": "35d27d6e5acf57bd8f1fe72c4ba7344ef816e5c1c1d9c19bdc2183cb0f819eed",
+    "kind": "generated_semantic_regression",
+    "generator": "tests/fixtures/generate_coverage_20261030.py"
+  },
+  {
+    "fixture": "tests/fixtures/tilelang_explicit128_race.tvm.json",
+    "sha256": "5b140a11394fa3ace0b570b76bab84408b7aa39fe95353a68b051814deba0732",
+    "kind": "generated_semantic_regression",
+    "generator": "tests/fixtures/generate_coverage_20261030.py"
+  },
+  {
+    "fixture": "tests/fixtures/tilelang_cta_vote_divergent.tvm.json",
+    "sha256": "6cbbc058a39c96d34695bcac9e4f39270c61101914f1748edb0c3ac9934ad36e",
+    "kind": "generated_semantic_regression",
+    "generator": "tests/fixtures/generate_coverage_20261030.py"
+  },
+  {
+    "fixture": "tests/fixtures/tilelang_cta_vote_safe.tvm.json",
+    "sha256": "d9e7e24ac5fa3c76490725be32c236838d4db97219da16b5f9f06d6c9d16a27f",
+    "kind": "generated_semantic_regression",
+    "generator": "tests/fixtures/generate_coverage_20261030.py"
+  }
+]

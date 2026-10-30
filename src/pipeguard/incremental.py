@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass, field
+from heapq import heappop, heappush
 from typing import Any, Literal
 
 from .engine import (
@@ -16,7 +18,6 @@ from .model import (
     engine_completion_streams,
     stable_channel_handoff_id,
     stable_collective_release_id,
-    stable_completion_id,
     stable_group_completion_id,
     stable_phase_id,
 )
@@ -31,19 +32,38 @@ END = EndAnchor()
 AnchorToken = str | EndAnchor
 
 
+class TraceAnchorSequence(Sequence[str]):
+    def __init__(self, trace: Any) -> None:
+        self.trace = trace
+
+    def __len__(self) -> int:
+        return len(self.trace)
+
+    def __getitem__(self, index: int | slice) -> str | tuple[str, ...]:
+        if isinstance(index, slice):
+            return tuple(
+                self.trace[position].id
+                for position in range(*index.indices(len(self)))
+            )
+        return self.trace[index].id
+
+    def __iter__(self):
+        for event in self.trace:
+            yield event.id
+
+
 @dataclass(frozen=True, slots=True)
 class AnchorStream:
     kind: Literal[
         "PROGRAM",
         "PHASE_COMPLETION",
-        "TMA_COMPLETION",
         "BARRIER_RELEASE",
         "GROUP_COMPLETION",
         "CHANNEL_HANDOFF",
         "ENGINE_COMPLETION",
     ]
     name: str
-    anchors: tuple[str, ...]
+    anchors: Sequence[str]
 
     @property
     def tokens(self) -> tuple[AnchorToken, ...]:
@@ -126,7 +146,6 @@ class StableReadySet:
 class IncrementalCounters:
     program_streams: int = 0
     phase_streams: int = 0
-    tma_completion_streams: int = 0
     barrier_release_streams: int = 0
     group_completion_streams: int = 0
     channel_handoff_streams: int = 0
@@ -140,7 +159,6 @@ class IncrementalCounters:
     anchor_boundaries: int = 0
     transitions_by_kind: dict[str, int] = field(default_factory=lambda: {
         "PROGRAM": 0,
-        "TMA_COMPLETION": 0,
         "PHASE_COMPLETION": 0,
         "BARRIER_RELEASE": 0,
         "GROUP_COMPLETION": 0,
@@ -159,6 +177,10 @@ class IncrementalCounters:
     group_notifications: int = 0
     channel_notifications: int = 0
     engine_notifications: int = 0
+    group_frontier_queries: int = 0
+    group_frontier_advances: int = 0
+    group_wait_probes: int = 0
+    group_uniqueness_probes: int = 0
     frontier_exposures: int = 0
     phase_enable_checks: int = 0
     remaining_removals: int = 0
@@ -186,6 +208,10 @@ class IncrementalCounters:
             self.group_notifications,
             self.channel_notifications,
             self.engine_notifications,
+            self.group_frontier_queries,
+            self.group_frontier_advances,
+            self.group_wait_probes,
+            self.group_uniqueness_probes,
             self.frontier_exposures,
             self.phase_enable_checks,
             self.remaining_removals,
@@ -197,7 +223,6 @@ class IncrementalCounters:
             "stream_counts": {
                 "program": self.program_streams,
                 "phase_completion": self.phase_streams,
-                "tma_completion": self.tma_completion_streams,
                 "barrier_release": self.barrier_release_streams,
                 "group_completion": self.group_completion_streams,
                 "channel_handoff": self.channel_handoff_streams,
@@ -225,6 +250,10 @@ class IncrementalCounters:
             "group_notifications": self.group_notifications,
             "channel_notifications": self.channel_notifications,
             "engine_notifications": self.engine_notifications,
+            "group_frontier_queries": self.group_frontier_queries,
+            "group_frontier_advances": self.group_frontier_advances,
+            "group_wait_probes": self.group_wait_probes,
+            "group_uniqueness_probes": self.group_uniqueness_probes,
             "frontier_exposures": self.frontier_exposures,
             "phase_enable_checks": self.phase_enable_checks,
             "remaining_removals": self.remaining_removals,
@@ -235,7 +264,10 @@ class IncrementalCounters:
         }
 
 
-def build_anchor_streams(module: Module, anchor_ids: list[str]) -> tuple[AnchorStream, ...]:
+def build_anchor_streams(
+    module: Module,
+    anchor_ids: Sequence[str],
+) -> tuple[AnchorStream, ...]:
     """Partition every checker anchor into its naturally ordered stream."""
 
     streams: list[AnchorStream] = []
@@ -245,8 +277,14 @@ def build_anchor_streams(module: Module, anchor_ids: list[str]) -> tuple[AnchorS
         for anchors in explicit_engine_streams.values()
         for anchor in anchors
     }
+    implicit_program = getattr(module, "implicit_program_completion", False)
     for actor in sorted(module.events_by_actor):
-        anchors = tuple(event.id for event in module.events_by_actor[actor])
+        trace = module.events_by_actor[actor]
+        anchors: Sequence[str] = (
+            TraceAnchorSequence(trace)
+            if implicit_program
+            else tuple(event.id for event in trace)
+        )
         if anchors:
             streams.append(AnchorStream("PROGRAM", f"program:{actor}", anchors))
 
@@ -254,12 +292,24 @@ def build_anchor_streams(module: Module, anchor_ids: list[str]) -> tuple[AnchorS
         resource.id: {} for resource in module.resources
     }
     for event in module.events:
-        if event.resource is None or event.generation is None or event.lifecycle_epoch is None:
+        if (
+            event.resource is None
+            or event.generation is None
+            or event.lifecycle_epoch is None
+            or (
+                event.type in {"MBarrierArrive", "MBarrierArriveExpectTx"}
+                and not event.predicate
+            )
+        ):
             continue
         identifier = stable_phase_id(event.resource, event.lifecycle_epoch, event.generation)
         phases[event.resource][identifier] = (event.lifecycle_epoch, event.generation, identifier)
     for resource in sorted(phases):
-        ordered = tuple(item[2] for item in sorted(phases[resource].values()))
+        ordered = tuple(
+            item[2]
+            for item in sorted(phases[resource].values())
+            if item[2] not in engine_anchors
+        )
         if ordered:
             streams.append(AnchorStream("PHASE_COMPLETION", f"phase:{resource}", ordered))
 
@@ -337,23 +387,135 @@ def build_anchor_streams(module: Module, anchor_ids: list[str]) -> tuple[AnchorS
             ordered,
         ))
 
-    for event in sorted(module.events, key=lambda item: stable_completion_id(item.id, item.generation or 0)):
-        if event.type != "TmaLoadIssue":
-            continue
-        identifier = stable_completion_id(event.id, event.generation)
-        if identifier not in engine_anchors:
-            streams.append(AnchorStream("TMA_COMPLETION", f"tma:{identifier}", (identifier,)))
-
     for engine, anchors in sorted(explicit_engine_streams.items()):
         if anchors:
             streams.append(AnchorStream("ENGINE_COMPLETION", f"engine:{engine}", anchors))
 
-    covered = [anchor for stream in streams for anchor in stream.anchors]
-    if len(covered) != len(set(covered)) or set(covered) != set(anchor_ids):
-        missing = sorted(set(anchor_ids) - set(covered))
-        extra = sorted(set(covered) - set(anchor_ids))
-        raise AssertionError(f"anchor stream partition mismatch: missing={missing}, extra={extra}")
+    if implicit_program:
+        covered_count = sum(len(stream.anchors) for stream in streams)
+        if covered_count != len(anchor_ids):
+            raise AssertionError(
+                "parametric anchor stream partition mismatch: "
+                f"covered={covered_count}, expected={len(anchor_ids)}"
+            )
+    else:
+        covered = [anchor for stream in streams for anchor in stream.anchors]
+        if len(covered) != len(set(covered)) or set(covered) != set(anchor_ids):
+            missing = sorted(set(anchor_ids) - set(covered))
+            extra = sorted(set(covered) - set(anchor_ids))
+            raise AssertionError(
+                f"anchor stream partition mismatch: missing={missing}, extra={extra}"
+            )
     return tuple(sorted(streams, key=lambda stream: (stream.anchors[0] if stream.anchors else "", stream.kind, stream.name)))
+
+
+@dataclass(frozen=True, slots=True)
+class ReadyMetadata:
+    phase_resources: dict[str, str]
+    collective_resources: dict[str, str]
+    group_resources: dict[str, tuple[str, str, str]]
+    channel_resources: dict[str, tuple[str, int]]
+    dynamic_ready: bool
+    rank: dict[str, int]
+    identifiers: tuple[str, ...]
+
+
+def _build_ready_metadata(
+    executor: Executor,
+    anchor_ids: Sequence[str],
+) -> ReadyMetadata:
+    phase_resources: dict[str, str] = {}
+    collective_resources: dict[str, str] = {}
+    group_resources: dict[str, tuple[str, str, str]] = {}
+    channel_resources: dict[str, tuple[str, int]] = {}
+    for event in executor.module.events:
+        if event.resource is not None and event.generation is not None:
+            phase_resources[
+                stable_phase_id(event.resource, event.lifecycle_epoch, event.generation)
+            ] = event.resource
+        if event.type in {"BarrierArrive", "BarrierObserve"}:
+            collective_resources[
+                stable_collective_release_id(event.resource, event.invocation_id)
+            ] = event.resource
+        if event.type in {
+            "CpAsyncCommitGroup",
+            "WgmmaCommitGroup",
+            "TmaStoreCommitGroup",
+        }:
+            protocol = executor.module.resource_map[event.resource].protocol
+            completion_kinds = {
+                "CP_ASYNC": ("GROUP_COMPLETE",),
+                "WGMMA": ("OPERANDS_RELEASED", "RESULT_READY"),
+                "TMA_STORE": ("SOURCE_RELEASED", "GLOBAL_COMPLETE"),
+            }[protocol]
+            for completion_kind in completion_kinds:
+                group_resources[
+                    stable_group_completion_id(
+                        protocol,
+                        event.group_owner,
+                        event.group_seq,
+                        completion_kind,
+                    )
+                ] = (event.resource, event.group_owner, completion_kind)
+        if event.type in {"ProducerCommit", "ConsumerWait"}:
+            channel_resources[
+                stable_channel_handoff_id(
+                    event.resource,
+                    event.slot,
+                    event.logical_phase,
+                )
+            ] = (event.resource, event.slot)
+    dynamic_ready = getattr(
+        executor.module, "implicit_program_completion", False
+    )
+    transitions: list[Transition] = [] if dynamic_ready else [
+        Transition(event.id, "PROGRAM", event=event)
+        for event in executor.module.events
+    ]
+    for identifier in anchor_ids:
+        if identifier in executor.events:
+            continue
+        if identifier in phase_resources:
+            transitions.append(Transition(
+                identifier,
+                "PHASE_COMPLETION",
+                resource=phase_resources[identifier],
+            ))
+        elif identifier in collective_resources:
+            transitions.append(Transition(
+                identifier,
+                "BARRIER_RELEASE",
+                resource=collective_resources[identifier],
+            ))
+        elif identifier in group_resources:
+            resource, owner, completion_kind = group_resources[identifier]
+            transitions.append(Transition(
+                identifier,
+                "GROUP_COMPLETION",
+                resource=resource,
+                owner=owner,
+                completion_kind=completion_kind,
+            ))
+        elif identifier in channel_resources:
+            resource, slot = channel_resources[identifier]
+            transitions.append(Transition(
+                identifier,
+                "CHANNEL_HANDOFF",
+                resource=resource,
+                slot=slot,
+            ))
+        else:
+            raise AssertionError(f"unknown synthetic anchor identity: {identifier}")
+    ordered = sorted(transitions, key=Transition.order_key)
+    return ReadyMetadata(
+        phase_resources,
+        collective_resources,
+        group_resources,
+        channel_resources,
+        dynamic_ready,
+        {transition.id: rank for rank, transition in enumerate(ordered)},
+        tuple(transition.id for transition in ordered),
+    )
 
 
 class ReadyIndex:
@@ -363,7 +525,7 @@ class ReadyIndex:
         self,
         executor: Executor,
         state: ExecutionState,
-        anchor_ids: list[str],
+        anchor_ids: Sequence[str],
         counters: IncrementalCounters,
         hold: AnchorToken | None = None,
     ) -> None:
@@ -384,87 +546,18 @@ class ReadyIndex:
         self.blocked_waits: dict[str, set[str]] = {}
         self.future_phase_followers: dict[str, set[str]] = {}
 
-        tma_ids = {
-            stable_completion_id(event.id, event.generation)
-            for event in executor.module.events if event.type == "TmaLoadIssue"
-        }
-        self.tma_ids = tma_ids
-        phase_resources: dict[str, str] = {}
-        collective_resources: dict[str, str] = {}
-        group_resources: dict[str, tuple[str, str, str]] = {}
-        channel_resources: dict[str, tuple[str, int]] = {}
-        for event in executor.module.events:
-            if event.resource is not None and event.generation is not None:
-                phase_resources[stable_phase_id(event.resource, event.lifecycle_epoch, event.generation)] = event.resource
-            if event.type in {"BarrierArrive", "BarrierObserve"}:
-                collective_resources[
-                    stable_collective_release_id(event.resource, event.invocation_id)
-                ] = event.resource
-            if event.type in {"CpAsyncCommitGroup", "WgmmaCommitGroup", "TmaStoreCommitGroup"}:
-                protocol = executor.module.resource_map[event.resource].protocol
-                completion_kinds = {
-                    "CP_ASYNC": ("GROUP_COMPLETE",),
-                    "WGMMA": ("OPERANDS_RELEASED", "RESULT_READY"),
-                    "TMA_STORE": ("SOURCE_RELEASED", "GLOBAL_COMPLETE"),
-                }[protocol]
-                for completion_kind in completion_kinds:
-                    group_resources[
-                        stable_group_completion_id(
-                            protocol,
-                            event.group_owner,
-                            event.group_seq,
-                            completion_kind,
-                        )
-                    ] = (event.resource, event.group_owner, completion_kind)
-            if event.type in {"ProducerCommit", "ConsumerWait"}:
-                channel_resources[
-                    stable_channel_handoff_id(
-                        event.resource,
-                        event.slot,
-                        event.logical_phase,
-                    )
-                ] = (event.resource, event.slot)
-        self.group_resources = group_resources
-        transitions: list[Transition] = [
-            Transition(event.id, "PROGRAM", event=event) for event in executor.module.events
-        ]
-        for identifier in anchor_ids:
-            if identifier in executor.events:
-                continue
-            if identifier in tma_ids:
-                transitions.append(Transition(identifier, "TMA_COMPLETION"))
-            elif identifier in phase_resources:
-                transitions.append(Transition(identifier, "PHASE_COMPLETION", resource=phase_resources[identifier]))
-            elif identifier in collective_resources:
-                transitions.append(Transition(identifier, "BARRIER_RELEASE", resource=collective_resources[identifier]))
-            elif identifier in group_resources:
-                resource, owner, completion_kind = group_resources[identifier]
-                transitions.append(
-                    Transition(
-                        identifier,
-                        "GROUP_COMPLETION",
-                        resource=resource,
-                        owner=owner,
-                        completion_kind=completion_kind,
-                    )
-                )
-            elif identifier in channel_resources:
-                resource, slot = channel_resources[identifier]
-                transitions.append(Transition(
-                    identifier,
-                    "CHANNEL_HANDOFF",
-                    resource=resource,
-                    slot=slot,
-                ))
-            else:
-                raise AssertionError(f"unknown synthetic anchor identity: {identifier}")
-        ordered_transitions = sorted(transitions, key=Transition.order_key)
-        self.rank = {
-            transition.id: rank
-            for rank, transition in enumerate(ordered_transitions)
-        }
-        self.identifiers = tuple(transition.id for transition in ordered_transitions)
-        self.ready = StableReadySet(len(ordered_transitions))
+        metadata = getattr(executor, "_ready_index_metadata", None)
+        if metadata is None:
+            metadata = _build_ready_metadata(executor, anchor_ids)
+            executor._ready_index_metadata = metadata
+        self.phase_resources = metadata.phase_resources
+        self.group_resources = metadata.group_resources
+        self.dynamic_ready = metadata.dynamic_ready
+        self.rank = metadata.rank
+        self.identifiers = metadata.identifiers
+        self.ready = StableReadySet(len(metadata.identifiers))
+        self.dynamic_heap: list[tuple[tuple[Any, ...], str]] = []
+        self.dynamic_ids: set[str] = set()
 
         for actor in sorted(state.frontiers):
             self._assess_actor(actor)
@@ -491,13 +584,21 @@ class ReadyIndex:
             return
         self.held_candidates.pop(transition.id, None)
         self.active[transition.id] = transition
-        if not self.ready.add(self.rank[transition.id]):
-            raise AssertionError(f"active transition already present in ready bitmap: {transition.id}")
+        if self.dynamic_ready:
+            self.dynamic_ids.add(transition.id)
+            heappush(self.dynamic_heap, (transition.order_key(), transition.id))
+        elif not self.ready.add(self.rank[transition.id]):
+            raise AssertionError(
+                f"active transition already present in ready bitmap: {transition.id}"
+            )
         self.counters.worklist_pushes += 1
 
     def _deactivate(self, identifier: str) -> None:
         if self.active.pop(identifier, None) is not None:
-            self.ready.discard(self.rank[identifier])
+            if self.dynamic_ready:
+                self.dynamic_ids.discard(identifier)
+            else:
+                self.ready.discard(self.rank[identifier])
         self.held_candidates.pop(identifier, None)
 
     def _clear_actor(self, actor: str) -> None:
@@ -522,7 +623,11 @@ class ReadyIndex:
         if event is None:
             return
         self.counters.frontier_exposures += 1
-        missing = {dependency for dependency in event.depends_on if dependency not in self.state.executed}
+        missing = {
+            dependency
+            for dependency in event.depends_on
+            if not self.executor.event_executed(self.state, dependency)
+        }
         if missing:
             self.actor_dependencies[actor] = missing
             for dependency in missing:
@@ -533,6 +638,16 @@ class ReadyIndex:
         if event.resource is not None:
             self.actor_resource[actor] = event.resource
             self.resource_followers.setdefault(event.resource, set()).add(actor)
+        if (
+            event.type == "MBarrierInvalidate"
+            and self.executor._phase_transition(
+                event.resource,
+                self.state.barriers[event.resource],
+                self.state,
+            ) is not None
+        ):
+            self.future_phase_followers.setdefault(event.resource, set()).add(actor)
+            return
         if event.type == "MBarrierWaitParity":
             status = self.executor._wait_status(event, self.state.barriers[event.resource])
             if status == "BLOCKED":
@@ -587,26 +702,26 @@ class ReadyIndex:
                 return
         if event.resource is not None and event.generation is not None:
             barrier = self.state.barriers[event.resource]
-            phase = self.executor._phase_transition(event.resource, barrier)
-            if event.generation == barrier.generation + 1 and phase is not None:
+            phase = self.executor._phase_transition(event.resource, barrier, self.state)
+            if (
+                event.generation == barrier.generation + 1
+                and phase is not None
+                and not (self.hold == phase.id and barrier.expected_tx > 0)
+            ):
                 self.future_phase_followers.setdefault(event.resource, set()).add(actor)
                 return
         self._queue(Transition(event.id, "PROGRAM", event=event))
-
-    def _refresh_tma_completion(self, completion: str) -> None:
-        self._deactivate(completion)
-        if (
-            completion in self.state.pending_completions
-            and self.executor._engine_completion_ready(self.state, completion)
-        ):
-            self._queue(Transition(completion, "TMA_COMPLETION"))
 
     def _refresh_phase(self, resource: str) -> None:
         self.counters.phase_enable_checks += 1
         old = self.phase_ready.pop(resource, None)
         if old is not None:
             self._deactivate(old)
-        transition = self.executor._phase_transition(resource, self.state.barriers[resource])
+        transition = self.executor._phase_transition(
+            resource,
+            self.state.barriers[resource],
+            self.state,
+        )
         if transition is not None:
             self.phase_ready[resource] = transition.id
             self._queue(transition)
@@ -657,11 +772,21 @@ class ReadyIndex:
             if transition is not None:
                 self.group_ready[key] = transition.id
                 self._queue(transition)
-        if owner in self.resource_followers.get(resource, set()):
-            event = self.executor._frontier_event(self.state, owner)
-            if event is not None and event.type in {"CpAsyncWaitGroup", "WgmmaWaitGroup", "TmaStoreWaitGroup"}:
-                self.counters.wait_notifications += 1
-            self._assess_actor(owner)
+        followers = tuple(sorted(self.resource_followers.get(resource, set())))
+        for actor in followers:
+            event = self.executor._frontier_event(self.state, actor)
+            if (
+                event is None
+                or event.type not in {
+                    "CpAsyncWaitGroup",
+                    "WgmmaWaitGroup",
+                    "TmaStoreWaitGroup",
+                }
+                or event.group_owner != owner
+            ):
+                continue
+            self.counters.wait_notifications += 1
+            self._assess_actor(actor)
 
     def _refresh_channel(self, resource: str, slot: int) -> None:
         self.counters.channel_notifications += 1
@@ -688,6 +813,21 @@ class ReadyIndex:
             self._assess_actor(actor)
 
     def pop(self) -> Transition | None:
+        if self.dynamic_ready:
+            while self.dynamic_heap:
+                _order, identifier = heappop(self.dynamic_heap)
+                if identifier not in self.dynamic_ids:
+                    self.counters.stale_worklist_pops += 1
+                    continue
+                self.dynamic_ids.remove(identifier)
+                self.counters.worklist_pops += 1
+                transition = self.active.pop(identifier, None)
+                if transition is None:
+                    raise AssertionError(
+                        f"dynamic ready heap lost active transition: {identifier}"
+                    )
+                return transition
+            return None
         rank = self.ready.pop_min()
         if rank is None:
             return None
@@ -706,7 +846,10 @@ class ReadyIndex:
         if isinstance(hold, str):
             transition = self.active.pop(hold, None)
             if transition is not None:
-                self.ready.discard(self.rank[hold])
+                if self.dynamic_ready:
+                    self.dynamic_ids.discard(hold)
+                else:
+                    self.ready.discard(self.rank[hold])
                 self.held_candidates[hold] = transition
 
     def release(self, anchor: str) -> None:
@@ -724,13 +867,11 @@ class ReadyIndex:
             self.counters.dependency_notifications += len(waiters)
             for actor in waiters:
                 self._assess_actor(actor)
-        for completion in delta.spawned_completions:
-            self._refresh_tma_completion(completion)
         for completion in delta.retired_completions:
             for successor in self.executor.engine_successors.get(completion, ()):
                 self.counters.engine_notifications += 1
-                if successor in self.tma_ids:
-                    self._refresh_tma_completion(successor)
+                if successor in self.phase_resources:
+                    self._refresh_phase(self.phase_resources[successor])
                 else:
                     resource, owner, _completion_kind = self.group_resources[successor]
                     self._refresh_group(resource, owner)
@@ -764,14 +905,13 @@ class AnchorAnalysis:
 class IncrementalEngine:
     """Canonical and delayed-anchor maximal execution without full scans."""
 
-    def __init__(self, executor: Executor, anchor_ids: list[str]):
+    def __init__(self, executor: Executor, anchor_ids: Sequence[str]):
         self.executor = executor
         self.anchor_ids = anchor_ids
         self.streams = build_anchor_streams(executor.module, anchor_ids)
         self.counters = IncrementalCounters(
             program_streams=sum(stream.kind == "PROGRAM" for stream in self.streams),
             phase_streams=sum(stream.kind == "PHASE_COMPLETION" for stream in self.streams),
-            tma_completion_streams=sum(stream.kind == "TMA_COMPLETION" for stream in self.streams),
             barrier_release_streams=sum(stream.kind == "BARRIER_RELEASE" for stream in self.streams),
             group_completion_streams=sum(stream.kind == "GROUP_COMPLETION" for stream in self.streams),
             channel_handoff_streams=sum(stream.kind == "CHANNEL_HANDOFF" for stream in self.streams),
@@ -781,6 +921,7 @@ class IncrementalEngine:
             n_ext=len(anchor_ids) + sum(len(event.depends_on) for event in executor.module.events),
             t_eff=len(self.streams),
         )
+        self.executor.incremental_counters = self.counters
 
     def _new(self, hold: AnchorToken | None) -> tuple[ExecutionState, ReadyIndex]:
         state = self.executor.initial_state()
@@ -806,7 +947,12 @@ class IncrementalEngine:
             self.counters.completed_passes += 1
         return ExplorationResult(state, self.executor.boundary(state), driven.error, stuck, None)
 
-    def analyze_streams(self) -> AnchorAnalysis:
+    def analyze_streams(
+        self,
+        *,
+        materialize_boundaries: bool = True,
+        boundary_callback: Any | None = None,
+    ) -> AnchorAnalysis:
         boundaries: list[dict[str, Any]] = []
         dynamic_edges: set[tuple[str, str, str]] = set()
         for stream in self.streams:
@@ -833,7 +979,10 @@ class IncrementalEngine:
                         unreachable_state=state,
                     )
                 boundary = self.executor.boundary(state)
-                boundaries.append({"anchor": anchor, "boundary": list(boundary)})
+                if boundary_callback is not None:
+                    boundary_callback(anchor, boundary)
+                if materialize_boundaries:
+                    boundaries.append({"anchor": anchor, "boundary": list(boundary)})
                 self.counters.anchor_boundaries += 1
                 next_hold: AnchorToken = stream.anchors[index + 1] if index + 1 < len(stream.anchors) else END
                 ready.install_hold(next_hold)

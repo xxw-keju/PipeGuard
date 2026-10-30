@@ -22,7 +22,13 @@
       "properties": {
         "architecture": {"const": "sm90"}, "warp_size": {"const": 32},
         "cta_threads": {"type": "integer", "minimum": 1}, "shared_memory_bytes": {"type": "integer", "minimum": 0},
-        "grid_scope": {"const": "single_cta"}
+        "grid_scope": {"const": "single_cta"},
+        "launch_grid": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "integer", "minimum": 1}},
+        "selected_cta": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "integer", "minimum": 0}}
+      },
+      "dependentRequired": {
+        "launch_grid": ["selected_cta"],
+        "selected_cta": ["launch_grid"]
       }
     },
     "assumptions": {
@@ -41,12 +47,18 @@
     },
     "frontend_provenance": {
       "type": "object", "additionalProperties": false, "required": ["extraction_complete", "source"],
-      "properties": {"extraction_complete": {"const": true}, "source": {"type": "string", "minLength": 1}}
+      "properties": {
+        "extraction_complete": {"const": true}, "source": {"type": "string", "minLength": 1},
+        "final_ptx": {
+          "type": "object", "additionalProperties": false, "required": ["sha256", "text"],
+          "properties": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "text": {"type": "string", "minLength": 1}}
+        }
+      }
     },
     "actors": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/actor"}},
     "resources": {"type": "array", "items": {"$ref": "#/$defs/resource"}},
     "regions": {"type": "array", "items": {"$ref": "#/$defs/region"}},
-    "events": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/event"}},
+    "events": {"type": "array", "items": {"$ref": "#/$defs/event"}},
     "unsupported_constructs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
   },
   "$defs": {
@@ -55,7 +67,8 @@
       "properties": {
         "id": {"type": "string", "minLength": 1},
         "kind": {"enum": ["LANE", "WARP", "WARPGROUP", "PARTITION", "ASYNC_ENGINE"]},
-        "participants": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "integer", "minimum": 0}}
+        "participants": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "integer", "minimum": 0}},
+        "role": {"enum": ["PROGRAM_STREAM", "EXECUTION_OWNER", "BOTH", "ASYNC_ENGINE"]}
       }
     },
     "resource": {
@@ -64,7 +77,7 @@
         "id": {"type": "string", "minLength": 1},
         "kind": {"enum": ["mbarrier", "cta_barrier", "named_barrier", "async_group", "channel"]},
         "participants": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-        "capacity": {"type": "integer", "minimum": 1},
+        "capacity": {"type": "integer", "minimum": 1, "description": "Collective/channel capacity. Legacy async_group capacity is accepted but ignored; commit groups have no semantic capacity."},
         "protocol": {"enum": ["CP_ASYNC", "WGMMA", "TMA_STORE"]},
         "scope": {"const": "CTA"},
         "visibility_mask": {"$ref": "#/$defs/visibility_mask"}
@@ -95,24 +108,38 @@
         "tensor_write": {"type": "boolean"}, "control_only": {"type": "boolean"}
       }
     },
+    "tma_transfer": {
+      "type": "object", "additionalProperties": false,
+      "required": ["source_region", "destination_region", "bytes"],
+      "properties": {
+        "source_region": {"type": "string", "minLength": 1},
+        "destination_region": {"type": "string", "minLength": 1},
+        "bytes": {"type": "integer", "minimum": 1}
+      }
+    },
     "event": {
       "type": "object", "additionalProperties": false, "required": ["id", "type", "actor", "seq"],
       "properties": {
         "id": {"type": "string", "minLength": 1}, "type": {"type": "string", "minLength": 1},
         "actor": {"type": "string", "minLength": 1}, "seq": {"type": "integer", "minimum": 0},
+        "owner": {"type": "string", "minLength": 1},
         "depends_on": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
         "resource": {"type": "string", "minLength": 1}, "region": {"type": "string", "minLength": 1},
         "source_region": {"type": "string", "minLength": 1}, "destination_region": {"type": "string", "minLength": 1},
         "regions": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "transfers": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/tma_transfer"}},
         "count": {"type": "integer", "minimum": 1}, "bytes": {"type": "integer", "minimum": 1},
         "lifecycle_epoch": {"type": "integer", "minimum": 0},
-        "generation": {"type": "integer", "minimum": 0}, "raw_parity": {"type": "integer", "minimum": 0, "maximum": 1},
+        "generation": {"type": "integer", "minimum": 0}, "layout": {"enum": ["V0", "V1"]},
+        "raw_parity": {"type": "integer", "minimum": 0, "maximum": 1},
         "parity_evidence": {"$ref": "#/$defs/parity_evidence"}, "predicate": {"type": "boolean"},
         "invocation_id": {"type": "integer", "minimum": 0},
+        "async_resource": {"type": "string", "minLength": 1},
         "group_owner": {"type": "string", "minLength": 1}, "group_seq": {"type": "integer", "minimum": 0},
         "wait_group_count": {"type": "integer", "minimum": 0},
         "completion_kind": {"enum": ["GROUP_COMPLETE", "OPERANDS_RELEASED", "RESULT_READY", "SOURCE_RELEASED", "GLOBAL_COMPLETE"]},
         "wait_mode": {"enum": ["READ_ONLY", "GLOBAL"]},
+        "reduction": {"type": "boolean"},
         "engine_id": {"type": "string", "minLength": 1}, "engine_seq": {"type": "integer", "minimum": 0},
         "slot": {"type": "integer", "minimum": 0}, "logical_phase": {"type": "integer", "minimum": 0},
         "from_domain": {"enum": ["GENERIC", "ASYNC_COPY", "TMA", "TENSOR_CORE"]},

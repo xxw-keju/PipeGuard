@@ -5,21 +5,38 @@ import subprocess
 import sys
 from pathlib import Path
 
+import fastjsonschema
 import pytest
 
-from pipeguard.checker import _anchor_ids, check_module
+import pipeguard.checker as checker_module
+from pipeguard.checker import (
+    Effect,
+    _anchor_ids,
+    _data_hazard,
+    _effects,
+    _overlapping_effect_pairs,
+    check_module,
+)
 from pipeguard.engine import ExecutionState, Executor, ProtocolError, Transition
 from pipeguard.incremental import END, IncrementalEngine, StableReadySet, build_anchor_streams
 from pipeguard.model import (
+    Actor,
+    Event,
     PGIRError,
+    _bucket_events_by_actor,
+    _dangling_dependencies,
+    _diagnostic_schema_validator,
+    _fast_schema_validator,
     load_module,
     module_from_dict,
-    stable_channel_handoff_id,
+    normalize_module,
     stable_collective_release_id,
-    stable_completion_id,
     stable_group_completion_id,
     stable_group_id,
+    stable_phase_id,
 )
+
+from protocol_cases import CASES
 
 FIXTURES = Path(__file__).parent / "fixtures"
 
@@ -30,6 +47,224 @@ def load(name: str):
 
 def verdict(name: str) -> dict:
     return check_module(load(name))
+
+
+@pytest.mark.parametrize("fixture", ["safe_handoff.json", "cluster_dsmem_handoff.json"])
+def test_empty_finite_event_graph_is_safe_for_both_pgir_versions(fixture: str):
+    raw = json.loads((FIXTURES / fixture).read_text())
+    raw["events"] = []
+    module = module_from_dict(raw)
+    assert check_module(module, engine="maximal")["verdict"] == "SAFE"
+    assert check_module(module, engine="crosscheck")["verdict"] == "SAFE"
+
+
+@pytest.mark.parametrize("fixture", ["safe_handoff.json", "missing_sync_data_hazard.json"])
+def test_overlapping_effect_index_preserves_naive_pair_order(fixture: str):
+    module = load(fixture)
+    effects = _effects(module)
+    expected = []
+    for left_index, left in enumerate(effects):
+        left_region = module.region_map[left.region]
+        for right in effects[left_index + 1:]:
+            right_region = module.region_map[right.region]
+            if (
+                left_region.address_space == right_region.address_space
+                and left_region.owner_cta_rank == right_region.owner_cta_rank
+                and left_region.allocation_id == right_region.allocation_id
+                and left_region.offset < right_region.offset + right_region.extent
+                and right_region.offset < left_region.offset + left_region.extent
+            ):
+                expected.append((left.id, right.id))
+    actual = [
+        (left.id, right.id)
+        for left, right in _overlapping_effect_pairs(module, effects)
+    ]
+    assert actual == expected
+
+
+def test_data_hazard_disjoint_intervals_do_not_scan_all_effect_pairs(monkeypatch):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["resources"] = []
+    raw["regions"] = [
+        {
+            "id": f"region-{index}",
+            "allocation_id": "array",
+            "address_space": "GLOBAL",
+            "offset": index * 4,
+            "extent": 4,
+        }
+        for index in range(4096)
+    ]
+    actor_sequences = {actor["id"]: 0 for actor in raw["actors"]}
+    raw["events"] = []
+    for index, region in enumerate(raw["regions"]):
+        actor = raw["actors"][index % len(raw["actors"])]["id"]
+        sequence = actor_sequences[actor]
+        actor_sequences[actor] += 1
+        raw["events"].append({
+            "id": f"write-{index}",
+            "type": "MemWrite",
+            "actor": actor,
+            "seq": sequence,
+            "region": region["id"],
+        })
+    module = module_from_dict(raw)
+
+    class NoQuadraticSlice(list):
+        def __getitem__(self, key):
+            if isinstance(key, slice):
+                raise AssertionError("data hazard scan sliced the complete effect suffix")
+            return super().__getitem__(key)
+
+    effects = NoQuadraticSlice(
+        Effect(
+            id=f"effect-{event.id}",
+            actor=event.actor,
+            mode="WRITE",
+            region=event.region,
+            begin=event.id,
+            end=event.id,
+            async_window=False,
+        )
+        for event in module.events
+    )
+    monkeypatch.setattr(checker_module, "_effects", lambda _module: effects)
+    assert _data_hazard(module, object()) is None
+
+
+def test_module_indexes_are_constructed_once_and_reused():
+    module = load("safe_handoff.json")
+    assert module.event_map is module.event_map
+    assert module.resource_map is module.resource_map
+    assert module.region_map is module.region_map
+    assert module.actor_map is module.actor_map
+
+
+def test_events_by_actor_buckets_once_in_actor_order_and_sorts_each_trace():
+    class SinglePassEvents(tuple):
+        iterations = 0
+
+        def __iter__(self):
+            self.iterations += 1
+            if self.iterations > 1:
+                raise AssertionError("events were scanned more than once")
+            return super().__iter__()
+
+    actors = (
+        Actor("z_actor", "LANE", (0,)),
+        Actor("a_actor", "LANE", (1,)),
+        Actor("empty_actor", "LANE", (2,)),
+    )
+    events = SinglePassEvents((
+        Event("a_late", "MemRead", "a_actor", 1),
+        Event("z_late", "MemRead", "z_actor", 1),
+        Event("a_tie_b", "MemRead", "a_actor", 0),
+        Event("unknown", "MemRead", "missing_actor", 0),
+        Event("z_early", "MemRead", "z_actor", 0),
+        Event("a_tie_a", "MemRead", "a_actor", 0),
+    ))
+
+    grouped = _bucket_events_by_actor(actors, events)
+
+    assert events.iterations == 1
+    assert list(grouped) == ["z_actor", "a_actor", "empty_actor"]
+    assert [[event.id for event in trace] for trace in grouped.values()] == [
+        ["z_early", "z_late"],
+        ["a_tie_a", "a_tie_b", "a_late"],
+        [],
+    ]
+
+
+@pytest.mark.parametrize(
+    ("mutation", "code", "details"),
+    [
+        (
+            lambda raw: raw["events"][0].update(actor="missing"),
+            "DANGLING_REFERENCE",
+            {"event": "init", "actor": "missing"},
+        ),
+        (
+            lambda raw: raw["events"][1].update(id=raw["events"][0]["id"]),
+            "DUPLICATE_ID",
+            {"id": "init", "kind": "event"},
+        ),
+        (
+            lambda raw: raw["events"][1].update(seq=3),
+            "NONCONTIGUOUS_SEQUENCE",
+            {"actor": "a_producer", "sequence": [0, 2, 3]},
+        ),
+    ],
+)
+def test_events_by_actor_bucketing_preserves_validation_errors(mutation, code, details):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    mutation(raw)
+
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+
+    assert caught.value.code == code
+    assert caught.value.details == details
+
+
+def test_dangling_dependencies_scan_only_dependency_ids_and_preserve_details():
+    class MembershipOnlyEvents(dict):
+        def __iter__(self):
+            raise AssertionError("event table must not be scanned")
+
+        def keys(self):
+            raise AssertionError("event keys must not be scanned")
+
+    events = MembershipOnlyEvents(known=object())
+
+    assert _dangling_dependencies(("missing-z", "known", "missing-a", "missing-z"), events) == [
+        "missing-a",
+        "missing-z",
+    ]
+
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["events"][3]["depends_on"] = ["missing-z", "init", "missing-a"]
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+    assert caught.value.code == "DANGLING_REFERENCE"
+    assert caught.value.details == {"event": "wait", "depends_on": ["missing-a", "missing-z"]}
+
+
+def test_self_dependency_remains_a_distinct_validation_error():
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["events"][3]["depends_on"] = ["wait"]
+
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+
+    assert caught.value.code == "SELF_DEPENDENCY"
+    assert caught.value.details == {"event": "wait"}
+
+
+@pytest.mark.parametrize("fixture", ["safe_handoff.json", "cluster_dsmem_handoff.json"])
+def test_fast_schema_acceptance_matches_canonical_validator(fixture: str):
+    valid = json.loads((FIXTURES / fixture).read_text())
+    documents = [valid]
+    for mutation in (
+        lambda raw: raw.update(unexpected=True),
+        lambda raw: raw["events"][0].update(unexpected=True),
+        lambda raw: raw["events"][0].update(id=""),
+        lambda raw: raw["events"][0].update(seq=-1),
+        lambda raw: raw["events"][0].update(depends_on=["duplicate", "duplicate"]),
+    ):
+        raw = json.loads(json.dumps(valid))
+        mutation(raw)
+        documents.append(raw)
+
+    fast = _fast_schema_validator(valid["schema_version"])
+    canonical = _diagnostic_schema_validator(valid["schema_version"])
+    for raw in documents:
+        try:
+            fast(raw)
+            fast_accepts = True
+        except fastjsonschema.JsonSchemaException:
+            fast_accepts = False
+        canonical_accepts = next(canonical.iter_errors(raw), None) is None
+        assert fast_accepts == canonical_accepts
 
 
 def test_safe_handoff_has_visibility_path_and_manifest():
@@ -44,7 +279,7 @@ def test_safe_handoff_has_visibility_path_and_manifest():
     ("fixture", "code"),
     [
         ("missing_arrive.json", "MISSING_ARRIVAL"),
-        ("stale_generation.json", "PROTOCOL_INVALID_PHASE_ADVANCE"),
+        ("stale_generation.json", "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE"),
         ("phase_lap.json", "PHASE_LAP"),
         ("use_before_init.json", "USE_BEFORE_INIT"),
         ("tma_bytes_mismatch.json", "TX_BYTES_MISMATCH"),
@@ -58,16 +293,18 @@ def test_sync_hazards(fixture: str, code: str):
 
 
 @pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
-def test_partial_next_phase_before_old_wait_is_safe(engine):
+def test_partial_next_phase_before_old_wait_is_invalid(engine):
     result = check_module(load("partial_next_phase.json"), engine=engine)
-    assert result["verdict"] == "SAFE"
+    assert result["verdict"] == "SYNC_HAZARD"
+    assert result["diagnostics"][0]["code"] == "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE"
     if engine == "crosscheck":
         comparison = result["artifacts"]["crosscheck"]
-        assert comparison["maximal"]["verdict"] == comparison["exhaustive"]["verdict"] == "SAFE"
+        assert comparison["maximal"]["verdict"] == comparison["exhaustive"]["verdict"] == "SYNC_HAZARD"
+        assert comparison["maximal"]["primary_diagnostic"] == comparison["exhaustive"]["primary_diagnostic"] == "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE"
         assert comparison["maximal"]["boundaries"] == comparison["exhaustive"]["boundaries"]
 
 
-def test_initial_remaining_tracks_future_obligations_and_partial_arrival_is_allowed():
+def test_initial_remaining_tracks_future_obligations_and_first_next_arrival_is_rejected():
     executor = Executor(load("partial_next_phase.json"))
     state = executor.initial_state()
     assert state.remaining == {
@@ -83,27 +320,15 @@ def test_initial_remaining_tracks_future_obligations_and_partial_arrival_is_allo
     for identifier in ("init", "arrive0"):
         executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
     executor.apply(state, next(item for item in executor.enabled(state) if item.kind == "PHASE_COMPLETION"))
-    executor.apply(state, next(item for item in executor.enabled(state) if item.id == "arrive1a"))
-    assert state.barriers["bar"].generation == 1
-    assert state.barriers["bar"].pending == 1
-    assert state.remaining[("bar", 0, 0)] == {"wait0"}
-
-    wait = next(item for item in executor.enabled(state) if item.id == "wait0")
-    executor.apply(state, wait)
-    assert "wait0" in state.observed
-    assert ("bar", 0, 0) not in state.remaining
-    before_duplicate = executor.fingerprint(state)
+    before_arrive = executor.fingerprint(state)
     with pytest.raises(ProtocolError) as caught:
-        executor.apply(state, wait)
-    assert caught.value.code == "DUPLICATE_LOGICAL_WAIT_CONSUMPTION"
-    assert executor.fingerprint(state) == before_duplicate
-
-    executor.apply(state, next(item for item in executor.enabled(state) if item.id == "arrive1b"))
-    executor.apply(state, next(item for item in executor.enabled(state) if item.kind == "PHASE_COMPLETION"))
-    assert state.barriers["bar"].generation == 2
+        executor.apply(state, next(item for item in executor.enabled(state) if item.id == "arrive1a"))
+    assert caught.value.code == "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE"
+    assert caught.value.state["required_observed_generation"] == 0
+    assert executor.fingerprint(state) == before_arrive
 
 
-def test_tma_issue_does_not_credit_completion_bytes():
+def test_tma_issue_contributes_bytes_without_per_issue_completion():
     module = load("tma_completion_before_arrival.json")
     executor = Executor(module)
     state = executor.initial_state()
@@ -111,29 +336,27 @@ def test_tma_issue_does_not_credit_completion_bytes():
         transition = next(item for item in executor.enabled(state) if item.id == identifier)
         executor.apply(state, transition)
     barrier = state.barriers["bar"]
-    completion = stable_completion_id("issue", 0)
     assert barrier.expected_tx == 4
-    assert barrier.completed_tx == 0
-    assert completion in state.pending_completions
+    assert barrier.issued_tx == 4
     assert not any(item["kind"] == "PHASE_COMPLETION" for item in state.trace)
+    assert all(item.kind != "TMA_COMPLETION" for item in executor.enabled(state))
 
 
 @pytest.mark.parametrize(
-    ("fixture", "relation"),
-    [
-        ("tma_completion_before_arrival.json", "before"),
-        ("tma_completion_after_arrival.json", "after"),
-    ],
+    "fixture",
+    ["tma_completion_before_arrival.json", "tma_completion_after_arrival.json"],
 )
-def test_tma_completion_is_independent_and_can_precede_or_follow_arrival(fixture: str, relation: str):
+def test_tma_phase_completion_follows_issue_and_arrival(fixture: str):
     result = verdict(fixture)
     assert result["verdict"] == "SAFE"
     trace = [item["transition"] for item in result["artifacts"]["canonical_trace"]]
-    completion_index = next(index for index, item in enumerate(trace) if item.startswith("completion:tma-load:"))
-    arrival_index = trace.index("arrive")
-    assert (completion_index < arrival_index) if relation == "before" else (completion_index > arrival_index)
-    phase_index = next(index for index, item in enumerate(trace) if item.startswith("completion:mbarrier-phase:"))
-    assert phase_index > max(completion_index, arrival_index)
+    assert not any(item.startswith("completion:tma-load:") for item in trace)
+    phase_index = next(
+        index for index, item in enumerate(trace)
+        if item.startswith("completion:mbarrier-phase:")
+    )
+    assert phase_index > trace.index("issue")
+    assert phase_index > trace.index("arrive")
 
 
 def test_missing_synchronization_is_data_hazard_not_canonical_order():
@@ -142,22 +365,50 @@ def test_missing_synchronization_is_data_hazard_not_canonical_order():
     assert result["witness"]["events"] == ["read", "write"]
 
 
-def test_tma_destination_access_window_requires_completion_observation():
-    result = verdict("tma_window_hazard.json")
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive"])
+def test_concurrent_atomics_on_the_same_bytes_do_not_race(engine: str):
+    raw = json.loads((FIXTURES / "missing_sync_data_hazard.json").read_text())
+    for event in raw["events"]:
+        event["type"] = "AtomicReadModifyWrite"
+    assert check_module(module_from_dict(raw), engine=engine)["verdict"] == "SAFE"
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive"])
+def test_atomic_conflicts_with_an_unordered_plain_read(engine: str):
+    raw = json.loads((FIXTURES / "missing_sync_data_hazard.json").read_text())
+    raw["events"][0]["type"] = "AtomicReadModifyWrite"
+    result = check_module(module_from_dict(raw), engine=engine)
     assert result["verdict"] == "DATA_HAZARD"
-    window = next(effect for effect in result["witness"]["effects"] if effect["id"] == "effect:issue:destination")
-    assert window["window"] == ["issue", stable_completion_id("issue", 0)]
+    assert result["witness"]["events"] == ["read", "write"]
+
+
+def _append_tma_window_observer(raw: dict) -> None:
+    raw["events"].append({
+        "id": "wait", "type": "MBarrierWaitParity", "actor": "a", "seq": 4,
+        "resource": "bar", "lifecycle_epoch": 0, "generation": 0, "raw_parity": 0,
+        "parity_evidence": structured_evidence("a:bar", 0),
+    })
+
+
+def test_tma_destination_access_window_requires_completion_observation():
+    raw = json.loads((FIXTURES / "tma_window_hazard.json").read_text())
+    _append_tma_window_observer(raw)
+    result = check_module(module_from_dict(raw))
+    assert result["verdict"] == "DATA_HAZARD"
+    window = next(effect for effect in result["witness"]["effects"] if effect["id"] == "effect:issue:transfer:0:destination")
+    assert window["window"] == ["issue", stable_phase_id("bar", 0, 0)]
 
 
 def test_tma_source_read_window_rejects_unordered_overwrite():
     raw = json.loads((FIXTURES / "tma_window_hazard.json").read_text())
     read = next(event for event in raw["events"] if event["id"] == "read")
     read.update({"type": "MemWrite", "region": "source"})
+    _append_tma_window_observer(raw)
     result = check_module(module_from_dict(raw))
     assert result["verdict"] == "DATA_HAZARD"
-    source = next(effect for effect in result["witness"]["effects"] if effect["id"] == "effect:issue:source")
+    source = next(effect for effect in result["witness"]["effects"] if effect["id"] == "effect:issue:transfer:0:source")
     assert source["mode"] == "READ"
-    assert source["window"] == ["issue", stable_completion_id("issue", 0)]
+    assert source["window"] == ["issue", stable_phase_id("bar", 0, 0)]
 
 
 def test_tma_load_missing_source_is_fail_closed():
@@ -165,7 +416,146 @@ def test_tma_load_missing_source_is_fail_closed():
     next(event for event in raw["events"] if event["type"] == "TmaLoadIssue").pop("source_region")
     with pytest.raises(PGIRError) as caught:
         module_from_dict(raw)
-    assert caught.value.code == "EVENT_FIELDS_MISSING"
+    assert caught.value.code == "TMA_TRANSFER_REPRESENTATION_INVALID"
+
+
+def test_legacy_single_transfer_normalizes_to_grouped_tma_form():
+    legacy_raw = json.loads((FIXTURES / "tma_completion_before_arrival.json").read_text())
+    for region in legacy_raw["regions"]:
+        region["extent"] = 4
+    grouped_raw = json.loads(json.dumps(legacy_raw))
+    issue = next(event for event in grouped_raw["events"] if event["type"] == "TmaLoadIssue")
+    issue["transfers"] = [{
+        "source_region": issue.pop("source_region"),
+        "destination_region": issue.pop("destination_region"),
+        "bytes": issue["bytes"],
+    }]
+    assert normalize_module(module_from_dict(legacy_raw)) == normalize_module(
+        module_from_dict(grouped_raw)
+    )
+
+
+def grouped_tma_load_module():
+    raw = json.loads((FIXTURES / "tma_completion_before_arrival.json").read_text())
+    raw["regions"] = [
+        {"id": "source0", "allocation_id": "global-input", "address_space": "GLOBAL", "offset": 0, "extent": 2},
+        {"id": "source1", "allocation_id": "global-input", "address_space": "GLOBAL", "offset": 2, "extent": 2},
+        {"id": "tile0", "allocation_id": "smem", "address_space": "SHARED", "offset": 0, "extent": 2},
+        {"id": "tile1", "allocation_id": "smem", "address_space": "SHARED", "offset": 2, "extent": 2},
+    ]
+    issue = next(event for event in raw["events"] if event["type"] == "TmaLoadIssue")
+    issue.pop("source_region")
+    issue.pop("destination_region")
+    issue["transfers"] = [
+        {"source_region": "source0", "destination_region": "tile0", "bytes": 2},
+        {"source_region": "source1", "destination_region": "tile1", "bytes": 2},
+    ]
+    return raw
+
+
+def test_grouped_tma_load_preserves_transfer_effects_with_one_phase_completion():
+    module = module_from_dict(grouped_tma_load_module())
+    issue = next(event for event in module.events if event.type == "TmaLoadIssue")
+    assert len(issue.tma_transfers) == 2
+    effects = [effect for effect in _effects(module) if effect.begin == issue.id]
+    assert {effect.region for effect in effects} == {"source0", "source1", "tile0", "tile1"}
+    assert {effect.end for effect in effects} == {stable_phase_id("bar", 0, 0)}
+    result = check_module(module, engine="crosscheck")
+    assert result["verdict"] == "SAFE"
+    assert result["statistics"]["phase_streams"] == 1
+
+
+@pytest.mark.parametrize(
+    ("mutation", "code"),
+    [
+        (
+            lambda raw: raw["events"][2]["transfers"][0].update({"bytes": 1}),
+            "TMA_TRANSFER_BYTES_MISMATCH",
+        ),
+        (
+            lambda raw: raw["regions"][0].update({"extent": 1}),
+            "TMA_TRANSFER_REGION_SIZE_MISMATCH",
+        ),
+        (
+            lambda raw: raw["events"][2].update({
+                "source_region": "source0",
+                "destination_region": "tile0",
+            }),
+            "TMA_TRANSFER_REPRESENTATION_INVALID",
+        ),
+    ],
+)
+def test_grouped_tma_load_validation_is_fail_closed(mutation, code):
+    raw = grouped_tma_load_module()
+    mutation(raw)
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+    assert caught.value.code == code
+
+
+def test_grouped_tma_load_reports_conflict_for_individual_transfer_region():
+    raw = grouped_tma_load_module()
+    raw["actors"].append({"id": "other", "kind": "PARTITION", "participants": [1]})
+    raw["target"]["cta_threads"] = 2
+    raw["resources"][0]["participants"].append("other")
+    raw["events"].append({
+        "id": "overwrite",
+        "type": "MemWrite",
+        "actor": "other",
+        "seq": 0,
+        "region": "tile1",
+        "depends_on": ["init"],
+    })
+    result = check_module(module_from_dict(raw), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+    assert any(
+        effect["id"] == "effect:issue:transfer:1:destination"
+        for effect in result["witness"]["effects"]
+    )
+
+
+def tma_wait_observer_module(*, outsider_write: bool):
+    raw = json.loads((FIXTURES / "tma_completion_before_arrival.json").read_text())
+    raw["actors"] = [
+        {"id": "producer", "kind": "PARTITION", "participants": [0]},
+        {"id": "observer", "kind": "PARTITION", "participants": [1]},
+        {"id": "outsider", "kind": "PARTITION", "participants": [2]},
+    ]
+    raw["target"]["cta_threads"] = 3
+    raw["resources"][0]["participants"] = ["producer", "observer", "outsider"]
+    for event in raw["events"]:
+        if event["id"] in {"init", "expect", "issue", "arrive"}:
+            event["actor"] = "producer"
+        elif event["id"] == "wait":
+            event.update({"actor": "observer", "seq": 0, "depends_on": ["init"]})
+    if outsider_write:
+        raw["events"].append({
+            "id": "outsider_write",
+            "type": "MemWrite",
+            "actor": "outsider",
+            "seq": 0,
+            "region": "tile",
+            "depends_on": ["init"],
+        })
+    else:
+        raw["events"].append({
+            "id": "observer_read",
+            "type": "MemRead",
+            "actor": "observer",
+            "seq": 1,
+            "region": "tile",
+        })
+    return module_from_dict(raw)
+
+
+def test_tma_wait_closes_window_for_observing_actor():
+    assert check_module(tma_wait_observer_module(outsider_write=False), engine="crosscheck")["verdict"] == "SAFE"
+
+
+def test_tma_wait_does_not_globally_close_window_for_other_actor():
+    result = check_module(tma_wait_observer_module(outsider_write=True), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+    assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
 
 
 def test_unknown_and_known_unimplemented_events_are_distinct_and_fail_closed():
@@ -174,7 +564,7 @@ def test_unknown_and_known_unimplemented_events_are_distinct_and_fail_closed():
     assert unknown.value.code == "UNKNOWN_EVENT"
 
     raw = json.loads((FIXTURES / "unknown_event.json").read_text())
-    raw["events"][0]["type"] = "AtomicReadModifyWrite"
+    raw["events"][0]["type"] = "Fork"
     with pytest.raises(PGIRError) as known:
         module_from_dict(raw)
     assert known.value.code == "KNOWN_EVENT_UNSUPPORTED"
@@ -239,6 +629,65 @@ def lifecycle_module(*event_types: str):
 def test_invalidate_after_completed_phase_is_legal():
     result = check_module(lifecycle_module("MBarrierInit", "MBarrierArrive", "MBarrierWaitParity", "MBarrierInvalidate"))
     assert result["verdict"] == "SAFE"
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_invalidate_after_ordered_arrival_phase_needs_no_wait(engine):
+    # PTX forbids invalidating an in-progress phase; an arrival-driven phase
+    # whose arrivals all precede the invalidation is already complete.
+    result = check_module(
+        lifecycle_module("MBarrierInit", "MBarrierArrive", "MBarrierInvalidate"),
+        engine=engine,
+    )
+    assert result["verdict"] == "SAFE"
+
+
+def cross_actor_invalidate_module(ordered: bool):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["resources"][0]["participants"] = ["a_producer", "b_consumer"]
+    invalidate = {
+        "id": "invalidate",
+        "type": "MBarrierInvalidate",
+        "actor": "b_consumer",
+        "seq": 0,
+        "resource": "bar",
+        "lifecycle_epoch": 0,
+        "depends_on": ["arrive"] if ordered else ["init"],
+    }
+    raw["events"] = [
+        event for event in raw["events"] if event["actor"] == "a_producer"
+    ] + [invalidate]
+    return module_from_dict(raw)
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_invalidate_after_cross_actor_arrival_requires_ordering(engine):
+    ordered = check_module(cross_actor_invalidate_module(True), engine=engine)
+    assert ordered["verdict"] == "SAFE"
+    unordered = check_module(cross_actor_invalidate_module(False), engine=engine)
+    assert unordered["verdict"] == "SYNC_HAZARD"
+    assert unordered["diagnostics"][0]["code"] in {
+        "INVALID_MBARRIER_UNOBSERVED_PHASE",
+        "INVALIDATE_INCOMPLETE",
+    }
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_invalidate_after_transaction_phase_requires_successful_wait(engine):
+    raw = json.loads((FIXTURES / "tma_completion_after_arrival.json").read_text())
+    wait = next(event for event in raw["events"] if event["id"] == "wait")
+    wait.clear()
+    wait.update({
+        "id": "invalidate",
+        "type": "MBarrierInvalidate",
+        "actor": "a",
+        "seq": 4,
+        "resource": "bar",
+        "lifecycle_epoch": 0,
+    })
+    result = check_module(module_from_dict(raw), engine=engine)
+    assert result["verdict"] == "SYNC_HAZARD"
+    assert result["diagnostics"][0]["code"] == "INVALID_MBARRIER_UNOBSERVED_PHASE"
 
 
 def test_use_after_invalidate_and_live_reinit_are_rejected():
@@ -318,7 +767,7 @@ def test_generic_write_to_tma_source_requires_proxy_support():
 
 def test_synthetic_id_namespace_collision_is_rejected():
     raw = json.loads((FIXTURES / "tma_window_hazard.json").read_text())
-    next(event for event in raw["events"] if event["id"] == "read")["id"] = stable_completion_id("issue", 0)
+    next(event for event in raw["events"] if event["id"] == "read")["id"] = "completion:reserved"
     with pytest.raises(PGIRError) as caught:
         module_from_dict(raw)
     assert caught.value.code == "RESERVED_ID_NAMESPACE"
@@ -339,10 +788,13 @@ def test_extraction_evidence_and_lane_bounds_are_required():
     assert lane.value.code == "PARTICIPANT_OUT_OF_RANGE"
 
 
-def test_init_cannot_be_invalidated_before_a_completed_phase():
-    result = check_module(lifecycle_module("MBarrierInit", "MBarrierInvalidate"))
-    assert result["verdict"] == "SYNC_HAZARD"
-    assert result["diagnostics"][0]["code"] == "INVALIDATE_INCOMPLETE"
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_unused_initialized_barrier_can_be_invalidated_without_a_completed_phase(engine):
+    result = check_module(
+        lifecycle_module("MBarrierInit", "MBarrierInvalidate"),
+        engine=engine,
+    )
+    assert result["verdict"] == "SAFE"
 
 
 def test_integral_float_and_missing_per_wait_evidence_fail_closed():
@@ -357,6 +809,14 @@ def test_integral_float_and_missing_per_wait_evidence_fail_closed():
     with pytest.raises(PGIRError) as evidence:
         module_from_dict(raw)
     assert evidence.value.code == "INCONCLUSIVE_PARITY"
+
+
+def test_mbarrier_layout_v1_is_explicitly_unsupported():
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    next(event for event in raw["events"] if event["type"] == "MBarrierInit")["layout"] = "V1"
+    with pytest.raises(PGIRError) as caught:
+        module_from_dict(raw)
+    assert caught.value.code == "UNSUPPORTED_MBARRIER_LAYOUT_V1"
 
 
 def test_event_type_specific_fields_and_false_arrive_expect_tx():
@@ -374,6 +834,19 @@ def test_event_type_specific_fields_and_false_arrive_expect_tx():
         {"id": "wait", "type": "MBarrierWaitParity", "actor": "b", "seq": 0, "resource": "bar", "lifecycle_epoch": 0, "generation": 0, "raw_parity": 0, "parity_evidence": {"derivation_kind": "BARRIER_HISTORY", "logical_stream_id": "false-arrive-test", "lifecycle_epoch": 0, "stream_rank": 0, "polling_coalesced": True}, "depends_on": ["init"]},
     ]
     assert check_module(module_from_dict(raw))["verdict"] == "SAFE"
+
+    raw["events"].insert(3, {
+        "id": "false_next", "type": "MBarrierArriveExpectTx",
+        "actor": "a", "seq": 3, "resource": "bar", "lifecycle_epoch": 0,
+        "count": 1, "bytes": 8, "generation": 1, "predicate": False,
+    })
+    module = module_from_dict(raw)
+    result = check_module(module, engine="maximal")
+    assert result["verdict"] == "SAFE"
+    assert not any(
+        "mbarrier-phase" in anchor and "g00000001" in anchor
+        for anchor in _anchor_ids(module)
+    )
 
 
 
@@ -409,10 +882,32 @@ def strict_multi_observer_module(require_both: bool):
 
 
 def test_required_and_multiple_observers():
-    module = strict_multi_observer_module(True)
-    assert module.required_logical_waits == {("bar", 0, 0): frozenset({"wait_b", "wait_c"})}
+    raw = json.loads(json.dumps(strict_multi_observer_module(True).raw))
+    raw["events"].append({
+        "id": "wait_b1", "type": "MBarrierWaitParity", "actor": "b_observer", "seq": 1,
+        "resource": "bar", "lifecycle_epoch": 0, "generation": 1, "raw_parity": 1,
+        "parity_evidence": structured_evidence("b", 1), "depends_on": ["arrive1"],
+    })
+    module = module_from_dict(raw)
+    assert module.required_logical_waits == {
+        ("bar", 0, 0): frozenset({"wait_b", "wait_c"}),
+        ("bar", 0, 1): frozenset({"wait_b1"}),
+    }
     for engine in ("maximal", "exhaustive", "crosscheck"):
         assert check_module(module, engine=engine)["verdict"] == "SAFE"
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_one_successful_wait_allows_next_phase_arrive(engine):
+    raw = json.loads(json.dumps(strict_multi_observer_module(False).raw))
+    raw["events"] = [event for event in raw["events"] if event["id"] != "wait_c"]
+    raw["events"].append({
+        "id": "wait_b1", "type": "MBarrierWaitParity", "actor": "b_observer", "seq": 1,
+        "resource": "bar", "lifecycle_epoch": 0, "generation": 1, "raw_parity": 1,
+        "parity_evidence": structured_evidence("b", 1), "depends_on": ["arrive1"],
+    })
+    result = check_module(module_from_dict(raw), engine=engine)
+    assert result["verdict"] == "SAFE"
 
 
 def test_missing_observer_blocks_only_phase_completion_all_engines():
@@ -439,10 +934,10 @@ def test_invalidate_cannot_retire_unobserved_required_waits(engine):
 
     result = check_module(module_from_dict(raw), engine=engine)
     assert result["verdict"] == "SYNC_HAZARD"
-    assert result["diagnostics"][0]["code"] == "INVALIDATE_INCOMPLETE"
-    remaining = result["witness"]["protocol_state"].get("remaining_logical_waits")
-    if remaining is not None:
-        assert remaining and set(remaining).issubset({"wait_b", "wait_c"})
+    assert result["diagnostics"][0]["code"] in {
+        "INVALID_MBARRIER_UNOBSERVED_PHASE",
+        "INVALIDATE_INCOMPLETE",
+    }
 
 
 def test_duplicate_rank_gap_wrong_generation_and_parity_fail_closed():
@@ -528,19 +1023,19 @@ def test_phase_completion_guard_is_atomic_after_one_of_multiple_waits():
     assert executor.fingerprint(state) == before
 
 
-def test_rejected_tma_completion_is_failure_atomic():
+def test_mismatched_tma_bytes_reject_forced_phase_atomically():
     raw = json.loads((FIXTURES / "tma_completion_before_arrival.json").read_text())
     next(event for event in raw["events"] if event["id"] == "issue")["bytes"] = 8
     executor = Executor(module_from_dict(raw))
     state = executor.initial_state()
-    for identifier in ("init", "expect", "issue"):
+    for identifier in ("init", "expect", "issue", "arrive"):
         executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
-    completion = next(item for item in executor.enabled(state) if item.kind == "TMA_COMPLETION")
     before = executor.fingerprint(state)
+    phase = stable_phase_id("bar", 0, 0)
 
     with pytest.raises(ProtocolError) as caught:
-        executor.apply(state, completion)
-    assert caught.value.code == "TX_BYTES_EXCEED_EXPECTED"
+        executor.apply(state, Transition(phase, "PHASE_COMPLETION", resource="bar"))
+    assert caught.value.code == "INVALID_PHASE_COMPLETION_TRANSITION"
     assert executor.fingerprint(state) == before
 
 
@@ -559,13 +1054,14 @@ def test_stale_phase_completion_transition_is_rejected_atomically():
     assert executor.fingerprint(state) == before
 
 
-def test_missing_covered_observe_group_is_unsupported_not_sync_hazard():
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_missing_successful_wait_is_a_sync_hazard_at_first_next_arrive(engine):
     raw = json.loads((FIXTURES / "stale_generation.json").read_text())
     raw["events"] = [event for event in raw["events"] if event["type"] != "MBarrierWaitParity"]
-    with pytest.raises(PGIRError) as caught:
-        module_from_dict(raw)
-    assert caught.value.code == "UNSUPPORTED_MISSING_OBSERVE_GROUP"
-    assert caught.value.details["target_generation"] == 0
+    result = check_module(module_from_dict(raw), engine=engine)
+    assert result["verdict"] == "SYNC_HAZARD"
+    assert result["diagnostics"][0]["code"] == "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE"
+    assert result["diagnostics"][0]["event"] == "a1"
 
 
 def tx_delayed_phase_module():
@@ -581,28 +1077,29 @@ def tx_delayed_phase_module():
     return module_from_dict(raw)
 
 
-def test_tx_delay_allows_old_wait_after_final_arrive_before_phase_completion():
+def test_next_phase_first_arrive_requires_prior_successful_wait():
     executor = Executor(tx_delayed_phase_module())
     state = executor.initial_state()
     for identifier in ("init", "arrive0"):
         executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
     executor.apply(state, next(item for item in executor.enabled(state) if item.kind == "PHASE_COMPLETION"))
-    for identifier in ("expect1", "issue1", "arrive1", "wait0"):
+    for identifier in ("expect1", "issue1"):
         executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
-    barrier = state.barriers["bar"]
-    assert barrier.generation == 1 and barrier.pending == 0
-    assert barrier.completed_tx == 0 and barrier.expected_tx == 4
-    assert state.observed == {"wait0"}
-    executor.apply(state, next(item for item in executor.enabled(state) if item.kind == "TMA_COMPLETION"))
-    executor.apply(state, next(item for item in executor.enabled(state) if item.kind == "PHASE_COMPLETION"))
-    assert state.barriers["bar"].generation == 2
+    before = executor.fingerprint(state)
+    arrive = next(item for item in executor.enabled(state) if item.id == "arrive1")
+    with pytest.raises(ProtocolError) as caught:
+        executor.apply(state, arrive)
+    assert caught.value.code == "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE"
+    assert caught.value.event == "arrive1"
+    assert caught.value.state["required_observed_generation"] == 0
+    assert executor.fingerprint(state) == before
 
 
 @pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
-def test_tx_delay_schedule_that_completes_before_old_wait_is_risky(engine):
+def test_tx_delay_schedule_with_arrive_before_old_wait_is_invalid(engine):
     result = check_module(tx_delayed_phase_module(), engine=engine)
     assert result["verdict"] == "SYNC_HAZARD"
-    assert result["diagnostics"][0]["code"] == "PROTOCOL_INVALID_PHASE_ADVANCE"
+    assert result["diagnostics"][0]["code"] == "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE"
 
 
 def tx_pending_early_next_arrival_module():
@@ -619,6 +1116,7 @@ def tx_pending_early_next_arrival_module():
         {"id": "issue0", "type": "TmaLoadIssue", "actor": "a", "seq": 2, "resource": "bar", "lifecycle_epoch": 0, "bytes": 4, "generation": 0, "source_region": "source", "destination_region": "tile"},
         {"id": "arrive0", "type": "MBarrierArrive", "actor": "a", "seq": 3, "resource": "bar", "lifecycle_epoch": 0, "count": 1, "generation": 0},
         {"id": "wait0", "type": "MBarrierWaitParity", "actor": "a", "seq": 4, "resource": "bar", "lifecycle_epoch": 0, "generation": 0, "raw_parity": 0, "parity_evidence": structured_evidence("a:bar", 0)},
+        {"id": "wait1", "type": "MBarrierWaitParity", "actor": "a", "seq": 5, "resource": "bar", "lifecycle_epoch": 0, "generation": 1, "raw_parity": 1, "parity_evidence": structured_evidence("a:bar", 1), "depends_on": ["arrive1"]},
         {"id": "arrive1", "type": "MBarrierArrive", "actor": "b", "seq": 0, "resource": "bar", "lifecycle_epoch": 0, "count": 1, "generation": 1, "depends_on": ["arrive0"]},
     ]
     return module_from_dict(raw)
@@ -628,7 +1126,12 @@ def tx_pending_early_next_arrival_module():
 def test_held_tx_completion_does_not_hide_zero_pending_early_arrival(engine):
     result = check_module(tx_pending_early_next_arrival_module(), engine=engine)
     assert result["verdict"] == "SYNC_HAZARD"
-    assert result["diagnostics"][0]["code"] == "ARRIVE_WITH_ZERO_PENDING_COUNT"
+    expected = (
+        "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE"
+        if engine == "exhaustive"
+        else "ARRIVE_WITH_ZERO_PENDING_COUNT"
+    )
+    assert result["diagnostics"][0]["code"] == expected
 
 
 def test_phase_lap_precedes_zero_pending_diagnostic():
@@ -909,7 +1412,6 @@ def test_incremental_program_stream_first_middle_final_and_end_flush():
     # the final application proves END flushed the last held anchor.
     assert engine.counters.transitions_by_kind == {
         "PROGRAM": 6,
-        "TMA_COMPLETION": 0,
         "PHASE_COMPLETION": 0,
         "BARRIER_RELEASE": 0,
         "GROUP_COMPLETION": 0,
@@ -938,35 +1440,36 @@ def test_maximal_uses_no_enabled_scan_or_state_clone(monkeypatch):
     monkeypatch.setattr(Executor, "enabled", forbidden)
     monkeypatch.setattr(ExecutionState, "clone", forbidden)
     result = check_module(load("partial_next_phase.json"), engine="maximal")
-    assert result["verdict"] == "SAFE"
-    assert result["artifacts"]["canonical_trace"]
+    assert result["verdict"] == "SYNC_HAZARD"
+    assert result["diagnostics"][0]["code"] == "INVALID_MBARRIER_UNOBSERVED_PHASE_REUSE"
+    assert result["artifacts"]["pdg"]
     assert result["statistics"]["full_enabled_scans"] == 0
     assert result["statistics"]["state_clones"] == 0
     assert result["statistics"]["replayed_prefix_steps"] == 0
 
 
-def test_every_real_and_synthetic_anchor_has_one_incremental_boundary():
+def test_every_real_and_phase_anchor_has_one_incremental_boundary():
     module = load("tma_completion_before_arrival.json")
     expected = _anchor_ids(module)
     result = check_module(module, engine="maximal")
     anchors = [item["anchor"] for item in result["artifacts"]["boundaries"]]
     assert result["verdict"] == "SAFE"
     assert anchors == expected
-    assert any(anchor.startswith("completion:tma-load:") for anchor in anchors)
+    assert not any(anchor.startswith("completion:tma-load:") for anchor in anchors)
     assert any(anchor.startswith("completion:mbarrier-phase:") for anchor in anchors)
     assert len(anchors) == len(set(anchors))
 
 
-def test_held_tma_completion_exposes_early_next_generation_hazard():
+def test_held_tma_phase_exposes_early_next_generation_hazard():
     module = tx_pending_early_next_arrival_module()
-    completion = stable_completion_id("issue0", 0)
+    phase = stable_phase_id("bar", 0, 0)
     result = check_module(module, engine="maximal")
     assert result["verdict"] == "SYNC_HAZARD"
     assert result["diagnostics"][0]["code"] == "ARRIVE_WITH_ZERO_PENDING_COUNT"
     assert result["diagnostics"][0]["event"] == "arrive1"
     prefix = [step["transition"] for step in result["witness"]["reachable_execution_prefix"]]
     assert "issue0" in prefix
-    assert completion not in prefix
+    assert phase not in prefix
 
 
 @pytest.mark.parametrize(("actors", "events_per_actor"), [(1, 3), (2, 2), (3, 1)])
@@ -988,11 +1491,12 @@ def test_incremental_operation_counts_scale_by_work_not_timing():
         assert result["verdict"] == "SAFE"
         assert statistics["n_ext"] == size
         assert statistics["t_eff"] == 1
-        assert statistics["state_initializations"] == 2
-        assert statistics["completed_passes"] == 2
+        assert statistics["state_initializations"] == 1
+        assert statistics["completed_passes"] == 1
         assert statistics["anchor_boundaries"] == size
-        assert statistics["transitions_by_kind"]["PROGRAM"] == 2 * size
-        assert statistics["transition_attempts"] == 2 * size
+        assert statistics["analytical_program_only_boundaries"] == size
+        assert statistics["transitions_by_kind"]["PROGRAM"] == size
+        assert statistics["transition_attempts"] == size
         assert statistics["scheduler_work_units"] <= 10 * size
         assert statistics["worklist_pops"] == statistics["transition_attempts"]
         assert statistics["stale_worklist_pops"] == 0
@@ -1013,28 +1517,28 @@ def test_incremental_statistics_certificate_is_deterministic():
     assert first["certificate"]["stream_counts"] == {
         "program": 3,
         "phase_completion": 0,
-        "tma_completion": 0,
         "barrier_release": 0,
         "group_completion": 0,
         "channel_handoff": 0,
         "engine_completion": 0,
         "total": 3,
     }
-    assert first["boundary_evaluations"] == 6
+    assert first["boundary_evaluations"] == 0
+    assert first["analytical_program_only_boundaries"] == 6
 
 
 @pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
-def test_never_spawned_synthetic_phase_anchor_is_unreachable_not_stuck(engine):
+def test_predicated_false_arrival_creates_no_synthetic_phase_anchor(engine):
     module = lifecycle_module("MBarrierInit", "MBarrierArrive")
     raw = json.loads(json.dumps(module.raw))
     raw["events"][1]["predicate"] = False
-    result = check_module(module_from_dict(raw), engine=engine)
-    assert result["verdict"] == "INCONCLUSIVE"
+    module = module_from_dict(raw)
+    assert not any("mbarrier-phase" in anchor for anchor in _anchor_ids(module))
+    result = check_module(module, engine=engine)
+    assert result["verdict"] == "SAFE"
     if engine == "crosscheck":
-        assert result["artifacts"]["crosscheck"]["maximal"]["verdict"] == "INCONCLUSIVE"
-        assert result["artifacts"]["crosscheck"]["exhaustive"]["verdict"] == "INCONCLUSIVE"
-    else:
-        assert result["diagnostics"][0]["code"] == "ANCHOR_NOT_REACHED"
+        assert result["artifacts"]["crosscheck"]["maximal"]["verdict"] == "SAFE"
+        assert result["artifacts"]["crosscheck"]["exhaustive"]["verdict"] == "SAFE"
 
 
 def test_crosscheck_retains_maximal_incremental_certificate():
@@ -1083,17 +1587,21 @@ def test_proxy_protocol_fields_are_structured_and_validated():
     assert malformed.value.code == "SCHEMA_INVALID"
 
 
-def test_channel_and_mbarrier_resource_metadata_fail_closed():
+def test_channel_resource_and_events_are_known_but_unsupported():
     raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
-    raw["resources"][0].update({
-        "kind": "channel",
-        "capacity": 2,
-        "scope": "CTA",
-    })
-    with pytest.raises(PGIRError) as caught:
+    raw["resources"][0]["kind"] = "channel"
+    with pytest.raises(PGIRError) as resource:
         module_from_dict(raw)
-    assert caught.value.code == "RESOURCE_FIELDS_MISSING"
+    assert resource.value.code == "KNOWN_RESOURCE_UNSUPPORTED"
 
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["events"][0]["type"] = "ChannelCreate"
+    with pytest.raises(PGIRError) as event:
+        module_from_dict(raw)
+    assert event.value.code == "KNOWN_EVENT_UNSUPPORTED"
+
+
+def test_mbarrier_resource_metadata_fail_closed():
     raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
     raw["resources"][0]["capacity"] = 2
     with pytest.raises(PGIRError) as unexpected:
@@ -1108,9 +1616,8 @@ def test_protocol_synthetic_ids_are_stable_and_component_safe():
         stable_group_id("CP_ASYNC", "owner:a", 2),
         stable_group_id("CP_ASYNC", "owner", 2),
         stable_group_completion_id("WGMMA", "wg:0", 4, "RESULT_READY"),
-        stable_channel_handoff_id("channel:0", 1, 5),
     }
-    assert len(identifiers) == 6
+    assert len(identifiers) == 5
     assert stable_group_id("CP_ASYNC", "owner:a", 2) in identifiers
     assert all(identifier.startswith(("completion:", "group:")) for identifier in identifiers)
 
@@ -1329,7 +1836,6 @@ def cp_async_module(
         "id": "copies",
         "kind": "async_group",
         "participants": ["owner"],
-        "capacity": 8,
         "protocol": "CP_ASYNC",
         "scope": "CTA",
     }]
@@ -1393,6 +1899,70 @@ def cp_async_module(
     return module_from_dict(raw)
 
 
+def serial_cp_async_wait_module(group_count: int):
+    raw = json.loads(json.dumps(cp_async_module(1, overwrite_group=None).raw))
+    events = []
+    for group in range(group_count):
+        events.extend([
+            {
+                "id": f"issue{group}",
+                "type": "CpAsyncIssue",
+                "actor": "owner",
+                "seq": 3 * group,
+                "resource": "copies",
+                "source_region": "source",
+                "destination_region": "tile0",
+                "bytes": 16,
+                "group_owner": "owner",
+            },
+            {
+                "id": f"commit{group}",
+                "type": "CpAsyncCommitGroup",
+                "actor": "owner",
+                "seq": 3 * group + 1,
+                "resource": "copies",
+                "group_owner": "owner",
+                "group_seq": group,
+            },
+            {
+                "id": f"wait{group}",
+                "type": "CpAsyncWaitGroup",
+                "actor": "owner",
+                "seq": 3 * group + 2,
+                "resource": "copies",
+                "group_owner": "owner",
+                "wait_group_count": 0,
+            },
+        ])
+    raw["events"] = events
+    return module_from_dict(raw)
+
+
+def test_commit_group_frontier_work_scales_linearly():
+    reports = {
+        groups: check_module(serial_cp_async_wait_module(groups), engine="maximal")
+        for groups in (16, 32, 64, 128)
+    }
+    keys = (
+        "group_frontier_queries",
+        "group_frontier_advances",
+        "group_wait_probes",
+        "group_uniqueness_probes",
+    )
+    for groups, report in reports.items():
+        assert report["verdict"] == "SAFE"
+        statistics = report["statistics"]
+        assert statistics["group_frontier_queries"] == 15 * groups + 3
+        assert statistics["group_frontier_advances"] == 3 * groups
+        assert statistics["group_wait_probes"] == 15 * groups
+        assert statistics["group_uniqueness_probes"] == 3 * groups
+        assert all(statistics[key] <= 16 * groups for key in keys)
+    for smaller, larger in zip((16, 32, 64), (32, 64, 128)):
+        small = reports[smaller]["statistics"]
+        large = reports[larger]["statistics"]
+        assert large["scheduler_work_units"] <= 2 * small["scheduler_work_units"]
+
+
 @pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
 def test_cp_async_wait_zero_closes_copy_window(engine):
     module = cp_async_module()
@@ -1446,7 +2016,7 @@ def test_cp_async_missing_commit_and_wait_before_commit_fail_closed():
     assert early["diagnostics"][0]["code"] == "WAIT_BEFORE_COMMIT"
 
 
-def test_cp_async_group_validation_rejects_owner_sequence_and_capacity_ambiguity():
+def test_cp_async_group_validation_rejects_owner_and_sequence_ambiguity():
     raw = json.loads(json.dumps(cp_async_module().raw))
     raw["actors"].append({"id": "other", "kind": "PARTITION", "participants": [0]})
     next(event for event in raw["events"] if event["id"] == "issue0")["group_owner"] = "other"
@@ -1461,16 +2031,10 @@ def test_cp_async_group_validation_rejects_owner_sequence_and_capacity_ambiguity
     assert sequence.value.code == "COMMIT_GROUP_SEQUENCE_GAP"
 
     raw = json.loads(json.dumps(cp_async_module().raw))
-    raw["resources"][0]["capacity"] = 9
-    with pytest.raises(PGIRError) as capacity:
-        module_from_dict(raw)
-    assert capacity.value.code == "CP_ASYNC_CAPACITY_UNSUPPORTED"
-
-    raw = json.loads(json.dumps(cp_async_module().raw))
-    raw["events"][-2]["wait_group_count"] = 8
-    with pytest.raises(PGIRError) as wait_count:
-        module_from_dict(raw)
-    assert wait_count.value.code == "WAIT_GROUP_COUNT_OUT_OF_RANGE"
+    raw["resources"][0]["capacity"] = 17  # ignored legacy metadata
+    module_from_dict(raw)
+    raw["events"][-2]["wait_group_count"] = 32
+    module_from_dict(raw)
 
 
 def test_cp_async_completion_replay_is_failure_atomic():
@@ -1512,14 +2076,13 @@ def test_cp_async_group_completion_stream_is_ordered_and_delta_driven(monkeypatc
     assert result["statistics"]["state_clones"] == 0
 
 
-def test_held_cp_async_completion_exposes_group_capacity_violation():
+def test_held_cp_async_completion_ignores_legacy_capacity():
     raw = json.loads(json.dumps(cp_async_module(2, wait_group_count=0, overwrite_group=None).raw))
     raw["resources"][0]["capacity"] = 1
     module = module_from_dict(raw)
     for engine in ("maximal", "exhaustive", "crosscheck"):
         result = check_module(module, engine=engine)
-        assert result["verdict"] == "SYNC_HAZARD"
-        assert result["diagnostics"][0]["code"] == "COMMIT_GROUP_CAPACITY_EXCEEDED"
+        assert result["verdict"] == "SAFE"
 
 
 def test_cp_async_wait_does_not_publish_to_another_actor_via_dependency():
@@ -1568,7 +2131,7 @@ def cp_async_linear_module(size: int):
 def test_cp_async_incremental_work_scales_linearly_by_count():
     reports = {
         size: check_module(cp_async_linear_module(size), engine="maximal")
-        for size in (16, 32)
+        for size in (16, 32, 64)
     }
     for size, result in reports.items():
         statistics = result["statistics"]
@@ -1578,6 +2141,7 @@ def test_cp_async_incremental_work_scales_linearly_by_count():
         assert statistics["state_initializations"] == 3
         assert statistics["completed_passes"] == 3
         assert statistics["transition_attempts"] == 12 * size
+        assert statistics["pdg_edges"] <= 3 * statistics["n_ext"]
         assert statistics["full_enabled_scans"] == 0
         assert statistics["state_clones"] == 0
         assert statistics["replayed_prefix_steps"] == 0
@@ -1585,6 +2149,7 @@ def test_cp_async_incremental_work_scales_linearly_by_count():
     large = reports[32]["statistics"]
     assert large["transition_attempts"] == 2 * small["transition_attempts"]
     assert large["scheduler_work_units"] <= 2 * small["scheduler_work_units"] + 16
+    assert large["pdg_edges"] <= 2 * small["pdg_edges"] + 8
 
 
 def wgmma_module(
@@ -1604,7 +2169,6 @@ def wgmma_module(
         "id": "mma",
         "kind": "async_group",
         "participants": ["wg"],
-        "capacity": 8,
         "protocol": "WGMMA",
         "scope": "CTA",
     }]
@@ -1709,6 +2273,30 @@ def test_wgmma_typed_endpoints_close_their_own_windows(engine):
     assert {operands, result_ready}.issubset(anchors)
 
 
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_wgmma_result_wait_publishes_to_member_lane_actor(engine):
+    raw = json.loads(json.dumps(wgmma_module(overwrite_operand=False).raw))
+    raw["actors"].append({"id": "lane0", "kind": "LANE", "participants": [0]})
+    read = next(event for event in raw["events"] if event["id"] == "accumulator_read")
+    read.update({"actor": "lane0", "seq": 0, "depends_on": ["wait_result"]})
+    assert check_module(module_from_dict(raw), engine=engine)["verdict"] == "SAFE"
+
+
+def test_wgmma_result_wait_does_not_publish_outside_owner_warpgroup():
+    raw = json.loads(json.dumps(wgmma_module(overwrite_operand=False).raw))
+    raw["target"]["cta_threads"] = 129
+    raw["actors"].append({"id": "outsider", "kind": "LANE", "participants": [128]})
+    read = next(event for event in raw["events"] if event["id"] == "accumulator_read")
+    read.update({"actor": "outsider", "seq": 0, "depends_on": ["wait_result"]})
+    result = check_module(module_from_dict(raw), engine="crosscheck")
+    assert result["verdict"] == "SYNC_HAZARD"
+    assert result["diagnostics"][0]["code"] == "WGMMA_RESULT_NOT_READY"
+    assert [finding["class"] for finding in result["all_findings"]] == [
+        "SYNC_HAZARD",
+        "DATA_HAZARD",
+    ]
+
+
 def test_wgmma_result_ready_does_not_release_shared_operands():
     result = check_module(
         wgmma_module(wait_operands=False, wait_result=True, read_accumulator=False),
@@ -1727,9 +2315,14 @@ def test_wgmma_operands_released_does_not_make_result_ready():
         wgmma_module(wait_result=False, overwrite_operand=False, read_accumulator=True),
         engine="crosscheck",
     )
-    assert result["verdict"] == "DATA_HAZARD"
+    assert result["verdict"] == "SYNC_HAZARD"
+    assert result["diagnostics"][0]["code"] == "WGMMA_RESULT_NOT_READY"
+    data_finding = next(
+        finding for finding in result["all_findings"]
+        if finding["class"] == "DATA_HAZARD"
+    )
     accumulator = next(
-        effect for effect in result["witness"]["effects"]
+        effect for effect in data_finding["witness"]["effects"]
         if effect["id"] == "effect:mma_issue:accumulator"
     )
     assert accumulator["window"][1].endswith("result_ready")
@@ -1758,6 +2351,29 @@ def test_wgmma_requires_complete_warpgroup_and_typed_wait_endpoint():
     with pytest.raises(PGIRError) as endpoint:
         module_from_dict(raw)
     assert endpoint.value.code == "INVALID_WGMMA_WAIT_ENDPOINT"
+
+
+def test_wgmma_issue_accepts_register_operand_without_proxy_fencing_it():
+    raw = json.loads(json.dumps(wgmma_module().raw))
+    raw["regions"].append({
+        "id": "register_operand",
+        "allocation_id": "register-input",
+        "address_space": "REGISTER",
+        "offset": 0,
+        "extent": 64,
+    })
+    next(event for event in raw["events"] if event["id"] == "mma_issue")["regions"].append("register_operand")
+    assert check_module(module_from_dict(raw), engine="crosscheck")["verdict"] == "SAFE"
+
+
+def test_wgmma_accepts_aligned_multi_warpgroup_partition_owner():
+    raw = json.loads(json.dumps(wgmma_module().raw))
+    raw["target"]["cta_threads"] = 256
+    raw["actors"][0].update({
+        "kind": "PARTITION",
+        "participants": list(range(256)),
+    })
+    assert check_module(module_from_dict(raw), engine="crosscheck")["verdict"] == "SAFE"
 
 
 def test_wgmma_empty_group_is_fail_closed_without_ptx_contract():
@@ -1815,7 +2431,7 @@ def test_wgmma_maximal_uses_two_delta_driven_endpoint_streams(monkeypatch):
     assert result["statistics"]["state_clones"] == 0
 
 
-def test_wgmma_capacity_counts_every_unfinished_endpoint():
+def test_wgmma_legacy_capacity_does_not_reject_later_groups():
     raw = json.loads(json.dumps(wgmma_module(
         wait_operands=False,
         overwrite_operand=False,
@@ -1848,8 +2464,7 @@ def test_wgmma_capacity_counts_every_unfinished_endpoint():
     module = module_from_dict(raw)
     for engine in ("maximal", "exhaustive", "crosscheck"):
         result = check_module(module, engine=engine)
-        assert result["verdict"] == "SYNC_HAZARD"
-        assert result["diagnostics"][0]["code"] == "COMMIT_GROUP_CAPACITY_EXCEEDED"
+        assert result["verdict"] == "SAFE"
 
 
 def tma_store_module(
@@ -1863,7 +2478,7 @@ def tma_store_module(
     raw["target"]["cta_threads"] = 1
     raw["resources"] = [{
         "id": "stores", "kind": "async_group", "participants": ["store_owner"],
-        "capacity": 8, "protocol": "TMA_STORE", "scope": "CTA",
+         "protocol": "TMA_STORE", "scope": "CTA",
     }]
     raw["regions"] = [
         {"id": "store_source", "allocation_id": "shared-source", "address_space": "SHARED", "offset": 0, "extent": 64},
@@ -1983,129 +2598,102 @@ def test_tma_store_maximal_uses_two_delta_driven_endpoint_streams(monkeypatch):
     assert result["statistics"]["state_clones"] == 0
 
 
-def channel_module(phases: int = 1, control_only: bool = False):
-    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+def gsan_cross_sm_reduced_module(producer_sem: str, consumer_sem: str, scope: str):
+    raw = cluster_dsmem_module(cluster_ctas=2)
     raw["actors"] = [
-        {"id": "producer", "kind": "PARTITION", "participants": [0]},
-        {"id": "consumer", "kind": "PARTITION", "participants": [1]},
+        {"id": "producer", "kind": "PARTITION", "participants": [0], "cta_rank": 0},
+        {"id": "consumer", "kind": "PARTITION", "participants": [0], "cta_rank": 1},
     ]
-    raw["target"]["cta_threads"] = 2
-    mask = {name: False for name in full_visibility_mask()}
-    mask["control_only" if control_only else "shared"] = True
-    raw["resources"] = [{
-        "id": "pipe", "kind": "channel", "participants": ["producer", "consumer"],
-        "capacity": 1, "scope": "CTA", "visibility_mask": mask,
+    raw["regions"] = [{
+        "id": "payload", "allocation_id": "global:payload",
+        "address_space": "GLOBAL", "offset": 0, "extent": 4,
     }]
-    raw["regions"] = [{"id": "tile", "allocation_id": "shared-tile", "address_space": "SHARED", "offset": 0, "extent": 64}]
-    producer_events = [{"id": "create", "type": "ChannelCreate", "actor": "producer", "seq": 0, "resource": "pipe"}]
-    consumer_events = []
-    for phase in range(phases):
-        producer_events.extend([
-            {"id": f"acquire{phase}", "type": "ProducerAcquire", "actor": "producer", "seq": 1 + 3 * phase, "resource": "pipe", "slot": 0, "logical_phase": phase},
-            {"id": f"produce{phase}", "type": "MemWrite", "actor": "producer", "seq": 2 + 3 * phase, "region": "tile"},
-            {"id": f"commit{phase}", "type": "ProducerCommit", "actor": "producer", "seq": 3 + 3 * phase, "resource": "pipe", "slot": 0, "logical_phase": phase},
-        ])
-        consumer_events.extend([
-            {"id": f"consume_wait{phase}", "type": "ConsumerWait", "actor": "consumer", "seq": 3 * phase, "resource": "pipe", "slot": 0, "logical_phase": phase},
-            {"id": f"consume{phase}", "type": "MemRead", "actor": "consumer", "seq": 1 + 3 * phase, "region": "tile"},
-            {"id": f"release{phase}", "type": "ConsumerRelease", "actor": "consumer", "seq": 2 + 3 * phase, "resource": "pipe", "slot": 0, "logical_phase": phase},
-        ])
-    raw["events"] = producer_events + consumer_events
+    synchronizes = (
+        producer_sem in {"release", "acq_rel"}
+        and consumer_sem in {"acquire", "acq_rel"}
+        and scope in {"gpu", "sys"}
+    )
+    if not synchronizes:
+        raw["resources"] = []
+        raw["events"] = [
+            {"id": "payload_write", "type": "MemWrite", "actor": "producer", "seq": 0, "region": "payload"},
+            {"id": "payload_read", "type": "MemRead", "actor": "consumer", "seq": 0, "region": "payload"},
+        ]
+        return module_from_dict(raw)
+    mask = {name: False for name in full_visibility_mask()}
+    mask.update({"dsmem": False, "global_read": True, "global_write": True})
+    raw["resources"] = [{
+        "id": "atomic_flag", "kind": "channel",
+        "participants": ["producer", "consumer"],
+        "capacity": 1, "scope": "GPU", "visibility_mask": mask,
+    }]
+    raw["events"] = [
+        {"id": "flag_create", "type": "ChannelCreate", "actor": "producer", "seq": 0, "resource": "atomic_flag"},
+        {"id": "flag_acquire_slot", "type": "ProducerAcquire", "actor": "producer", "seq": 1, "resource": "atomic_flag", "slot": 0, "logical_phase": 0},
+        {"id": "payload_write", "type": "MemWrite", "actor": "producer", "seq": 2, "region": "payload"},
+        {"id": "flag_release", "type": "ProducerCommit", "actor": "producer", "seq": 3, "resource": "atomic_flag", "slot": 0, "logical_phase": 0},
+        {"id": "flag_poll", "type": "ConsumerWait", "actor": "consumer", "seq": 0, "resource": "atomic_flag", "slot": 0, "logical_phase": 0},
+        {"id": "payload_read", "type": "MemRead", "actor": "consumer", "seq": 1, "region": "payload"},
+        {"id": "flag_done", "type": "ConsumerRelease", "actor": "consumer", "seq": 2, "resource": "atomic_flag", "slot": 0, "logical_phase": 0},
+    ]
     return module_from_dict(raw)
 
 
-@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
-def test_channel_handoff_and_two_sided_reuse_are_safe(engine):
-    module = channel_module(phases=2)
-    result = check_module(module, engine=engine)
-    assert result["verdict"] == "SAFE"
-    handoffs = [stable_channel_handoff_id("pipe", 0, phase) for phase in range(2)]
-    anchors = {item["anchor"] for item in result["artifacts"]["boundaries"]}
-    assert set(handoffs).issubset(anchors)
-    edges = result["artifacts"]["pdg"]["edges"]
-    assert {"from": "commit0", "to": handoffs[0], "kind": "CHANNEL_COMMIT"} in edges
-    assert {"from": handoffs[0], "to": "consume_wait0", "kind": "CHANNEL_HANDOFF"} in edges
-    assert {"from": "release0", "to": "acquire1", "kind": "CHANNEL_RELEASE"} in edges
+def test_gsan_release_acquire_cross_sm_reduced_case_is_unsupported_without_atomics():
+    with pytest.raises(PGIRError) as caught:
+        gsan_cross_sm_reduced_module("release", "acquire", "gpu")
+    assert caught.value.code == "KNOWN_RESOURCE_UNSUPPORTED"
 
 
-def test_control_only_channel_orders_execution_but_not_shared_visibility():
-    result = check_module(channel_module(control_only=True), engine="crosscheck")
+@pytest.mark.parametrize(
+    ("producer_sem", "consumer_sem", "scope"),
+    [
+        ("relaxed", "acquire", "gpu"),
+        ("relaxed", "acquire", "sys"),
+        ("release", "relaxed", "gpu"),
+        ("release", "relaxed", "sys"),
+        ("release", "acquire", "cta"),
+        ("release", "acq_rel", "cta"),
+        ("acq_rel", "acquire", "cta"),
+        ("acq_rel", "acq_rel", "cta"),
+    ],
+)
+def test_gsan_cross_sm_semantic_and_scope_mismatch_reduced_cases_report_race(
+    producer_sem,
+    consumer_sem,
+    scope,
+):
+    result = check_module(
+        gsan_cross_sm_reduced_module(producer_sem, consumer_sem, scope),
+        engine="crosscheck",
+    )
     assert result["verdict"] == "DATA_HAZARD"
+    assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
 
 
-def test_channel_missing_commit_and_release_have_structured_witnesses():
-    raw = json.loads(json.dumps(channel_module().raw))
-    raw["events"] = [event for event in raw["events"] if event["id"] != "commit0"]
-    for actor in ("producer", "consumer"):
-        actor_events = [event for event in raw["events"] if event["actor"] == actor]
-        for seq, event in enumerate(actor_events):
-            event["seq"] = seq
-    missing_commit = check_module(module_from_dict(raw))
-    assert missing_commit["verdict"] == "SYNC_HAZARD"
-    assert missing_commit["diagnostics"][0]["code"] == "MISSING_PRODUCER_COMMIT"
-
-    raw = json.loads(json.dumps(channel_module().raw))
-    raw["events"] = [event for event in raw["events"] if event["id"] != "release0"]
-    missing_release = check_module(module_from_dict(raw))
-    assert missing_release["verdict"] == "SYNC_HAZARD"
-    assert missing_release["diagnostics"][0]["code"] == "MISSING_CONSUMER_RELEASE"
-
-
-def test_channel_wrong_owner_and_slot_fail_closed():
-    raw = json.loads(json.dumps(channel_module().raw))
-    commit = next(event for event in raw["events"] if event["id"] == "commit0")
-    commit.update({"actor": "consumer", "seq": 0, "depends_on": ["produce0"]})
-    producer_events = [event for event in raw["events"] if event["actor"] == "producer"]
-    for seq, event in enumerate(producer_events):
-        event["seq"] = seq
-    consumer_events = [commit] + [
-        event for event in raw["events"]
-        if event["actor"] == "consumer" and event["id"] != "commit0"
+@pytest.mark.parametrize(
+    ("left", "right"),
+    [("MemWrite", "MemRead"), ("MemRead", "MemWrite"), ("MemWrite", "MemWrite")],
+    ids=["raw", "war", "waw"],
+)
+def test_gsan_basic_cross_sm_race_reduced_cases_crosscheck(left, right):
+    raw = cluster_dsmem_module(cluster_ctas=2)
+    raw["actors"] = [
+        {"id": "cta0", "kind": "PARTITION", "participants": [0], "cta_rank": 0},
+        {"id": "cta1", "kind": "PARTITION", "participants": [0], "cta_rank": 1},
     ]
-    for seq, event in enumerate(consumer_events):
-        event["seq"] = seq
-    wrong_owner = check_module(module_from_dict(raw))
-    assert wrong_owner["verdict"] == "SYNC_HAZARD"
-    assert wrong_owner["diagnostics"][0]["code"] == "CHANNEL_PRODUCER_OWNERSHIP"
-
-    raw = json.loads(json.dumps(channel_module().raw))
-    next(event for event in raw["events"] if event["id"] == "acquire0")["slot"] = 1
-    with pytest.raises(PGIRError) as slot:
-        module_from_dict(raw)
-    assert slot.value.code == "CHANNEL_SLOT_OUT_OF_RANGE"
-
-
-def test_channel_handoff_replay_is_failure_atomic():
-    executor = Executor(channel_module())
-    state = executor.initial_state()
-    for identifier in ("create", "acquire0", "produce0", "commit0"):
-        executor.apply(state, next(item for item in executor.enabled(state) if item.id == identifier))
-    handoff = next(item for item in executor.enabled(state) if item.kind == "CHANNEL_HANDOFF")
-    executor.apply(state, handoff)
-    before = executor.fingerprint(state)
-    with pytest.raises(ProtocolError) as replay:
-        executor.apply(state, handoff)
-    assert replay.value.code == "INVALID_CHANNEL_HANDOFF_TRANSITION"
-    assert executor.fingerprint(state) == before
-
-
-def test_channel_maximal_uses_delta_driven_handoff_stream(monkeypatch):
-    module = channel_module(phases=2)
-    streams = [stream for stream in build_anchor_streams(module, _anchor_ids(module)) if stream.kind == "CHANNEL_HANDOFF"]
-    assert len(streams) == 1
-    assert streams[0].anchors == tuple(stable_channel_handoff_id("pipe", 0, phase) for phase in range(2))
-
-    def forbidden(*_args, **_kwargs):
-        raise AssertionError("reference scan/clone reached from channel maximal engine")
-
-    monkeypatch.setattr(Executor, "enabled", forbidden)
-    monkeypatch.setattr(ExecutionState, "clone", forbidden)
-    result = check_module(module, engine="maximal")
-    assert result["verdict"] == "SAFE"
-    assert result["statistics"]["channel_handoff_streams"] == 1
-    assert result["statistics"]["channel_notifications"] > 0
-    assert result["statistics"]["full_enabled_scans"] == 0
-    assert result["statistics"]["state_clones"] == 0
+    raw["resources"] = []
+    raw["regions"] = [{
+        "id": "target", "allocation_id": "global:target",
+        "address_space": "GLOBAL", "offset": 0, "extent": 4,
+    }]
+    raw["events"] = [
+        {"id": "left", "type": left, "actor": "cta0", "seq": 0, "region": "target"},
+        {"id": "right", "type": right, "actor": "cta1", "seq": 0, "region": "target"},
+    ]
+    result = check_module(module_from_dict(raw), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+    assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
 
 
 def tma_load_proxy_module(to_domain: str = "TMA", fence_after_issue: bool = False, fence_region: str = "source"):
@@ -2141,6 +2729,95 @@ def test_directional_proxy_fence_publishes_generic_write_to_tma(engine):
     assert [transfer.to_domain for transfer in state.visibility_transfers] == ["TMA"]
 
 
+def elected_proxy_tma_store_module(control_only: bool = False):
+    raw = json.loads((FIXTURES / "safe_handoff.json").read_text())
+    raw["target"]["cta_threads"] = 2
+    raw["actors"] = [
+        {"id": "writer", "kind": "LANE", "participants": [0]},
+        {"id": "fencer", "kind": "LANE", "participants": [1]},
+    ]
+    visibility = full_visibility_mask()
+    visibility["control_only"] = control_only
+    if control_only:
+        visibility.update({
+            "shared": False,
+            "global_read": False,
+            "global_write": False,
+            "tensor_read": False,
+            "tensor_write": False,
+        })
+    raw["resources"] = [
+        {
+            "id": "cta", "kind": "cta_barrier", "participants": ["writer", "fencer"],
+            "capacity": 2, "scope": "CTA", "visibility_mask": visibility,
+        },
+        {
+            "id": "stores", "kind": "async_group", "participants": ["fencer"],
+             "protocol": "TMA_STORE", "scope": "CTA",
+        },
+    ]
+    raw["regions"] = [
+        {
+            "id": "shared", "allocation_id": "shared", "address_space": "SHARED",
+            "offset": 0, "extent": 64,
+        },
+        {
+            "id": "global", "allocation_id": "global", "address_space": "GLOBAL",
+            "offset": 0, "extent": 64,
+        },
+    ]
+    raw["events"] = [
+        {"id": "write", "type": "MemWrite", "actor": "writer", "seq": 0, "region": "shared"},
+        {
+            "id": "writer_arrive", "type": "BarrierArrive", "actor": "writer", "seq": 1,
+            "resource": "cta", "invocation_id": 0, "count": 1,
+        },
+        {
+            "id": "writer_observe", "type": "BarrierObserve", "actor": "writer", "seq": 2,
+            "resource": "cta", "invocation_id": 0,
+        },
+        {
+            "id": "fencer_arrive", "type": "BarrierArrive", "actor": "fencer", "seq": 0,
+            "resource": "cta", "invocation_id": 0, "count": 1,
+        },
+        {
+            "id": "fencer_observe", "type": "BarrierObserve", "actor": "fencer", "seq": 1,
+            "resource": "cta", "invocation_id": 0,
+        },
+        {
+            "id": "proxy", "type": "ProxyFence", "actor": "fencer", "seq": 2,
+            "from_domain": "GENERIC", "to_domain": "TMA", "scope": "CTA",
+            "regions": ["shared"], "visibility_mask": full_visibility_mask(),
+        },
+        {
+            "id": "store", "type": "TmaStoreIssue", "actor": "fencer", "seq": 3,
+            "resource": "stores", "group_owner": "fencer", "source_region": "shared",
+            "destination_region": "global", "bytes": 64,
+        },
+        {
+            "id": "commit", "type": "TmaStoreCommitGroup", "actor": "fencer", "seq": 4,
+            "resource": "stores", "group_owner": "fencer", "group_seq": 0,
+        },
+        {
+            "id": "wait", "type": "TmaStoreWaitGroup", "actor": "fencer", "seq": 5,
+            "resource": "stores", "group_owner": "fencer", "wait_group_count": 0,
+            "wait_mode": "GLOBAL",
+        },
+    ]
+    return module_from_dict(raw)
+
+
+@pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
+def test_elected_proxy_fence_publishes_collective_shared_writes(engine):
+    assert check_module(elected_proxy_tma_store_module(), engine=engine)["verdict"] == "SAFE"
+
+
+def test_elected_proxy_fence_requires_typed_collective_visibility():
+    result = check_module(elected_proxy_tma_store_module(control_only=True), engine="crosscheck")
+    assert result["verdict"] == "DATA_HAZARD"
+    assert result["diagnostics"][0]["code"] == "UNORDERED_CONFLICT"
+
+
 def test_proxy_wrong_domain_does_not_publish():
     raw = tma_load_proxy_module()
     next(event for event in raw["events"] if event["id"] == "proxy")["to_domain"] = "ASYNC_COPY"
@@ -2162,6 +2839,43 @@ def test_proxy_region_must_cover_async_source():
     })
     result = check_module(module_from_dict(raw), engine="crosscheck")
     assert result["verdict"] == "DATA_HAZARD"
+
+
+@pytest.mark.parametrize(
+    ("fragments", "expected"),
+    [
+        (((0, 112, "same"),), "SAFE"),
+        (((0, 56, "same"), (56, 56, "same")), "SAFE"),
+        (((40, 72, "same"), (0, 56, "same")), "SAFE"),
+        (((0, 56, "same"), (57, 55, "same")), "DATA_HAZARD"),
+        (((0, 56, "same"), (56, 56, "other")), "DATA_HAZARD"),
+    ],
+)
+def test_proxy_region_union_exactly_covers_async_source(fragments, expected):
+    raw = json.loads(json.dumps(next(
+        case.raw
+        for case in CASES
+        if case.label == "PGIR-TMA-06-NAMED-PROXY-AND-WAIT-CORRECT"
+    )))
+    source = next(region for region in raw["regions"] if region["id"] == "source")
+    fragment_ids = []
+    for index, (offset, extent, allocation_id) in enumerate(fragments):
+        identifier = f"source_fragment_{index}"
+        raw["regions"].append({
+            **source,
+            "id": identifier,
+            "allocation_id": (
+                source["allocation_id"]
+                if allocation_id == "same"
+                else allocation_id
+            ),
+            "offset": offset,
+            "extent": extent,
+        })
+        fragment_ids.append(identifier)
+    next(event for event in raw["events"] if event["id"] == "proxy")["regions"] = fragment_ids
+
+    assert check_module(module_from_dict(raw), engine="crosscheck")["verdict"] == expected
 
 
 def test_proxy_reverse_direction_and_mask_mismatch_fail_closed():
@@ -2252,22 +2966,30 @@ def tma_engine_order_module(order: tuple[int, int] | None):
             "id": "overwrite0", "type": "MemWrite", "actor": "a",
             "seq": len(events) + 1, "region": "source0",
         },
+        {
+            "id": "wait0", "type": "MBarrierWaitParity", "actor": "a",
+            "seq": len(events) + 2, "resource": "bar0", "lifecycle_epoch": 0,
+            "generation": 0, "raw_parity": 0,
+            "parity_evidence": {
+                "derivation_kind": "BARRIER_HISTORY", "logical_stream_id": "a:bar0",
+                "lifecycle_epoch": 0, "stream_rank": 0, "polling_coalesced": True,
+            },
+        },
     ])
     raw["events"] = events
     return raw
 
 
 @pytest.mark.parametrize("engine", ["maximal", "exhaustive", "crosscheck"])
-def test_explicit_engine_order_makes_later_observation_cover_prior_completion(engine):
+def test_explicit_engine_order_makes_later_observation_cover_prior_phase(engine):
     result = check_module(module_from_dict(tma_engine_order_module((0, 1))), engine=engine)
-    first = stable_completion_id("issue0", 0)
-    second = stable_completion_id("issue1", 0)
+    first = stable_phase_id("bar0", 0, 0)
+    second = stable_phase_id("bar1", 0, 0)
     assert result["verdict"] == "SAFE"
     assert result["artifacts"]["engine_completion_streams"] == {"dma": [first, second]}
     assert {"from": first, "to": second, "kind": "ENGINE_ORDER"} in result["artifacts"]["pdg"]["edges"]
     if engine == "maximal":
         assert result["statistics"]["engine_completion_streams"] == 1
-        assert result["statistics"]["tma_completion_streams"] == 0
         assert result["statistics"]["engine_notifications"] > 0
         assert result["statistics"]["full_enabled_scans"] == 0
 
@@ -2311,7 +3033,7 @@ def test_missing_or_reverse_engine_order_preserves_completion_race():
     assert check_module(module_from_dict(tma_engine_order_module((1, 0))), engine="crosscheck")["verdict"] == "DATA_HAZARD"
 
 
-def test_engine_order_blocks_forced_out_of_order_completion_atomically():
+def test_engine_order_blocks_forced_out_of_order_phase_atomically():
     module = module_from_dict(tma_engine_order_module((0, 1)))
     executor = Executor(module)
     state = executor.initial_state()
@@ -2320,9 +3042,12 @@ def test_engine_order_blocks_forced_out_of_order_completion_atomically():
             break
         executor.apply(state, Transition(event.id, "PROGRAM", event=event))
     before = executor.fingerprint(state)
-    second = stable_completion_id("issue1", 0)
+    second = stable_phase_id("bar1", 0, 0)
     with pytest.raises(ProtocolError) as caught:
-        executor.apply(state, Transition(second, "TMA_COMPLETION"))
+        executor.apply(
+            state,
+            Transition(second, "PHASE_COMPLETION", resource="bar1"),
+        )
     assert caught.value.code == "ENGINE_ORDER_VIOLATION"
     assert executor.fingerprint(state) == before
 
@@ -2527,3 +3252,56 @@ def test_pgir_v2_cluster_fixture_runs_through_cli():
     result = json.loads(process.stdout)
     assert result["verdict"] == "SAFE"
     assert "single_cluster" in result["manifest"]["scope"]
+
+
+@pytest.mark.parametrize("read_destination", [False, True])
+def test_tma_bulk_read_wait_preserves_separate_global_visibility(read_destination):
+    raw = json.loads(json.dumps(tma_store_module(
+        global_wait=False, overwrite_source=False, read_destination=False,
+    ).raw))
+    templates = raw["events"]
+    raw["events"] = []
+    for group in range(9):
+        region = dict(raw["regions"][1], id=f"output{group}", offset=group * 64)
+        raw["regions"].append(region)
+        for template in templates:
+            event = dict(template, id=template["id"] + str(group), seq=len(raw["events"]))
+            if event["type"] == "TmaStoreIssue":
+                event["destination_region"] = region["id"]
+            if event["type"] == "TmaStoreCommitGroup":
+                event["group_seq"] = group
+            raw["events"].append(event)
+    if read_destination:
+        raw["events"].append(dict(id="global_read", type="MemRead", actor="store_owner",
+                                 seq=len(raw["events"]), region="output0"))
+    report = check_module(module_from_dict(raw), engine="maximal")
+    assert report["verdict"] == ("DATA_HAZARD" if read_destination else "SAFE")
+
+
+@pytest.mark.parametrize(("reduction", "read_destination", "expected"), [
+    (True, False, "SAFE"), (False, False, "DATA_HAZARD"),
+    (True, True, "DATA_HAZARD"),
+])
+def test_tma_reduction_is_atomic_only_at_destination(reduction, read_destination, expected):
+    raw = json.loads(json.dumps(tma_store_module(
+        global_wait=False, overwrite_source=False, read_destination=False,
+    ).raw))
+    templates = raw["events"]
+    raw["events"] = []
+    for group in range(2):
+        for template in templates:
+            event = dict(template, id=template["id"] + str(group), seq=len(raw["events"]))
+            if event["type"] == "TmaStoreIssue":
+                event["reduction"] = reduction
+            if event["type"] == "TmaStoreCommitGroup":
+                event["group_seq"] = group
+            raw["events"].append(event)
+    if read_destination:
+        raw["events"].append(dict(id="global_read", type="MemRead", actor="store_owner",
+                                 seq=len(raw["events"]), region="store_destination"))
+    assert check_module(module_from_dict(raw), engine="maximal")["verdict"] == expected
+    # Reductions read shared source non-atomically, even though destination
+    # reductions are atomic with respect to each other.
+    raw["events"].insert(1, dict(id="early_overwrite", type="MemWrite", actor="store_owner", region="store_source"))
+    for seq, event in enumerate(raw["events"]):event["seq"] = seq
+    assert check_module(module_from_dict(raw), engine="maximal")["verdict"] == "DATA_HAZARD"

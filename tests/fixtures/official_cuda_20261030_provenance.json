@@ -1,0 +1,64 @@
+[
+  {
+    "fixture": "tilelang_empty_cuda.tvm.json",
+    "sha256": "f1fc00defa37d8fc722fe48533552ea858e8ab406be6024574eb5dc888cfe407",
+    "source": {
+      "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+      "end_line": 62,
+      "git_blob": "7edb5dbd166349946bd0893befa2c234053b8fc2",
+      "qualname": "_empty_kernel_with_binding_variants.kernel_with_scalar_kernel_binding",
+      "relative_path": "testing/python/issue/test_tilelang_issue_830.py",
+      "selected_source_sha256": "5797f35463c73fa9a23654bfbd0899dd4889d1519776272f2a0ef107b30d68cf",
+      "source_sha256": "acf71221b2d8c779f9044943e9ab56edf97f2502d4fa2d2c953d4223e1e3a1af",
+      "start_line": 58
+    },
+    "generation": {
+      "cuda_sha256": "755077d94e7fd91e5c9e16825faf11ecb310ab558992e63b5062c597a9e54eb0",
+      "raw_ir_sha256": "f1fc00defa37d8fc722fe48533552ea858e8ab406be6024574eb5dc888cfe407",
+      "source_sha256": "acf71221b2d8c779f9044943e9ab56edf97f2502d4fa2d2c953d4223e1e3a1af",
+      "grid": [
+        1,
+        1,
+        1
+      ],
+      "device_functions": 1,
+      "pass_configs": {},
+      "config_evidence": [],
+      "target": "{\"kind\":\"cuda\",\"tag\":\"\",\"keys\":[\"cuda\",\"gpu\"],\"max_num_threads\":1024,\"thread_warp_size\":32,\"arch\":\"sm_90a\"}",
+      "compile_bindings": {},
+      "device_compilation": false,
+      "gpu_execution": false
+    }
+  },
+  {
+    "fixture": "tilelang_true_device_assert.tvm.json",
+    "sha256": "9ab6e592e4340043a99b8c4091ddc818cdedb55112816ed28e495fc71dd9d602",
+    "source": {
+      "commit": "2c31e071c626c0498b48dcdc2741dc8651b70dc1",
+      "end_line": 12,
+      "git_blob": "6a0c51717094c12de90541653e1ef60d13536803",
+      "qualname": "test_device_assert_no_trigger.program",
+      "relative_path": "testing/python/debug/test_device_assert.py",
+      "selected_source_sha256": "be035f3ca0aec5608aaae08332672da6fb89ab3ff87f3d40e45e49c76168bdc6",
+      "source_sha256": "a5a73e16a89596a7628c8292bf15ebf6473e5d5f7abef999e72926a6ce95e1b4",
+      "start_line": 8
+    },
+    "generation": {
+      "cuda_sha256": "32df6ea15f89f8cef8cde24154eb88e6752ff97f24fdf729952ff734cd5a4aad",
+      "raw_ir_sha256": "9ab6e592e4340043a99b8c4091ddc818cdedb55112816ed28e495fc71dd9d602",
+      "source_sha256": "a5a73e16a89596a7628c8292bf15ebf6473e5d5f7abef999e72926a6ce95e1b4",
+      "grid": [
+        1,
+        1,
+        1
+      ],
+      "device_functions": 1,
+      "pass_configs": {},
+      "config_evidence": [],
+      "target": "{\"kind\":\"cuda\",\"tag\":\"\",\"keys\":[\"cuda\",\"gpu\"],\"max_num_threads\":1024,\"thread_warp_size\":32,\"arch\":\"sm_90a\"}",
+      "compile_bindings": {},
+      "device_compilation": false,
+      "gpu_execution": false
+    }
+  }
+]

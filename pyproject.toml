@@ -7,14 +7,16 @@ name = "pipeguard"
 version = "0.2.0"
 description = "DSL-neutral SM90 static checker core with isolated single-CTA and cluster PGIR profiles"
 readme = "README.md"
-requires-python = ">=3.12"
-dependencies = ["jsonschema>=4.21"]
+requires-python = ">=3.10"
+dependencies = ["fastjsonschema>=2.19", "jsonschema>=4.21"]
 
 [project.optional-dependencies]
 test = ["pytest>=8"]
 
 [project.scripts]
 pipeguard = "pipeguard.cli:main"
+pipeguard-capture-tilelang = "pipeguard.capture.tilelang_capture:main"
+pipeguard-capture-triton = "pipeguard.capture.triton_capture:main"
 
 [tool.setuptools.package-data]
 pipeguard = ["specs/*.json"]
